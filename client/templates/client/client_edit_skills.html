@@ -1,0 +1,89 @@
+{% extends 'client/client_main_page.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    Edit Skills
+{% endblock %}
+
+{% block content %}
+
+    <script type="text/javascript" src="{% static 'client/js/client_main.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#add_more').click(function () {
+                var form_idx = $('#id_form-TOTAL_FORMS').val();
+                $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+                $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+            });
+        });
+    </script>
+    <h3>Write your skills</h3>
+
+    <div class="row">
+        <div class="col">
+            <form method="post">
+                {% csrf_token %}
+                <div class="list-group">
+
+                    <div id="skills">
+                        <input type="text" class="form-control m-sm-1" placeholder="Enter your skill"
+                               aria-label="Enter your skill" aria-describedby="button-addon2"
+                               name="skill">
+                    </div>
+                    <button type="button" class="btn btn-outline-primary m-sm-1"
+                            onclick="add_1more_element('input', 'Enter your skill', 'skill', '','skills')">
+                        Навык +
+                    </button>
+                </div>
+                <button type="submit" class="btn btn-outline-success m-sm-1">Сохранить</button>
+            </form>
+        </div>
+    </div>
+
+    <hr>
+    <p>test code</p>
+    <br>
+    <!-- тестовый код: как по нажатию кнопки добавить ещё 1 form-элемент или "include"??? -->
+    <div id="div_add">
+        <form id="form_add" method="post">
+            {% csrf_token %}
+            <!-- v1 -->
+            {% include 'client/skills_test_include.html' %}
+            <!-- v2 -->
+            {{ form.as_p }}
+            <!-- button -->
+            <button type="submit" class="btn btn-outline-success m-sm-1">save</button>
+        </form>
+        <button type="button" class="btn btn-outline-primary m-sm-1"
+                onclick="">
+            add
+        </button>
+    </div>
+    <!-- тестовый код: как по нажатию добавить ещё 1 form-элемент ??? -->
+
+    <hr>
+    <p>test code</p>
+    <br>
+    <h3>FormSet example</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ myformset.management_form }}
+        <div id="form_set">
+            {% for form in myformset.forms %}
+                {{ form.non_field_errors }}
+                {{ form.errors }}
+                <table class='no_error'>
+                    {{ form }}
+                </table>
+            {% endfor %}
+        </div>
+        <input type="button" value="Add More" id="add_more" class="btn btn-outline-primary m-sm-1">
+        <div id="empty_form" style="display:none">
+            <table class='no_error'>
+                {{ myformset.empty_form }}
+            </table>
+        </div>
+        <button type="submit" class="btn btn-outline-success m-sm-1">save</button>
+    </form>
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'client/client_main_page.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    Client Profile
+{% endblock %}
+
+{% block content %}
+
+    <div>
+        <h3>Hello Client Profile</h3>
+        <p>
+            <a href="{% url 'client_edit' %}" class="btn btn-outline-primary">Редактировать</a>
+
+            <img src="{{ client_img }}" alt="img" class="m-sm-1" height="64">
+
+            text....
+
+            <a href="{% url 'client' %}" class="btn btn-outline-danger">X</a>
+        </p>
+
+    </div>
+
+{% endblock %}

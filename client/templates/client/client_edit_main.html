@@ -1,0 +1,241 @@
+{% extends 'client/client_main_page.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    Edit Profile
+{% endblock %}
+
+{% block content %}
+
+    <script type="text/javascript" src="{% static 'client/js/client_main.js' %}"></script>
+
+    <div class="row">
+        <div class="col-md-8">
+
+            <form method="post">
+                {% csrf_token %}
+
+                <h3>Общая информация</h3>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Имя:</span>
+                    </div>
+                    <input type="text" aria-label="First name" class="form-control" name="client_first_name"
+                           value="имя" required>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Фамилия:</span>
+                    </div>
+                    <input type="text" aria-label="Last name" class="form-control" name="client_last_name"
+                           value="Фамилия" required>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Отчество:</span>
+                    </div>
+                    <input type="text" aria-label="Middle name" class="form-control" name="client_middle_name"
+                           value="Отчество" required>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="id_sex">Пол:</label>
+                    </div>
+
+                    <select class="custom-select" id="id_sex" name="sex">
+                        <option selected>Choose...</option>
+                        <option value="M">М</option>
+                        <option value="F">Ж</option>
+                        <!-- testing Sex model -->
+                        {% for s in sex %}
+                            <option value="{{ s.sex_word }}">{{ s.sex_word }}</option>
+                        {% endfor %}
+                        <!-- testing Sex model-->
+                    </select>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="id_date_born">Дата рождения:</label>
+                    </div>
+                    <input type="date" name="date_born" aria-label="DateBorn" id="id_date_born">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="id_citizenship">Гражданство:</label>
+                    </div>
+                    <select class="custom-select" id="id_citizenship" name="citizenship">
+                        <option selected>Choose...</option>
+                        <option value="BY">РБ</option>
+                        <option value="RU">РФ</option>
+                        <option value="UA">Украина</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="id_family_state">Семейное положение:</label>
+                    </div>
+                    <select class="custom-select" id="id_family_state" name="family_state">
+                        <option selected>Choose...</option>
+                        <!-- TODO: if sex == M -->
+                        <option value="1">холост</option>
+                        <option value="2">женат</option>
+                        <!-- TODO: if sex == F -->
+                        <option value="3">не замужем</option>
+                        <option value="4">замужем</option>
+                    </select>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="id_children">Дети:</label>
+                    </div>
+                    <select class="custom-select" id="id_children" name="children">
+                        <option selected>Choose...</option>
+                        <option value="yes">Есть</option>
+                        <option value="no">Нету</option>
+                    </select>
+                </div>
+
+                <h3>Адрес проживания</h3>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="id_country">Страна:</label>
+                    </div>
+                    <select class="custom-select" id="id_country" name="country">
+                        <option selected>Choose...</option>
+                        <option value="BY">РБ</option>
+                        <option value="RU">РФ</option>
+                        <option value="UA">Украина</option>
+                    </select>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="id_city">Город:</label>
+                    </div>
+                    <select class="custom-select" id="id_city" name="city">
+                        <option selected>Choose...</option>
+                        <option value="Minsk">Minsk</option>
+                        <option value="Moscow">Moscow</option>
+                        <option value="Kiev">Kiev</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Улица:</span>
+                    </div>
+                    <input type="text" aria-label="First name" class="form-control" name="street">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Дом:</span>
+                    </div>
+                    <input type="text" aria-label="House" class="form-control" name="house">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Квартира:</span>
+                    </div>
+                    <input type="text" aria-label="Flat" class="form-control" name="flat">
+                </div>
+
+                <h3>Контакты</h3>
+
+                <div class="input-group mb-3">
+                    <div class="form-group" id="phone_0">
+                        <label for="int_phone">Телефон:</label>
+                        <input type="tel" class="form-control" name="phone" aria-describedby="small_phone"
+                               id="int_phone" value="+">
+                        <small class="form-text text-muted" id="small_phone">
+                            +375291234567 (код страны + код оператора + номер)
+                        </small>
+                    </div>
+                    <button class="btn btn-outline-primary mb-3" type="button"
+                            onclick="add_1more_element('input', 'add 1more phone', 'phone', '+', 'phone_0')">
+                        +
+                    </button>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Telegram:</span>
+                    </div>
+                    <input type="text" aria-label="Telegram" class="form-control"
+                           name="telegram_link" value="@">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Skype:</span>
+                    </div>
+                    <input type="text" aria-label="Skype" class="form-control" name="skype_id">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">E-mail:</span>
+                    </div>
+                    <input type="email" aria-label="E-mail" class="form-control" name="email">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Linkedin:</span>
+                    </div>
+                    <input type="url" aria-label="Linkedin" class="form-control" name="link_linkedin">
+                </div>
+
+                <hr>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="id_state">Статус:</label>
+                    </div>
+                    <select class="custom-select" id="id_state" name="state">
+                        <option selected>Choose...</option>
+                        <option value="1">В поиске</option>
+                        <option value="2">На собеседовании</option>
+                        <option value="3">Трудоустроен</option>
+                        <option value="4">Не ищет работу</option>
+                        <option value="5">Не сотрудничает</option>
+                        <option value="6">Заблокирован</option>
+                    </select>
+                </div>
+
+
+                <button type="submit" class="btn btn-outline-success">Сохранить</button>
+
+            </form>
+        </div>
+
+        <div class="col-md-4">
+
+            <h3>Дополнительно:</h3>
+
+            <div class="list-group">
+                <a href="{% url 'client_edit_education' %}" id="edit_education"
+                   class="list-group-item list-group-item-action list-group-item-primary">
+                    Образование +</a>
+                <a href="{% url 'client_edit_skills' %}" id="edit_skills"
+                   class="list-group-item list-group-item-action list-group-item-secondary">
+                    Навыки +</a>
+                <a href="{% url 'client_edit_experience' %}" id="edit_experience"
+                   class="list-group-item list-group-item-action list-group-item-warning">
+                    Опыт работы +</a>
+                <a href="{% url 'client_edit_cv' %}" id="edit_cv"
+                   class="list-group-item list-group-item-action list-group-item-info">
+                    Резюме +</a>
+                <a href="{% url 'client_edit_photo' %}" id="edit_photo"
+                   class="list-group-item list-group-item-action list-group-item-danger">
+                    Фото +</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
