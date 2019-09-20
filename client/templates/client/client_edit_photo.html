@@ -1,0 +1,18 @@
+{% extends 'client/client_main_page.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    Edit Photo
+{% endblock %}
+
+{% block content %}
+
+    <h3>Upload Your Photo</h3>
+
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-outline-success">Сохранить</button>
+    </form>
+
+{% endblock %}

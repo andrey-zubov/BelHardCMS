@@ -1,0 +1,66 @@
+{% extends 'client/client_main_page.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    Edit Experience
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                {% csrf_token %}
+
+                <h3> Experience </h3>
+
+                <div class="form-group">
+                    <label for="id_experience_1">Название организации</label>
+                    <input type="text" class="form-control" id="id_experience_1" name="experience_1">
+                </div>
+
+                <div class="form-group">
+                    <label for="id_experience_2">Область работы (сфера)</label>
+                    <select multiple class="form-control" id="id_experience_2" name="experience_2">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_experience_3">Должность</label>
+                    <input type="text" class="form-control" id="id_experience_3" name="experience_3">
+                </div>
+
+                <h5>Период работы:</h5>
+
+                <div class="form-group">
+                    <label for="id_exp_date_start">Дата начала</label>
+                    <input type="date" class="form-control" id="id_exp_date_start" name="exp_date_start">
+                </div>
+
+                <div class="form-group">
+                    <label for="id_exp_date_end">Дата окончания</label>
+                    <input type="date" class="form-control" id="id_exp_date_end" name="exp_date_end">
+                </div>
+
+                <div class="form-group">
+                    <label for="id_experience_4">Обязанности на рабочем месте</label>
+                    <input type="text" class="form-control" id="id_experience_4" name="experience_4">
+                </div>
+
+                <button type="submit" class="btn btn-outline-success m-sm-1">Добавить эти данные</button>
+            </form>
+
+            <!-- не работает -->
+            <input type="button" value="Добавить опыт работы" id="add_more" class="btn btn-outline-primary m-sm-1">
+            <!-- не работает -->
+            <button type="submit" class="btn btn-outline-success m-sm-1">Соранить все данные</button>
+
+        </div>
+    </div>
+
+{% endblock %}

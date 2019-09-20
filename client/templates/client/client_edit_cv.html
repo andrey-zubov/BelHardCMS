@@ -1,0 +1,61 @@
+{% extends 'client/client_main_page.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    Edit CV
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-8">
+            <h3>Резюме</h3>
+            <form action="{% url 'client_edit_cv' %}" method="post">
+                {% csrf_token %}
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Должность:</span>
+                    </div>
+                    <input type="text" aria-label="position" class="form-control" name="position">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="time_job">Занятость:</label>
+                    </div>
+                    <select class="custom-select" id="time_job" name="time_job">
+                        <option selected>Choose...</option>
+                        <option value="full">Полная</option>
+                        <option value="part">Частичная</option>
+                        <option value="remote">Удалённая</option>
+                    </select>
+                </div>
+
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Уровень заработной платы:</span>
+                    </div>
+                    <input type="text" aria-label="salary" class="form-control" name="salary">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="type_salary">Валюта:</label>
+                    </div>
+                    <select class="custom-select" id="type_salary" name="type_salary">
+                        <option selected>Choose...</option>
+                        <option value="$">$</option>
+                        <option value="BYN">BYN</option>
+                        <option value="RUR">RUR</option>
+                    </select>
+                </div>
+
+                <input type="button" value="Add More" class="btn btn-outline-primary m-sm-1">
+
+                <button type="submit" class="btn btn-outline-success m-sm-1">Сохранить</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
