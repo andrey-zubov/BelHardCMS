@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import formset_factory  # modelformset_factory
 
-from .models import Client, Skills, Experience
+from .models import Opinion, Answer, Client, Skills, Experience
 
 # special field names for the Formsets
 # https://docs.djangoproject.com/en/2.2/topics/forms/formsets/
@@ -55,3 +55,19 @@ class AddExperienceForm(forms.ModelForm):
     class Meta:
         model = Experience
         fields = ('name',)
+
+
+class OpinionForm(forms.ModelForm):
+    class Meta:
+        model = Opinion
+        fields = ['title', 'text']
+
+        widgets={'title' : forms.TextInput(attrs={'class':'form-control'}),
+                 'text' : forms.TextInput(attrs={'class':'form-control'}),
+            }
+
+
+class AnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = ['text',]
