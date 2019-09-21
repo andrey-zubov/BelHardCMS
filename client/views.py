@@ -1,5 +1,7 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
+from django.urls import reverse
+from django.views import View
 
 from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm
 from .models import *
@@ -257,6 +259,39 @@ def client_edit_experience(request):
         return redirect('/client/edit')
 
     return render(request, 'client/client_edit_experience.html', response)
+
+class MessagesView(View):
+    def get(self, request):
+        try:
+            chat = Chat.objects.get(members=request.user)
+            if request.user in chat.members.all():
+                chat.message_set.filter(is_readed=False).exclude(author=request.user).update(is_readed=True)
+            else:
+                chat = None
+        except Chat.DoesNotExist:
+            chat = None
+
+        return render(
+            request,
+            'client/client_chat.html',
+            {
+                'user_profile': request.user,
+                'chat': chat,
+                'form': MessageForm()
+            }
+        )
+
+    def post(self, request):
+        form = MessageForm(data=request.POST)
+        chat = Chat.objects.get(members=request.user)
+        print(form)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.chat_id = chat.id
+            message.author = request.user
+            message.save()
+        return redirect(reverse('contact_with_centre'))
+
 
 def opinion_list(request):
     opinion = Opinion.objects.all()
