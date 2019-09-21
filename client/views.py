@@ -4,6 +4,8 @@ from django.template.context_processors import csrf
 from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet
 from .models import *
 
+from django.contrib import auth
+
 
 def client_main_page(request):
     response = csrf(request)
@@ -254,3 +256,26 @@ def client_edit_experience(request):
         return redirect('/client/edit')
 
     return render(request, 'client/client_edit_experience.html', response)
+
+
+
+def client_login(request):      #ввести логин/пароль -> зайти в систему
+    res = csrf(request)
+    res['url'] = 'login'
+    if request.POST:
+        password = request.POST['password']
+        user = request.POST['user']
+        u = auth.authenticate(username=user, password=password)
+        if u:
+            auth.login(request, u)
+            return redirect('/user_tasks/')               #переадресация после авторизации
+        else:
+            res['error'] = "Неверный login/пароль"
+            return render(request, 'registration.html', res)
+    else:
+        return render(request, 'registration.html', res)
+
+
+def client_logout(request):     #выйти из системы, возврат на стартовую страницу
+    auth.logout(request)
+    return redirect('/')      #вставить редирект куда требуется

@@ -21,6 +21,8 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('client/', include('client.client_urls')),
+    path('reg/', include('client.client_urls'))
+   # path('reg/', include('registration.urls')),
 ]
 
 if settings.DEBUG:

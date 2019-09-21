@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+
+</head>
+<body>
+
+<h1>Пожалуйста, авторизируйтесь</h1>
+
+
+<form action="/reg/{{ url }}/" method="post">
+{% csrf_token %}
+
+   <!--логин-->
+<div class="form-group">
+  <label for="user">Login:</label>
+  <input type="text" class="form-control" id="user" name="user">
+</div>
+  <!--пароль-->
+<div class="form-group">
+  <label for="pass">Пароль:</label>
+  <input type="password" class="form-control" id="pass" name="password">
+</div>
+    <input type="submit" value="Войти">
+</form>
+
+
+{% if error %}
+    <h1>{{ error }}</h1>
+{% endif %}
+
+
+</body>
+</html>
