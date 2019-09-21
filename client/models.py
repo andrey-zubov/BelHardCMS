@@ -2,6 +2,7 @@
 
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.shortcuts import reverse
 import re
 
 from django.utils import timezone
@@ -159,6 +160,7 @@ class Telephone(models.Model):
         else:
             print("incorrect phone number")
 
+
 class Chat(models.Model):
     class Meta:
         verbose_name = "Чат"
@@ -177,4 +179,30 @@ class Message(models.Model):
     message = models.TextField(verbose_name="Сообщение")
     pub_date = models.DateTimeField(verbose_name='Дата сообщения', default=timezone.now)
     is_readed = models.BooleanField(verbose_name='Прочитано', default=False)
+
+
+
+class Opinion(models.Model):
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    text = models.TextField(max_length=3000)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def get_adres(self):
+        return reverse('opinion_detail', kwargs={'pk': self.pk})
+
+    def opinion_delete(self):
+        return reverse('opinion_delete', kwargs={'pk': self.pk})
+
+    def __str__(self):
+        return self.title[:10]
+
+class Answer(models.Model):
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    text = models.TextField(max_length=3000)
+    opinion = models.OneToOneField(Opinion, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.text[:10]
 

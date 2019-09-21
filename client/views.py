@@ -1,10 +1,14 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
 from django.urls import reverse
 from django.views import View
 
-from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, MessageForm
+from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm
+
 from .models import *
+
+from django.views.generic import View
+
 
 
 def client_main_page(request):
@@ -257,7 +261,6 @@ def client_edit_experience(request):
 
     return render(request, 'client/client_edit_experience.html', response)
 
-
 class MessagesView(View):
     def get(self, request):
         try:
@@ -289,4 +292,54 @@ class MessagesView(View):
             message.author = request.user
             message.save()
         return redirect(reverse('contact_with_centre'))
+
+
+def opinion_list(request):
+    opinion = Opinion.objects.all()
+    return render(request, 'opinion/index.html', context={'opinion' : opinion})
+
+def answer_create(request, pk):
+    opinion = get_object_or_404(Opinion, id=pk)
+    answer = Answer.objects.filter(pk = pk)
+    form = AnswerForm()
+
+    if request.method == "POST":
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.opinion = opinion
+            form.user = request.user
+            form.save()
+            return redirect('opinion_detail', pk)
+    return render(request, 'opinion/answer_create.html', context={'form':form, 'opinion':opinion, "answer" : answer})
+
+class OpinionCreate(View):
+    def get(self, request):
+        form = OpinionForm()
+        return render(request,'opinion/opinion_create.html', context={'form':form})
+
+    def post(self, request):
+        form = OpinionForm(request.POST)
+
+        if form.is_valid():
+            new_opinion = form.save(commit=False)
+            new_opinion.user = request.user
+            new_opinion.save()
+            return redirect('opinion_detail', pk = new_opinion.pk)
+        return render(request, 'opinion/opinion_create.html', context={'form' : form})
+
+def opinion_detail(request, pk):
+    opinion = get_object_or_404(Opinion, pk=pk)
+    return render(request, 'opinion/opinion_detail.html', {'opinion': opinion})
+
+
+class OpinionDelete(View):
+    def get(self, request, pk):
+        opinion = Opinion.objects.filter(pk = pk)
+        return render(request, 'opinion/opinion_delete.html', context={'opinion' : opinion})
+
+    def post(self, request, pk):
+        opinion = Opinion.objects.filter(pk = pk)
+        opinion.delete()
+        return redirect(reverse('opinion_list'))
 
