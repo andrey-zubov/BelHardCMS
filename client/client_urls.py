@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.urls import path
 
 from . import views
@@ -11,4 +12,5 @@ urlpatterns = [
     path('edit/cv', views.client_edit_cv, name='client_edit_cv'),
     path('edit/education', views.client_edit_education, name='client_edit_education'),
     path('edit/experience', views.client_edit_experience, name='client_edit_experience'),
+    path('chat', login_required(views.MessagesView.as_view()), name='contact_with_centre'),
 ]
