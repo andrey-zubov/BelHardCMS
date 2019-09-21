@@ -3,7 +3,7 @@ from django.template.context_processors import csrf
 from django.urls import reverse
 from django.views import View
 
-from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm
+from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 from .models import *
 
 from django.views.generic import View
@@ -353,7 +353,7 @@ def client_login(request):      #ввести логин/пароль -> зай�
         u = auth.authenticate(username=user, password=password)
         if u:
             auth.login(request, u)
-            return redirect('/user_tasks/')               #переадресация после авторизации
+            return redirect('/')               #переадресация после авторизации
         else:
             res['error'] = "Неверный login/пароль"
             return render(request, 'registration.html', res)
