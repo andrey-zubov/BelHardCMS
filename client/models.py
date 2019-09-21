@@ -1,7 +1,11 @@
+
+
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
 import re
+
+from django.utils import timezone
 
 UserModel = get_user_model()
 
@@ -157,6 +161,27 @@ class Telephone(models.Model):
             print("incorrect phone number")
 
 
+class Chat(models.Model):
+    class Meta:
+        verbose_name = "Чат"
+        verbose_name_plural = "Чаты"
+
+    members = models.ManyToManyField(UserModel, verbose_name="Участник")
+
+
+class Message(models.Model):
+
+    class Meta:
+        ordering = ['pub_date']
+
+    chat = models.ForeignKey(Chat, verbose_name="Чат", on_delete=models.CASCADE, )
+    author = models.ForeignKey(UserModel, verbose_name="Пользователь", on_delete=models.CASCADE)
+    message = models.TextField(verbose_name="Сообщение")
+    pub_date = models.DateTimeField(verbose_name='Дата сообщения', default=timezone.now)
+    is_readed = models.BooleanField(verbose_name='Прочитано', default=False)
+
+
+
 class Opinion(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
@@ -180,3 +205,4 @@ class Answer(models.Model):
 
     def __str__(self):
         return self.text[:10]
+
