@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>таски ТЕСТ</title>
+</head>
+<body>
+Hello tasks
+<div>
+    {% for task in tasks %}
+    <h1>-----</h1>
+    <b>{{ task.title }}</b><br>
+    {{ task.text }}
+    {% for subtask in subtasks %}
+        <p>-<b>{{ subtask.text }}
+    {% endfor %}
+    {% endfor %}
+</div>
+</body>
+</html>
