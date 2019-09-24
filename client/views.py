@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404, HttpResponse
 from django.template.context_processors import csrf
 from django.urls import reverse
 from django.views import View
@@ -364,3 +364,9 @@ def client_login(request):      #ввести логин/пароль -> зай�
 def client_logout(request):     #выйти из системы, возврат на стартовую страницу
     auth.logout(request)
     return redirect('/')      #вставить редирект куда требуется
+
+def client_tasks(request):
+    res = {}
+    res['tasks'] = Tasks.objects.all()
+    res['subtasks'] = Subtasks.objects.all()
+    return render(request, 'client/client_tasks.html', res)

@@ -206,3 +206,19 @@ class Answer(models.Model):
     def __str__(self):
         return self.text[:10]
 
+class Tasks(models.Model):
+    title = models.CharField(max_length=30, verbose_name='Имя задачи')
+    text = models.TextField(null=True, verbose_name='Текст задачи')
+    date = models.DateField(auto_now_add=True, verbose_name='Дата публикации')
+    date_end = models.DateField(verbose_name='Дата окончания задачи')
+   # sub = models.ForeignKey('Subtasks', on_delete=models.PROTECT, null=True)
+
+
+class Subtasks(models.Model):
+    text = models.CharField(max_length=200, verbose_name='подзадача')
+    task_id = models.ForeignKey(Tasks, on_delete=models.CASCADE, default=None)
+
+    def __str__(self):
+        return self.text
+
+
