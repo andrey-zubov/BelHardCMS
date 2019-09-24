@@ -364,3 +364,15 @@ def client_login(request):      #ввести логин/пароль -> зай�
 def client_logout(request):     #выйти из системы, возврат на стартовую страницу
     auth.logout(request)
     return redirect('/')      #вставить редирект куда требуется
+
+
+def tasks(request):
+    task = Tasks.objects.filter(user = request.user, status = True)
+
+    task_false = Tasks.objects.filter(user=request.user, status=False) #status=False)
+
+
+    return render(request, 'client/tasks.html', context = {'task' : task,  'task_false': task_false})
+
+
+

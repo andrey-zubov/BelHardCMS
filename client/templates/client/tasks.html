@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="active"></div>
+    {% for task in task %}
+        {{task.title}}
+         {{task.subtask.all}}
+
+        <hr>
+    {% endfor %}
+</div>
+<button id="show">Показать заверешенные задачи</button>
+<div class="close" hidden >
+    {% for task in task_false %}
+        {{task.title}}
+        {{task.subtask.all}}
+        <hr>
+    {% endfor %}
+    <button class="hide">Скрыть</button>
+</div>
+
+<script>
+$('document').ready(function () {
+    $('#show').on('click', function () {
+        $('.close').show()
+    });
+    $(".close .hide").click(function(){
+        $(this).parents(".close").hide();
+    });
+
+});
+
+
+
+</script>
+</body>
+</html>

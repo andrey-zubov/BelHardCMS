@@ -24,6 +24,8 @@ urlpatterns = [
     path('login/', client_login),
     path('logout/', client_logout),
 
+    path('tasks/', tasks, name = 'tasks_list')
+
 
 
 ]
