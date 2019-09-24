@@ -206,3 +206,20 @@ class Answer(models.Model):
     def __str__(self):
         return self.text[:10]
 
+
+class Tasks(models.Model):
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null = True)
+    title = models.TextField(max_length=200)
+    time = models.DateTimeField()
+    date = models.DateField()
+    comment = models.TextField(max_length=300)
+    status = models.BooleanField(default=None) #активная задача
+
+
+class SubTasks(models.Model):
+    title = models.TextField(max_length=100)
+    task = models.ForeignKey(Tasks, on_delete=models.CASCADE, related_name="subtask")
+    status = models.BooleanField(default=True) #активная задача
+
+    def __str__(self):
+        return self.title
