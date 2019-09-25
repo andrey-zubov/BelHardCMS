@@ -367,9 +367,9 @@ def client_logout(request):     #выйти из системы, возврат 
 
 
 def tasks(request):
-    task = Tasks.objects.filter(user = request.user, status = True)
-
+    task = Tasks.objects.filter(user=request.user, status=True)
     task_false = Tasks.objects.filter(user=request.user, status=False) #status=False)
+    print(task[0].show_all[0].title)
 
 
     return render(request, 'client/tasks.html', context = {'task' : task,  'task_false': task_false})

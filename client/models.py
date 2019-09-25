@@ -212,8 +212,12 @@ class Tasks(models.Model):
     title = models.TextField(max_length=200)
     time = models.DateTimeField()
     date = models.DateField()
-    comment = models.TextField(max_length=300)
+    comment = models.TextField(max_length=300, blank=True)
     status = models.BooleanField(default=None) #активная задача
+
+    @property
+    def show_all(self):
+        return self.subtask.all()
 
 
 class SubTasks(models.Model):
