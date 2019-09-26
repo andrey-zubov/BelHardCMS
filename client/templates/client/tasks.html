@@ -6,11 +6,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body>
-<div class="active"></div>
-    {% for task in task %}
-        {{task.title}}
-         {{task.subtask.all}}
-
+<div class="active">
+    {% for tas in task %}
+        <button class="fortask" id="idfortas{{ tas.id }}">{{ tas.title }}</button><br><hr>
+        <div id="forsubtask{{ tas.id }}" hidden>
+            {% for sub in tas.show_all %}
+                {{ sub.title }}<hr>
+            {% endfor %}
+        </div>
         <hr>
     {% endfor %}
 </div>
@@ -18,7 +21,10 @@
 <div class="close" hidden >
     {% for task in task_false %}
         {{task.title}}
-        {{task.subtask.all}}
+
+        {% for sub in task.show_all %}
+            {{ sub.title }}
+        {% endfor %}
         <hr>
     {% endfor %}
     <button class="hide">Скрыть</button>
@@ -32,11 +38,19 @@ $('document').ready(function () {
     $(".close .hide").click(function(){
         $(this).parents(".close").hide();
     });
+    $('.fortask').on('click', function () {
+        var id = 'forsubtask' + $(this).attr('id').slice(8);
+        var elem = $('#' + id);
+        if(elem.is(":visible")){
+            elem.hide();
+        } else {
+            elem.show();
+        }
+
+
+    })
 
 });
-
-
-
 </script>
 </body>
 </html>
