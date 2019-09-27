@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+     {% for opinion in opinion %}
+
+        <h2>{{opinion.title}}</h2>
+
+        <h4>{{opinion.text}}</h4>
+        <h5>{{opinion.date}}</h5>
+        <h6>{{opinion.user}}</h6>
+
+
+        <a href="{{opinion.get_adres}}" class="btn btn-primary">More</a>
+
+    {%endfor%}<hr>
+</body>
+</html>

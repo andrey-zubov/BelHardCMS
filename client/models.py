@@ -1,5 +1,12 @@
+
+
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.shortcuts import reverse
+import re
+
+
+from django.utils import timezone
 
 UserModel = get_user_model()
 
@@ -209,5 +216,82 @@ class Telephone(models.Model):
     telephone_number = models.CharField(max_length=20, blank=True, null=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
 
+    def save(self, *args, **kwargs):
+        pattern = "^[+]{1}[0-9]{1,20}$"
+        tel = self.telephone_number
+        if re.match(pattern=pattern, string=tel):
+            print("phone to save: %s" % tel)
+            # super().save(*args, **kwargs)   # TODO uncomment after 'UserLogin' module done!!!
+        else:
+            print("incorrect phone number")
+
+
+class Chat(models.Model):
+    class Meta:
+        verbose_name = "Чат"
+        verbose_name_plural = "Чаты"
+
+    members = models.ManyToManyField(UserModel, verbose_name="Участник")
+
+
+class Message(models.Model):
+
+    class Meta:
+        ordering = ['pub_date']
+
+    chat = models.ForeignKey(Chat, verbose_name="Чат", on_delete=models.CASCADE, )
+    author = models.ForeignKey(UserModel, verbose_name="Пользователь", on_delete=models.CASCADE)
+    message = models.TextField(verbose_name="Сообщение")
+    pub_date = models.DateTimeField(verbose_name='Дата сообщения', default=timezone.now)
+    is_readed = models.BooleanField(verbose_name='Прочитано', default=False)
+
+
+
+class Opinion(models.Model):
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    text = models.TextField(max_length=3000)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def get_adres(self):
+        return reverse('opinion_detail', kwargs={'pk': self.pk})
+
+    def opinion_delete(self):
+        return reverse('opinion_delete', kwargs={'pk': self.pk})
+
     def __str__(self):
-        return self.telephone_number
+        return self.title[:10]
+
+class Answer(models.Model):
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    text = models.TextField(max_length=3000)
+    opinion = models.OneToOneField(Opinion, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.text[:10]
+
+
+class Tasks(models.Model):
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null = True)
+    title = models.TextField(max_length=200)
+    time = models.DateTimeField()
+    date = models.DateField()
+    comment = models.TextField(max_length=300, blank=True)
+    status = models.BooleanField(default=None) #активная задача
+
+    @property
+    def show_all(self):
+        return self.subtask.all()
+
+
+class SubTasks(models.Model):
+    title = models.TextField(max_length=100)
+    task = models.ForeignKey(Tasks, on_delete=models.CASCADE, related_name="subtask")
+    status = models.BooleanField(default=True) #активная задача
+
+    #def __str__(self):
+    #    return self.title
+
+    #def __str__(self):
+    #    return self.telephone_number

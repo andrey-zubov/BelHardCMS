@@ -1,10 +1,18 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
+from django.urls import reverse
+from django.views import View
+
+
+from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 
 from BelHardCRM.settings import MEDIA_URL
 from .forms import UploadImgForm, EducationFormSet, CertificateFormSet, inlineEduCert
 from .models import *
 from .utility import *
+
+from django.views.generic import View
+from django.contrib import auth
 
 
 def client_main_page(request):
@@ -348,6 +356,121 @@ def client_edit_experience(request):
     return render(request, 'client/client_edit_experience.html', response)
 
 
+class MessagesView(View):
+    def get(self, request):
+        try:
+            chat = Chat.objects.get(members=request.user)
+            if request.user in chat.members.all():
+                chat.message_set.filter(is_readed=False).exclude(author=request.user).update(is_readed=True)
+            else:
+                chat = None
+        except Chat.DoesNotExist:
+            chat = None
+
+        return render(
+            request,
+            'client/client_chat.html',
+            {
+                'user_profile': request.user,
+                'chat': chat,
+                'form': MessageForm()
+            }
+        )
+
+    def post(self, request):
+        form = MessageForm(data=request.POST)
+        chat = Chat.objects.get(members=request.user)
+        print(form)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.chat_id = chat.id
+            message.author = request.user
+            message.save()
+        return redirect(reverse('contact_with_centre'))
+
+
+def opinion_list(request):
+    opinion = Opinion.objects.all()
+    return render(request, 'opinion/index.html', context={'opinion' : opinion})
+
+def answer_create(request, pk):
+    opinion = get_object_or_404(Opinion, id=pk)
+    answer = Answer.objects.filter(pk = pk)
+    form = AnswerForm()
+
+    if request.method == "POST":
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.opinion = opinion
+            form.user = request.user
+            form.save()
+            return redirect('opinion_detail', pk)
+    return render(request, 'opinion/answer_create.html', context={'form':form, 'opinion':opinion, "answer" : answer})
+
+class OpinionCreate(View):
+    def get(self, request):
+        form = OpinionForm()
+        return render(request,'opinion/opinion_create.html', context={'form':form})
+
+    def post(self, request):
+        form = OpinionForm(request.POST)
+
+        if form.is_valid():
+            new_opinion = form.save(commit=False)
+            new_opinion.user = request.user
+            new_opinion.save()
+            return redirect('opinion_detail', pk = new_opinion.pk)
+        return render(request, 'opinion/opinion_create.html', context={'form' : form})
+
+def opinion_detail(request, pk):
+    opinion = get_object_or_404(Opinion, pk=pk)
+    return render(request, 'opinion/opinion_detail.html', {'opinion': opinion})
+
+
+class OpinionDelete(View):
+    def get(self, request, pk):
+        opinion = Opinion.objects.filter(pk = pk)
+        return render(request, 'opinion/opinion_delete.html', context={'opinion' : opinion})
+
+    def post(self, request, pk):
+        opinion = Opinion.objects.filter(pk = pk)
+        opinion.delete()
+        return redirect(reverse('opinion_list'))
+
+
+
+def client_login(request):      #ввести логин/пароль -> зайти в систему
+    res = csrf(request)
+    res['url'] = 'login'
+    if request.POST:
+        password = request.POST['password']
+        user = request.POST['user']
+        u = auth.authenticate(username=user, password=password)
+        if u:
+            auth.login(request, u)
+            return redirect('/')               #переадресация после авторизации
+        else:
+            res['error'] = "Неверный login/пароль"
+            return render(request, 'registration.html', res)
+    else:
+        return render(request, 'registration.html', res)
+
+
+def client_logout(request):     #выйти из системы, возврат на стартовую страницу
+    auth.logout(request)
+    return redirect('/')      #вставить редирект куда требуется
+
+
+def tasks(request):
+    task = Tasks.objects.filter(user=request.user, status=True)
+    task_false = Tasks.objects.filter(user=request.user, status=False) #status=False)
+    print(task[0].show_all[0].title)
+
+
+    return render(request, 'client/tasks.html', context = {'task' : task,  'task_false': task_false})
+
+
 def form_education(request):
     """ Test Code - Module Form Set """
     response = csrf(request)
@@ -416,3 +539,4 @@ def load_client_img(req):
     except Exception as ex:
         logging.error("Exception in - load_client_img()\n %s" % ex)
         return '/media/user_1.png'
+
