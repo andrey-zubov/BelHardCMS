@@ -11,4 +11,5 @@ urlpatterns = [
     path('edit/cv', views.client_edit_cv, name='client_edit_cv'),
     path('edit/education', views.client_edit_education, name='client_edit_education'),
     path('edit/experience', views.client_edit_experience, name='client_edit_experience'),
+    path('edit/form_edu', views.form_education, name='form_edu'),
 ]
