@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.template.context_processors import csrf
 
 from BelHardCRM.settings import MEDIA_URL
-from .forms import UploadImgForm, AddEducationFormSet
+from .forms import UploadImgForm, EducationFormSet, CertificateFormSet, inlineEduCert
 from .models import *
 from .utility import *
 
@@ -354,39 +354,51 @@ def form_education(request):
     response['client_img'] = load_client_img(request.user)
 
     if request.method == 'POST':
-        form_set_edu = AddEducationFormSet(request.POST)
+        print(request.POST)
+
+        cert_inst = None
+        form_set_cert = CertificateFormSet(request.POST, request.FILES)
+        if form_set_cert.is_valid():
+            print("FormSet_Cert - OK")
+            for c in form_set_cert:
+                c_items = c.cleaned_data.items()
+                print('cert_items: %s' % c_items)
+                if c_items:
+                    cert_inst = c.save(commit=False)
+                    # cert_inst.evidence_of_edu.save_m2m()
+                    cert_inst.save()
+        else:
+            print("FormSet_Cert not Valid")
+
+        form_set_edu = EducationFormSet(request.POST)
         if form_set_edu.is_valid():
-            print('form_set_edu - OK')
+            print('FormSet_Edu - OK')
             for f in form_set_edu:
                 f_items = f.cleaned_data.items()
-                print("items: %s" % f_items)
+                print("edu_items: %s" % f_items)
                 if f_items:
-                    edu = f.cleaned_data.get('education')
-                    s_a = f.cleaned_data.get('subject_area')
-                    sp = f.cleaned_data.get('specialization')
-                    qu = f.cleaned_data.get('qualification')
-                    ds = f.cleaned_data.get('date_start')
-                    de = f.cleaned_data.get('date_end')
+                    """ edu_inst - unsaved model instance!
+                    It gives you ability to attach data to the instance before saving to the DB! """
+                    edu_inst = f.save(commit=False)
+                    """ attach ForeignKey == Certificate instance """
+                    edu_inst.certificate = cert_inst
+                    """ Save Education instance """
+                    edu_inst.save()
 
-                    print("edu: %s, s_a: %s, sp: %s, qu: %s, ds: %s, de: %s"
-                          % (edu, s_a, sp, qu, ds, de))
-
-                    education = Education(education=edu,
-                                          subject_area=s_a,
-                                          specialization=sp,
-                                          qualification=qu,
-                                          date_start=ds,
-                                          date_end=de)
-                    education.save()
                     client = Client.objects.get(user_client=request.user)
-                    client.education = education
+                    """ attach Edu.Inst to the client, because Client has ForeignKey to Edu-n """
+                    client.education = edu_inst
                     client.save()
+                    """ saving this shit and going to sleep (02:30 here :P)"""
         else:
-            print('form_set_edu not valid')
+            print('FormSet_Edu not valid')
 
         return redirect(to='/client/edit/form_edu')
     else:
-        response['edu_form'] = AddEducationFormSet()
+        response['edu_form'] = EducationFormSet()
+        response['certificate'] = CertificateFormSet()
+        response['inlineEduCert'] = inlineEduCert()
+
     return render(request, 'client/form_edu.html', response)
 
 

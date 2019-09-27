@@ -42,13 +42,14 @@ class City(models.Model):
 class Certificate(models.Model):
     # OneToMany to the Client model
 
+    # evidence_of_edu = models.ManyToManyField(to='Education')
+
     img = models.ImageField(blank=True, null=True, verbose_name='certificate_img')  # ?????????????????????
-    link = models.URLField(max_length=100, verbose_name='certificate_link',
-                           blank=True, null=True)
+    link = models.URLField(blank=True, null=True, max_length=100, verbose_name='certificate_link')
 
 
 class EducationWord(models.CharField):
-    # OneToMany to the Client model
+    # OneToMany to the Education model
 
     education_word = models.CharField(max_length=100)
 

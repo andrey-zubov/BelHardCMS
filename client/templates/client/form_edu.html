@@ -16,51 +16,35 @@
         });
     </script>
 
-    <div class="row">
-        <div class="col-md-6">
-            <h3>Образование FormSet</h3>
-            <form method="post">
-                {% csrf_token %}
-                {{ edu_form.management_form }}
-                <div id="form_set_edu">
-                    {% for form in edu_form.forms %}
-                        {{ form.non_field_errors }}
-                        {{ form.errors }}
-                        <table class='no_error'>
-                            <h4>Образование</h4>
-                            {{ form }}
-                        </table>
-                    {% endfor %}
-                </div>
-                <input type="button" value="Add More" id="add_more_edu" class="btn btn-outline-primary m-sm-1">
-                <div id="empty_form_edu" style="display:none">
+    <div class="container">
+        <h3>Образование FormSet</h3>
+        <form enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            {{ edu_form.management_form }}
+            {{ certificate.management_form }}
+            <div id="form_set_edu">
+                {% for form in edu_form.forms %}
+                    {{ form.non_field_errors }}
+                    {{ form.errors }}
                     <table class='no_error'>
                         <h4>Образование</h4>
-                        {{ edu_form.empty_form }}
+                        {{ form }}
+                        {{ certificate }}
+{#                        {{ inlineEduCert }}#}
                     </table>
-                </div>
-                <button type="submit" class="btn btn-outline-success m-sm-1">save</button>
-            </form>
-        </div>
+                {% endfor %}
+            </div>
+            <input type="button" value="Add More" id="add_more_edu" class="btn btn-outline-primary m-sm-1">
+            <div id="empty_form_edu" style="display:none">
+                <table class='no_error'>
+                    <h4>Образование</h4>
+                    {{ edu_form.empty_form }}
+                    {{ certificate.empty_form }}
+{#                    {{ inlineEduCert.empty_form }}#}
+                </table>
+            </div>
+            <button type="submit" class="btn btn-outline-success m-sm-1">save</button>
+        </form>
     </div>
-
-    <form method="post">
-        <h3>Custom Form Testing</h3>
-        {% csrf_token %}
-        <div>
-            {{ edu_form.management_form }}
-            {% for f in edu_form %}
-                <div class="input-group">
-                    <p>education: {{ f.education }}</p>
-                    <p>subject_area: {{ f.subject_area }}</p>
-                    <p>specialization: {{ f.specialization }}</p>
-                    <p>qualification: {{ f.qualification }}</p>
-                    <p>date_start: {{ f.date_start }}</p>
-                    <p>date_end: {{ f.date_end }}</p>
-                </div>
-            {% endfor %}
-        </div>
-        <button type="submit" class="btn btn-outline-success m-sm-1">save</button>
-    </form>
 
 {% endblock %}

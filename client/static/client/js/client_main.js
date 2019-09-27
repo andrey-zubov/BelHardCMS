@@ -8,19 +8,7 @@ function add_1more_element(create_element, placeholder, post_name, item_value, a
     document.getElementById(append_to).appendChild(item);
 }
 
-function add_more() {
-    var origin = $("#origin_div").clone();
-    var count = 0;
-    $("#add_more").on("click", function () {
-        var add = origin.clone();
-        count += 1;
-        console.log(count);
-
-        add.attr("id", "new_div");
-        add.appendTo("#div_to_add_new");
-    });
-}
-
+// пример JS для страницы "Опыт работы"
 function add_exp_form() {
     var count = 1;
     var origin = $("#origin_div").clone();
