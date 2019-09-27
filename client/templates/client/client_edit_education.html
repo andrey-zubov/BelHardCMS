@@ -6,56 +6,91 @@
 
 {% block content %}
 
+    <!-- JS добавления однотипных форм. ONLY FOR THIS CUSTOM FORM -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var count = 1;
+            var origin = $("#origin_div").clone();
+
+            $("#add_more").on("click", function () {
+                var add = origin.clone();
+                var current_div = add.children('div');
+
+                for (var i = 0; i < 8; i++) {
+                    // 8 inputs
+                    var element = $(current_div[i]).children('input');
+                    var attr_name = $(element).attr('name');
+                    $(element).attr('name', attr_name + count);
+                }
+                count++;
+                // Изменяет вложенный текст
+                var text = add.children('#edu_h');
+                console.log(text);
+                $(text).attr('innerText', text.text('Образование ' + count));
+
+                add.appendTo("#div_to_add_new");
+            });
+        });
+    </script>
+
     <div class="row">
         <div class="col-md-6">
-            <h3>Образование</h3>
-
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                <div class="form-group">
-                    <label for="id_education">Учебное заведение</label>
-                    <input type="text" class="form-control" id="id_education" name="education">
-                </div>
-                <div class="form-group">
-                    <label for="id_subject_area">Предметная область</label>
-                    <input type="text" class="form-control" id="id_subject_area" name="subject_area">
-                </div>
-                <div class="form-group">
-                    <label for="id_specialization">Специальность</label>
-                    <input type="text" class="form-control" id="id_specialization" name="specialization">
-                </div>
-                <div class="form-group">
-                    <label for="id_qualification">Квалификация</label>
-                    <input type="text" class="form-control" id="id_qualification" name="qualification">
-                </div>
-                <p>Период обучения:</p>
-                <div class="form-group">
-                    <label for="id_date_start">Дата начала</label>
-                    <input type="date" class="form-control" id="id_date_start" name="date_start">
-                </div>
-                <div class="form-group">
-                    <label for="id_date_end">Дата окончания</label>
-                    <input type="date" class="form-control" id="id_date_end" name="date_end">
+
+                <div id="div_to_add_new">
+                    <div id="origin_div">
+
+                        <h3 id="edu_h">Образование</h3>
+
+                        <div class="form-group">
+                            <label for="id_education">Учебное заведение</label>
+                            <input type="text" class="form-control" id="id_education" name="education">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_subject_area">Предметная область</label>
+                            <input type="text" class="form-control" id="id_subject_area" name="subject_area">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_specialization">Специальность</label>
+                            <input type="text" class="form-control" id="id_specialization" name="specialization">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_qualification">Квалификация</label>
+                            <input type="text" class="form-control" id="id_qualification" name="qualification">
+                        </div>
+                        <p>Период обучения:</p>
+                        <div class="form-group">
+                            <label for="id_date_start">Дата начала</label>
+                            <input type="date" class="form-control" id="id_date_start" name="date_start">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_date_end">Дата окончания</label>
+                            <input type="date" class="form-control" id="id_date_end" name="date_end">
+                        </div>
+
+                        <!-- переделать -->
+                        <div class="form-group">
+                            <label for="id_certificate_img">Сертификат (img)</label>
+                            <input type="file" class="form-control" id="id_certificate_img" name="certificate_img">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_certificate_url">Сертификат (ссылка)</label>
+                            <input type="url" class="form-control" id="id_certificate_url" name="certificate_url">
+                        </div>
+
+                    </div>
                 </div>
 
-                <!-- переделать -->
-                <div class="form-group">
-                    <label for="id_certificate_img">Сертификат (img)</label>
-                    <input type="file" class="form-control" id="id_certificate_img" name="certificate_img">
-                </div>
+                <input type="button" value="Добавить образование" id="add_more"
+                       class="btn btn-outline-primary m-sm-1">
 
-                <div class="form-group">
-                    <label for="id_certificate_url">Сертификат (ссылка)</label>
-                    <input type="url" class="form-control" id="id_certificate_url" name="certificate_url">
-                </div>
-
-                <button type="submit" class="btn btn-outline-success m-sm-1">Добавить эти данные</button>
+                <button type="submit" class="btn btn-outline-success m-sm-1"
+                        id="save">Соранить все данные
+                </button>
             </form>
 
-            <!-- не работает -->
-            <input type="button" value="Добавить образование" id="add_more" class="btn btn-outline-primary m-sm-1">
-            <!-- не работает -->
-            <button type="submit" class="btn btn-outline-success m-sm-1">Соранить все данные</button>
         </div>
     </div>
 
