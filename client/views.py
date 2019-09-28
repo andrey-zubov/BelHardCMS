@@ -1,5 +1,6 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
+from django.http import HttpResponse
 from django.urls import reverse
 from django.views import View
 
@@ -463,9 +464,10 @@ def client_logout(request):     #выйти из системы, возврат 
 
 
 def tasks(request):
-    task = Tasks.objects.filter(user=request.user, status=True)
-    task_false = Tasks.objects.filter(user=request.user, status=False) #status=False)
-    print(task[0].show_all[0].title)
+    task = Tasks.objects.filter(user=request.user, status=False)
+    task_false = Tasks.objects.filter(user=request.user, status=True) #status=False)
+    task_false = sorted(task_false, key=lambda x:x.endtime,  reverse=True)
+
 
 
     return render(request, 'client/tasks.html', context = {'task' : task,  'task_false': task_false})
@@ -540,3 +542,15 @@ def load_client_img(req):
         logging.error("Exception in - load_client_img()\n %s" % ex)
         return '/media/user_1.png'
 
+
+def checktask(request):
+    id =(request.GET['id'])
+    task = Tasks.objects.get(id=id)
+    if task.status == False:
+        task.status = True
+        task.endtime = timezone.now()
+    else:
+        task.status = False
+        task.endtime = None
+    task.save()
+    return HttpResponse(task)

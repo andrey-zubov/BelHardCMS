@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
 import re
+from datetime import datetime
 
 
 from django.utils import timezone
@@ -272,17 +273,36 @@ class Answer(models.Model):
         return self.text[:10]
 
 
+
+
 class Tasks(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null = True)
     title = models.TextField(max_length=200)
     time = models.DateTimeField()
-    date = models.DateField()
     comment = models.TextField(max_length=300, blank=True)
-    status = models.BooleanField(default=None) #активная задача
+    status = models.BooleanField(default=False) #задача, которая не выполнена
+    endtime = models.DateTimeField(blank=True, null=True)
+    checkstatus = models.BooleanField(default=True)#статус активен, если можем после выоплнения задачи в течении 60 сек вернуть в активную задачу
+
+
 
     @property
     def show_all(self):
         return self.subtask.all()
+
+    @property
+    def checktime(self):
+        if self.endtime != None:
+            akttime = timezone.now() - self.endtime
+            if self.checkstatus == False:
+                pass
+            elif str(akttime)[2:4] >= '01':
+                self.checkstatus = False
+
+
+
+
+
 
 
 class SubTasks(models.Model):
