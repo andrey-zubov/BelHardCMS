@@ -202,11 +202,11 @@ class CV(models.Model):
     """ Резюме. ForeignKey = Несколько резюме у одного клиента. """
     client_cv = models.ForeignKey(to='Client', on_delete=models.CASCADE)
 
-    position = models.CharField(max_length=100)
-    employment = models.ForeignKey(Employment, on_delete=models.SET_NULL, null=True)
-    time_job = models.ForeignKey(TimeJob, on_delete=models.SET_NULL, null=True)
-    salary = models.CharField(max_length=10, null=True)
-    type_salary = models.ForeignKey(TypeSalary, on_delete=models.SET_NULL, null=True)
+    position = models.CharField(max_length=100, null=True, blank=True)
+    employment = models.ForeignKey(Employment, on_delete=models.SET_NULL, null=True, blank=True)
+    time_job = models.ForeignKey(TimeJob, on_delete=models.SET_NULL, null=True, blank=True)
+    salary = models.CharField(max_length=10, null=True, blank=True)
+    type_salary = models.ForeignKey(TypeSalary, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.position
@@ -258,7 +258,7 @@ class Client(models.Model):
 
 class Telephone(models.Model):
     """ Номера телефонов. ForeignKey = несколько телефонов у одного Клиента. """
-    client = models.ForeignKey(to='Client', on_delete=models.CASCADE)
+    client_phone = models.ForeignKey(to='Client', on_delete=models.CASCADE)
 
     telephone_number = models.CharField(max_length=20, blank=True, null=True)
 

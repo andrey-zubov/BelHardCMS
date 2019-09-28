@@ -128,8 +128,10 @@ def client_edit_main(request):
         for t in tel:
             t = check_phone(t)
             if t:
-                phone = Telephone(telephone_number=t)
-                phone.client = client
+                phone = Telephone(
+                    client_phone=client,
+                    telephone_number=t
+                )
                 phone.save()
 
         print('client_edit_main - OK')
@@ -152,13 +154,13 @@ def client_edit_skills(request):
 
         for s in skills_arr:
             if s:
-                skill = Skills(skill=check_input_str(s))
-                skill.save()
-
                 """ ОБЪЕДИНЕНИЕ модуля Навыки с конкретным залогиненым клиентом!!! """
-                # client = Client.objects.get(user_client=request.user)
-                # client.skills = skill
-                # client.save()
+                client = Client.objects.get(user_client=request.user)
+                skill = Skills(
+                    client_skills=client,
+                    skill=check_input_str(s)
+                )
+                skill.save()
 
         return redirect(to='/client/edit')
     else:
@@ -215,7 +217,10 @@ def client_edit_cv(request):
             type_salary.save()
 
             if any([position, employment_word, time_job_word, salary, type_word]):
+                client = Client.objects.get(user_client=request.user)
+
                 cv = CV(
+                    client_cv=client,
                     position=position,
                     employment=employment,
                     time_job=time_job,
@@ -223,10 +228,6 @@ def client_edit_cv(request):
                     type_salary=type_salary,
                 )
                 cv.save()
-
-                # client = Client.objects.get(user_client=request.user)
-                # client.cv = cv
-                # client.save()
 
                 print("CV Form - OK\n", position, employment, time_job, salary, type_salary)
             else:
@@ -248,7 +249,7 @@ def client_edit_education(request):
 
         arr_edu = pars_edu_request(request.POST, request.FILES)
         for edus in arr_edu:
-            institution = edus['education']
+            institution = edus['institution']
             subject_area = edus['subject_area']
             specialization = edus['specialization']
             qualification = edus['qualification']
@@ -269,22 +270,25 @@ def client_edit_education(request):
 
             if any([institution, subject_area, specialization, qualification,
                     date_start, date_end, img_name, link]):
-                certificate = Certificate(
-                    img=img_name,
-                    link=link
-                )
-                certificate.save()
+                client = Client.objects.get(user_client=request.user)
 
                 education = Education(
+                    client_edu=client,
                     institution=institution,
                     subject_area=subject_area,
                     specialization=specialization,
                     qualification=qualification,
                     date_start=date_start if date_start else None,
-                    date_end=date_end if date_end else None,
-                    certificate=certificate
+                    date_end=date_end if date_end else None
                 )
                 education.save()
+
+                certificate = Certificate(
+                    education=education,
+                    img=img_name,
+                    link=link
+                )
+                certificate.save()
 
                 # client = Client.objects.get(user_client=request.user)
                 # client.education = education
@@ -318,7 +322,10 @@ def client_edit_experience(request):
             duties = dic['experience_4']
 
             if any([organisation, position, start_date, end_date, duties]):
+                client = Client.objects.get(user_client=request.user)
+
                 experiences = Experience(
+                    client_exp=client,
                     name=organisation,
                     position=position,
                     start_date=start_date if start_date else None,
@@ -334,10 +341,6 @@ def client_edit_experience(request):
                         sp = Sphere(sphere_word=s)
                         sp.save()
                         experiences.sphere.add(sp)
-
-                client = Client.objects.get(user_client=request.user)
-                client.organization = experiences
-                client.save()
 
                 print("Experience Form - OK\n", organisation, spheres, position, start_date if start_date else None,
                       end_date if end_date else None, duties if duties else None)
