@@ -5,6 +5,7 @@ from django.db import models
 from django.shortcuts import reverse
 import re
 
+
 from django.utils import timezone
 
 UserModel = get_user_model()
@@ -13,90 +14,154 @@ UserModel = get_user_model()
 class Sex(models.Model):
     sex_word = models.CharField(max_length=1)
 
+    def __str__(self):
+        return self.sex_word
+
 
 class Citizenship(models.Model):
     country_word = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.country_word
 
 
 class FamilyState(models.Model):
     state_word = models.CharField(max_length=20)
 
+    def __str__(self):
+        return self.state_word
+
 
 class Children(models.Model):
     children_word = models.CharField(max_length=3)
+
+    def __str__(self):
+        return self.children_word
 
 
 class City(models.Model):
     city_word = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.city_word
+
 
 class Certificate(models.Model):
+    # OneToMany to the Client model
+
+    # evidence_of_edu = models.ManyToManyField(to='Education')
+
     img = models.ImageField(blank=True, null=True, verbose_name='certificate_img')  # ?????????????????????
-    link = models.URLField(max_length=100, verbose_name='certificate_link',
-                           blank=True, null=True)
+    link = models.URLField(blank=True, null=True, max_length=100, verbose_name='certificate_link')
 
 
 class EducationWord(models.CharField):
+    # OneToMany to the Education model
+
     education_word = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.education_word
 
 
 class Education(models.Model):
-    education = models.CharField(max_length=100)  # ?????????????????????
-    subject_area = models.CharField(max_length=100, verbose_name='Предметная область')
-    specialization = models.CharField(max_length=100, verbose_name='Специализация')
-    qualification = models.CharField(max_length=100, verbose_name='Квалификация')
+    # OneToMany to the Client model
+
+    education = models.CharField(max_length=100, null=True, blank=True)  # ?????????????????????
+    subject_area = models.CharField(max_length=100, null=True, blank=True,
+                                    verbose_name='Предметная область')
+    specialization = models.CharField(max_length=100, null=True, blank=True,
+                                      verbose_name='Специализация')
+    qualification = models.CharField(max_length=100, null=True, blank=True,
+                                     verbose_name='Квалификация')
     date_start = models.DateField(null=True, blank=True, verbose_name='дата начала')
     date_end = models.DateField(null=True, blank=True, verbose_name='дата окончания')
     certificate = models.ForeignKey(Certificate, null=True, blank=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.education
 
 
 class SkillsWord(models.Model):
     skills_word = models.CharField(max_length=100)  # ?????????????????????
 
+    def __str__(self):
+        return self.skills_word
+
 
 class Skills(models.Model):
+    # OneToMany to the Client model
+
     skills = models.CharField(max_length=100, blank=True, null=True)  # ?????????????????????
 
 
 class Sphere(models.Model):
     sphere_word = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.sphere_word
+
 
 class Experience(models.Model):
-    name = models.CharField(max_length=100)
-    sphere = models.ManyToManyField(Sphere)  # ??? not more 3
-    position = models.CharField(max_length=100)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    duties = models.TextField(max_length=3000)
+    # OneToMany to the Client model
+
+    name = models.CharField(max_length=100, null=True, blank=True, verbose_name='organisation')
+    sphere = models.ManyToManyField(Sphere, verbose_name='sphere')  # ??? not more 3
+    position = models.CharField(max_length=100, null=True, blank=True, verbose_name='position')
+    start_date = models.DateField(null=True, blank=True, verbose_name='start_date')
+    end_date = models.DateField(null=True, blank=True, verbose_name='end_date')
+    duties = models.TextField(max_length=3000, null=True, blank=True, verbose_name='duties')
+
+    def __str__(self):
+        return self.name
 
 
 class CvWord(models.Model):
     position_word = models.CharField(max_length=100)  # ?????????????????????
 
+    def __str__(self):
+        return self.position_word
+
 
 class Employment(models.Model):
     employment = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.employment
 
 
 class TimeJob(models.Model):
     time_job_word = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.time_job_word
+
 
 class TypeSalary(models.Model):
     type_word = models.CharField(max_length=8)
 
+    def __str__(self):
+        return self.type_word
+
 
 class CV(models.Model):
+    # OneToMany to the Client model
+
     position = models.CharField(max_length=100)  # ?????????????????????
     employment = models.ForeignKey(Employment, on_delete=models.SET_NULL, null=True)
     time_job = models.ForeignKey(TimeJob, on_delete=models.SET_NULL, null=True)
     salary = models.CharField(max_length=10, null=True)
     type_salary = models.ForeignKey(TypeSalary, on_delete=models.SET_NULL, null=True)
 
+    def __str__(self):
+        return self.position
+
 
 class State(models.Model):
     state_word = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.state_word
 
 
 class Client(models.Model):
@@ -206,3 +271,27 @@ class Answer(models.Model):
     def __str__(self):
         return self.text[:10]
 
+
+class Tasks(models.Model):
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null = True)
+    title = models.TextField(max_length=200)
+    time = models.DateTimeField()
+    date = models.DateField()
+    comment = models.TextField(max_length=300, blank=True)
+    status = models.BooleanField(default=None) #активная задача
+
+    @property
+    def show_all(self):
+        return self.subtask.all()
+
+
+class SubTasks(models.Model):
+    title = models.TextField(max_length=100)
+    task = models.ForeignKey(Tasks, on_delete=models.CASCADE, related_name="subtask")
+    status = models.BooleanField(default=True) #активная задача
+
+    #def __str__(self):
+    #    return self.title
+
+    #def __str__(self):
+    #    return self.telephone_number
