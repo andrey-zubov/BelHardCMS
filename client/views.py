@@ -5,7 +5,7 @@ from django.views.generic import View
 
 from BelHardCRM.settings import MEDIA_URL
 from .forms import OpinionForm, AnswerForm, MessageForm
-from .forms import UploadImgForm, EducationFormSet, CertificateFormSet, inlineEduCert
+from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
 from .models import *
 from .utility import *
 
@@ -76,7 +76,7 @@ def client_edit_main(request):
             client = Client(
                 user_client=user,
                 name=user_name,
-                lastname=last_name,
+                last_name=last_name,
                 patronymic=patronymic,
                 sex=sex,
                 date_born=date if date else None,
@@ -103,7 +103,7 @@ def client_edit_main(request):
             client = Client.objects.get(user_client=user)  # Объект = Клиент_id
 
             client.name = user_name
-            client.lastname = last_name
+            client.last_name = last_name
             client.patronymic = patronymic
             client.sex = sex
             client.date_born = date if date else None
@@ -152,13 +152,13 @@ def client_edit_skills(request):
 
         for s in skills_arr:
             if s:
-                skill = Skills(skills=check_input_str(s))
+                skill = Skills(skill=check_input_str(s))
                 skill.save()
 
                 """ ОБЪЕДИНЕНИЕ модуля Навыки с конкретным залогиненым клиентом!!! """
-                client = Client.objects.get(user_client=request.user)
-                client.skills = skill
-                client.save()
+                # client = Client.objects.get(user_client=request.user)
+                # client.skills = skill
+                # client.save()
 
         return redirect(to='/client/edit')
     else:
@@ -224,9 +224,9 @@ def client_edit_cv(request):
                 )
                 cv.save()
 
-                client = Client.objects.get(user_client=request.user)
-                client.cv = cv
-                client.save()
+                # client = Client.objects.get(user_client=request.user)
+                # client.cv = cv
+                # client.save()
 
                 print("CV Form - OK\n", position, employment, time_job, salary, type_salary)
             else:
@@ -248,7 +248,7 @@ def client_edit_education(request):
 
         arr_edu = pars_edu_request(request.POST, request.FILES)
         for edus in arr_edu:
-            university = edus['education']
+            institution = edus['education']
             subject_area = edus['subject_area']
             specialization = edus['specialization']
             qualification = edus['qualification']
@@ -267,7 +267,7 @@ def client_edit_education(request):
 
             link = edus['certificate_url']
 
-            if any([university, subject_area, specialization, qualification,
+            if any([institution, subject_area, specialization, qualification,
                     date_start, date_end, img_name, link]):
                 certificate = Certificate(
                     img=img_name,
@@ -276,7 +276,7 @@ def client_edit_education(request):
                 certificate.save()
 
                 education = Education(
-                    education=university,
+                    institution=institution,
                     subject_area=subject_area,
                     specialization=specialization,
                     qualification=qualification,
@@ -286,11 +286,11 @@ def client_edit_education(request):
                 )
                 education.save()
 
-                client = Client.objects.get(user_client=request.user)
-                client.education = education
-                client.save()
+                # client = Client.objects.get(user_client=request.user)
+                # client.education = education
+                # client.save()
 
-                print("Education Form - OK\n", university, subject_area, specialization, qualification,
+                print("Education Form - OK\n", institution, subject_area, specialization, qualification,
                       date_start if date_start else None, date_end if date_end else None, img_name, link)
             else:
                 print('Education Form is Empty')
@@ -516,7 +516,7 @@ def form_education(request):
     else:
         response['edu_form'] = EducationFormSet()
         response['certificate'] = CertificateFormSet()
-        response['inlineEduCert'] = inlineEduCert()
+        # response['inlineEduCert'] = inlineEduCert()
 
     return render(request, 'client/form_edu.html', response)
 
