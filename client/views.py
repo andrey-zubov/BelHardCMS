@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
 from django.urls import reverse
 from django.views import View
+from django.http import HttpResponse
 
 
 from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
@@ -539,4 +540,12 @@ def load_client_img(req):
     except Exception as ex:
         logging.error("Exception in - load_client_img()\n %s" % ex)
         return '/media/user_1.png'
+
+
+def checktask(request):
+    id =(request.GET['id'])
+    task = Tasks.objects.get(id=id)
+    task.status = False
+    task.save()
+    return HttpResponse(task)
 

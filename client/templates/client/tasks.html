@@ -8,10 +8,11 @@
 <body>
 <div class="active">
     {% for tas in task %}
-        <button class="fortask" id="idfortas{{ tas.id }}">{{ tas.title }}</button><br><hr>
+        <input class="check_tas" id="check_tas{{ tas.id }}" type="checkbox"><button class="fortask" id="idfortas{{ tas.id }}">{{ tas.title }}</button><br><hr>
         <div id="forsubtask{{ tas.id }}" hidden>
+
             {% for sub in tas.show_all %}
-                {{ sub.title }}<hr>
+                <input class="chech_sub" id="check_sub{{ sut.id }}" type="checkbox">{{ sub.title }}<hr>
             {% endfor %}
         </div>
         <hr>
@@ -48,7 +49,23 @@ $('document').ready(function () {
         }
 
 
-    })
+    });
+
+    $('.check_tas').on('click', function () {
+
+            var id = $(this).attr('id').slice(9);
+
+            $.ajax({
+                'url': '/client/checktask/',
+                'data': {'id': id},
+                success: function (data) {
+                    console.log(data)
+                }
+            });
+            console.log(id)
+
+
+        })
 
 });
 </script>
