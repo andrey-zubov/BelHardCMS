@@ -521,6 +521,7 @@ def form_education(request):
     return render(request, 'client/form_edu.html', response)
 
 
+
 def load_client_img(req):
     """ Show Client Img in the Navigation Bar.
     Img loaded from DB, if user do not have img - load default. """
