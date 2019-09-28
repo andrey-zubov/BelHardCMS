@@ -20,7 +20,7 @@ urlpatterns = [
     path(r'opinion/edit/<int:pk>/delete/', OpinionDelete.as_view(), name = 'opinion_delete'),
     path('login/', client_login),
     path('logout/', client_logout),
-    path('tasks/', tasks, name = 'tasks_list')
+    path('tasks/', tasks, name = 'tasks_list'),
     path('edit/form_edu', views.form_education, name='form_edu'),
 
 ]
