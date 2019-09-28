@@ -185,6 +185,7 @@ class Client(models.Model):
     link_linkedin = models.URLField(max_length=200, null=True, blank=True)
     skype = models.CharField(max_length=100, null=True, blank=True)
 
+
     # education fields
     education = models.ForeignKey(Education, on_delete=models.SET_NULL, null=True, blank=True)
     # skills
