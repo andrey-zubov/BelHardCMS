@@ -1,11 +1,6 @@
-
-
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
-import re
-
-
 from django.utils import timezone
 
 UserModel = get_user_model()
@@ -104,6 +99,8 @@ class Sphere(models.Model):
 
 class Experience(models.Model):
     # OneToMany to the Client model
+
+    # clien = models.ForeignKey(to='Client')
 
     name = models.CharField(max_length=100, null=True, blank=True, verbose_name='organisation')
     sphere = models.ManyToManyField(Sphere, verbose_name='sphere')  # ??? not more 3
@@ -216,14 +213,8 @@ class Telephone(models.Model):
     telephone_number = models.CharField(max_length=20, blank=True, null=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
 
-    def save(self, *args, **kwargs):
-        pattern = "^[+]{1}[0-9]{1,20}$"
-        tel = self.telephone_number
-        if re.match(pattern=pattern, string=tel):
-            print("phone to save: %s" % tel)
-            # super().save(*args, **kwargs)   # TODO uncomment after 'UserLogin' module done!!!
-        else:
-            print("incorrect phone number")
+    def __str__(self):
+        return self.telephone_number
 
 
 class Chat(models.Model):
@@ -235,7 +226,6 @@ class Chat(models.Model):
 
 
 class Message(models.Model):
-
     class Meta:
         ordering = ['pub_date']
 
@@ -244,7 +234,6 @@ class Message(models.Model):
     message = models.TextField(verbose_name="Сообщение")
     pub_date = models.DateTimeField(verbose_name='Дата сообщения', default=timezone.now)
     is_readed = models.BooleanField(verbose_name='Прочитано', default=False)
-
 
 
 class Opinion(models.Model):
@@ -262,6 +251,7 @@ class Opinion(models.Model):
     def __str__(self):
         return self.title[:10]
 
+
 class Answer(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     text = models.TextField(max_length=3000)
@@ -273,12 +263,12 @@ class Answer(models.Model):
 
 
 class Tasks(models.Model):
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null = True)
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True)
     title = models.TextField(max_length=200)
     time = models.DateTimeField()
     date = models.DateField()
     comment = models.TextField(max_length=300, blank=True)
-    status = models.BooleanField(default=None) #активная задача
+    status = models.BooleanField(default=None)  # активная задача
 
     @property
     def show_all(self):
@@ -288,10 +278,10 @@ class Tasks(models.Model):
 class SubTasks(models.Model):
     title = models.TextField(max_length=100)
     task = models.ForeignKey(Tasks, on_delete=models.CASCADE, related_name="subtask")
-    status = models.BooleanField(default=True) #активная задача
+    status = models.BooleanField(default=True)  # активная задача
 
-    #def __str__(self):
+    # def __str__(self):
     #    return self.title
 
-    #def __str__(self):
+    # def __str__(self):
     #    return self.telephone_number

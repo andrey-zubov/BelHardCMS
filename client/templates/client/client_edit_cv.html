@@ -24,7 +24,9 @@
                     switch (i) {
                         case 0: // input #1
                             element = $(current_div[i]).children('input');
+                            console.log(element);
                             attr_name = $(element).attr('name');
+                            console.log(attr_name);
                             $(element).attr('name', attr_name + count);
                             break;
                         case 1: // select #1
