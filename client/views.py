@@ -3,6 +3,7 @@ from django.template.context_processors import csrf
 from django.http import HttpResponse
 from django.urls import reverse
 from django.views import View
+from django.http import HttpResponse
 
 
 from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
@@ -546,6 +547,7 @@ def load_client_img(req):
 def checktask(request):
     id =(request.GET['id'])
     task = Tasks.objects.get(id=id)
+
     if task.status == False:
         task.status = True
         task.endtime = timezone.now()
@@ -554,3 +556,4 @@ def checktask(request):
         task.endtime = None
     task.save()
     return HttpResponse(task)
+

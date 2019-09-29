@@ -62,9 +62,13 @@ $('document').ready(function () {
         } else {
             elem.show();
         }
+
+
     });
     $('.check_tas').on('click', function () {
+
             var id = $(this).attr('id').slice(9);
+
             $.ajax({
                 'url': '/client/checktask/',
                 'data': {'id': id},
@@ -73,7 +77,9 @@ $('document').ready(function () {
                 }
             });
             console.log(id)
+
         })
+
 });
 </script>
 </body>
