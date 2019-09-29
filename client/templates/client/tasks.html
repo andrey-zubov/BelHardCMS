@@ -20,14 +20,29 @@
 </div>
 <button id="show">Показать заверешенные задачи</button>
 <div class="close" hidden >
-    {% for task in task_false %}
-        {{task.title}}
+    {% for tas in task_false %}
+    <div hidden>{{ tas.checktime }}</div>
+        {% if tas.checkstatus != False %}
+            <input class="check_tas" id="check_tas{{ tas.id }}" type="checkbox"><button class="fortask" id="idfortas{{ tas.id }}">{{ tas.title }}</button><br><hr>
+            <div id="forsubtask{{ tas.id }}" hidden>
 
+                {% for sub in tas.show_all %}
+                    <input class="chech_sub" id="check_sub{{ sub.id }}" type="checkbox">{{ sub.title }}<hr>
+                {% endfor %}
+            </div>
+            <hr>
+        {% endif %}
+
+    {% if tas.checkstatus == False %}
+        {{tas.title}}
         {% for sub in task.show_all %}
             {{ sub.title }}
         {% endfor %}
+     {% endif %}
         <hr>
     {% endfor %}
+
+
     <button class="hide">Скрыть</button>
 </div>
 
@@ -50,7 +65,6 @@ $('document').ready(function () {
 
 
     });
-
     $('.check_tas').on('click', function () {
 
             var id = $(this).attr('id').slice(9);
@@ -63,7 +77,6 @@ $('document').ready(function () {
                 }
             });
             console.log(id)
-
 
         })
 
