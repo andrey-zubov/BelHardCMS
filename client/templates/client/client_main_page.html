@@ -28,7 +28,7 @@
 <div class="p-sm-3 pt-sm-5">
     <nav class="nav fixed-top" style="background-color: #344955">
         <a class="nav-link text-white" href="/">HR-System</a>
-        <a class="nav-link text-white" href="#">Задачи</a>
+        <a class="nav-link text-white" href="{% url 'tasks_list' %}">Задачи {%if readtask != 0 %} {{ readtask }} {% endif %}</a>
         <a class="nav-link text-white" href="#">Предложение</a>
         <a class="nav-link text-white" href="#">Собеседования</a>
         <a class="nav-link text-white" href="#">Связаться с КЦ</a>

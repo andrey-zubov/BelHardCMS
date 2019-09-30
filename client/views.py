@@ -20,8 +20,9 @@ from django.contrib import auth
 def client_main_page(request):
     response = csrf(request)
     response['client_img'] = load_client_img(request.user)
+    readtask = len(Tasks.objects.filter(user = request.user, readtask = False))
 
-    return render(request=request, template_name='client/client_main_page.html', context=response)
+    return render(request=request, template_name='client/client_main_page.html', context={'response' : response, 'readtask' : readtask})
 
 
 def client_profile(request):
