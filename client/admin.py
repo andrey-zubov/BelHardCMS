@@ -7,6 +7,8 @@ class Subtasks_Inline(admin.StackedInline):
 
 class Tasks_Admin(admin.ModelAdmin):
     inlines = [Subtasks_Inline]
+    readonly_fields = ['endtime']
+
 
 admin.site.register(Opinion)
 admin.site.register(Answer)
