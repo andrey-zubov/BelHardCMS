@@ -67,6 +67,7 @@ def load_edit_page(client):
             response['cl_citizenship'] = check_if_str(client.citizenship, '')
             response['cl_family_state'] = check_if_str(client.family_state, '')
             response['cl_children'] = check_if_str(client.children, '')
+            response['cl_country'] = check_if_str(client.country, '')
             response['cl_city'] = check_if_str(client.city, '')
             response['cl_street'] = check_if_str(client.street, '')
             response['cl_house'] = check_if_str(client.house, '')
