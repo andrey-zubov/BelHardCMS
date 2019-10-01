@@ -16,14 +16,16 @@ from .utility import (check_input_str, check_home_number, check_telegram, check_
 
 def client_main_page(request):
     response = csrf(request)
-    response['client_img'] = load_client_img(request.user)
+    client_instance = client_check(request.user)
+    response['client_img'] = load_client_img(client_instance)
 
     return render(request=request, template_name='client/client_main_page.html', context=response)
 
 
 def client_profile(request):
     response = csrf(request)
-    response['client_img'] = load_client_img(request.user)
+    client_instance = client_check(request.user)
+    response['client_img'] = load_client_img(client_instance)
 
     return render(request=request, template_name='client/client_profile.html', context=response)
 
@@ -173,7 +175,7 @@ def client_edit_skills(request):
 
 def client_edit_photo(request):
     response = csrf(request)
-    response['client_img'] = load_client_img(request.user)
+    client_instance = client_check(request.user)
 
     if request.method == 'POST':
         print('client_edit_photo - request.POST')
@@ -181,9 +183,8 @@ def client_edit_photo(request):
         form = UploadImgForm(request.POST, request.FILES)
         if form.is_valid():
             img = form.cleaned_data.get('img')
-            client = Client.objects.get(user_client=request.user)
-            client.img = img
-            client.save()
+            client_instance.img = img
+            client_instance.save()
             """
             в БД сохраняется УНИКАЛЬНОЕ имя картинки (пр. user_2_EntrmQR.png)
             в папке MEDIA_URL = '/media/'
@@ -192,6 +193,7 @@ def client_edit_photo(request):
             return redirect(to='/client/edit')
     else:
         print('client_edit_photo - request.GET')
+        response['client_img'] = load_client_img(client_instance)
         response['form'] = UploadImgForm()
 
     return render(request=request, template_name='client/client_edit_photo.html', context=response)
@@ -244,7 +246,7 @@ def client_edit_cv(request):
 
 def client_edit_education(request):
     response = csrf(request)
-    response['client_img'] = load_client_img(request.user)
+    client_instance = client_check(request.user)
 
     if request.method == 'POST':
         print("save_client_education - request.POST")
@@ -300,6 +302,7 @@ def client_edit_education(request):
         return redirect('/client/edit')
     else:
         print('client_edit_education - request.GET')
+        response['client_img'] = load_client_img(client_instance)
 
     return render(request, 'client/client_edit_education.html', response)
 
@@ -471,7 +474,7 @@ def tasks(request):
 def form_education(request):
     """ Test Code - Module Form Set """
     response = csrf(request)
-    response['client_img'] = load_client_img(request.user)
+    client_instance = client_check(request.user)
 
     if request.method == 'POST':
         print(request.POST)
@@ -515,6 +518,7 @@ def form_education(request):
 
         return redirect(to='/client/edit/form_edu')
     else:
+        response['client_img'] = load_client_img(client_instance)
         response['edu_form'] = EducationFormSet()
         response['certificate'] = CertificateFormSet()
         # response['inlineEduCert'] = inlineEduCert()

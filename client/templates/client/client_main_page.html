@@ -25,8 +25,8 @@
 </head>
 <body style="font-size: large">
 
-<div class="p-sm-3 pt-sm-5">
-    <nav class="nav fixed-top" style="background-color: #344955">
+<div class="container">
+    <nav class="nav " style="background-color: #344955">
         <a class="nav-link text-white" href="/">HR-System</a>
         <a class="nav-link text-white" href="#">Задачи</a>
         <a class="nav-link text-white" href="#">Предложение</a>
@@ -39,12 +39,10 @@
     </nav>
 </div>
 
-<div class="p-sm-3 pt-sm-5">
-    <div class="container">
-        <section class="content">
-            {% block content %}{% endblock %}
-        </section>
-    </div>
+<div class="container my-2">
+    <section class="content">
+        {% block content %}{% endblock %}
+    </section>
 </div>
 
 </body>
