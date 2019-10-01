@@ -8,6 +8,7 @@
 <body>
 <div class="active">
     {% for tas in task %}
+        <div hidden>{{ tas.check_readstatus }}</div>
         <input class="check_tas" id="check_tas{{ tas.id }}" type="checkbox"><button class="fortask" id="idfortas{{ tas.id }}">{{ tas.title }}</button><br><hr>
         <div id="forsubtask{{ tas.id }}" hidden>
 
@@ -16,6 +17,7 @@
             {% endfor %}
         </div>
         <hr>
+
     {% endfor %}
 </div>
 <button id="show">Показать заверешенные задачи</button>

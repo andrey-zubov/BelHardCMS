@@ -1,12 +1,7 @@
-
-
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
 import re
-from datetime import datetime
-
-
 from django.utils import timezone
 
 UserModel = get_user_model()
@@ -283,7 +278,7 @@ class Tasks(models.Model):
     status = models.BooleanField(default=False) #задача, которая не выполнена
     endtime = models.DateTimeField(blank=True, null=True)
     checkstatus = models.BooleanField(default=True)#статус активен, если можем после выоплнения задачи в течении 60 сек вернуть в активную задачу
-
+    readtask = models.BooleanField(default=False)
 
 
     @property
@@ -298,6 +293,12 @@ class Tasks(models.Model):
                 pass
             elif str(akttime)[2:4] >= '01':
                 self.checkstatus = False
+
+    @property
+    def check_readstatus(self):
+            if self.readtask == False:
+                self.readtask = True
+                print('uyu')
 
 
 class SubTasks(models.Model):
