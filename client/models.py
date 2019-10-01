@@ -216,6 +216,10 @@ class State(models.Model):
     """ Стутус клиента. """
     state_word = models.CharField(max_length=100)
 
+    class Meta:
+        verbose_name = 'Стутус клиента'
+        verbose_name_plural = 'Стутус клиента'
+
     def __str__(self):
         return self.state_word
 
@@ -247,7 +251,7 @@ class Client(models.Model):
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return "%s %s %s" % (self.name, self.last_name, self.patronymic)
+        return "%s %s %s" % (self.last_name, self.name, self.patronymic)
 
     def delete(self, *args, **kwargs):
         self.img.delete()

@@ -66,6 +66,9 @@ class TypeSalaryAdmin(admin.ModelAdmin):
     model = TypeSalary
 
 
+class StateAdmin(admin.ModelAdmin):
+    model = State
+
 admin.site.register(Sex, SexAdmin)
 admin.site.register(Citizenship, CitizenshipAdmin)
 admin.site.register(FamilyState, FamilyStateAdmin)
@@ -78,3 +81,4 @@ admin.site.register(CvWord, CvWordAdmin)
 admin.site.register(Employment, EmploymentAdmin)
 admin.site.register(TimeJob, TimeJobAdmin)
 admin.site.register(TypeSalary, TypeSalaryAdmin)
+admin.site.register(State, StateAdmin)

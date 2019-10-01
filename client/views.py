@@ -1,13 +1,17 @@
+import logging
+from time import perf_counter
 from django.contrib import auth
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
 from django.views.generic import View
 
 from BelHardCRM.settings import MEDIA_URL
+from client.work_with_db import (load_client_img, load_edit_page, client_check)
 from .forms import OpinionForm, AnswerForm, MessageForm
 from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
 from .models import *
-from .utility import *
+from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
+                      pars_edu_request, pars_exp_request)
 
 
 def client_main_page(request):
@@ -27,17 +31,10 @@ def client_profile(request):
 def client_edit_main(request):
     response = csrf(request)
 
-    """ Загрузка из БД списков для выбора """
-    response['client_img'] = load_client_img(request.user)
-    response['sex'] = Sex.objects.all()
-    response['citizenship'] = Citizenship.objects.all()
-    response['family_state'] = reversed(FamilyState.objects.all())
-    response['children'] = reversed(Children.objects.all())
-    response['country'] = response['citizenship']
-    response['city'] = reversed(City.objects.all())
-    response['state'] = reversed(State.objects.all())
+    client_instance = client_check(request.user)
 
     if request.method == 'POST':
+        time_0 = perf_counter()
         print('client_edit_main - request.POST')
 
         """ Входные данные для сохранения: """
@@ -45,13 +42,15 @@ def client_edit_main(request):
         user_name = check_input_str(request.POST['client_first_name'])
         last_name = check_input_str(request.POST['client_last_name'])
         patronymic = check_input_str(request.POST['client_middle_name'])
-        sex = Sex.objects.get(sex_word=request.POST['sex'])
-        date = request.POST['date_born']
-        citizenship = Citizenship.objects.get(country_word=request.POST['citizenship'])
-        family_state = FamilyState.objects.get(state_word=request.POST['family_state'])
-        children = Children.objects.get(children_word=request.POST['children'])
-        country = Citizenship.objects.get(country_word=request.POST['country'])
-        city = City.objects.get(city_word=request.POST['city'])
+        sex = Sex.objects.get(sex_word=request.POST['sex']) if request.POST['sex'] else None
+        date = request.POST['date_born'] if request.POST['date_born'] else None
+        citizenship = Citizenship.objects.get(country_word=request.POST['citizenship']) if request.POST[
+            'citizenship'] else None
+        family_state = FamilyState.objects.get(state_word=request.POST['family_state']) if request.POST[
+            'family_state'] else None
+        children = Children.objects.get(children_word=request.POST['children']) if request.POST['children'] else None
+        country = Citizenship.objects.get(country_word=request.POST['country']) if request.POST['country'] else None
+        city = City.objects.get(city_word=request.POST['city']) if request.POST['city'] else None
         street = check_input_str(request.POST['street'])
         house = check_home_number(request.POST['house'])
         flat = check_home_number(request.POST['flat'])
@@ -59,17 +58,12 @@ def client_edit_main(request):
         skype = check_input_str(request.POST['skype_id'])
         email = request.POST['email']
         link_linkedin = request.POST['link_linkedin']
-        state = State.objects.get(state_word=request.POST['state'])
+        state = State.objects.get(state_word=request.POST['state']) if request.POST['state'] else None
 
         print(user_name, last_name, patronymic, sex, date, citizenship, family_state, children, country, city,
               street, house, flat, telegram_link, skype, email, link_linkedin, state)
 
-        """ проверка - сохранена ли карточка клиента в БД. 
-        users_id_list - список карточек c id клиента. """
-        users_id_list = [i['user_client_id'] for i in Client.objects.all().values()]
-        print("users_id_list: %s" % users_id_list)
-
-        if user.id not in users_id_list:
+        if not client_instance:
             """ Если карточки нету - создаём. """
             print('User Profile DO NOT exists - creating!')
 
@@ -79,7 +73,7 @@ def client_edit_main(request):
                 last_name=last_name,
                 patronymic=patronymic,
                 sex=sex,
-                date_born=date if date else None,
+                date_born=date,
                 citizenship=citizenship,
                 family_state=family_state,
                 children=children,
@@ -100,13 +94,12 @@ def client_edit_main(request):
             Перезаписываем (изменяем) существующие данныев. """
             print('User Profile exists - Overwriting user data')
 
-            client = Client.objects.get(user_client=user)  # Объект = Клиент_id
-
+            client = client_instance
             client.name = user_name
             client.last_name = last_name
             client.patronymic = patronymic
             client.sex = sex
-            client.date_born = date if date else None
+            client.date_born = date
             client.citizenship = citizenship
             client.family_state = family_state
             client.children = children
@@ -134,10 +127,14 @@ def client_edit_main(request):
                 )
                 phone.save()
 
-        print('client_edit_main - OK')
+        print('client_edit_main - OK; TIME: %s' % (perf_counter() - time_0))
         return redirect(to='/client/profile')
     else:
         print('client_edit_main - request.GET')
+
+        """ Загрузка из БД списков для выбора и данных клиента"""
+        response['client_img'] = load_client_img(client_instance)
+        response['data'] = load_edit_page(client_instance)
 
     return render(request=request, template_name='client/client_edit_main.html', context=response)
 
@@ -289,10 +286,6 @@ def client_edit_education(request):
                     link=link
                 )
                 certificate.save()
-
-                # client = Client.objects.get(user_client=request.user)
-                # client.education = education
-                # client.save()
 
                 print("Education Form - OK\n", institution, subject_area, specialization, qualification,
                       date_start if date_start else None, date_end if date_end else None, img_name, link)
@@ -522,19 +515,3 @@ def form_education(request):
         # response['inlineEduCert'] = inlineEduCert()
 
     return render(request, 'client/form_edu.html', response)
-
-
-def load_client_img(req):
-    """ Show Client Img in the Navigation Bar.
-    Img loaded from DB, if user do not have img - load default. """
-    try:
-        print("user: %s, id: %s" % (req, req.id))
-        client_img = Client.objects.get(user_client=req).img
-        if client_img:
-            logging.info("Client.img: %s" % client_img)
-            return "%s%s" % (MEDIA_URL, client_img)
-        else:
-            return '/media/user_1.png'
-    except Exception as ex:
-        logging.error("Exception in - load_client_img()\n %s" % ex)
-        return '/media/user_1.png'

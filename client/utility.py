@@ -43,6 +43,13 @@ def check_phone(phone: str) -> str or None:
         return None
 
 
+def check_if_str(string: str, out: str or None) -> str:
+    if string:
+        return string
+    else:
+        return out
+
+
 def pars_exp_request(req_post) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели Experience. """
