@@ -25,10 +25,31 @@
 </head>
 <body style="font-size: large">
 
+<style>
+.task {
+    position: relative;
+}
+.counter{
+    top: 2px;
+    right: -7px;
+    border-radius: 50%;
+    font-size: 6px;
+    position: absolute;
+    font-weight: bold;
+
+    width: 10px;
+    height: 10px;
+    color: #fff;
+
+    text-align: center;
+    background: red
+}
+</style>
+
 <div class="p-sm-3 pt-sm-5">
     <nav class="nav fixed-top" style="background-color: #344955">
         <a class="nav-link text-white" href="/">HR-System</a>
-        <a class="nav-link text-white" href="{% url 'tasks_list' %}">Задачи {%if readtask != 0 %} {{ readtask }} {% endif %}</a>
+        <a class="nav-link text-white" href="{% url 'tasks_list' %}"> <div class="task"> Задачи  {%if readtask != 0 %} <div class="counter"> {{ readtask }} </div>{% endif %}</div></a>
         <a class="nav-link text-white" href="#">Предложение</a>
         <a class="nav-link text-white" href="#">Собеседования</a>
         <a class="nav-link text-white" href="#">Связаться с КЦ</a>

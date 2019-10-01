@@ -1,12 +1,7 @@
-
-
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
 import re
-from datetime import datetime
-
-
 from django.utils import timezone
 
 UserModel = get_user_model()
