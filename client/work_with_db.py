@@ -2,7 +2,7 @@ import logging
 from collections import defaultdict
 from time import perf_counter
 from BelHardCRM.settings import MEDIA_URL
-from client.models import (Client, Sex, Citizenship, FamilyState, Children, City, State, Telephone)
+from client.models import (Client, Sex, Citizenship, FamilyState, Children, City, State, Telephone, Skills)
 from client.utility import check_if_str
 
 
@@ -85,4 +85,22 @@ def load_edit_page(client):
 
     except Exception as ex:
         logging.error("Exception in - load_edit_page()\n %s" % ex)
+        return None
+
+
+def load_skills_page(client):
+    """  """
+    try:
+        time_0 = perf_counter()
+        print("load_skills_page()")
+        response = defaultdict()
+
+        if client:
+            skills_arr = [i['skill'] for i in Skills.objects.filter(client_skills=client).values()]
+            response['cl_skill'] = skills_arr
+
+        print('TIME load_skills_page(): %s' % (perf_counter() - time_0))
+        return response
+    except Exception as ex:
+        logging.error("Exception in load_skills_page()\n%s" % ex)
         return None

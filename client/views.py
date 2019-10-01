@@ -6,7 +6,7 @@ from django.template.context_processors import csrf
 from django.views.generic import View
 
 from BelHardCRM.settings import MEDIA_URL
-from client.work_with_db import (load_client_img, load_edit_page, client_check)
+from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page)
 from .forms import OpinionForm, AnswerForm, MessageForm
 from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
 from .models import *
@@ -141,27 +141,32 @@ def client_edit_main(request):
 
 def client_edit_skills(request):
     response = csrf(request)
-    response['client_img'] = load_client_img(request.user)
+
+    client_instance = client_check(request.user)
 
     if request.method == 'POST':
         print("client_edit_skills - request.POST")
 
-        skills_arr = request.POST.getlist('skill')
+        skills_arr = request.POST.getlist('skill') if request.POST.getlist('skill') else None
         print("skill: %s" % skills_arr)
 
-        for s in skills_arr:
-            if s:
-                """ ОБЪЕДИНЕНИЕ модуля Навыки с конкретным залогиненым клиентом!!! """
-                client = Client.objects.get(user_client=request.user)
-                skill = Skills(
-                    client_skills=client,
-                    skill=check_input_str(s)
-                )
-                skill.save()
+        if any(skills_arr):
+            for s in skills_arr:
+                if s:
+                    """ ОБЪЕДИНЕНИЕ модуля Навыки с конкретным залогиненым клиентом!!! """
+                    skill = Skills(
+                        client_skills=client_instance,
+                        skill=check_input_str(s)
+                    )
+                    skill.save()
+        else:
+            print("No skills")
 
         return redirect(to='/client/edit')
     else:
         print('client_edit_skills - request.GET')
+        response['client_img'] = load_client_img(client_instance)
+        response['data'] = load_skills_page(client_instance)
 
     return render(request=request, template_name='client/client_edit_skills.html', context=response)
 

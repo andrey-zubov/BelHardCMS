@@ -195,7 +195,7 @@
                     </div>
 
                     <input type="button" value="Добавить" id="add_more"
-                           class="btn btn-outline-primary m-sm-1">
+                           class="btn btn-outline-primary">
                 </div>
 
                 <div class="input-group mb-3">
@@ -230,7 +230,6 @@
                            value="{{ data.cl_linkedin }}">
                 </div>
 
-                <hr>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="id_state">Статус:</label>
@@ -243,15 +242,15 @@
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-outline-success">Сохранить</button>
+                <div class="text-center">
+                    <a class="btn btn-outline-warning m-2" href="{% url 'client_profile' %}">Назад</a>
+                    <button type="submit" class="btn btn-outline-success m-2">Сохранить</button>
+                </div>
 
             </form>
-
-            <a class="btn btn-outline-warning my-2" href="{% url 'client_profile' %}">Назад</a>
         </div>
 
         <div class="col-md-4">
-
             <h3>Дополнительно:</h3>
 
             <div class="list-group">

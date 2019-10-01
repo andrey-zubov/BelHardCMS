@@ -33,66 +33,61 @@
         });
     </script>
 
-    <div class="row">
-        <div class="col-md-6">
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
 
-                <div id="div_to_add_new">
-                    <div id="origin_div">
+        <div id="div_to_add_new">
+            <div id="origin_div">
 
-                        <h3 id="edu_h">Образование</h3>
+                <h3 id="edu_h">Образование</h3>
 
-                        <div class="form-group">
-                            <label for="id_institution">Учебное заведение</label>
-                            <input type="text" class="form-control" id="id_institution" name="institution">
-                        </div>
-                        <div class="form-group">
-                            <label for="id_subject_area">Предметная область</label>
-                            <input type="text" class="form-control" id="id_subject_area" name="subject_area">
-                        </div>
-                        <div class="form-group">
-                            <label for="id_specialization">Специальность</label>
-                            <input type="text" class="form-control" id="id_specialization" name="specialization">
-                        </div>
-                        <div class="form-group">
-                            <label for="id_qualification">Квалификация</label>
-                            <input type="text" class="form-control" id="id_qualification" name="qualification">
-                        </div>
-                        <p>Период обучения:</p>
-                        <div class="form-group">
-                            <label for="id_date_start">Дата начала</label>
-                            <input type="date" class="form-control" id="id_date_start" name="date_start">
-                        </div>
-                        <div class="form-group">
-                            <label for="id_date_end">Дата окончания</label>
-                            <input type="date" class="form-control" id="id_date_end" name="date_end">
-                        </div>
-
-                        <!-- переделать -->
-                        <div class="form-group">
-                            <label for="id_certificate_img">Сертификат (img)</label>
-                            <input type="file" class="form-control" id="id_certificate_img" name="certificate_img">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="id_certificate_url">Сертификат (ссылка)</label>
-                            <input type="url" class="form-control" id="id_certificate_url" name="certificate_url">
-                        </div>
-
-                    </div>
+                <div class="form-group">
+                    <label for="id_institution">Учебное заведение</label>
+                    <input type="text" class="form-control" id="id_institution" name="institution">
+                </div>
+                <div class="form-group">
+                    <label for="id_subject_area">Предметная область</label>
+                    <input type="text" class="form-control" id="id_subject_area" name="subject_area">
+                </div>
+                <div class="form-group">
+                    <label for="id_specialization">Специальность</label>
+                    <input type="text" class="form-control" id="id_specialization" name="specialization">
+                </div>
+                <div class="form-group">
+                    <label for="id_qualification">Квалификация</label>
+                    <input type="text" class="form-control" id="id_qualification" name="qualification">
+                </div>
+                <p>Период обучения:</p>
+                <div class="form-group">
+                    <label for="id_date_start">Дата начала</label>
+                    <input type="date" class="form-control" id="id_date_start" name="date_start">
+                </div>
+                <div class="form-group">
+                    <label for="id_date_end">Дата окончания</label>
+                    <input type="date" class="form-control" id="id_date_end" name="date_end">
                 </div>
 
-                <input type="button" value="Добавить образование" id="add_more"
-                       class="btn btn-outline-primary m-sm-1">
+                <!-- переделать -->
+                <div class="form-group">
+                    <label for="id_certificate_img">Сертификат (img)</label>
+                    <input type="file" class="form-control" id="id_certificate_img" name="certificate_img">
+                </div>
 
-                <button type="submit" class="btn btn-outline-success m-sm-1"
-                        id="save">Соранить все данные
-                </button>
-            </form>
+                <div class="form-group">
+                    <label for="id_certificate_url">Сертификат (ссылка)</label>
+                    <input type="url" class="form-control" id="id_certificate_url" name="certificate_url">
+                </div>
 
+            </div>
         </div>
-    </div>
+
+        <div class="text-center">
+            <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>
+            <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>
+            <input type="button" value="Добавить образование" id="add_more" class="btn btn-outline-primary m-2">
+        </div>
+
+    </form>
 
 {% endblock %}
 
