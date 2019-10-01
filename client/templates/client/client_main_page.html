@@ -25,13 +25,44 @@
 </head>
 <body style="font-size: large">
 
+<style>
+.messages {
+    position: relative;
+}
+.counter{
+    top: -8px;
+    right: -8px;
+    border-radius: 50%;
+    font-size: 11px;
+    position: absolute;
+    font-weight: bold;
+    width: 15px;
+    height: 15px;
+    color: #000000;
+    text-align: center;
+    background: greenyellow;
+}
+.notification{
+    width:80%;
+    height:30px;
+    color: black;
+    text-align: center;
+    background:greenyellow;
+    border: 3px #000000 solid;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -khtml-border-radius:10px;
+    border-radius: 10px;
+}
+</style>
+
 <div class="p-sm-3 pt-sm-5">
     <nav class="nav fixed-top" style="background-color: #344955">
         <a class="nav-link text-white" href="/">HR-System</a>
         <a class="nav-link text-white" href="#">Задачи</a>
         <a class="nav-link text-white" href="#">Предложение</a>
         <a class="nav-link text-white" href="#">Собеседования</a>
-        <a class="nav-link text-white" href="#">Связаться с КЦ</a>
+        <a class="nav-link text-white" href="{% url 'contact_with_centre' %}"> <div class="messages"> Связаться с КЦ {%if unread_messages != 0 %} <div class="counter"> {{ unread_messages }} </div>{% endif %}</div></a>
         <a class="nav-link text-white" href="{% url 'client_profile' %}">
             <img src="{{ client_img }}" alt="img" class="rounded-circle" height="64">
             Клиент
@@ -41,7 +72,11 @@
 
 <div class="p-sm-3 pt-sm-5">
     <section class="content">
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% if unread_messages != 0 %}
+        <div class="notification">У Вас  {{ unread_messages }}  новых сообщения от карьерного центра</div>
+        {% endif %}
+        {% endblock %}
     </section>
 </div>
 

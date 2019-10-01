@@ -20,8 +20,11 @@ from django.contrib import auth
 def client_main_page(request):
     response = csrf(request)
     response['client_img'] = load_client_img(request.user)
+    chat = Chat.objects.get(members=request.user)
+    unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
+    context = {'response': response, 'unread_messages': unread_messages}
 
-    return render(request=request, template_name='client/client_main_page.html', context=response)
+    return render(request=request, template_name='client/client_main_page.html', context=context)
 
 
 def client_profile(request):
@@ -363,21 +366,16 @@ class MessagesView(View):
         try:
             chat = Chat.objects.get(members=request.user)
             if request.user in chat.members.all():
-                chat.message_set.filter(is_readed=False).exclude(author=request.user).update(is_readed=True)
+                chat.message_set.filter(is_read=False).exclude(author=request.user).update(is_read=True)
             else:
                 chat = None
         except Chat.DoesNotExist:
             chat = None
 
-        return render(
-            request,
-            'client/client_chat.html',
-            {
-                'user_profile': request.user,
-                'chat': chat,
-                'form': MessageForm()
-            }
-        )
+        unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
+        context = {'user_profile': request.user, 'unread_messages': unread_messages, 'chat': chat, 'form': MessageForm()}
+
+        return render(request, 'client/client_chat.html', context)
 
     def post(self, request):
         form = MessageForm(data=request.POST)
@@ -545,7 +543,7 @@ def load_client_img(req):
 
 
 def checktask(request):
-    id =(request.GET['id'])
+    id = (request.GET['id'])
     task = Tasks.objects.get(id=id)
 
     if task.status == False:

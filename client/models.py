@@ -244,7 +244,7 @@ class Message(models.Model):
     author = models.ForeignKey(UserModel, verbose_name="Пользователь", on_delete=models.CASCADE)
     message = models.TextField(verbose_name="Сообщение")
     pub_date = models.DateTimeField(verbose_name='Дата сообщения', default=timezone.now)
-    is_readed = models.BooleanField(verbose_name='Прочитано', default=False)
+    is_read = models.BooleanField(verbose_name='Прочитано', default=False)
 
 
 
@@ -300,11 +300,6 @@ class Tasks(models.Model):
                 self.checkstatus = False
 
 
-
-
-
-
-
 class SubTasks(models.Model):
     title = models.TextField(max_length=100)
     task = models.ForeignKey(Tasks, on_delete=models.CASCADE, related_name="subtask")
@@ -315,3 +310,12 @@ class SubTasks(models.Model):
 
     #def __str__(self):
     #    return self.telephone_number
+
+
+class Settings(models.Model):
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True)
+    messages = models.BooleanField(default=True)
+    tasks = models.BooleanField(default=True)
+    suggestions = models.BooleanField(default=True)
+    meetings = models.BooleanField(default=True)
+
