@@ -21,10 +21,9 @@
     {% load staticfiles %}
     <title>{% block title %}Client{% endblock %} - HR-System</title>
 </head>
-<body style="font-size: large">
 
 <style>
-.messages {
+.task {
     position: relative;
 }
 .messages_count{
@@ -40,6 +39,20 @@
     text-align: center;
     background: greenyellow;
 }
+.counter{
+    top: 2px;
+    right: -7px;
+    border-radius: 50%;
+    font-size: 6px;
+    position: absolute;
+    font-weight: bold;
+    width: 10px;
+    height: 10px;
+    color: #fff;
+    text-align: center;
+    background: red;
+    border: 0.5px solid black;
+}
 .messages_notification{
     width:80%;
     height:10%;
@@ -52,7 +65,42 @@
     -khtml-border-radius:10px;
     border-radius: 10px;
 }
+
+.task-notification{
+    width: 450px;
+    background: lightcoral;
+    text-align: center;
+    border-radius: 15px;
+    margin: 0 auto;
+    position: relative;
+}
+.close {
+  position: absolute;
+  right: 4px;
+  top: 7px;
+  width: 10px;
+  height: 10px;
+  opacity: 0.3;
+}
+.close:hover {
+  opacity: 1;
+}
+.close:before, .close:after {
+  position: absolute;
+  left: 0px;
+  content: ' ';
+  height: 10px;
+  width: 2px;
+  background-color: #333;
+}
+.close:before {
+  transform: rotate(45deg);
+}
+.close:after {
+  transform: rotate(-45deg);
+}
 </style>
+
 
 <div class="p-sm-3 pt-sm-5">
     <nav class="nav fixed-top" style="background-color: #344955">
@@ -122,6 +170,39 @@
 
     setInterval('reloadData()', 10000)*/
 
+<body style="font-size: large">
+
+            <div class="p-sm-3 pt-sm-5">
+                <nav class="nav fixed-top" style="background-color: #344955; width: 100%; margin: 0 auto; max-width: 900px; display: flex; justify-content: space-between; align-items: center;">
+                    <a class="nav-link text-white" href="/">HR-System</a>
+                    <a class="nav-link text-white" href="{% url 'tasks_list' %}"> <div class="task"> Задачи  {%if readtask != 0 %} <div class="counter"> {{ readtask }} </div>{% endif %}</div></a>
+                    <a class="nav-link text-white" href="#">Предложение</a>
+                    <a class="nav-link text-white" href="#">Собеседования</a>
+                    <a class="nav-link text-white" href="#">Связаться с КЦ</a>
+                    <a class="nav-link text-white" href="{% url 'client_profile' %}">
+                        <img src="{{ client_img }}" alt="img" class="rounded-circle" height="64">
+                        Клиент
+                    </a>
+                </nav>
+            </div>
+    {%if readtask != 0 %}
+       <div class="task-notification"><h1>У Вас  {{ readtask }} новые задачи </h1> <span class="close"></span></div>
+    {% endif %}
+    <div class="p-sm-3 pt-sm-5">
+        <section class="content">
+            {% block content %}{% endblock %}
+        </section>
+    </div>
+
+
 </script>
 </body>
+
+<script>
+$('document').ready(function () {
+    $('.close').on('click', function () {
+        $('.task-notification').hide()
+    });
+});
+</script>
 </html>

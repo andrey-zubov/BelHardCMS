@@ -20,11 +20,12 @@ from django.contrib import auth
 def client_main_page(request):
     response = csrf(request)
     response['client_img'] = load_client_img(request.user)
+    readtask = len(Tasks.objects.filter(user = request.user, readtask = False))
     chat = Chat.objects.get(members=request.user)
     unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
-    context = {'response': response, 'unread_messages': unread_messages}
-
+    context = {'response': response, 'unread_messages': unread_messages, 'readtask' : readtask}
     return render(request=request, template_name='client/client_main_page.html', context=context)
+
 
 
 def client_profile(request):
