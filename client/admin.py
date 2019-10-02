@@ -14,5 +14,6 @@ admin.site.register(Opinion)
 admin.site.register(Answer)
 admin.site.register(Chat)
 admin.site.register(Tasks, Tasks_Admin)
+admin.site.register(Message)
 
 # Register your models here.
