@@ -47,12 +47,12 @@
 }
 .task-notification{
     width: 450px;
-    background: lightcoral;
+    background: #fe6060;
     text-align: center;
     border-radius: 15px;
     margin: 0 auto;
     position: relative;
-
+    color: white;
 }
 
 .close {
@@ -63,9 +63,11 @@
   height: 10px;
   opacity: 0.3;
 }
+
 .close:hover {
   opacity: 1;
 }
+
 .close:before, .close:after {
   position: absolute;
   left: 0px;
@@ -74,11 +76,42 @@
   width: 2px;
   background-color: #333;
 }
+
 .close:before {
   transform: rotate(45deg);
 }
+
 .close:after {
   transform: rotate(-45deg);
+}
+
+.messages {
+    position: relative;
+}
+.messages_count{
+    top: -8px;
+    right: -8px;
+    border-radius: 50%;
+    font-size: 11px;
+    position: absolute;
+    font-weight: bold;
+    width: 15px;
+    height: 15px;
+    color: #000000;
+    text-align: center;
+    background: greenyellow;
+}
+.messages_notification{
+    width:80%;
+    height:10%;
+    color: black;
+    text-align: center;
+    background:greenyellow;
+    border: 3px #000000 solid;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -khtml-border-radius:10px;
+    border-radius: 10px;
 }
 
 </style>
@@ -91,7 +124,7 @@
                     <a class="nav-link text-white" href="{% url 'tasks_list' %}"> <div class="task"> Задачи  {%if readtask != 0 %} <div class="counter"> {{ readtask }} </div>{% endif %}</div></a>
                     <a class="nav-link text-white" href="#">Предложение</a>
                     <a class="nav-link text-white" href="#">Собеседования</a>
-                    <a class="nav-link text-white" href="#">Связаться с КЦ</a>
+                    <a class="nav-link text-white" href="{% url 'contact_with_centre' %}"> <div class="messages"> Связаться с КЦ <div class="messages_count" id="mes_count" hidden="true"> {{ unread_messages }} </div></div></a>
                     <a class="nav-link text-white" href="{% url 'client_profile' %}">
                         <img src="{{ client_img }}" alt="img" class="rounded-circle" height="64">
                         Клиент
@@ -99,11 +132,17 @@
                 </nav>
             </div>
     {%if readtask != 0 %}
-       <div class="task-notification"><h1>У Вас  {{ readtask }} новые задачи </h1> <span class="close"></span></div>
+       <div class="task-notification"><h1> У Вас  {{ readtask }} новые задачи </h1> <span class="close"></span></div>
     {% endif %}
     <div class="p-sm-3 pt-sm-5">
         <section class="content">
-            {% block content %}{% endblock %}
+            {% block content %}
+                <div id="check_notifications">
+                {% if unread_messages != 0 %}
+                <div class="messages_notification" id="mes_not">У Вас  {{ unread_messages }}  новых сообщения от карьерного центра </div>
+                {% endif %}
+                </div>
+            {% endblock %}
         </section>
     </div>
 
@@ -114,6 +153,33 @@ $('document').ready(function () {
     $('.close').on('click', function () {
         $('.task-notification').hide()
     });
+    $('.close').on('click', function () {
+            $('#check_notifications').hide();
+        });
+        console.log('fuf');
+        $.ajax({
+                'url': '/client/checknotifications/',
+                success: function (data) {
+                    if (data != 0) {
+                        document.getElementById('mes_count').hidden = false;
+                        document.getElementById('mes_count').innerHTML =  data;
+                    }
+                }
+            });
+        setInterval(function(){
+            $.ajax({
+                'url': '/client/checknotifications/',
+                success: function (data) {
+                    if (data != 0) {
+                        document.getElementById('mes_count').hidden = false;
+                        document.getElementById('mes_count').innerHTML =  data;
+                    }
+                    else {
+                        document.getElementById('mes_count').hidden = true;
+                    }
+                }
+            });
+        }, 10000);
 });
 </script>
 </html>
