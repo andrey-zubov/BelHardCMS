@@ -1,12 +1,14 @@
 import logging
 from time import perf_counter
+from PIL import Image
+import PIL
 from django.contrib import auth
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
 from django.views.generic import View
 
 from BelHardCRM.settings import MEDIA_URL
-from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page)
+from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page)
 from .forms import OpinionForm, AnswerForm, MessageForm
 from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
 from .models import *
@@ -260,24 +262,22 @@ def client_edit_education(request):
             date_start = edus['date_start']
             date_end = edus['date_end']
 
-            img_name = None
+            img = edus['certificate_img']
+            img_name = str(img).replace(' ', '_')
             try:
-                img = edus['certificate_img']
-                img_name = str(img)
-                with open(MEDIA_URL + img_name, 'wb+') as file:
-                    for chunk in img.chunks():
-                        file.write(chunk)
+                # im = Image.open(MEDIA_URL + img_name)
+                # im.save(img_name)
+                Image.Image.save(img, MEDIA_URL + img_name, 'jpeg')
             except:
-                logging.error("Ex. in cer_img save")
+                logging.error("Ex. in cer_img_save")
 
             link = edus['certificate_url']
 
             if any([institution, subject_area, specialization, qualification,
                     date_start, date_end, img_name, link]):
-                client = Client.objects.get(user_client=request.user)
 
                 education = Education(
-                    client_edu=client,
+                    client_edu=client_instance,
                     institution=institution,
                     subject_area=subject_area,
                     specialization=specialization,
@@ -303,6 +303,7 @@ def client_edit_education(request):
     else:
         print('client_edit_education - request.GET')
         response['client_img'] = load_client_img(client_instance)
+        response['data'] = load_education_page(client_instance)
 
     return render(request, 'client/client_edit_education.html', response)
 

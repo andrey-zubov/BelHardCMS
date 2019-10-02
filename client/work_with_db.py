@@ -1,8 +1,10 @@
 import logging
 from collections import defaultdict
 from time import perf_counter
+
 from BelHardCRM.settings import MEDIA_URL
-from client.models import (Client, Sex, Citizenship, FamilyState, Children, City, State, Telephone, Skills)
+from client.models import (Client, Sex, Citizenship, FamilyState, Children, City, State, Telephone, Skills, Education,
+                           Certificate)
 from client.utility import check_if_str
 
 
@@ -89,7 +91,7 @@ def load_edit_page(client):
 
 
 def load_skills_page(client):
-    """  """
+    """ TBA """
     try:
         time_0 = perf_counter()
         print("load_skills_page()")
@@ -103,4 +105,34 @@ def load_skills_page(client):
         return response
     except Exception as ex:
         logging.error("Exception in load_skills_page()\n%s" % ex)
+        return None
+
+
+def load_education_page(client):
+    """ TBA """
+    try:
+        time_0 = perf_counter()
+        print("load_education_page()")
+        response = defaultdict()
+
+        if client:
+            edus = [i for i in Education.objects.filter(client_edu=client).values()]
+            response['cl_edu'] = edus
+
+            edu_id = [e['id'] for e in response['cl_edu']]
+            certs = [[c for c in Certificate.objects.filter(education_id=i).values()] for i in edu_id]
+
+            for e in edus:
+                # print("e: %s" % e)
+                for c in certs[0]:
+                    # print("c: %s" % c)
+                    e['certs_img'] = "%s%s" % (MEDIA_URL, c['img'])
+                    e['certs_url'] = c['link']
+            print(response['cl_edu'])
+
+        print('TIME load_education_page(): %s' % (perf_counter() - time_0))
+        return response
+
+    except Exception as ex:
+        logging.error("Exception in load_education_page()\n%s" % ex)
         return None

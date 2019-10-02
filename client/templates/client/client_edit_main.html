@@ -71,16 +71,11 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <label class="input-group-text" for="id_date_born">Дата рождения:</label>
-                    </div>
-                    <input type="text" name="date_born" aria-label="DateBorn" id="id_date_born"
-                           value="{{ data.cl_date_born|date:"m-d-Y" }}">
-                    <div class="input-group-append">
-                        <input class="btn btn-outline-secondary" type="date" name="date_born"
-                               aria-label="DateBorn">
-                    </div>
+
+                <div class="form-group">
+                    <label for="id_date_born">Дата рождения</label>
+                    <input type="date" class="form-control" id="id_date_born" name="date_born"
+                           value="{{ data.cl_date_born|date:"Y-d-m" }}">
                 </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
