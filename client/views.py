@@ -556,3 +556,13 @@ def checktask(request):
     task.save()
     return HttpResponse(task)
 
+def checknotifications(request):
+    chat = Chat.objects.get(members=request.user)
+    unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
+
+    return HttpResponse(unread_messages)
+
+def set_settings(request):
+    #request.GET
+    return HttpResponse()
+
