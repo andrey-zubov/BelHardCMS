@@ -29,7 +29,7 @@
 }
 .counter{
     top: 2px;
-    right: -7px;
+    right: -10px;
     border-radius: 50%;
     font-size: 6px;
     position: absolute;
@@ -44,13 +44,15 @@
     border: 0.5px solid black;
 }
 .task-notification{
-    width: 450px;
+    margin-top: 10px;
+    width: 50%;
     background: #fe6060;
     text-align: center;
     border-radius: 15px;
     margin: 0 auto;
     position: relative;
     color: white;
+    border: 1px #000000 solid;
 }
 
 .close {
@@ -86,7 +88,7 @@
 .messages {
     position: relative;
 }
-.messages_count{
+.messages_coun{
     top: -8px;
     right: -8px;
     border-radius: 50%;
@@ -99,19 +101,48 @@
     text-align: center;
     background: greenyellow;
 }
-.messages_notification{
+.messages_notificatio{
+    margin-top: 10px;
     width:80%;
     height:10%;
     color: black;
     text-align: center;
     background:greenyellow;
-    border: 3px #000000 solid;
+    border: 1px #000000 solid;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
     -khtml-border-radius:10px;
     border-radius: 10px;
 }
 
+.messages_count{
+    top: 2px;
+    right: -10px;
+    border-radius: 50%;
+    font-size: 6px;
+    position: absolute;
+    font-weight: bold;
+
+    width: 10px;
+    height: 10px;
+    color: #fff;
+
+    text-align: center;
+    background: red;
+    border: 0.5px solid black;
+}
+
+.messages_notification{
+        margin-top: 10px;
+        width: 50%;
+        background: #fe6060;
+        text-align: center;
+        border-radius: 15px;
+        margin: 0 auto;
+        position: relative;
+        color: white;
+        border: 1px #000000 solid;
+    }
 </style>
 
 <body style="font-size: large">
@@ -129,15 +160,16 @@
                     </a>
                 </nav>
             </div>
-    {%if readtask != 0 %}
-       <div class="task-notification"><h1> У Вас  {{ readtask }} новые задачи </h1> <span class="close"></span></div>
-    {% endif %}
+
     <div class="p-sm-3 pt-sm-5">
         <section class="content">
             {% block content %}
+                {%if readtask != 0 %}
+                    <div class="task-notification"><h2> У Вас  {{ readtask }} новые задачи </h2> <span class="close"></span></div>
+                    {% endif %}
                 <div id="check_notifications">
                 {% if unread_messages != 0 %}
-                <div class="messages_notification" id="mes_not">У Вас  {{ unread_messages }}  новых сообщения от карьерного центра </div>
+                    <div class="messages_notification" id="mes_not"><h2>У Вас  {{ unread_messages }}  новых сообщения от карьерного центра </h2></div>
                 {% endif %}
                 </div>
             {% endblock %}
