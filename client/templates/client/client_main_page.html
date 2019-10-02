@@ -10,9 +10,7 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-            crossorigin="anonymous"></script>
+   <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
             integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
             crossorigin="anonymous"></script>
@@ -29,7 +27,7 @@
 .messages {
     position: relative;
 }
-.counter{
+.messages_count{
     top: -8px;
     right: -8px;
     border-radius: 50%;
@@ -42,9 +40,9 @@
     text-align: center;
     background: greenyellow;
 }
-.notification{
+.messages_notification{
     width:80%;
-    height:30px;
+    height:10%;
     color: black;
     text-align: center;
     background:greenyellow;
@@ -62,7 +60,7 @@
         <a class="nav-link text-white" href="#">Задачи</a>
         <a class="nav-link text-white" href="#">Предложение</a>
         <a class="nav-link text-white" href="#">Собеседования</a>
-        <a class="nav-link text-white" href="{% url 'contact_with_centre' %}"> <div class="messages"> Связаться с КЦ {%if unread_messages != 0 %} <div class="counter"> {{ unread_messages }} </div>{% endif %}</div></a>
+        <a class="nav-link text-white" href="{% url 'contact_with_centre' %}"> <div class="messages"> Связаться с КЦ <div class="messages_count" id="mes_count" hidden="true"> {{ unread_messages }} </div></div></a>
         <a class="nav-link text-white" href="{% url 'client_profile' %}">
             <img src="{{ client_img }}" alt="img" class="rounded-circle" height="64">
             Клиент
@@ -70,15 +68,60 @@
     </nav>
 </div>
 
-<div class="p-sm-3 pt-sm-5">
-    <section class="content">
+<section class="content">
         {% block content %}
+        <div id="check_notifications">
         {% if unread_messages != 0 %}
-        <div class="notification">У Вас  {{ unread_messages }}  новых сообщения от карьерного центра</div>
+        <div class="messages_notification" id="mes_not">У Вас  {{ unread_messages }}  новых сообщения от карьерного центра </div>
         {% endif %}
+        </div>
         {% endblock %}
-    </section>
-</div>
+</section>
 
+<div class="p-sm-3 pt-sm-5">
+
+</div>
+<script>
+
+    $('document').ready(function () {
+        $('.close').on('click', function () {
+            $('#check_notifications').hide();
+        });
+        console.log('fuf');
+        $.ajax({
+                'url': '/client/checknotifications/',
+                success: function (data) {
+                    if (data != 0) {
+                        document.getElementById('mes_count').hidden = false;
+                        document.getElementById('mes_count').innerHTML =  data;
+                    }
+                }
+            });
+        setInterval(function(){
+            $.ajax({
+                'url': '/client/checknotifications/',
+                success: function (data) {
+                    if (data != 0) {
+                        document.getElementById('mes_count').hidden = false;
+                        document.getElementById('mes_count').innerHTML =  data;
+                    }
+                    else {
+                        document.getElementById('mes_count').hidden = true;
+                    }
+                }
+            });
+        }, 10000);
+
+    });
+
+
+    /*var reloadData = function() {
+        $('#check_notifications').load(document.URL + '#check_notifications');
+        console.log("reload");
+    }
+
+    setInterval('reloadData()', 10000)*/
+
+</script>
 </body>
 </html>
