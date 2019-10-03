@@ -20,16 +20,20 @@
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
     {% load staticfiles %}
     <title>{% block title %}Client{% endblock %} - HR-System</title>
 </head>
+
 <body style="font-size: large">
 
 <div class="p-sm-3 pt-sm-5">
     <nav class="nav fixed-top" style="background-color: #344955">
         <a class="nav-link text-white" href="/">HR-System</a>
         <a class="nav-link text-white" href="#">Задачи</a>
-        <a class="nav-link text-white" href="#">Предложение</a>
+        <a class="nav-link text-white" href="{% url 'resumes_list_url' %}">Предложения</a>
         <a class="nav-link text-white" href="#">Собеседования</a>
         <a class="nav-link text-white" href="#">Связаться с КЦ</a>
         <a class="nav-link text-white" href="{% url 'client_profile' %}">
@@ -43,6 +47,14 @@
     <section class="content">
         {% block content %}{% endblock %}
     </section>
+</div>
+
+<div class="p-sm-3 pt-sm-5">
+    <nav class="nav fixed-bottom" style="background-color: #344955">
+        <a class="nav-link text-white" href="{% url 'help_list_url' %}">Помощь<a class="offset-md-1"></a></a>
+        <a class="nav-link text-white" href="{% url 'settings_list_url' %}">Настройки<a class="offset-md-1"></a></a>
+        <a class="nav-link text-white" href="#">Оставить отзыв</a>
+    </nav>
 </div>
 
 </body>
