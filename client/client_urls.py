@@ -17,12 +17,14 @@ urlpatterns = [
     path(r'opinion/create/', OpinionCreate.as_view(), name='opinion_create'),
     path(r'opinion/<int:pk>/', opinion_detail, name='opinion_detail'),
     path(r'opinion/edit/<int:pk>/', answer_create, name='opinion_answer'),
-    path(r'opinion/edit/<int:pk>/delete/', OpinionDelete.as_view(), name = 'opinion_delete'),
+    path(r'opinion/edit/<int:pk>/delete/', OpinionDelete.as_view(), name='opinion_delete'),
     path('login/', client_login),
     path('logout/', client_logout),
-    path('tasks/', tasks, name = 'tasks_list'),
+    path('tasks/', tasks, name='tasks_list'),
     path('edit/form_edu/', views.form_education, name='form_edu'),
     path(r'checktask/', views.checktask),
     path(r'checknotifications/', views.checknotifications),
+    path(r'settings/', views.settings_menu, name='settings_menu'),
+    path(r'settingsset/', views.set_settings, name='settings_set'),
 
 ]
