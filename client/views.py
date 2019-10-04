@@ -207,9 +207,6 @@ def client_edit_cv(request):
     response = csrf(request)
     client_instance = client_check(request.user)
 
-
-
-
     if request.method == 'POST':
         print('client_edit_cv - request.POST')
 
@@ -259,20 +256,11 @@ def client_edit_education(request):
             qualification = edus['qualification']
             date_start = edus['date_start']
             date_end = edus['date_end']
-
-            img = edus['certificate_img']
-            img_name = str(img).replace(' ', '_')
-            try:
-                # im = Image.open(MEDIA_URL + img_name)
-                # im.save(img_name)
-                Image.Image.save(img, MEDIA_URL + img_name, 'jpeg')
-            except:
-                logging.error("Ex. in cer_img_save")
-
             link = edus['certificate_url']
+            img = edus['certificate_img']
 
             if any([institution, subject_area, specialization, qualification,
-                    date_start, date_end, img_name, link]):
+                    date_start, date_end, img, link]):
 
                 education = Education(
                     client_edu=client_instance,
@@ -287,13 +275,13 @@ def client_edit_education(request):
 
                 certificate = Certificate(
                     education=education,
-                    img=img_name,
+                    img=img,
                     link=link
                 )
                 certificate.save()
 
                 print("Education Form - OK\n", institution, subject_area, specialization, qualification,
-                      date_start if date_start else None, date_end if date_end else None, img_name, link)
+                      date_start if date_start else None, date_end if date_end else None, img, link)
             else:
                 print('Education Form is Empty')
 
@@ -490,7 +478,7 @@ class FormEducation(TemplateView):
         return render(request, self.template_name, response)
 
     def post(self, request):
-        print(request.POST)
+        print("FormEducation.POST: %s" % request.POST)
         client_instance = client_check(request.user)
         edu_inst = None
         form_set_edu = EducationFormSet(request.POST)

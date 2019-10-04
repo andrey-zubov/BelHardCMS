@@ -27,6 +27,16 @@ class UploadImgForm(forms.ModelForm):
         }
 
 
+class UploadCertificateForm(forms.ModelForm):
+    class Meta:
+        model = Certificate
+        fields = ('img',)
+
+        widgets = {
+            'img': forms.FileInput(attrs={'class': 'form-control-file'}),
+        }
+
+
 class AddSkillForm(forms.ModelForm):
     class Meta:
         model = Skills
@@ -81,7 +91,7 @@ class EducationForm(forms.ModelForm):
     class Meta:
         model = Education
         fields = ('institution', 'subject_area', 'specialization',
-                  'qualification', 'date_start', 'date_end')
+                  'qualification', 'date_start', 'date_end',)
 
         widgets = {
             'institution': forms.TextInput(attrs={'class': 'form-control'}),

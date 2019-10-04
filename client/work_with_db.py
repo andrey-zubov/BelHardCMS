@@ -120,13 +120,15 @@ def load_education_page(client):
 
             edu_id = [e['id'] for e in response['cl_edu']]
             certs = [[c for c in Certificate.objects.filter(education_id=i).values()] for i in edu_id]
+            print(certs)
 
             for e in edus:
-                # print("e: %s" % e)
-                for c in certs[0]:
-                    # print("c: %s" % c)
-                    e['img'] = "%s%s" % (MEDIA_URL, c['img'])
-                    e['link'] = c['link']
+                print("e: %s" % e)
+                for c in certs:
+                    print("c: %s" % c)
+                    if c[0]['education_id'] == e['id']:
+                        e['img'] = "%s%s" % (MEDIA_URL, c[0]['img'])
+                        e['link'] = c[0]['link']
             print("cl_edu: %s" % response['cl_edu'])
 
         print('TIME load_education_page(): %s' % (perf_counter() - time_0))
@@ -139,12 +141,10 @@ def load_education_page(client):
 def load_cv_edition_page(client):
     try:
         response = defaultdict()
-
         if client:
             cvs = [i for i in CV.objects.filter(client_cv=client).values()]
             response['cl_cvs'] = cvs
-
-            print(response['cl_cvs'])
+            print("cl_cvs: %s" % response['cl_cvs'])
         return response
     except Exception as ex:
         logging.error("Exception in load_cv_page()\n%s" % ex)
