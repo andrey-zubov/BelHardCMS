@@ -1,3 +1,4 @@
+from collections import defaultdict
 from time import perf_counter
 
 from django.contrib import auth
@@ -5,8 +6,8 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
 from django.views.generic import View, TemplateView
 
-from client.forms import (OpinionForm, AnswerForm, MessageForm, SabClassFormset, UploadImgForm, EducationFormSet,
-                          CertificateFormSet)
+from client.forms import (OpinionForm, AnswerForm, MessageForm, UploadImgForm, EducationFormSet,
+                          CertificateFormSet, SabClassFormset)
 from client.models import *
 from client.utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
                             pars_edu_request, pars_exp_request)
@@ -459,8 +460,8 @@ class FormEducation(TemplateView):
 
     def get(self, request, *args, **kwargs):
         client_instance = client_check(request.user)
-        load_data = load_education_page(client_instance)['cl_edu']
 
+        load_data = load_education_page(client_instance)['cl_edu']
         response = {'client_img': load_client_img(client_instance),
                     'edu_form': EducationFormSet(initial=load_data),
                     'certificate': CertificateFormSet(initial=load_data),

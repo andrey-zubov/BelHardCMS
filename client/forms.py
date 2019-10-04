@@ -1,7 +1,11 @@
-from django import forms
-from django.forms import formset_factory, modelform_factory
+from string import Template
 
-from client.models import (Client, Skills, Experience, Message, Opinion, Answer, Education, Certificate)
+from django import forms
+from django.forms import formset_factory
+from django.utils.safestring import mark_safe
+
+from client.models import (Client, Skills, Experience, Message, Opinion, Answer,
+                           Education, Certificate)
 
 # special field names for the Formsets
 # https://docs.djangoproject.com/en/2.2/topics/forms/formsets/
@@ -111,12 +115,18 @@ class EducationForm(forms.ModelForm):
         }
 
 
+class PictureWidget(forms.widgets.Widget):
+    def render(self, name, value, attrs=None, **kwargs):
+        html = Template("""<img src="$link" alt="img" class="m-sm-1" height="100">""")
+        return mark_safe(html.substitute(link=value))
+
+
 class CertificateForm(forms.ModelForm):
     """ Test Code - Module Form Set """
 
     class Meta:
         model = Certificate
-        fields = ('img', 'link',)
+        fields = ('show_img', 'img', 'link',)
 
         widgets = {
             'img': forms.FileInput(attrs={'class': 'form-control-file'}),
@@ -140,6 +150,5 @@ SabClassFormset = formset_factory(SabClassForm)
 AddSkillFormSet = formset_factory(AddSkillForm)
 EducationFormSet = formset_factory(EducationForm)
 CertificateFormSet = formset_factory(CertificateForm)
-# inlineEduCert = inlineformset_factory(Certificate, Education, fields=('institution', 'subject_area', 'specialization',
-#                                                                       'qualification', 'date_start', 'date_end',
-#                                                                       'certificate'))
+# inlineEduCert = inlineformset_factory(Education, Certificate,
+#                                       fields=('education', 'img', 'link',))
