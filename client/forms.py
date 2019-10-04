@@ -1,9 +1,7 @@
 from django import forms
-from django.forms import formset_factory, inlineformset_factory
-
+from django.forms import formset_factory
 
 from .models import Client, Skills, Experience, Message, Opinion, Answer, Education, Certificate
-
 
 # special field names for the Formsets
 # https://docs.djangoproject.com/en/2.2/topics/forms/formsets/
@@ -29,13 +27,23 @@ class UploadImgForm(forms.ModelForm):
         }
 
 
+class UploadCertificateForm(forms.ModelForm):
+    class Meta:
+        model = Certificate
+        fields = ('img',)
+
+        widgets = {
+            'img': forms.FileInput(attrs={'class': 'form-control-file'}),
+        }
+
+
 class AddSkillForm(forms.ModelForm):
     class Meta:
         model = Skills
-        fields = ('skills',)
+        fields = ('skill',)
 
         widgets = {
-            'skills': forms.TextInput(attrs={'class': 'form-control'}),
+            'skill': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
         data = {
@@ -61,32 +69,32 @@ class MessageForm(forms.ModelForm):
         labels = {'message': ""}
 
 
-
 class OpinionForm(forms.ModelForm):
     class Meta:
         model = Opinion
         fields = ['title', 'text']
 
-        widgets={'title' : forms.TextInput(attrs={'class':'form-control'}),
-                 'text' : forms.TextInput(attrs={'class':'form-control'}),
-            }
+        widgets = {'title': forms.TextInput(attrs={'class': 'form-control'}),
+                   'text': forms.TextInput(attrs={'class': 'form-control'}),
+                   }
 
 
 class AnswerForm(forms.ModelForm):
     class Meta:
         model = Answer
-        fields = ['text',]
-        
+        fields = ['text', ]
+
+
 class EducationForm(forms.ModelForm):
     """ Test Code - Module Form Set """
 
     class Meta:
         model = Education
-        fields = ('education', 'subject_area', 'specialization',
-                  'qualification', 'date_start', 'date_end')
+        fields = ('institution', 'subject_area', 'specialization',
+                  'qualification', 'date_start', 'date_end',)
 
         widgets = {
-            'education': forms.TextInput(attrs={'class': 'form-control'}),
+            'institution': forms.TextInput(attrs={'class': 'form-control'}),
             'subject_area': forms.TextInput(attrs={'class': 'form-control'}),
             'specialization': forms.TextInput(attrs={'class': 'form-control'}),
             'qualification': forms.TextInput(attrs={'class': 'form-control'}),
@@ -127,7 +135,6 @@ class CertificateForm(forms.ModelForm):
 AddSkillFormSet = formset_factory(AddSkillForm)
 EducationFormSet = formset_factory(EducationForm)
 CertificateFormSet = formset_factory(CertificateForm)
-inlineEduCert = inlineformset_factory(Certificate, Education, fields=('education', 'subject_area', 'specialization',
-                                                                      'qualification', 'date_start', 'date_end',
-                                                                      'certificate'))
-
+# inlineEduCert = inlineformset_factory(Certificate, Education, fields=('institution', 'subject_area', 'specialization',
+#                                                                       'qualification', 'date_start', 'date_end',
+#                                                                       'certificate'))
