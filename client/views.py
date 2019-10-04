@@ -1,7 +1,7 @@
 import logging
 from time import perf_counter
-
 from PIL import Image
+import PIL
 from django.contrib import auth
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
@@ -202,6 +202,9 @@ def client_edit_photo(request):
 
 
 def client_edit_cv(request):
+
+    client_instance = client_check(request.user)
+
     response = csrf(request)
     response['client_img'] = load_client_img(request.user)
 
@@ -211,22 +214,15 @@ def client_edit_cv(request):
         arr_cv = pars_cv_request(request.POST)
         for cvs in arr_cv:
             position = cvs['position']
-            employment_word = cvs['employment']
-            employment = Employment(employment=employment_word)
-            employment.save()
-            time_job_word = cvs['time_job']
-            time_job = TimeJob(time_job_word=time_job_word)
-            time_job.save()
+            employment = Employment.objects.get(employment=request.POST['employment'])
+            time_job = TimeJob.objects.get(time_job_word=request.POST['time_job'])
             salary = cvs['salary']
-            type_word = cvs['type_salary']
-            type_salary = TypeSalary(type_word=type_word)
-            type_salary.save()
+            type_salary = TypeSalary.objects.get(type_word=request.POST['type_salary'])
 
-            if any([position, employment_word, time_job_word, salary, type_word]):
-                client = Client.objects.get(user_client=request.user)
+            if any([position, employment, time_job, salary, type_salary]):
 
                 cv = CV(
-                    client_cv=client,
+                    client_cv=client_instance,
                     position=position,
                     employment=employment,
                     time_job=time_job,
@@ -480,7 +476,20 @@ def form_education(request):
     if request.method == 'POST':
         print(request.POST)
 
-        edu_inst = None
+        cert_inst = None
+        form_set_cert = CertificateFormSet(request.POST, request.FILES)
+        if form_set_cert.is_valid():
+            print("FormSet_Cert - OK")
+            for c in form_set_cert:
+                c_items = c.cleaned_data.items()
+                print('cert_items: %s' % c_items)
+                if c_items:
+                    cert_inst = c.save(commit=False)
+                    # cert_inst.evidence_of_edu.save_m2m()
+                    cert_inst.save()
+        else:
+            print("FormSet_Cert not Valid")
+
         form_set_edu = EducationFormSet(request.POST)
         if form_set_edu.is_valid():
             print('FormSet_Edu - OK')
@@ -491,26 +500,18 @@ def form_education(request):
                     """ edu_inst - unsaved model instance!
                     It gives you ability to attach data to the instance before saving to the DB! """
                     edu_inst = f.save(commit=False)
-                    """ attach ForeignKey == Client instance """
-                    edu_inst.client_edu = client_instance
+                    """ attach ForeignKey == Certificate instance """
+                    edu_inst.certificate = cert_inst
                     """ Save Education instance """
                     edu_inst.save()
+
+                    client = Client.objects.get(user_client=request.user)
+                    """ attach Edu.Inst to the client, because Client has ForeignKey to Edu-n """
+                    client.education = edu_inst
+                    client.save()
+                    """ saving this shit and going to sleep (02:30 here :P)"""
         else:
             print('FormSet_Edu not valid')
-
-        form_set_cert = CertificateFormSet(request.POST, request.FILES)
-        if form_set_cert.is_valid():
-            print("FormSet_Cert - OK")
-            for c in form_set_cert:
-                c_items = c.cleaned_data.items()
-                print('cert_items: %s' % c_items)
-                if c_items:
-                    cert_inst = c.save(commit=False)
-                    """ attach ForeignKey == Education instance """
-                    cert_inst.education = edu_inst
-                    cert_inst.save()
-        else:
-            print("FormSet_Cert not Valid")
 
         return redirect(to='/client/edit/form_edu')
     else:

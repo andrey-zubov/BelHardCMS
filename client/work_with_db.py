@@ -4,7 +4,7 @@ from time import perf_counter
 
 from BelHardCRM.settings import MEDIA_URL
 from client.models import (Client, Sex, Citizenship, FamilyState, Children, City, State, Telephone, Skills, Education,
-                           Certificate)
+                           Certificate, CV)
 from client.utility import check_if_str
 
 
@@ -136,3 +136,22 @@ def load_education_page(client):
     except Exception as ex:
         logging.error("Exception in load_education_page()\n%s" % ex)
         return None
+
+
+def load_cv_edition_page(client):
+    try:
+        response = defaultdict()
+
+        if client:
+            cvs = [i for i in CV.objects.filter(client_cv=client).values()]
+            response['cl_cvs'] = cvs
+
+            print(response['cl_cvs'])
+        return response
+    except Exception as ex:
+        logging.error("Exception in load_cv_page()\n%s" % ex)
+        return None
+
+
+
+
