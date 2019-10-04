@@ -124,7 +124,6 @@ class CertificateForm(forms.ModelForm):
     """ Test Code - Module Form Set """
     show_img = forms.ImageField(widget=PictureWidget)
 
-
     class Meta:
         model = Certificate
         fields = ('show_img', 'img', 'link',)

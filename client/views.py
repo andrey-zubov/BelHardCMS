@@ -2,18 +2,18 @@ from time import perf_counter
 
 from django.contrib import auth
 from django.http import HttpResponse
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.context_processors import csrf
-from django.views.generic import View, TemplateView
+from django.views import View
+from django.views.generic import TemplateView
 
-from client.forms import OpinionForm, AnswerForm, MessageForm
-from client.forms import (SabClassFormSet, CertificateForm)
-from client.forms import UploadImgForm, EducationFormSet, CertificateFormSet
+from client.forms import (OpinionForm, AnswerForm, MessageForm, UploadImgForm, EducationFormSet,
+                          CertificateFormSet, CertificateForm, SabClassFormSet)
 from client.models import *
 from client.utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
                             pars_edu_request, pars_exp_request)
-from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
-                                 load_cv_edition_page)
+from client.work_with_db import client_check, load_client_img, load_edit_page, load_skills_page, load_cv_edition_page, \
+    load_education_page
 
 
 def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
