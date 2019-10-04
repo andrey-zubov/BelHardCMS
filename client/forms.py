@@ -1,7 +1,7 @@
 from django import forms
-from django.forms import formset_factory
+from django.forms import formset_factory, modelform_factory
 
-from .models import Client, Skills, Experience, Message, Opinion, Answer, Education, Certificate
+from client.models import (Client, Skills, Experience, Message, Opinion, Answer, Education, Certificate)
 
 # special field names for the Formsets
 # https://docs.djangoproject.com/en/2.2/topics/forms/formsets/
@@ -132,6 +132,11 @@ class CertificateForm(forms.ModelForm):
         }
 
 
+class SabClassForm(EducationForm, CertificateForm):
+    pass
+
+
+SabClassFormset = formset_factory(SabClassForm)
 AddSkillFormSet = formset_factory(AddSkillForm)
 EducationFormSet = formset_factory(EducationForm)
 CertificateFormSet = formset_factory(CertificateForm)

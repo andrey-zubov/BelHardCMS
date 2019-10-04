@@ -120,16 +120,16 @@ def load_education_page(client):
 
             edu_id = [e['id'] for e in response['cl_edu']]
             certs = [[c for c in Certificate.objects.filter(education_id=i).values()] for i in edu_id]
-            print(certs)
+            # print(certs)
 
             for e in edus:
-                print("e: %s" % e)
+                # print("e: %s" % e)
                 for c in certs:
-                    print("c: %s" % c)
+                    # print("c: %s" % c)
                     if c[0]['education_id'] == e['id']:
                         e['img'] = "%s%s" % (MEDIA_URL, c[0]['img'])
                         e['link'] = c[0]['link']
-            print("cl_edu: %s" % response['cl_edu'])
+            # print("cl_edu: %s" % response['cl_edu'])
 
         print('TIME load_education_page(): %s' % (perf_counter() - time_0))
         return response
