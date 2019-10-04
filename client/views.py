@@ -1,14 +1,11 @@
-import logging
 from collections import defaultdict
 from time import perf_counter
 
-from PIL import Image
 from django.contrib import auth
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
 from django.views.generic import View, TemplateView
 
-from BelHardCRM.settings import MEDIA_URL
 from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
                                  load_cv_edition_page)
 from .forms import OpinionForm, AnswerForm, MessageForm
@@ -466,10 +463,6 @@ class FormEducation(TemplateView):
         response = defaultdict()
 
         load_data = load_education_page(client_instance)['cl_edu']
-        # load_data_edu = Education.objects.filter(client_edu=client_instance).values()
-        # edu_id = [e['id'] for e in load_data_edu]
-        # load_data_cert = [[c for c in Certificate.objects.filter(education_id=i).values()] for i in edu_id]
-        # print(load_data_cert[0])
 
         response['client_img'] = load_client_img(client_instance)
         response['edu_form'] = EducationFormSet(initial=load_data)
