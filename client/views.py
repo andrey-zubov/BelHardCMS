@@ -1,4 +1,3 @@
-from collections import defaultdict
 from time import perf_counter
 
 from django.contrib import auth
@@ -7,13 +6,13 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
 from django.views.generic import View, TemplateView
 
+from client.forms import (OpinionForm, AnswerForm, MessageForm, SabClassFormset, UploadImgForm, EducationFormSet,
+                          CertificateFormSet)
+from client.models import *
+from client.utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
+                            pars_edu_request, pars_exp_request)
 from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
                                  load_cv_edition_page)
-from .forms import OpinionForm, AnswerForm, MessageForm
-from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
-from .models import *
-from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
-                      pars_edu_request, pars_exp_request)
 
 
 def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
@@ -479,23 +478,23 @@ class FormEducation(TemplateView):
 
     def get(self, request, *args, **kwargs):
         client_instance = client_check(request.user)
-        response = defaultdict()
-
         load_data = load_education_page(client_instance)['cl_edu']
 
-        response['client_img'] = load_client_img(client_instance)
-        response['edu_form'] = EducationFormSet(initial=load_data)
-        response['certificate'] = CertificateFormSet(initial=load_data)
-
+        response = {'client_img': load_client_img(client_instance),
+                    'edu_form': EducationFormSet(initial=load_data),
+                    'certificate': CertificateFormSet(initial=load_data),
+                    'sab_class_form': SabClassFormset(initial=load_data),
+                    }
         return render(request, self.template_name, response)
 
     def post(self, request):
         print("FormEducation.POST: %s" % request.POST)
         client_instance = client_check(request.user)
-        edu_inst = None
+
         form_set_edu = EducationFormSet(request.POST)
         form_set_cert = CertificateFormSet(request.POST, request.FILES)
 
+        edu_inst = None
         if form_set_edu.is_valid():
             print('FormSet_Edu - OK')
             for f in form_set_edu:

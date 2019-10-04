@@ -129,7 +129,7 @@ def load_education_page(client):
                         e['img'] = "%s%s" % (MEDIA_URL, c[0]['img'])
                         e['link'] = c[0]['link']
                         e['show_img'] = "%s%s" % (MEDIA_URL, c[0]['img'])
-            print("cl_edu: %s" % response['cl_edu'])
+            # print("cl_edu: %s" % response['cl_edu'])
         print('TIME load_education_page(): %s' % (perf_counter() - time_0))
         return response
     except Exception as ex:
