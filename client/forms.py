@@ -123,6 +123,7 @@ class PictureWidget(forms.widgets.Widget):
 
 class CertificateForm(forms.ModelForm):
     """ Test Code - Module Form Set """
+    show_img = forms.ImageField(widget=PictureWidget)
 
     class Meta:
         model = Certificate
@@ -146,7 +147,7 @@ class SabClassForm(EducationForm, CertificateForm):
     pass
 
 
-SabClassFormset = formset_factory(SabClassForm)
+SabClassFormSet = formset_factory(SabClassForm)
 AddSkillFormSet = formset_factory(AddSkillForm)
 EducationFormSet = formset_factory(EducationForm)
 CertificateFormSet = formset_factory(CertificateForm)
