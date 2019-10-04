@@ -1,7 +1,7 @@
 import logging
 from time import perf_counter
+
 from PIL import Image
-import PIL
 from django.contrib import auth
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
@@ -480,20 +480,7 @@ def form_education(request):
     if request.method == 'POST':
         print(request.POST)
 
-        cert_inst = None
-        form_set_cert = CertificateFormSet(request.POST, request.FILES)
-        if form_set_cert.is_valid():
-            print("FormSet_Cert - OK")
-            for c in form_set_cert:
-                c_items = c.cleaned_data.items()
-                print('cert_items: %s' % c_items)
-                if c_items:
-                    cert_inst = c.save(commit=False)
-                    # cert_inst.evidence_of_edu.save_m2m()
-                    cert_inst.save()
-        else:
-            print("FormSet_Cert not Valid")
-
+        edu_inst = None
         form_set_edu = EducationFormSet(request.POST)
         if form_set_edu.is_valid():
             print('FormSet_Edu - OK')
@@ -504,18 +491,26 @@ def form_education(request):
                     """ edu_inst - unsaved model instance!
                     It gives you ability to attach data to the instance before saving to the DB! """
                     edu_inst = f.save(commit=False)
-                    """ attach ForeignKey == Certificate instance """
-                    edu_inst.certificate = cert_inst
+                    """ attach ForeignKey == Client instance """
+                    edu_inst.client_edu = client_instance
                     """ Save Education instance """
                     edu_inst.save()
-
-                    client = Client.objects.get(user_client=request.user)
-                    """ attach Edu.Inst to the client, because Client has ForeignKey to Edu-n """
-                    client.education = edu_inst
-                    client.save()
-                    """ saving this shit and going to sleep (02:30 here :P)"""
         else:
             print('FormSet_Edu not valid')
+
+        form_set_cert = CertificateFormSet(request.POST, request.FILES)
+        if form_set_cert.is_valid():
+            print("FormSet_Cert - OK")
+            for c in form_set_cert:
+                c_items = c.cleaned_data.items()
+                print('cert_items: %s' % c_items)
+                if c_items:
+                    cert_inst = c.save(commit=False)
+                    """ attach ForeignKey == Education instance """
+                    cert_inst.education = edu_inst
+                    cert_inst.save()
+        else:
+            print("FormSet_Cert not Valid")
 
         return redirect(to='/client/edit/form_edu')
     else:
