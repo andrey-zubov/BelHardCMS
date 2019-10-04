@@ -114,7 +114,6 @@ def load_education_page(client):
         time_0 = perf_counter()
         print("load_education_page()")
         response = defaultdict()
-
         if client:
             edus = [i for i in Education.objects.filter(client_edu=client).values()]
             response['cl_edu'] = edus
@@ -126,13 +125,12 @@ def load_education_page(client):
                 # print("e: %s" % e)
                 for c in certs[0]:
                     # print("c: %s" % c)
-                    e['certs_img'] = "%s%s" % (MEDIA_URL, c['img'])
-                    e['certs_url'] = c['link']
-            print(response['cl_edu'])
+                    e['img'] = "%s%s" % (MEDIA_URL, c['img'])
+                    e['link'] = c['link']
+            print("cl_edu: %s" % response['cl_edu'])
 
         print('TIME load_education_page(): %s' % (perf_counter() - time_0))
         return response
-
     except Exception as ex:
         logging.error("Exception in load_education_page()\n%s" % ex)
         return None

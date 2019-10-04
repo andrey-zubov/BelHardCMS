@@ -1,11 +1,12 @@
 import logging
+from collections import defaultdict
 from time import perf_counter
 
 from PIL import Image
 from django.contrib import auth
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
-from django.views.generic import View
+from django.views.generic import View, TemplateView
 
 from BelHardCRM.settings import MEDIA_URL
 from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page)
@@ -472,16 +473,32 @@ def tasks(request):
     return render(request, 'client/tasks.html', context={'task': task, 'task_false': task_false})
 
 
-def form_education(request):
-    """ Test Code - Module Form Set """
-    response = csrf(request)
-    client_instance = client_check(request.user)
+class FormEducation(TemplateView):
+    template_name = 'client/form_edu.html'
 
-    if request.method == 'POST':
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = defaultdict()
+
+        load_data = load_education_page(client_instance)['cl_edu']
+        # load_data_edu = Education.objects.filter(client_edu=client_instance).values()
+        # edu_id = [e['id'] for e in load_data_edu]
+        # load_data_cert = [[c for c in Certificate.objects.filter(education_id=i).values()] for i in edu_id]
+        # print(load_data_cert[0])
+
+        response['client_img'] = load_client_img(client_instance)
+        response['edu_form'] = EducationFormSet(initial=load_data)
+        response['certificate'] = CertificateFormSet(initial=load_data)
+
+        return render(request, self.template_name, response)
+
+    def post(self, request):
         print(request.POST)
-
+        client_instance = client_check(request.user)
         edu_inst = None
         form_set_edu = EducationFormSet(request.POST)
+        form_set_cert = CertificateFormSet(request.POST, request.FILES)
+
         if form_set_edu.is_valid():
             print('FormSet_Edu - OK')
             for f in form_set_edu:
@@ -498,7 +515,6 @@ def form_education(request):
         else:
             print('FormSet_Edu not valid')
 
-        form_set_cert = CertificateFormSet(request.POST, request.FILES)
         if form_set_cert.is_valid():
             print("FormSet_Cert - OK")
             for c in form_set_cert:
@@ -513,10 +529,3 @@ def form_education(request):
             print("FormSet_Cert not Valid")
 
         return redirect(to='/client/edit/form_edu')
-    else:
-        response['client_img'] = load_client_img(client_instance)
-        response['edu_form'] = EducationFormSet()
-        response['certificate'] = CertificateFormSet()
-        # response['inlineEduCert'] = inlineEduCert()
-
-    return render(request, 'client/form_edu.html', response)

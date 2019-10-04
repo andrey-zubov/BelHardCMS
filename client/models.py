@@ -99,9 +99,6 @@ class Education(models.Model):
     date_start = models.DateField(null=True, blank=True, verbose_name='дата начала')
     date_end = models.DateField(null=True, blank=True, verbose_name='дата окончания')
 
-    def __str__(self):
-        return self.institution
-
 
 class SkillsWord(models.Model):
     """ Список навыков. Заполняется Админом + может вводиться клиентом. """
