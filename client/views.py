@@ -1,24 +1,12 @@
-import logging
 from collections import defaultdict
 from time import perf_counter
 
-#from PIL import Image
 from django.contrib import auth
+from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
-
-from django.urls import reverse
-from django.views import View
-from django.http import HttpResponse
-
-from .models import Vacancy, Resume
-
-from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
-
 from django.views.generic import View, TemplateView
 
-
-from BelHardCRM.settings import MEDIA_URL
 from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
                                  load_cv_edition_page)
 from .forms import OpinionForm, AnswerForm, MessageForm
@@ -28,17 +16,16 @@ from .utility import (check_input_str, check_home_number, check_telegram, check_
                       pars_edu_request, pars_exp_request)
 
 
-def client_main_page(request):  #!!!!!!!!!!!!!!!!!!!!!Alert 
+def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     response = csrf(request)
 
-    readtask = len(Tasks.objects.filter(user = request.user, readtask=False))
+    readtask = len(Tasks.objects.filter(user=request.user, readtask=False))
     chat = Chat.objects.get(members=request.user)
     unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
     settings = Settings.objects.get(user=request.user)
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
-   
-    #Poland
+    # Poland
     resumes = Resume.objects.all()
     suggestions = 0
     for resume in resumes:
@@ -49,7 +36,6 @@ def client_main_page(request):  #!!!!!!!!!!!!!!!!!!!!!Alert
     context.update(response)
     print(context['unread_suggestions'])
     return render(request=request, template_name='client/main_template_client.html', context=context)
-
 
 
 def client_profile(request):
@@ -380,7 +366,8 @@ class MessagesView(View):
             chat = None
 
         unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
-        context = {'user_profile': request.user, 'unread_messages': unread_messages, 'chat': chat, 'form': MessageForm()}
+        context = {'user_profile': request.user, 'unread_messages': unread_messages, 'chat': chat,
+                   'form': MessageForm()}
 
         return render(request, 'client/client_chat.html', context)
 
@@ -467,7 +454,7 @@ def client_login(request):  # ввести логин/пароль -> зайти
         user_chat = Chat.objects.get(members=request.user)
     except Chat.DoesNotExist:
         user_chat = Chat.objects.create()
-        user_chat.members.add(request.user) #TODO сюда добавить менеджера, которому, по дефолту, передают юзера
+        user_chat.members.add(request.user)  # TODO сюда добавить менеджера, которому, по дефолту, передают юзера
     try:
         user_settings = Settings.objects.get(user=request.user)
     except Settings.DoesNotExist:
@@ -481,11 +468,10 @@ def client_logout(request):  # выйти из системы, возврат н
 
 
 def tasks(request):
-
     task = Tasks.objects.filter(user=request.user, status=False)
-    task_false = Tasks.objects.filter(user=request.user, status=True) #status=False)
-    task_false = sorted(task_false, key=lambda x:x.endtime,  reverse=True)
-    return render(request, 'client/tasks.html', context = {'task' : task,  'task_false': task_false})
+    task_false = Tasks.objects.filter(user=request.user, status=True)  # status=False)
+    task_false = sorted(task_false, key=lambda x: x.endtime, reverse=True)
+    return render(request, 'client/tasks.html', context={'task': task, 'task_false': task_false})
 
 
 class FormEducation(TemplateView):
@@ -496,10 +482,6 @@ class FormEducation(TemplateView):
         response = defaultdict()
 
         load_data = load_education_page(client_instance)['cl_edu']
-        # load_data_edu = Education.objects.filter(client_edu=client_instance).values()
-        # edu_id = [e['id'] for e in load_data_edu]
-        # load_data_cert = [[c for c in Certificate.objects.filter(education_id=i).values()] for i in edu_id]
-        # print(load_data_cert[0])
 
         response['client_img'] = load_client_img(client_instance)
         response['edu_form'] = EducationFormSet(initial=load_data)
@@ -542,30 +524,6 @@ class FormEducation(TemplateView):
             print("FormSet_Cert not Valid")
 
         return redirect(to='/client/edit/form_edu')
-
-    # else:
-    #     response['edu_form'] = EducationFormSet()
-    #     response['certificate'] = CertificateFormSet()
-    #     response['inlineEduCert'] = inlineEduCert()
-
-   # return render(request, 'client/form_edu.html', response)
-
-
-def load_client_img(req):
-    """ Show Client Img in the Navigation Bar.
-    Img loaded from DB, if user do not have img - load default. """
-    try:
-        print("user: %s, id: %s" % (req, req.id))
-        client_img = Client.objects.get(user_client=req).img
-        if client_img:
-            logging.info("Client.img: %s" % client_img)
-            return "%s%s" % (MEDIA_URL, client_img)
-        else:
-            return '/media/user_1.png'
-    except Exception as ex:
-        logging.error("Exception in - load_client_img()\n %s" % ex)
-        return '/media/user_1.png'
-
 
 
 def checktask(request):
@@ -621,7 +579,7 @@ def set_settings(request):
     return HttpResponse(settings)
 
 
-#Poland's views
+# Poland's views
 
 def vacancies_list(request, slug):
     resume = Resume.objects.get(slug__iexact=slug)
@@ -649,19 +607,20 @@ def resume_detail(request, slug):
     return render(request, 'client/client_resume_detail.html', context={'resume': resume})
 
 
-def accepted_vacancies(request, slug):########################
+def accepted_vacancies(request, slug):  ########################
     resume = Resume.objects.get(slug__iexact=slug)
     return render(request, 'client/client_accepted_vacancies.html', context={'resume': resume})
 
 
-def rejected_vacancies(request, slug):##############################
+def rejected_vacancies(request, slug):  ##############################
     resume = Resume.objects.get(slug__iexact=slug)
     return render(request, 'client/client_rejected_vacancies.html', context={'resume': resume})
 
 
-def accept_reject(request):#
+def accept_reject(request):  #
 
-    if request.GET['flag'] == 'accept' and Vacancy.objects.get(slug__iexact=request.GET['slug']).in_waiting_for_resume.all():
+    if request.GET['flag'] == 'accept' and Vacancy.objects.get(
+            slug__iexact=request.GET['slug']).in_waiting_for_resume.all():
         print(request.GET['slug'], 1)
         r = Vacancy.objects.get(slug__iexact=request.GET['slug']).in_waiting_for_resume.get()
         v = Vacancy.objects.get(slug__iexact=request.GET['slug'])
@@ -670,7 +629,8 @@ def accept_reject(request):#
         r.save()
         return HttpResponse('accept_server')
 
-    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(slug__iexact=request.GET['slug']).in_waiting_for_resume.all():
+    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(
+            slug__iexact=request.GET['slug']).in_waiting_for_resume.all():
         print(request.GET['slug'], 2)
         r = Vacancy.objects.get(slug__iexact=request.GET['slug']).in_waiting_for_resume.get()
         v = Vacancy.objects.get(slug__iexact=request.GET['slug'])
@@ -679,7 +639,8 @@ def accept_reject(request):#
         r.save()
         return HttpResponse('reject_server')
 
-    elif request.GET['flag'] == 'accept' and Vacancy.objects.get(slug__iexact=request.GET['slug']).reject_for_resume.all():
+    elif request.GET['flag'] == 'accept' and Vacancy.objects.get(
+            slug__iexact=request.GET['slug']).reject_for_resume.all():
         print(request.GET['slug'], 3)
         r = Vacancy.objects.get(slug__iexact=request.GET['slug']).reject_for_resume.get()
         v = Vacancy.objects.get(slug__iexact=request.GET['slug'])
@@ -688,7 +649,8 @@ def accept_reject(request):#
         r.save()
         return HttpResponse('accept_server')
 
-    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(slug__iexact=request.GET['slug']).accept_for_resume.all():
+    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(
+            slug__iexact=request.GET['slug']).accept_for_resume.all():
         print(request.GET['slug'], 4)
         r = Vacancy.objects.get(slug__iexact=request.GET['slug']).accept_for_resume.get()
         v = Vacancy.objects.get(slug__iexact=request.GET['slug'])
@@ -707,13 +669,13 @@ def settings_list(request):
     settings = Settings.objects.all()
     status = 1 if Settings.objects.get().tumbler_on_off == 'on' else 0
     print('status = ', status)
-    return render(request, 'client/settings.html', context={'settings': settings, 'status': status })
+    return render(request, 'client/settings.html', context={'settings': settings, 'status': status})
 
 
-#def settings_on_off(request):
-    #status = 1 if SettingsNotification.objects.get().tumbler_on_off == 'on' else 0
-    #print('status = ', status)
-    #return render(request, 'client/client_settings.html', context={'status': status})
+# def settings_on_off(request):
+# status = 1 if SettingsNotification.objects.get().tumbler_on_off == 'on' else 0
+# print('status = ', status)
+# return render(request, 'client/client_settings.html', context={'status': status})
 
 
 def on_off(request):
@@ -732,6 +694,4 @@ def viewed(request):
             r.notification.clear()
         return HttpResponse('cleared')
 
-#End Poland's views
-
-
+# End Poland's views

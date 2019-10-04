@@ -75,6 +75,8 @@ class Certificate(models.Model):
     img = models.ImageField(blank=True, null=True, verbose_name='certificate_img')
     link = models.URLField(blank=True, null=True, max_length=100, verbose_name='certificate_link')
 
+    show_img = models.ImageField(blank=True, null=True)
+
 
 class EducationWord(models.Model):
     """ Список учебных заведений. Заполняется Админом + может вводиться клиентом. """
