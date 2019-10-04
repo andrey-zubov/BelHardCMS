@@ -1,4 +1,4 @@
-{% extends 'client/client_main_page.html' %}
+{% extends 'client/main_template_client.html' %}
 
 {% block title %}
     Edit education
@@ -29,8 +29,21 @@
                     <table class='no_error'>
                         <h4>Образование</h4>
                         {{ form }}
-                        {{ certificate }}
-{#                        {{ inlineEduCert }}#}
+                        <h4>Сертификат</h4>
+                        {% for cert in certificate.forms %}
+                            {{ cert.non_field_errors }}
+                            {{ cert.errors }}
+                            <table class='no_error'>
+                                {% if cert.img.value or cert.link.value %}
+                                    <img src="{{ cert.img.value }}" alt="img" class="m-sm-1" height="64">
+                                    {{ cert.link.value }}
+                                {% else %}
+                                    {{ cert }}
+                                {% endif %}
+                            </table>
+                        {% empty %}
+                            {{ cert }}
+                        {% endfor %}
                     </table>
                 {% endfor %}
             </div>
@@ -40,7 +53,6 @@
                     <h4>Образование</h4>
                     {{ edu_form.empty_form }}
                     {{ certificate.empty_form }}
-{#                    {{ inlineEduCert.empty_form }}#}
                 </table>
             </div>
             <button type="submit" class="btn btn-outline-success m-sm-1">save</button>

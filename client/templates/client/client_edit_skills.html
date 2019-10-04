@@ -1,4 +1,4 @@
-{% extends 'client/client_main_page.html' %}
+{% extends 'client/main_template_client.html' %}
 {% load staticfiles %}
 
 {% block title %}
@@ -6,52 +6,43 @@
 {% endblock %}
 
 {% block content %}
-
     <!-- JS добавления однотипных форм -->
     <script type="text/javascript">
         $(document).ready(function () {
-            var origin = $("#origin_div").clone();
+            var origin = $("#id_skill").clone();
             var count = 1;
             $("#add_more").on("click", function () {
                 var add = origin.clone();
                 count += 1;
-                //console.log(count);
-                var text = add.children('label');
-                //console.log(text);
-                // Изменяет вложенный текст
-                $(text).attr('innerText', text.text('Навык ' + count));
-                add.attr("id", "new_div");
+                add.attr('value', '');
+                add.attr("id", "new_skill");
                 add.appendTo("#div_to_add_new");
             });
         });
     </script>
 
-    <div class="row">
-        <div class="col-6">
+    <form method="post" id="origin_form">
+        {% csrf_token %}
+        <div id="div_to_add_new">
 
             <h3 class="text-center">Навыки</h3>
-
-            <form method="post" id="origin_form">
-                {% csrf_token %}
-
-                <div id="div_to_add_new">
-
-                    <!-- ИЗМЕНЯТЬ ЭТИ 4 Строчки-->
-                    <div class="form-group" id="origin_div">
-                        <label for="id_skill">Навык</label>
-                        <input type="text" class="form-control" id="id_skill" name="skill">
-                    </div>
-
-                </div>
-
-                <input type="button" value="Добавить Навыки" id="add_more"
-                       class="btn btn-outline-primary m-sm-1">
-
-                <button type="submit" class="btn btn-outline-success m-sm-1"
-                        id="save">Соранить все данные</button>
-            </form>
+            {% if not data.cl_skill %}
+                <input type="text" class="form-control my-2" id="id_skill" name="skill">
+            {% else %}
+                {% for s in data.cl_skill %}
+                    <input type="text" class="form-control my-2" id="id_skill" name="skill"
+                           value="{{ s }}">
+                {% endfor %}
+            {% endif %}
 
         </div>
-    </div>
+
+        <div class="text-center">
+            <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>
+            <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>
+            <input type="button" value="Добавить Навыки" id="add_more" class="btn btn-outline-primary m-2">
+        </div>
+
+    </form>
 
 {% endblock %}

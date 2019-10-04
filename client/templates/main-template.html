@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+
+</head>
+<body>
+{% block user_name %}
+Добро пожаловать, {{ user.first_name }}
+{% endblock %}
+
+<div class="top-bar">
+<ul class="nav nav-pills">
+  <li class="nav-item">
+    <a class="nav-link" href="/client/logout">Выход</a>
+  </li>
+</div>
+
+</ul>
+{% block usertasks %}
+{% endblock %}
+
+</body>
+</html>
