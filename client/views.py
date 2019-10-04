@@ -9,7 +9,8 @@ from django.template.context_processors import csrf
 from django.views.generic import View, TemplateView
 
 from BelHardCRM.settings import MEDIA_URL
-from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page)
+from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
+                                 load_cv_edition_page)
 from .forms import OpinionForm, AnswerForm, MessageForm
 from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
 from .models import *
@@ -204,7 +205,10 @@ def client_edit_photo(request):
 
 def client_edit_cv(request):
     response = csrf(request)
-    response['client_img'] = load_client_img(request.user)
+    client_instance = client_check(request.user)
+
+
+
 
     if request.method == 'POST':
         print('client_edit_cv - request.POST')
@@ -212,22 +216,14 @@ def client_edit_cv(request):
         arr_cv = pars_cv_request(request.POST)
         for cvs in arr_cv:
             position = cvs['position']
-            employment_word = cvs['employment']
-            employment = Employment(employment=employment_word)
-            employment.save()
-            time_job_word = cvs['time_job']
-            time_job = TimeJob(time_job_word=time_job_word)
-            time_job.save()
+            employment = Employment.objects.get(employment=request.POST['employment'])
+            time_job = TimeJob.objects.get(time_job_word=request.POST['time_job'])
             salary = cvs['salary']
-            type_word = cvs['type_salary']
-            type_salary = TypeSalary(type_word=type_word)
-            type_salary.save()
+            type_salary = TypeSalary.objects.get(type_word=request.POST['type_salary'])
 
-            if any([position, employment_word, time_job_word, salary, type_word]):
-                client = Client.objects.get(user_client=request.user)
-
+            if any([position, employment, time_job, salary, type_salary]):
                 cv = CV(
-                    client_cv=client,
+                    client_cv=client_instance,
                     position=position,
                     employment=employment,
                     time_job=time_job,
@@ -239,10 +235,11 @@ def client_edit_cv(request):
                 print("CV Form - OK\n", position, employment, time_job, salary, type_salary)
             else:
                 print('Cv form is Empty')
-
         return redirect(to='/client/edit')
     else:
         print('client_edit_cv - request.GET')
+        response['client_img'] = load_client_img(client_instance)
+        response['data'] = load_cv_edition_page(client_instance)
 
     return render(request, 'client/client_edit_cv.html', response)
 
@@ -512,8 +509,6 @@ class FormEducation(TemplateView):
                     edu_inst.client_edu = client_instance
                     """ Save Education instance """
                     edu_inst.save()
-        else:
-            print('FormSet_Edu not valid')
 
         if form_set_cert.is_valid():
             print("FormSet_Cert - OK")
