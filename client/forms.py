@@ -126,7 +126,6 @@ class CertificateForm(forms.ModelForm):
 
 
     class Meta:
-        # super(EducationForm.Meta)
         model = Certificate
         fields = ('show_img', 'img', 'link',)
 
