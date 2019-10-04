@@ -146,7 +146,7 @@ class SabClassForm(EducationForm, CertificateForm):
     pass
 
 
-SabClassFormset = formset_factory(SabClassForm)
+SabClassFormSet = formset_factory(SabClassForm)
 AddSkillFormSet = formset_factory(AddSkillForm)
 EducationFormSet = formset_factory(EducationForm)
 CertificateFormSet = formset_factory(CertificateForm)
