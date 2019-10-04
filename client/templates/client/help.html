@@ -1,0 +1,17 @@
+{% extends 'client/client_main_page.html' %}
+
+{% block title %}
+    Help
+{% endblock %}
+
+{% block content %}
+    <h2 class="offset-md-1">Часто задаваемые вопросы<a class="offset-md-2"><a href="{% url 'client' %}" class="btn btn-secondary">X</a></a></h2>
+    <div class="mt-4">
+        {% for faq in faqs %}
+            <div class="mt-4">
+                <h5>Вопрос: {{ faq.question }}<br></h5>
+                <p>Ответ: {{ faq.answer }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

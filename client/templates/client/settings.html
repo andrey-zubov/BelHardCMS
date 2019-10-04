@@ -1,0 +1,18 @@
+{% extends 'client/client_main_page.html' %}
+
+{% block title %}
+    Settings
+{% endblock %}
+
+{% block content %}
+    <h2 class="offset-md-1"><u>Всплывающие уведомления</u><a class="offset-md-2"><a href="{% url 'client' %}" class="btn btn-secondary">X</a></a></h2>
+    <div class="mt-5">
+        <div class="row">
+            <div class="col-4 offset-md-1">
+                {% for setting in settings %}
+                    <h4>{{ setting.name_setting }}<a class="offset-md-2"></a>{{ setting.name_setting_status }}<br></h4>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
