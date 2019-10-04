@@ -186,13 +186,14 @@ class Vacancy(models.Model):
         return reverse('vacancy_detail_url', kwargs={'slug': self.slug})
 
 
-class Resume(models.Model): ##Test teble
+class Resume(models.Model): ##Test table
     state = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
     vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
     vacancies_accept = models.ManyToManyField('Vacancy', blank=True, related_name='accept_for_resume')
     vacancies_reject = models.ManyToManyField('Vacancy', blank=True, related_name='reject_for_resume')
     vacancies_all = models.ManyToManyField('Vacancy', blank=True, related_name='all_for_resume')
+    notification = models.ManyToManyField('Vacancy', blank=True, related_name='notifications_for_resume')
 
     def __str__(self):
         return self.state
@@ -220,9 +221,11 @@ class Help(models.Model):
 class Settings(models.Model):
     name_setting = models.TextField(max_length=50)
     name_setting_status = models.BooleanField(default=True)
+    tumbler_on_off = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name_setting
+
 
 #########End Poland Task 1 & 2 ##############
 
