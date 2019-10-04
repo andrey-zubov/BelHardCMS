@@ -39,11 +39,19 @@ class ResumeAdmin(admin.ModelAdmin):
         'state', 'slug',
     )
 
+## Test settings for Poland
+class SettingsAdmin(admin.ModelAdmin):
 
+    list_display = ('name_setting', )
+    list_display_links = ('name_setting', )
+    search_fields = ('name_setting', )
+
+
+admin.site.register(Settings, SettingsAdmin)
 admin.site.register(Vacancy, VacancyAdmin)
 admin.site.register(Resume, ResumeAdmin)
 admin.site.register(Help)
-admin.site.register(Settings)
+
 
 admin.site.register(Opinion)
 admin.site.register(Answer)

@@ -21,6 +21,13 @@ from django.contrib import auth
 def client_main_page(request):
     response = csrf(request)
     response['client_img'] = load_client_img(request.user)
+    #Poland
+    resumes = Resume.objects.all()
+    notification = 0
+    for resume in resumes:
+        notification += resume.notification.count()
+    response['notification'] = notification
+    response['status'] = 1 if Settings.objects.get().tumbler_on_off == 'on' else 0
 
     return render(request=request, template_name='client/client_main_page.html', context=response)
 
@@ -628,6 +635,31 @@ def help_list(request):
 
 def settings_list(request):
     settings = Settings.objects.all()
-    return render(request, 'client/settings.html', context={'settings': settings})
+    status = 1 if Settings.objects.get().tumbler_on_off == 'on' else 0
+    print('status = ', status)
+    return render(request, 'client/settings.html', context={'settings': settings, 'status': status })
+
+
+#def settings_on_off(request):
+    #status = 1 if SettingsNotification.objects.get().tumbler_on_off == 'on' else 0
+    #print('status = ', status)
+    #return render(request, 'client/client_settings.html', context={'status': status})
+
+
+def on_off(request):
+    status = Settings.objects.get()
+    status.tumbler_on_off = request.GET['status']
+    print(status.tumbler_on_off)
+    status.save()
+    return HttpResponse(status.tumbler_on_off)
+
+
+def viewed(request):
+    if request.GET['action'] == 'clear':
+        resumes = Resume.objects.all()
+        for resume in resumes:
+            r = resume
+            r.notification.clear()
+        return HttpResponse('cleared')
 
 #End Poland's views

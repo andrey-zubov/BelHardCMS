@@ -32,5 +32,6 @@ urlpatterns = [
     path('accept_reject/', views.accept_reject),
     path('help/', help_list, name='help_list_url'),
     path('settings/', settings_list, name='settings_list_url'),
-
+    path('on_off/', views.on_off),    # on_off settings for notifications
+    path('viewed/', views.viewed),
 ]
