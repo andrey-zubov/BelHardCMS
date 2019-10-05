@@ -383,6 +383,7 @@ class Tasks(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True)
     title = models.TextField(max_length=200)
     time = models.DateTimeField()
+    date = models.DateField()
     comment = models.TextField(max_length=300, blank=True)
     status = models.BooleanField(default=False) #задача, которая не выполнена
     endtime = models.DateTimeField(blank=True, null=True)

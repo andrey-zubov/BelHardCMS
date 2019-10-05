@@ -6,10 +6,9 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
 from django.views.generic import View, TemplateView
 
-from client.forms import (OpinionForm, AnswerForm, MessageForm, UploadImgForm, EducationFormSet,
-                          CertificateFormSet, SabClassFormSet, CertificateForm)
-from client.forms import (OpinionForm, AnswerForm, MessageForm, SabClassFormset, UploadImgForm, EducationFormSet,
-                          CertificateFormSet)
+from client.forms import OpinionForm, AnswerForm, MessageForm
+from client.forms import (SabClassFormSet, CertificateForm)
+from client.forms import UploadImgForm, EducationFormSet, CertificateFormSet
 from client.models import *
 from client.utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
                             pars_edu_request, pars_exp_request)
@@ -136,7 +135,9 @@ def client_edit_main(request):
 
         """ Сохранение телефонных номеров клиента """
         tel = request.POST.getlist('phone')
-        print("tel: %s" % tel)
+        if any(tel):
+            Telephone.objects.all().delete()
+            # print("tel: %s" % tel)
         for t in tel:
             t = check_phone(t)
             if t:
@@ -149,8 +150,6 @@ def client_edit_main(request):
         print('client_edit_main - OK; TIME: %s' % (perf_counter() - time_0))
         return redirect(to='/client/profile')
     else:
-        print('client_edit_main - request.GET')
-
         """ Загрузка из БД списков для выбора и данных клиента"""
         response['client_img'] = load_client_img(client_instance)
         response['data'] = load_edit_page(client_instance)
@@ -160,16 +159,14 @@ def client_edit_main(request):
 
 def client_edit_skills(request):
     response = csrf(request)
-
     client_instance = client_check(request.user)
 
     if request.method == 'POST':
-        print("client_edit_skills - request.POST")
-
         skills_arr = request.POST.getlist('skill') if request.POST.getlist('skill') else None
-        print("skill: %s" % skills_arr)
 
         if any(skills_arr):
+            Skills.objects.all().delete()
+            # print("skill: %s" % skills_arr)
             for s in skills_arr:
                 if s:
                     """ ОБЪЕДИНЕНИЕ модуля Навыки с конкретным залогиненым клиентом!!! """
@@ -183,7 +180,6 @@ def client_edit_skills(request):
 
         return redirect(to='/client/edit')
     else:
-        print('client_edit_skills - request.GET')
         response['client_img'] = load_client_img(client_instance)
         response['data'] = load_skills_page(client_instance)
 
@@ -195,21 +191,16 @@ def client_edit_photo(request):
     client_instance = client_check(request.user)
 
     if request.method == 'POST':
-        print('client_edit_photo - request.POST')
-
         form = UploadImgForm(request.POST, request.FILES)
+
         if form.is_valid():
+            """ в БД сохраняется УНИКАЛЬНОЕ имя картинки (пр: user_2_EntrmQR.png) в папке MEDIA_URL = '/media/' """
             img = form.cleaned_data.get('img')
             client_instance.img = img
             client_instance.save()
-            """
-            в БД сохраняется УНИКАЛЬНОЕ имя картинки (пр. user_2_EntrmQR.png)
-            в папке MEDIA_URL = '/media/'
-            """
-            print('client save photo - OK')
-            return redirect(to='/client/edit')
+
+        return redirect(to='/client/edit')
     else:
-        print('client_edit_photo - request.GET')
         response['client_img'] = load_client_img(client_instance)
         response['form'] = UploadImgForm()
 
@@ -221,33 +212,33 @@ def client_edit_cv(request):
     client_instance = client_check(request.user)
 
     if request.method == 'POST':
-        print('client_edit_cv - request.POST')
+        arr_cv = pars_cv_request(request.POST)  # list of dictionaries
 
-        arr_cv = pars_cv_request(request.POST)
-        for cvs in arr_cv:
-            position = cvs['position']
-            employment = Employment.objects.get(employment=request.POST['employment'])
-            time_job = TimeJob.objects.get(time_job_word=request.POST['time_job'])
-            salary = cvs['salary']
-            type_salary = TypeSalary.objects.get(type_word=request.POST['type_salary'])
+        if any(arr_cv):
+            CV.objects.all().delete()
 
-            if any([position, employment, time_job, salary, type_salary]):
-                cv = CV(
-                    client_cv=client_instance,
-                    position=position,
-                    employment=employment,
-                    time_job=time_job,
-                    salary=salary,
-                    type_salary=type_salary,
-                )
-                cv.save()
+            for cvs in arr_cv:
+                position = cvs['position']
+                employment = Employment.objects.get(employment=request.POST['employment'])
+                time_job = TimeJob.objects.get(time_job_word=request.POST['time_job'])
+                salary = cvs['salary']
+                type_salary = TypeSalary.objects.get(type_word=request.POST['type_salary'])
 
-                print("CV Form - OK\n", position, employment, time_job, salary, type_salary)
-            else:
-                print('Cv form is Empty')
+                if any(cvs.values()):
+                    cv = CV(
+                        client_cv=client_instance,
+                        position=position,
+                        employment=employment,
+                        time_job=time_job,
+                        salary=salary,
+                        type_salary=type_salary,
+                    )
+                    cv.save()
+                    print("CV Form - OK\n", position, employment, time_job, salary, type_salary)
+                else:
+                    print('Cv form is Empty')
         return redirect(to='/client/edit')
     else:
-        print('client_edit_cv - request.GET')
         response['client_img'] = load_client_img(client_instance)
         response['data'] = load_cv_edition_page(client_instance)
 
@@ -259,48 +250,46 @@ def client_edit_education(request):
     client_instance = client_check(request.user)
 
     if request.method == 'POST':
-        print("save_client_education - request.POST")
+        arr_edu = pars_edu_request(request.POST, request.FILES)  # list of dictionaries
 
-        arr_edu = pars_edu_request(request.POST, request.FILES)
-        for edus in arr_edu:
-            institution = edus['institution']
-            subject_area = edus['subject_area']
-            specialization = edus['specialization']
-            qualification = edus['qualification']
-            date_start = edus['date_start']
-            date_end = edus['date_end']
-            link = edus['certificate_url']
-            img = edus['certificate_img']
+        if any(arr_edu):
+            Education.objects.all().delete()
 
-            if any([institution, subject_area, specialization, qualification,
-                    date_start, date_end, img, link]):
+            for edus in arr_edu:
+                institution = edus['institution']
+                subject_area = edus['subject_area']
+                specialization = edus['specialization']
+                qualification = edus['qualification']
+                date_start = edus['date_start']
+                date_end = edus['date_end']
+                link = edus['certificate_url']
+                img = edus['certificate_img']
 
-                education = Education(
-                    client_edu=client_instance,
-                    institution=institution,
-                    subject_area=subject_area,
-                    specialization=specialization,
-                    qualification=qualification,
-                    date_start=date_start if date_start else None,
-                    date_end=date_end if date_end else None
-                )
-                education.save()
+                if any(edus.values()):
+                    education = Education(
+                        client_edu=client_instance,
+                        institution=institution,
+                        subject_area=subject_area,
+                        specialization=specialization,
+                        qualification=qualification,
+                        date_start=date_start if date_start else None,
+                        date_end=date_end if date_end else None
+                    )
+                    education.save()
 
-                certificate = Certificate(
-                    education=education,
-                    img=img,
-                    link=link
-                )
-                certificate.save()
+                    certificate = Certificate(
+                        education=education,
+                        img=img,
+                        link=link
+                    )
+                    certificate.save()
 
-                print("Education Form - OK\n", institution, subject_area, specialization, qualification,
-                      date_start if date_start else None, date_end if date_end else None, img, link)
-            else:
-                print('Education Form is Empty')
-
+                    print("Education Form - OK\n", institution, subject_area, specialization, qualification,
+                          date_start if date_start else None, date_end if date_end else None, img, link)
+                else:
+                    print('Education Form is Empty')
         return redirect('/client/edit')
     else:
-        print('client_edit_education - request.GET')
         response['client_img'] = load_client_img(client_instance)
         response['data'] = load_education_page(client_instance)
 
@@ -309,48 +298,47 @@ def client_edit_education(request):
 
 def client_edit_experience(request):
     response = csrf(request)
-    response['client_img'] = load_client_img(request.user)
+    client_instance = client_check(request.user)
 
     if request.method == 'POST':
-        print("save_client_edit_experience - request POST")
+        arr = pars_exp_request(request.POST)  # list of dictionaries
 
-        arr = pars_exp_request(request.POST)
-        for dic in arr:
-            organisation = dic['experience_1']
-            position = dic['experience_3']
-            start_date = dic['exp_date_start']
-            end_date = dic['exp_date_end']
-            duties = dic['experience_4']
+        if any(arr):
+            Experience.objects.all().delete()
 
-            if any([organisation, position, start_date, end_date, duties]):
-                client = Client.objects.get(user_client=request.user)
+            for dic in arr:
+                organisation = dic['experience_1']
+                position = dic['experience_3']
+                start_date = dic['exp_date_start']
+                end_date = dic['exp_date_end']
+                duties = dic['experience_4']
 
-                experiences = Experience(
-                    client_exp=client,
-                    name=organisation,
-                    position=position,
-                    start_date=start_date if start_date else None,
-                    end_date=end_date if end_date else None,
-                    duties=duties if duties else None
-                )
-                experiences.save()
+                if any(dic.values()):
+                    experiences = Experience(
+                        client_exp=client_instance,
+                        name=organisation,
+                        position=position,
+                        start_date=start_date if start_date else None,
+                        end_date=end_date if end_date else None,
+                        duties=duties if duties else None
+                    )
+                    experiences.save()
 
-                spheres = dic['experience_2']
-                for s in spheres:
-                    if s:
-                        """ Save ManyToManyField 'sphere' """
-                        sp = Sphere(sphere_word=s)
-                        sp.save()
-                        experiences.sphere.add(sp)
+                    spheres = dic['experience_2']
+                    for s in spheres:
+                        if s:
+                            """ Save ManyToManyField 'sphere' """
+                            sp = Sphere(sphere_word=s)
+                            sp.save()
+                            experiences.sphere.add(sp)
 
-                print("Experience Form - OK\n", organisation, spheres, position, start_date if start_date else None,
-                      end_date if end_date else None, duties if duties else None)
-            else:
-                print('Experience Form is Empty')
-
+                    print("Experience Form - OK\n", organisation, spheres, position, start_date if start_date else None,
+                          end_date if end_date else None, duties if duties else None)
+                else:
+                    print('Experience Form is Empty')
         return redirect('/client/edit')
     else:
-        print('save_client_edit_experience - request GET')
+        response['client_img'] = load_client_img(client_instance)
 
     return render(request, 'client/client_edit_experience.html', response)
 
@@ -492,8 +480,8 @@ class FormEducation(TemplateView):
 
     def post(self, request):
         print("FormEducation.POST: %s" % request.POST)
-        client_instance = client_check(request.user)
 
+        client_instance = client_check(request.user)
         form_set_edu = EducationFormSet(request.POST)
         form_set_cert = CertificateFormSet(request.POST, request.FILES)
 
@@ -511,6 +499,8 @@ class FormEducation(TemplateView):
                     edu_inst.client_edu = client_instance
                     """ Save Education instance """
                     edu_inst.save()
+        else:
+            print("FormSet_Edu not Valid")
 
         if form_set_cert.is_valid():
             print("FormSet_Cert - OK")

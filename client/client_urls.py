@@ -28,7 +28,7 @@ urlpatterns = [
     path(r'settings/', views.settings_menu, name='settings_menu'),
     path(r'settingsset/', views.set_settings, name='settings_set'),
 
-    
+
     ##Poland urls
     path('resumes/', resumes_list, name='resumes_list_url'),
     path('resumes/<str:slug>/', resume_detail, name='resume_detail_url'),
