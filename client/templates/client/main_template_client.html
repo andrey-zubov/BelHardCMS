@@ -114,7 +114,7 @@
 
 </header>
     <section class="content" style="margin-top: 40px">
-        {% block content %}
+
             {%if settings.tasks == True %}
                     {%if readtask != 0 %}
                         <div class="notification" id="task_notification"><h2> Новые задачи:  {{ readtask }} </h2> <span class="close" id="close_task"></span></div>
@@ -133,8 +133,9 @@
                         {% endif %}
                         </div>
                 {% endif %}
+ {% block content %}
 
-
+ {% endblock %}
             <!-- There is KOSTYL from Poland))-->
 
             {% if status %}
@@ -160,7 +161,7 @@
                 </nav>
             </div>
         </div>
-        {% endblock %}
+
     </section>
 
 </body>

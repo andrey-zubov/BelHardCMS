@@ -251,7 +251,6 @@ class Resume(models.Model): ##Test table
     vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
     vacancies_accept = models.ManyToManyField('Vacancy', blank=True, related_name='accept_for_resume')
     vacancies_reject = models.ManyToManyField('Vacancy', blank=True, related_name='reject_for_resume')
-    vacancies_all = models.ManyToManyField('Vacancy', blank=True, related_name='all_for_resume')
     notification = models.ManyToManyField('Vacancy', blank=True, related_name='notifications_for_resume')
 
     def __str__(self):
@@ -430,11 +429,6 @@ class Settings(models.Model):
     suggestions = models.BooleanField(default=True)
     meetings = models.BooleanField(default=True)
 
-    name_setting = models.TextField(max_length=50, blank=True, null=True)
-    name_setting_status = models.BooleanField(default=True)
-    tumbler_on_off = models.CharField(max_length=50, blank=True, null=True)
 
-    def __str__(self):
-        return self.name_setting
 
 
