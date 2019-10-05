@@ -293,12 +293,13 @@ class Tasks(models.Model):
                 pass
             elif str(akttime)[2:4] >= '01':
                 self.checkstatus = False
+            self.save()
 
     @property
     def check_readstatus(self):
             if self.readtask == False:
                 self.readtask = True
-                print('uyu')
+                self.save()
 
 
 class SubTasks(models.Model):
