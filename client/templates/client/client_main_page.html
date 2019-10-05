@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,10 +19,22 @@
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>
 
+{% extends 'client/main_template_client.html' %}
+
+{% block title %}
+    Edit education
+{% endblock %}
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+
     {% load staticfiles %}
     <title>{% block title %}Client{% endblock %} - HR-System</title>
     <link rel="stylesheet" href="/static/client/style/style.css">
 </head>
+
 
 <style>
 
@@ -135,7 +148,82 @@
         <a href="{% url 'opinion_list' %}"><button class="buttons review">Оставить отзыв</button></a>
     </article>
 
+<body style="font-size: large">
+
+<div class="p-sm-3 pt-sm-5">
+    <nav class="nav fixed-top" style="background-color: #344955">
+        <a class="nav-link text-white" href="/">HR-System</a>
+        <a class="nav-link text-white" href="#">Задачи</a>
+        <a class="nav-link text-white" href="{% url 'resumes_list_url' %}" id="clearnotif">Предложения</a>
+        <a class="nav-link text-white" href="#">Собеседования</a>
+        <a class="nav-link text-white" href="#">Связаться с КЦ</a>
+        <a class="nav-link text-white" href="{% url 'client_profile' %}">
+            <img src="{{ client_img }}" alt="img" class="rounded-circle" height="64">
+            Клиент
+        </a>
+    </nav>
+</div>
+
+<div class="p-sm-3 pt-sm-5">
+    <section class="content">
+        {% block content %}{% endblock %}
+    </section>
+</div>
+
+
+<!-- There is KOSTYL from Poland))-->
+
+{% if status %}
+<div class="p-sm-5 pt-sm-5 fixed-bottom" >
+    {% if notification %}
+        <a href="{% url 'resumes_list_url' %}" id="clearnotif1">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+           Новых предложений: <strong> {{ notification }}</strong>.
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        </a>
+    {% endif %}
+</div>
+{% endif %}
+
+<div class="p-sm-3 pt-sm-5">
+    <nav class="nav fixed-bottom" style="background-color: #344955">
+        <a class="nav-link text-white" href="{% url 'help_list_url' %}">Помощь<a class="offset-md-1"></a></a>
+        <a class="nav-link text-white" href="{% url 'settings_list_url' %}">Настройки<a class="offset-md-1"></a></a>
+        <a class="nav-link text-white" href="#">Оставить отзыв</a>
+    </nav>
+</div>
+
+<script>
+$('document').ready(function () {
+
+    /*actions for buttons*/
+    $('#clearnotif').on('click',function () {
+        $.ajax({'url':'/client/viewed/',
+                'data':{'action': 'clear'},
+                success:function (data) {
+                    console.log(data);
+                }})
+
+    });
+
+    $('#clearnotif1').on('click',function () {
+        $.ajax({'url':'/client/viewed/',
+                'data':{'action': 'clear'},
+                success:function (data) {
+                    console.log(data);
+                }})
+
+    });
+
+})
+
+</script>
+
 </body>
+
 
 <script>
 $('document').ready(function () {
@@ -189,3 +277,12 @@ $('document').ready(function () {
 });
 </script>
 </html>
+
+</html>
+
+{% block content %}
+
+    <h3>Main Page Client</h3>
+
+{% endblock %}
+

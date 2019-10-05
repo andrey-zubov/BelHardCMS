@@ -1,0 +1,32 @@
+{% extends 'client/client_main_page.html' %}
+
+{% block title %}
+    Client resumes list
+{% endblock %}
+
+{% block content %}
+    <h2 class="mb-5 offset-md-0">Выбор резюме</h2>
+    {% for resume in resumes %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><a href="{{ resume.get_absolute_url }}">{{ resume.state }}</a></h5>
+            </div>
+            <div class="card-body">
+                <!--<b id="addition"> </b>
+                    <script>
+                        var x = {{ resume.vacancies_in_waiting.count }};
+                        var y = {{ resume.vacancies_accept.count }};
+                        var z = {{ resume.vacancies_reject.count }};
+                        s = x + y + z;
+                        document.getElementById("addition").innerHTML = s;
+                    </script>-->
+                <b>
+                    Всего: <a href="{{ resume.get_vacancies_list_url }}">{{ resume.vacancies_all.count }}</a> |
+                    <!--В ожидании: <a href="{{resume.get_absolute_url}}">{{ resume.vacancies_in_waiting.count }}</a>    |-->
+                    Принято: <a href="{{ resume.get_accept_url }}">{{ resume.vacancies_accept.count }}</a>    |
+                    Отклонено: <a href="{{ resume.get_reject_url }}">{{ resume.vacancies_reject.count }}</a>  |
+                </b>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
