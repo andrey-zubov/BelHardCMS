@@ -7,13 +7,14 @@ from django.template.context_processors import csrf
 from django.views import View
 from django.views.generic import TemplateView
 
-from client.forms import (OpinionForm, AnswerForm, MessageForm, UploadImgForm, EducationFormSet,
-                          CertificateFormSet, SabClassFormSet, CertificateForm)
+from client.edit.edit_forms import (EducationFormSet, CertificateForm, SabClassFormSet, CertificateFormSet,
+                                    UploadImgForm)
+from client.edit.parsers import (pars_cv_request, pars_edu_request, pars_exp_request)
+from client.edit.utility import (check_input_str, check_home_number, check_telegram, check_phone)
+from client.edit.work_with_db import (client_check, load_client_img, load_edit_page, load_skills_page,
+                                      load_cv_edition_page, load_education_page)
+from client.forms import (OpinionForm, AnswerForm, MessageForm)
 from client.models import *
-from client.utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
-                            pars_edu_request, pars_exp_request)
-from client.work_with_db import client_check, load_client_img, load_edit_page, load_skills_page, load_cv_edition_page, \
-    load_education_page
 
 
 def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
@@ -154,7 +155,7 @@ def client_edit_main(request):
         response['client_img'] = load_client_img(client_instance)
         response['data'] = load_edit_page(client_instance)
 
-    return render(request=request, template_name='client/client_edit_main.html', context=response)
+    return render(request=request, template_name='client/edit_forms/client_edit_main.html', context=response)
 
 
 def client_edit_skills(request):
@@ -183,7 +184,7 @@ def client_edit_skills(request):
         response['client_img'] = load_client_img(client_instance)
         response['data'] = load_skills_page(client_instance)
 
-    return render(request=request, template_name='client/client_edit_skills.html', context=response)
+    return render(request=request, template_name='client/edit_forms/client_edit_skills.html', context=response)
 
 
 def client_edit_photo(request):
@@ -204,7 +205,7 @@ def client_edit_photo(request):
         response['client_img'] = load_client_img(client_instance)
         response['form'] = UploadImgForm()
 
-    return render(request=request, template_name='client/client_edit_photo.html', context=response)
+    return render(request=request, template_name='client/edit_forms/client_edit_photo.html', context=response)
 
 
 def client_edit_cv(request):
@@ -242,7 +243,7 @@ def client_edit_cv(request):
         response['client_img'] = load_client_img(client_instance)
         response['data'] = load_cv_edition_page(client_instance)
 
-    return render(request, 'client/client_edit_cv.html', response)
+    return render(request, 'client/edit_forms/client_edit_cv.html', response)
 
 
 def client_edit_education(request):
@@ -293,7 +294,7 @@ def client_edit_education(request):
         response['client_img'] = load_client_img(client_instance)
         response['data'] = load_education_page(client_instance)
 
-    return render(request, 'client/client_edit_education.html', response)
+    return render(request, 'client/edit_forms/client_edit_education.html', response)
 
 
 def client_edit_experience(request):
@@ -340,7 +341,7 @@ def client_edit_experience(request):
     else:
         response['client_img'] = load_client_img(client_instance)
 
-    return render(request, 'client/client_edit_experience.html', response)
+    return render(request, 'client/edit_forms/client_edit_experience.html', response)
 
 
 class MessagesView(View):
@@ -464,7 +465,7 @@ def tasks(request):
 
 
 class FormEducation(TemplateView):
-    template_name = 'client/form_edu.html'
+    template_name = 'client/edit_forms/form_edu.html'
 
     def get(self, request, *args, **kwargs):
         client_instance = client_check(request.user)

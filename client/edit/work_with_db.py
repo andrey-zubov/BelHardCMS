@@ -5,7 +5,7 @@ from time import perf_counter
 from BelHardCRM.settings import MEDIA_URL
 from client.models import (Client, Sex, Citizenship, FamilyState, Children, City, State, Telephone, Skills, Education,
                            Certificate, CV)
-from client.utility import check_if_str
+from client.edit.utility import check_if_str
 
 
 def client_check(user):
