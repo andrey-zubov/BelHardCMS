@@ -22,7 +22,7 @@ urlpatterns = [
     path('login/', client_login),
     path('logout/', client_logout),
     path('tasks/', tasks, name='tasks_list'),
-    path('edit/form_edu/', views.form_education, name='form_edu'),
+    #path('edit/form_edu/', views.form_education, name='form_edu'),
     path(r'checktask/', views.checktask),
     path(r'checknotifications/', views.checknotifications),
     path(r'settings/', views.settings_menu, name='settings_menu'),

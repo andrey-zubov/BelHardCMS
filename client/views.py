@@ -2,7 +2,7 @@ import logging
 from collections import defaultdict
 from time import perf_counter
 
-from PIL import Image
+#from PIL import Image
 from django.contrib import auth
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
@@ -40,16 +40,15 @@ def client_main_page(request):  #!!!!!!!!!!!!!!!!!!!!!Alert
    
     #Poland
     resumes = Resume.objects.all()
-    notification = 0
+    suggestions = 0
     for resume in resumes:
-        notification += resume.notification.count()
-    response['notification'] = notification
-    response['status'] = 1 if Settings.objects.get().tumbler_on_off == 'on' else 0
-
+        suggestions += resume.notification.count()
+    response['unread_suggestions'] = suggestions
     client_instance = client_check(request.user)
     response['client_img'] = load_client_img(client_instance)
     context.update(response)
-    return render(request=request, template_name='client/client_main_page.html', context=context)
+    print(context['unread_suggestions'])
+    return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
 
@@ -535,12 +534,12 @@ class FormEducation(TemplateView):
 
         return redirect(to='/client/edit/form_edu')
 
-    else:
-        response['edu_form'] = EducationFormSet()
-        response['certificate'] = CertificateFormSet()
-        response['inlineEduCert'] = inlineEduCert()
+    # else:
+    #     response['edu_form'] = EducationFormSet()
+    #     response['certificate'] = CertificateFormSet()
+    #     response['inlineEduCert'] = inlineEduCert()
 
-    return render(request, 'client/form_edu.html', response)
+   # return render(request, 'client/form_edu.html', response)
 
 
 def load_client_img(req):
@@ -578,8 +577,12 @@ def checknotifications(request):
     chat = Chat.objects.get(members=request.user)
     unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
     readtask = len(Tasks.objects.filter(user=request.user, readtask=False))
-    #data = {'unread_mes': unread_messages, 'unread_task': readtask}
-    data = [unread_messages, readtask]
+    resumes = Resume.objects.all()
+    suggestions = 0
+    for resume in resumes:
+        suggestions += resume.notification.count()
+
+    data = [unread_messages, readtask, suggestions]
 
     return HttpResponse(data)
 
