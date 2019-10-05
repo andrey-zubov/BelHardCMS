@@ -6,7 +6,7 @@ from django.template.context_processors import csrf
 from django.views.generic import View, TemplateView
 
 from client.forms import (OpinionForm, AnswerForm, MessageForm, UploadImgForm, EducationFormSet,
-                          CertificateFormSet, SabClassFormSet)
+                          CertificateFormSet, SabClassFormSet, CertificateForm)
 from client.models import *
 from client.utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
                             pars_edu_request, pars_exp_request)
@@ -463,7 +463,8 @@ class FormEducation(TemplateView):
         load_data = load_education_page(client_instance)['cl_edu']
         response = {'client_img': load_client_img(client_instance),
                     'edu_form': EducationFormSet(initial=load_data),
-                    'certificate': CertificateFormSet(initial=load_data),
+                    # 'certificate': CertificateFormSet(initial=load_data),
+                    'certificate': CertificateForm(initial=load_data[0]),
                     'sab_class_form': SabClassFormSet(initial=load_data),
                     }
         return render(request, self.template_name, response)
