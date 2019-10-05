@@ -277,13 +277,6 @@ class Help(models.Model):
     def __str__(self):
         return self.question
 
-class Settings(models.Model):
-    name_setting = models.TextField(max_length=50)
-    name_setting_status = models.BooleanField(default=True)
-    tumbler_on_off = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name_setting
 
 
 #########End Poland Task 1 & 2 ##############
@@ -436,5 +429,12 @@ class Settings(models.Model):
     tasks = models.BooleanField(default=True)
     suggestions = models.BooleanField(default=True)
     meetings = models.BooleanField(default=True)
+
+    name_setting = models.TextField(max_length=50, blank=True, null=True)
+    name_setting_status = models.BooleanField(default=True)
+    tumbler_on_off = models.CharField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return self.name_setting
 
 
