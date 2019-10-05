@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
-import re
 from django.utils import timezone
 
 UserModel = get_user_model()
@@ -224,8 +223,7 @@ class State(models.Model):
         return self.state_word
 
 
-######Poland Task 1 & 2 ##############
-
+# Poland Task 1 & 2 ##############
 
 class Vacancy(models.Model):
     state = models.CharField(max_length=100)
@@ -279,66 +277,7 @@ class Help(models.Model):
         return self.question
 
 
-#########End Poland Task 1 & 2 ##############
-
-
-######Poland Task 1 & 2 ##############
-
-
-class Vacancy(models.Model):
-    state = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True)
-    salary = models.CharField(max_length=20)
-    organization = models.CharField(max_length=100)
-    address = models.CharField(max_length=200, null=True)
-    employment = models.CharField(max_length=100, null=True)
-    description = models.TextField(max_length=1000)
-    skills = models.CharField(max_length=100, null=True)
-    requirements = models.TextField(max_length=1000, null=True)
-    duties = models.TextField(max_length=1000, null=True)
-    conditions = models.TextField(max_length=1000, null=True)
-
-    def __str__(self):
-        return '{}'.format(self.state)
-
-    def get_absolute_url(self):
-        return reverse('vacancy_detail_url', kwargs={'slug': self.slug})
-
-
-class Resume(models.Model): ##Test table
-    state = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True)
-    vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
-    vacancies_accept = models.ManyToManyField('Vacancy', blank=True, related_name='accept_for_resume')
-    vacancies_reject = models.ManyToManyField('Vacancy', blank=True, related_name='reject_for_resume')
-    notification = models.ManyToManyField('Vacancy', blank=True, related_name='notifications_for_resume')
-
-    def __str__(self):
-        return self.state
-
-    def get_absolute_url(self):
-        return reverse('resume_detail_url', kwargs={'slug': self.slug})
-
-    def get_accept_url(self):
-        return reverse('accepted_vacancies_url', kwargs={'slug': self.slug})
-
-    def get_reject_url(self):
-        return reverse('rejected_vacancies_url', kwargs={'slug': self.slug})
-
-    def get_vacancies_list_url(self):
-        return reverse('vacancies_list_url', kwargs={'slug': self.slug})
-
-
-class Help(models.Model):
-    question = models.TextField(max_length=1000)
-    answer = models.CharField(max_length=1000)
-
-    def __str__(self):
-        return self.question
-
-
-
-#########End Poland Task 1 & 2 ##############
+# End Poland Task 1 & 2 ##############
 
 
 class Client(models.Model):
@@ -368,9 +307,6 @@ class Client(models.Model):
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
     # resumes
     resumes = models.ForeignKey(Resume, on_delete=models.SET_NULL, null=True, blank=True)
-    # resumes
-    resumes = models.ForeignKey(Resume, on_delete=models.SET_NULL, null=True, blank=True)
-
 
     def __str__(self):
         return "%s %s %s" % (self.last_name, self.name, self.patronymic)
@@ -437,19 +373,12 @@ class Answer(models.Model):
         return self.text[:10]
 
 
-
-
 class Tasks(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True)
     title = models.TextField(max_length=200)
     time = models.DateTimeField()
-    date = models.DateField()
+    date = models.DateField(null=True, blank=True)
     comment = models.TextField(max_length=300, blank=True)
-    status = models.BooleanField(default=False) #задача, которая не выполнена
-    endtime = models.DateTimeField(blank=True, null=True)
-    checkstatus = models.BooleanField(default=True)#статус активен, если можем после выоплнения задачи в течении 60 сек вернуть в активную задачу
-    readtask = models.BooleanField(default=False)
-
     status = models.BooleanField(default=False)  # задача, которая не выполнена
     endtime = models.DateTimeField(blank=True, null=True)
     checkstatus = models.BooleanField(
@@ -460,7 +389,7 @@ class Tasks(models.Model):
     def show_all(self):
         return self.subtask.all()
 
-    @property
+    # @property
     def checktime(self):
         if self.endtime != None:
             akttime = timezone.now() - self.endtime
@@ -470,23 +399,7 @@ class Tasks(models.Model):
                 self.checkstatus = False
             self.save()
 
-    @property
-    def check_readstatus(self):
-            if self.readtask == False:
-                self.readtask = True
-                self.save()
-
-    @property
-    def checktime(self):
-        if self.endtime != None:
-            akttime = timezone.now() - self.endtime
-            if self.checkstatus == False:
-                pass
-            elif str(akttime)[2:4] >= '01':
-                self.checkstatus = False
-            self.save()
-
-    @property
+    # @property
     def check_readstatus(self):
         if self.readtask == False:
             self.readtask = True
@@ -505,24 +418,19 @@ class SubTasks(models.Model):
     #    return self.telephone_number
 
 
-
-class Settings(models.Model):
-    user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
-    messages = models.BooleanField(default=True)
-    tasks = models.BooleanField(default=True)
-    suggestions = models.BooleanField(default=True)
-    meetings = models.BooleanField(default=True)
-
-    name_setting = models.TextField(max_length=50, blank=True, null=True)
-    name_setting_status = models.BooleanField(default=True)
-    tumbler_on_off = models.CharField(max_length=50, blank=True, null=True)
-
-    def __str__(self):
-        return self.name_setting
-
-
-
-
+# class Settings(models.Model):
+#     user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
+#     messages = models.BooleanField(default=True)
+#     tasks = models.BooleanField(default=True)
+#     suggestions = models.BooleanField(default=True)
+#     meetings = models.BooleanField(default=True)
+#
+#     name_setting = models.TextField(max_length=50, blank=True, null=True)
+#     name_setting_status = models.BooleanField(default=True)
+#     tumbler_on_off = models.CharField(max_length=50, blank=True, null=True)
+#
+#     def __str__(self):
+#         return self.name_setting
 
 
 class Settings(models.Model):
