@@ -10,7 +10,7 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-   <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
             integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
             crossorigin="anonymous"></script>
@@ -20,60 +20,43 @@
 
     {% load staticfiles %}
     <title>{% block title %}Client{% endblock %} - HR-System</title>
+    <link rel="stylesheet" href="/static/client/style/style.css">
 </head>
 
 <style>
+
 .task {
     position: relative;
 }
-.messages_count{
+.counter{
     top: -8px;
     right: -8px;
     border-radius: 50%;
-    font-size: 11px;
+    font-size: 12px;
     position: absolute;
     font-weight: bold;
-    width: 15px;
-    height: 15px;
+
+
+    width: 17px;
+    height: 17px;
     color: #000000;
-    text-align: center;
-    background: greenyellow;
-}
-.counter{
-    top: 2px;
-    right: -7px;
-    border-radius: 50%;
-    font-size: 6px;
-    position: absolute;
-    font-weight: bold;
-    width: 10px;
-    height: 10px;
-    color: #fff;
+
     text-align: center;
     background: red;
     border: 0.5px solid black;
 }
-.messages_notification{
-    width:80%;
-    height:10%;
-    color: black;
-    text-align: center;
-    background:greenyellow;
-    border: 3px #000000 solid;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -khtml-border-radius:10px;
-    border-radius: 10px;
-}
-
-.task-notification{
-    width: 450px;
-    background: lightcoral;
+.notification{
+    margin-top: 10px;
+    width: 50%;
+    background: #fe6060;
     text-align: center;
     border-radius: 15px;
     margin: 0 auto;
     position: relative;
+    color: white;
+    border: 1px #000000 solid;
 }
+
 .close {
   position: absolute;
   right: 4px;
@@ -82,9 +65,11 @@
   height: 10px;
   opacity: 0.3;
 }
+
 .close:hover {
   opacity: 1;
 }
+
 .close:before, .close:after {
   position: absolute;
   left: 0px;
@@ -93,55 +78,90 @@
   width: 2px;
   background-color: #333;
 }
+
 .close:before {
   transform: rotate(45deg);
 }
+
 .close:after {
   transform: rotate(-45deg);
 }
+
+.messages {
+    position: relative;
+}
 </style>
 
+<body style="font-size: large">
 
-<div class="p-sm-3 pt-sm-5">
-    <nav class="nav fixed-top" style="background-color: #344955">
-        <a class="nav-link text-white" href="/">HR-System</a>
-        <a class="nav-link text-white" href="#">Задачи</a>
-        <a class="nav-link text-white" href="#">Предложение</a>
-        <a class="nav-link text-white" href="#">Собеседования</a>
-        <a class="nav-link text-white" href="{% url 'contact_with_centre' %}"> <div class="messages"> Связаться с КЦ <div class="messages_count" id="mes_count" hidden="true"> {{ unread_messages }} </div></div></a>
-        <a class="nav-link text-white" href="{% url 'client_profile' %}">
-            <img src="{{ client_img }}" alt="img" class="rounded-circle" height="64">
-            Клиент
-        </a>
-    </nav>
-</div>
+            <div class="p-sm-3 pt-sm-5">
+                <nav class="nav fixed-top" style="background-color: #344955; width: 100%; margin: 0 auto; max-width: 900px; display: flex; justify-content: space-between; align-items: center;">
+                    <a class="nav-link text-white" href="/">HR-System</a>
+                    <a class="nav-link text-white" href="{% url 'tasks_list' %}"> <div class="task"> Задачи <div class="counter" id="task_count" hidden="true"> {{ readtask }} </div></div></a>
+                    <a class="nav-link text-white" href="#">Предложение</a>
+                    <a class="nav-link text-white" href="#">Собеседования</a>
+                    <a class="nav-link text-white" href="{% url 'contact_with_centre' %}"> <div class="messages"> Связаться с КЦ <div class="counter" id="mes_count" hidden="true"> {{ unread_messages }} </div></div></a>
+                    <a class="nav-link text-white" href="{% url 'client_profile' %}">
+                        <img src="{{ client_img }}" alt="img" class="rounded-circle" height="64">
+                        Клиент
+                    </a>
+                </nav>
+            </div>
 
-<section class="content">
-        {% block content %}
-        <div id="check_notifications">
-        {% if unread_messages != 0 %}
-        <div class="messages_notification" id="mes_not">У Вас  {{ unread_messages }}  новых сообщения от карьерного центра </div>
-        {% endif %}
-        </div>
-        {% endblock %}
-</section>
+    <div class="p-sm-3 pt-sm-5">
+        <section class="content">
+            {% block content %}
+                {%if settings.tasks == True %}
+                    {%if readtask != 0 %}
+                        <div class="notification" id="task_notification"><h2> Новые задачи:  {{ readtask }} </h2> <span class="close" id="close_task"></span></div>
+                    {% endif %}
+                {% endif %}
+                <div id="check_notifications">
+                {%if settings.messages == True %}
+                    {% if unread_messages != 0 %}
+                        <div class="notification" id="mes_notification"><h2>Новые сообщения:  {{ unread_messages }} </h2><span class="close" id="close_mes"></span></div>
+                    {% endif %}
+                {% endif %}
+                </div>
+            {% endblock %}
+        </section>
+    </div>
 
-<div class="p-sm-3 pt-sm-5">
+    </article>
 
-</div>
+    <article class="container__buttons">
+        <button class="buttons help">Помощь</button>
+        <a href="{% url 'settings_menu' %}"><button class="buttons" >Настройки</button></a>
+        <a href="{% url 'opinion_list' %}"><button class="buttons review">Оставить отзыв</button></a>
+    </article>
+
+</body>
+
 <script>
-
-    $('document').ready(function () {
-        $('.close').on('click', function () {
-            $('#check_notifications').hide();
+$('document').ready(function () {
+    $('#close_task').on('click', function () {
+        $('#task_notification').hide()
+    });
+    $('#close_mes').on('click', function () {
+            $('#mes_notification').hide();
         });
         console.log('fuf');
         $.ajax({
                 'url': '/client/checknotifications/',
                 success: function (data) {
-                    if (data != 0) {
+                    if (data[0] != 0) {
                         document.getElementById('mes_count').hidden = false;
-                        document.getElementById('mes_count').innerHTML =  data;
+                        document.getElementById('mes_count').innerHTML =  data[0];
+                    }
+                    else {
+                        document.getElementById('mes_count').hidden = true;
+                    }
+                    if (data[1] != 0) {
+                        document.getElementById('task_count').hidden = false;
+                        document.getElementById('task_count').innerHTML =  data[1];
+                    }
+                    else {
+                        document.getElementById('task_count').hidden = true;
                     }
                 }
             });
@@ -149,60 +169,23 @@
             $.ajax({
                 'url': '/client/checknotifications/',
                 success: function (data) {
-                    if (data != 0) {
+                    if (data[0] != 0) {
                         document.getElementById('mes_count').hidden = false;
-                        document.getElementById('mes_count').innerHTML =  data;
+                        document.getElementById('mes_count').innerHTML =  data[0];
                     }
                     else {
                         document.getElementById('mes_count').hidden = true;
                     }
+                    if (data[1] != 0) {
+                        document.getElementById('task_count').hidden = false;
+                        document.getElementById('task_count').innerHTML =  data[1];
+                    }
+                    else {
+                        document.getElementById('task_count').hidden = true;
+                    }
                 }
             });
         }, 10000);
-
-    });
-
-
-    /*var reloadData = function() {
-        $('#check_notifications').load(document.URL + '#check_notifications');
-        console.log("reload");
-    }
-
-    setInterval('reloadData()', 10000)*/
-
-<body style="font-size: large">
-
-            <div class="p-sm-3 pt-sm-5">
-                <nav class="nav fixed-top" style="background-color: #344955; width: 100%; margin: 0 auto; max-width: 900px; display: flex; justify-content: space-between; align-items: center;">
-                    <a class="nav-link text-white" href="/">HR-System</a>
-                    <a class="nav-link text-white" href="{% url 'tasks_list' %}"> <div class="task"> Задачи  {%if readtask != 0 %} <div class="counter"> {{ readtask }} </div>{% endif %}</div></a>
-                    <a class="nav-link text-white" href="#">Предложение</a>
-                    <a class="nav-link text-white" href="#">Собеседования</a>
-                    <a class="nav-link text-white" href="#">Связаться с КЦ</a>
-                    <a class="nav-link text-white" href="{% url 'client_profile' %}">
-                        <img src="{{ client_img }}" alt="img" class="rounded-circle" height="64">
-                        Клиент
-                    </a>
-                </nav>
-            </div>
-    {%if readtask != 0 %}
-       <div class="task-notification"><h1>У Вас  {{ readtask }} новые задачи </h1> <span class="close"></span></div>
-    {% endif %}
-    <div class="p-sm-3 pt-sm-5">
-        <section class="content">
-            {% block content %}{% endblock %}
-        </section>
-    </div>
-
-
-</script>
-</body>
-
-<script>
-$('document').ready(function () {
-    $('.close').on('click', function () {
-        $('.task-notification').hide()
-    });
 });
 </script>
 </html>

@@ -314,7 +314,7 @@ class SubTasks(models.Model):
 
 
 class Settings(models.Model):
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True)
+    user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
     messages = models.BooleanField(default=True)
     tasks = models.BooleanField(default=True)
     suggestions = models.BooleanField(default=True)

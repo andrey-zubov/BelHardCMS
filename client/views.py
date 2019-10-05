@@ -20,10 +20,11 @@ from django.contrib import auth
 def client_main_page(request):
     response = csrf(request)
     response['client_img'] = load_client_img(request.user)
-    readtask = len(Tasks.objects.filter(user = request.user, readtask = False))
+    readtask = len(Tasks.objects.filter(user = request.user, readtask=False))
     chat = Chat.objects.get(members=request.user)
     unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
-    context = {'response': response, 'unread_messages': unread_messages, 'readtask' : readtask}
+    settings = Settings.objects.get(user=request.user)
+    context = {'response': response, 'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
     return render(request=request, template_name='client/client_main_page.html', context=context)
 
 
@@ -467,9 +468,6 @@ def tasks(request):
     task = Tasks.objects.filter(user=request.user, status=False)
     task_false = Tasks.objects.filter(user=request.user, status=True) #status=False)
     task_false = sorted(task_false, key=lambda x:x.endtime,  reverse=True)
-
-
-
     return render(request, 'client/tasks.html', context = {'task' : task,  'task_false': task_false})
 
 
@@ -556,13 +554,39 @@ def checktask(request):
     task.save()
     return HttpResponse(task)
 
+
 def checknotifications(request):
     chat = Chat.objects.get(members=request.user)
     unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
+    readtask = len(Tasks.objects.filter(user=request.user, readtask=False))
+    #data = {'unread_mes': unread_messages, 'unread_task': readtask}
+    data = [unread_messages, readtask]
 
-    return HttpResponse(unread_messages)
+    return HttpResponse(data)
+
+
+def settings_menu(request):
+    settings = Settings.objects.get(user=request.user)
+    context = {'settings': settings, }
+    return render(request=request, template_name='client/client_settings.html', context=context)
+
 
 def set_settings(request):
-    #request.GET
-    return HttpResponse()
+    setting = request.GET['setting']
+    status = request.GET['state'] == 'true'
+    settings = Settings.objects.get(user=request.user)
+
+    if setting == 'messages':
+        settings.messages = status
+    elif setting == 'tasks':
+        settings.tasks = status
+    elif setting == 'suggestions':
+        settings.suggestions = status
+    elif setting == 'meetings':
+        settings.meetings = status
+
+    settings.save()
+
+    return HttpResponse(settings)
+
 
