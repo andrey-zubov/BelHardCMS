@@ -10,7 +10,7 @@ from django.views.generic import TemplateView
 from client.forms import (OpinionForm, AnswerForm, MessageForm, UploadImgForm, EducationFormSet,
                           CertificateFormSet, CertificateForm, SabClassFormSet)
 from client.forms import (OpinionForm, AnswerForm, MessageForm, UploadImgForm, EducationFormSet,
-                          CertificateFormSet, SabClassFormSet)
+                          CertificateFormSet, SabClassFormSet, CertificateForm)
 from client.models import *
 from client.utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
                             pars_edu_request, pars_exp_request)
