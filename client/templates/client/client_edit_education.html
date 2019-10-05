@@ -14,6 +14,7 @@
             var origin = $("#origin_div").clone();
             var cert_origin = $("#cert_origin").clone();
 
+
             $("#add_more").on("click", function () {
                 var add = origin.clone();
                 var current_div = add.children('div');
@@ -23,6 +24,7 @@
                     var element = $(current_div[i]).children('input');
                     var attr_name = $(element).attr('name');
                     $(element).attr('name', attr_name + count);
+                    $(element).attr('value', '');
                     {##}
                     {#if (i === 6) {  // img#}
                     {#    var element_img = $(current_div[i]).children('div').children('div').children('input');#}
@@ -80,7 +82,7 @@
                     <div class="form-group">
                         <label for="id_institution">Учебное заведение</label>
                         <input type="text" class="form-control" id="id_institution" name="institution"
-                               value="{{ edu.institution }}">
+                        value="{{ edu.institution }}">
                     </div>
                     <div class="form-group">
                         <label for="id_subject_area">Предметная область</label>

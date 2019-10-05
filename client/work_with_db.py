@@ -115,11 +115,11 @@ def load_education_page(client):
         print("load_education_page()")
         response = defaultdict()
         if client:
-            edus = [i for i in Education.objects.filter(client_edu=client).values()]
+            edus = [i for i in Education.objects.filter(client_edu=client).values()]    #расш
             response['cl_edu'] = edus
 
-            edu_id = [e['id'] for e in response['cl_edu']]
-            certs = [[c for c in Certificate.objects.filter(education_id=i).values()] for i in edu_id]
+            edu_id = [e['id'] for e in response['cl_edu']]    #расш
+            certs = [[c for c in Certificate.objects.filter(education_id=i).values()] for i in edu_id]  #расш
             # print(certs)
             for e in edus:
                 # print("e: %s" % e)

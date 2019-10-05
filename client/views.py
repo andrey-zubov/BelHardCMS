@@ -504,3 +504,5 @@ class FormEducation(TemplateView):
             print("FormSet_Cert not Valid")
 
         return redirect(to='/client/edit/form_edu')
+
+

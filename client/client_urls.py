@@ -23,4 +23,5 @@ urlpatterns = [
     path('logout/', views.client_logout),
     path('tasks/', views.tasks, name='tasks_list'),
     path('edit/form_edu', FormEducation.as_view(), name='form_edu'),
+
 ]
