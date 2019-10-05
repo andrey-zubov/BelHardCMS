@@ -7,7 +7,7 @@ from django.template.context_processors import csrf
 from django.views.generic import View, TemplateView
 
 from client.forms import (OpinionForm, AnswerForm, MessageForm, UploadImgForm, EducationFormSet,
-                          CertificateFormSet, SabClassFormSet)
+                          CertificateFormSet, SabClassFormSet, CertificateForm)
 from client.forms import (OpinionForm, AnswerForm, MessageForm, SabClassFormset, UploadImgForm, EducationFormSet,
                           CertificateFormSet)
 from client.models import *
@@ -484,7 +484,8 @@ class FormEducation(TemplateView):
 
         response = {'client_img': load_client_img(client_instance),
                     'edu_form': EducationFormSet(initial=load_data),
-                    'certificate': CertificateFormSet(initial=load_data),
+                    # 'certificate': CertificateFormSet(initial=load_data),
+                    'certificate': CertificateForm(initial=load_data[0]),
                     'sab_class_form': SabClassFormSet(initial=load_data),
                     }
         return render(request, self.template_name, response)
