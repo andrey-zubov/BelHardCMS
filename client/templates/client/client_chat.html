@@ -25,52 +25,16 @@
     </div>
 
 <script>
-
+    var auto = false
+            function scroll (ths) {
+                auto = ths.scrollTop(ths.prop('scrollHeight')) + ths.clientHeight == ths.scrollHeight;
+            }
     $('document').ready(function () {
-        var auto = false
-        function scroll (ths) {
-            auto = ths.scrollTop(ths.prop('scrollHeight')) + ths.clientHeight == ths.scrollHeight;
-        }
+
         console.log('fuf');
-        $.ajax({
-                'url': '/client/checknotifications/',
-                success: function (data) {
-                    if (data[0] != 0) {
-                        document.getElementById('mes_count').hidden = false;
-                        document.getElementById('mes_count').innerHTML =  data[0];
-                    }
-                    else {
-                        document.getElementById('mes_count').hidden = true;
-                    }
-                    if (data[1] != 0) {
-                        document.getElementById('task_count').hidden = false;
-                        document.getElementById('task_count').innerHTML =  data[1];
-                    }
-                    else {
-                        document.getElementById('task_count').hidden = true;
-                    }
-                }
-            });
+
         setInterval(function(){
-            $.ajax({
-                'url': '/client/checknotifications/',
-                success: function (data) {
-                    if (data[0] != 0) {
-                        document.getElementById('mes_count').hidden = false;
-                        document.getElementById('mes_count').innerHTML =  data[0];
-                    }
-                    else {
-                        document.getElementById('mes_count').hidden = true;
-                    }
-                    if (data[1] != 0) {
-                        document.getElementById('task_count').hidden = false;
-                        document.getElementById('task_count').innerHTML =  data[1];
-                    }
-                    else {
-                        document.getElementById('task_count').hidden = true;
-                    }
-                }
-            });
+
         }, 10000);
 
 
