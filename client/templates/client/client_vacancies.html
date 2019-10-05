@@ -1,0 +1,17 @@
+{% extends 'client/client_main_page.html' %}
+
+{% block title %}
+    Vacancies for resume
+{% endblock %}
+
+{% block content %}
+    <h2 class="mb-5">Список всех предложений {{ resume.state }}:</h2>
+    {% for vacancy in resume.vacancies_all.all %}
+        {% include 'client/includes/vacancy_template.html' %}
+    {% endfor %}
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+      <div class="btn-group mr-2" role="group" aria-label="First group">
+        <a href="{% url 'resumes_list_url' %}" class="btn btn-secondary">Назад</a>
+      </div>
+    </div>
+{% endblock %}
