@@ -9,10 +9,9 @@ from django.template.context_processors import csrf
 
 from django.urls import reverse
 from django.views import View
-
-from .models import Vacancy, Resume
 from django.http import HttpResponse
 
+from .models import Vacancy, Resume
 
 from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 
@@ -29,10 +28,16 @@ from .utility import (check_input_str, check_home_number, check_telegram, check_
                       pars_edu_request, pars_exp_request)
 
 
-def client_main_page(request):
+def client_main_page(request):  #!!!!!!!!!!!!!!!!!!!!!Alert 
     response = csrf(request)
 
-    response['client_img'] = load_client_img(request.user)
+    readtask = len(Tasks.objects.filter(user = request.user, readtask=False))
+    chat = Chat.objects.get(members=request.user)
+    unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
+    settings = Settings.objects.get(user=request.user)
+    context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
+
+   
     #Poland
     resumes = Resume.objects.all()
     notification = 0
@@ -43,9 +48,9 @@ def client_main_page(request):
 
     client_instance = client_check(request.user)
     response['client_img'] = load_client_img(client_instance)
+    context.update(response)
+    return render(request=request, template_name='client/client_main_page.html', context=context)
 
-
-    return render(request=request, template_name='client/client_main_page.html', context=response)
 
 
 def client_profile(request):
@@ -369,21 +374,16 @@ class MessagesView(View):
         try:
             chat = Chat.objects.get(members=request.user)
             if request.user in chat.members.all():
-                chat.message_set.filter(is_readed=False).exclude(author=request.user).update(is_readed=True)
+                chat.message_set.filter(is_read=False).exclude(author=request.user).update(is_read=True)
             else:
                 chat = None
         except Chat.DoesNotExist:
             chat = None
 
-        return render(
-            request,
-            'client/client_chat.html',
-            {
-                'user_profile': request.user,
-                'chat': chat,
-                'form': MessageForm()
-            }
-        )
+        unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
+        context = {'user_profile': request.user, 'unread_messages': unread_messages, 'chat': chat, 'form': MessageForm()}
+
+        return render(request, 'client/client_chat.html', context)
 
     def post(self, request):
         form = MessageForm(data=request.POST)
@@ -473,11 +473,11 @@ def client_logout(request):  # выйти из системы, возврат н
 
 
 def tasks(request):
-    task = Tasks.objects.filter(user=request.user, status=True)
-    task_false = Tasks.objects.filter(user=request.user, status=False)  # status=False)
-    print(task[0].show_all[0].title)
 
-    return render(request, 'client/tasks.html', context={'task': task, 'task_false': task_false})
+    task = Tasks.objects.filter(user=request.user, status=False)
+    task_false = Tasks.objects.filter(user=request.user, status=True) #status=False)
+    task_false = sorted(task_false, key=lambda x:x.endtime,  reverse=True)
+    return render(request, 'client/tasks.html', context = {'task' : task,  'task_false': task_false})
 
 
 class FormEducation(TemplateView):
@@ -557,6 +557,56 @@ def load_client_img(req):
     except Exception as ex:
         logging.error("Exception in - load_client_img()\n %s" % ex)
         return '/media/user_1.png'
+
+
+
+def checktask(request):
+    id = (request.GET['id'])
+    task = Tasks.objects.get(id=id)
+
+    if task.status == False:
+        task.status = True
+        task.endtime = timezone.now()
+    else:
+        task.status = False
+        task.endtime = None
+    task.save()
+    return HttpResponse(task)
+
+
+def checknotifications(request):
+    chat = Chat.objects.get(members=request.user)
+    unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
+    readtask = len(Tasks.objects.filter(user=request.user, readtask=False))
+    #data = {'unread_mes': unread_messages, 'unread_task': readtask}
+    data = [unread_messages, readtask]
+
+    return HttpResponse(data)
+
+
+def settings_menu(request):
+    settings = Settings.objects.get(user=request.user)
+    context = {'settings': settings, }
+    return render(request=request, template_name='client/client_settings.html', context=context)
+
+
+def set_settings(request):
+    setting = request.GET['setting']
+    status = request.GET['state'] == 'true'
+    settings = Settings.objects.get(user=request.user)
+
+    if setting == 'messages':
+        settings.messages = status
+    elif setting == 'tasks':
+        settings.tasks = status
+    elif setting == 'suggestions':
+        settings.suggestions = status
+    elif setting == 'meetings':
+        settings.meetings = status
+
+    settings.save()
+
+    return HttpResponse(settings)
 
 
 #Poland's views
@@ -671,4 +721,5 @@ def viewed(request):
         return HttpResponse('cleared')
 
 #End Poland's views
+
 

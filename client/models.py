@@ -1,9 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
-
 import re
-
 from django.utils import timezone
 
 UserModel = get_user_model()
@@ -356,7 +354,7 @@ class Message(models.Model):
     author = models.ForeignKey(UserModel, verbose_name="Пользователь", on_delete=models.CASCADE)
     message = models.TextField(verbose_name="Сообщение")
     pub_date = models.DateTimeField(verbose_name='Дата сообщения', default=timezone.now)
-    is_readed = models.BooleanField(verbose_name='Прочитано', default=False)
+    is_read = models.BooleanField(verbose_name='Прочитано', default=False)
 
 
 class Opinion(models.Model):
@@ -385,17 +383,38 @@ class Answer(models.Model):
         return self.text[:10]
 
 
+
+
 class Tasks(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True)
     title = models.TextField(max_length=200)
     time = models.DateTimeField()
-    date = models.DateField()
     comment = models.TextField(max_length=300, blank=True)
-    status = models.BooleanField(default=None)  # активная задача
+    status = models.BooleanField(default=False) #задача, которая не выполнена
+    endtime = models.DateTimeField(blank=True, null=True)
+    checkstatus = models.BooleanField(default=True)#статус активен, если можем после выоплнения задачи в течении 60 сек вернуть в активную задачу
+    readtask = models.BooleanField(default=False)
+
 
     @property
     def show_all(self):
         return self.subtask.all()
+
+    @property
+    def checktime(self):
+        if self.endtime != None:
+            akttime = timezone.now() - self.endtime
+            if self.checkstatus == False:
+                pass
+            elif str(akttime)[2:4] >= '01':
+                self.checkstatus = False
+            self.save()
+
+    @property
+    def check_readstatus(self):
+            if self.readtask == False:
+                self.readtask = True
+                self.save()
 
 
 class SubTasks(models.Model):
@@ -409,5 +428,13 @@ class SubTasks(models.Model):
     # def __str__(self):
     #    return self.telephone_number
 
+
+
+class Settings(models.Model):
+    user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
+    messages = models.BooleanField(default=True)
+    tasks = models.BooleanField(default=True)
+    suggestions = models.BooleanField(default=True)
+    meetings = models.BooleanField(default=True)
 
 

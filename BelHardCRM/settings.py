@@ -120,3 +120,5 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'client/media')
 MEDIA_URL = '/media/'
+
+

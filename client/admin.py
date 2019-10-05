@@ -12,6 +12,8 @@ class Subtasks_Inline(admin.StackedInline):
 class Tasks_Admin(admin.ModelAdmin):
 
     inlines = [Subtasks_Inline]
+    readonly_fields = ['endtime']
+
 
 
 
@@ -60,6 +62,8 @@ admin.site.register(Opinion)
 admin.site.register(Answer)
 admin.site.register(Chat)
 admin.site.register(Tasks, Tasks_Admin)
+admin.site.register(Message)
+admin.site.register(Settings)
 
 
 class SexAdmin(admin.ModelAdmin):
