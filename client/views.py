@@ -4,9 +4,12 @@ from django.contrib import auth
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.context_processors import csrf
+from django.views.generic import View, TemplateView
 from django.views import View
 from django.views.generic import TemplateView
 
+from client.forms import OpinionForm, AnswerForm, MessageForm
+from client.forms import UploadImgForm, EducationFormSet, CertificateFormSet
 from client.forms import (OpinionForm, AnswerForm, MessageForm, UploadImgForm, EducationFormSet,
                           CertificateFormSet, CertificateForm, SabClassFormSet)
 from client.forms import (OpinionForm, AnswerForm, MessageForm, UploadImgForm, EducationFormSet,

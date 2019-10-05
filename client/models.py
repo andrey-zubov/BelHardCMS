@@ -247,6 +247,64 @@ class Vacancy(models.Model):
         return reverse('vacancy_detail_url', kwargs={'slug': self.slug})
 
 
+class Resume(models.Model):  ##Test table
+    state = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True)
+    vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
+    vacancies_accept = models.ManyToManyField('Vacancy', blank=True, related_name='accept_for_resume')
+    vacancies_reject = models.ManyToManyField('Vacancy', blank=True, related_name='reject_for_resume')
+    notification = models.ManyToManyField('Vacancy', blank=True, related_name='notifications_for_resume')
+
+    def __str__(self):
+        return self.state
+
+    def get_absolute_url(self):
+        return reverse('resume_detail_url', kwargs={'slug': self.slug})
+
+    def get_accept_url(self):
+        return reverse('accepted_vacancies_url', kwargs={'slug': self.slug})
+
+    def get_reject_url(self):
+        return reverse('rejected_vacancies_url', kwargs={'slug': self.slug})
+
+    def get_vacancies_list_url(self):
+        return reverse('vacancies_list_url', kwargs={'slug': self.slug})
+
+
+class Help(models.Model):
+    question = models.TextField(max_length=1000)
+    answer = models.CharField(max_length=1000)
+
+    def __str__(self):
+        return self.question
+
+
+#########End Poland Task 1 & 2 ##############
+
+
+######Poland Task 1 & 2 ##############
+
+
+class Vacancy(models.Model):
+    state = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True)
+    salary = models.CharField(max_length=20)
+    organization = models.CharField(max_length=100)
+    address = models.CharField(max_length=200, null=True)
+    employment = models.CharField(max_length=100, null=True)
+    description = models.TextField(max_length=1000)
+    skills = models.CharField(max_length=100, null=True)
+    requirements = models.TextField(max_length=1000, null=True)
+    duties = models.TextField(max_length=1000, null=True)
+    conditions = models.TextField(max_length=1000, null=True)
+
+    def __str__(self):
+        return '{}'.format(self.state)
+
+    def get_absolute_url(self):
+        return reverse('vacancy_detail_url', kwargs={'slug': self.slug})
+
+
 class Resume(models.Model): ##Test table
     state = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
@@ -308,6 +366,8 @@ class Client(models.Model):
     skype = models.CharField(max_length=100, null=True, blank=True)
     img = models.ImageField(blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
+    # resumes
+    resumes = models.ForeignKey(Resume, on_delete=models.SET_NULL, null=True, blank=True)
     # resumes
     resumes = models.ForeignKey(Resume, on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -390,6 +450,11 @@ class Tasks(models.Model):
     checkstatus = models.BooleanField(default=True)#статус активен, если можем после выоплнения задачи в течении 60 сек вернуть в активную задачу
     readtask = models.BooleanField(default=False)
 
+    status = models.BooleanField(default=False)  # задача, которая не выполнена
+    endtime = models.DateTimeField(blank=True, null=True)
+    checkstatus = models.BooleanField(
+        default=True)  # статус активен, если можем после выоплнения задачи в течении 60 сек вернуть в активную задачу
+    readtask = models.BooleanField(default=False)
 
     @property
     def show_all(self):
@@ -410,6 +475,22 @@ class Tasks(models.Model):
             if self.readtask == False:
                 self.readtask = True
                 self.save()
+
+    @property
+    def checktime(self):
+        if self.endtime != None:
+            akttime = timezone.now() - self.endtime
+            if self.checkstatus == False:
+                pass
+            elif str(akttime)[2:4] >= '01':
+                self.checkstatus = False
+            self.save()
+
+    @property
+    def check_readstatus(self):
+        if self.readtask == False:
+            self.readtask = True
+            self.save()
 
 
 class SubTasks(models.Model):
@@ -442,3 +523,11 @@ class Settings(models.Model):
 
 
 
+
+
+class Settings(models.Model):
+    user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
+    messages = models.BooleanField(default=True)
+    tasks = models.BooleanField(default=True)
+    suggestions = models.BooleanField(default=True)
+    meetings = models.BooleanField(default=True)
