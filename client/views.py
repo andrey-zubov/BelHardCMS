@@ -6,7 +6,18 @@ from PIL import Image
 from django.contrib import auth
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
+
+from django.urls import reverse
+from django.views import View
+
+from .models import Vacancy, Resume
+from django.http import HttpResponse
+
+
+from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
+
 from django.views.generic import View, TemplateView
+
 
 from BelHardCRM.settings import MEDIA_URL
 from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
@@ -20,8 +31,19 @@ from .utility import (check_input_str, check_home_number, check_telegram, check_
 
 def client_main_page(request):
     response = csrf(request)
+
+    response['client_img'] = load_client_img(request.user)
+    #Poland
+    resumes = Resume.objects.all()
+    notification = 0
+    for resume in resumes:
+        notification += resume.notification.count()
+    response['notification'] = notification
+    response['status'] = 1 if Settings.objects.get().tumbler_on_off == 'on' else 0
+
     client_instance = client_check(request.user)
     response['client_img'] = load_client_img(client_instance)
+
 
     return render(request=request, template_name='client/client_main_page.html', context=response)
 
@@ -512,3 +534,141 @@ class FormEducation(TemplateView):
             print("FormSet_Cert not Valid")
 
         return redirect(to='/client/edit/form_edu')
+
+    else:
+        response['edu_form'] = EducationFormSet()
+        response['certificate'] = CertificateFormSet()
+        response['inlineEduCert'] = inlineEduCert()
+
+    return render(request, 'client/form_edu.html', response)
+
+
+def load_client_img(req):
+    """ Show Client Img in the Navigation Bar.
+    Img loaded from DB, if user do not have img - load default. """
+    try:
+        print("user: %s, id: %s" % (req, req.id))
+        client_img = Client.objects.get(user_client=req).img
+        if client_img:
+            logging.info("Client.img: %s" % client_img)
+            return "%s%s" % (MEDIA_URL, client_img)
+        else:
+            return '/media/user_1.png'
+    except Exception as ex:
+        logging.error("Exception in - load_client_img()\n %s" % ex)
+        return '/media/user_1.png'
+
+
+#Poland's views
+
+def vacancies_list(request, slug):
+    resume = Resume.objects.get(slug__iexact=slug)
+    return render(request, 'client/client_vacancies.html', context={'resume': resume})
+
+
+def vacancy_detail(request, slug):
+    vacancy = Vacancy.objects.get(slug__iexact=slug)
+    first_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.reject_for_resume.all()) else 0
+    second_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.accept_for_resume.all()) else 0
+    return render(request, 'client/client_vacancy_detail.html', context={
+        'vacancy': vacancy,
+        'first_flag': first_flag,
+        'second_flag': second_flag
+    })
+
+
+def resumes_list(request):
+    resumes = Resume.objects.all()
+    return render(request, 'client/client_resumes.html', context={'resumes': resumes})
+
+
+def resume_detail(request, slug):
+    resume = Resume.objects.get(slug__iexact=slug)
+    return render(request, 'client/client_resume_detail.html', context={'resume': resume})
+
+
+def accepted_vacancies(request, slug):########################
+    resume = Resume.objects.get(slug__iexact=slug)
+    return render(request, 'client/client_accepted_vacancies.html', context={'resume': resume})
+
+
+def rejected_vacancies(request, slug):##############################
+    resume = Resume.objects.get(slug__iexact=slug)
+    return render(request, 'client/client_rejected_vacancies.html', context={'resume': resume})
+
+
+def accept_reject(request):#
+
+    if request.GET['flag'] == 'accept' and Vacancy.objects.get(slug__iexact=request.GET['slug']).in_waiting_for_resume.all():
+        print(request.GET['slug'], 1)
+        r = Vacancy.objects.get(slug__iexact=request.GET['slug']).in_waiting_for_resume.get()
+        v = Vacancy.objects.get(slug__iexact=request.GET['slug'])
+        r.vacancies_accept.add(v)
+        r.vacancies_in_waiting.remove(v)
+        r.save()
+        return HttpResponse('accept_server')
+
+    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(slug__iexact=request.GET['slug']).in_waiting_for_resume.all():
+        print(request.GET['slug'], 2)
+        r = Vacancy.objects.get(slug__iexact=request.GET['slug']).in_waiting_for_resume.get()
+        v = Vacancy.objects.get(slug__iexact=request.GET['slug'])
+        r.vacancies_reject.add(v)
+        r.vacancies_in_waiting.remove(v)
+        r.save()
+        return HttpResponse('reject_server')
+
+    elif request.GET['flag'] == 'accept' and Vacancy.objects.get(slug__iexact=request.GET['slug']).reject_for_resume.all():
+        print(request.GET['slug'], 3)
+        r = Vacancy.objects.get(slug__iexact=request.GET['slug']).reject_for_resume.get()
+        v = Vacancy.objects.get(slug__iexact=request.GET['slug'])
+        r.vacancies_accept.add(v)
+        r.vacancies_reject.remove(v)
+        r.save()
+        return HttpResponse('accept_server')
+
+    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(slug__iexact=request.GET['slug']).accept_for_resume.all():
+        print(request.GET['slug'], 4)
+        r = Vacancy.objects.get(slug__iexact=request.GET['slug']).accept_for_resume.get()
+        v = Vacancy.objects.get(slug__iexact=request.GET['slug'])
+        r.vacancies_reject.add(v)
+        r.vacancies_accept.remove(v)
+        r.save()
+        return HttpResponse('reject_server')
+
+
+def help_list(request):
+    faqs = Help.objects.all()
+    return render(request, 'client/help.html', context={'faqs': faqs})
+
+
+def settings_list(request):
+    settings = Settings.objects.all()
+    status = 1 if Settings.objects.get().tumbler_on_off == 'on' else 0
+    print('status = ', status)
+    return render(request, 'client/settings.html', context={'settings': settings, 'status': status })
+
+
+#def settings_on_off(request):
+    #status = 1 if SettingsNotification.objects.get().tumbler_on_off == 'on' else 0
+    #print('status = ', status)
+    #return render(request, 'client/client_settings.html', context={'status': status})
+
+
+def on_off(request):
+    status = Settings.objects.get()
+    status.tumbler_on_off = request.GET['status']
+    print(status.tumbler_on_off)
+    status.save()
+    return HttpResponse(status.tumbler_on_off)
+
+
+def viewed(request):
+    if request.GET['action'] == 'clear':
+        resumes = Resume.objects.all()
+        for resume in resumes:
+            r = resume
+            r.notification.clear()
+        return HttpResponse('cleared')
+
+#End Poland's views
+

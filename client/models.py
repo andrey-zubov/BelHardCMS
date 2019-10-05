@@ -1,6 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
+
+import re
+
 from django.utils import timezone
 
 UserModel = get_user_model()
@@ -221,6 +224,73 @@ class State(models.Model):
         return self.state_word
 
 
+######Poland Task 1 & 2 ##############
+
+
+class Vacancy(models.Model):
+    state = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True)
+    salary = models.CharField(max_length=20)
+    organization = models.CharField(max_length=100)
+    address = models.CharField(max_length=200, null=True)
+    employment = models.CharField(max_length=100, null=True)
+    description = models.TextField(max_length=1000)
+    skills = models.CharField(max_length=100, null=True)
+    requirements = models.TextField(max_length=1000, null=True)
+    duties = models.TextField(max_length=1000, null=True)
+    conditions = models.TextField(max_length=1000, null=True)
+
+    def __str__(self):
+        return '{}'.format(self.state)
+
+    def get_absolute_url(self):
+        return reverse('vacancy_detail_url', kwargs={'slug': self.slug})
+
+
+class Resume(models.Model): ##Test table
+    state = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True)
+    vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
+    vacancies_accept = models.ManyToManyField('Vacancy', blank=True, related_name='accept_for_resume')
+    vacancies_reject = models.ManyToManyField('Vacancy', blank=True, related_name='reject_for_resume')
+    vacancies_all = models.ManyToManyField('Vacancy', blank=True, related_name='all_for_resume')
+    notification = models.ManyToManyField('Vacancy', blank=True, related_name='notifications_for_resume')
+
+    def __str__(self):
+        return self.state
+
+    def get_absolute_url(self):
+        return reverse('resume_detail_url', kwargs={'slug': self.slug})
+
+    def get_accept_url(self):
+        return reverse('accepted_vacancies_url', kwargs={'slug': self.slug})
+
+    def get_reject_url(self):
+        return reverse('rejected_vacancies_url', kwargs={'slug': self.slug})
+
+    def get_vacancies_list_url(self):
+        return reverse('vacancies_list_url', kwargs={'slug': self.slug})
+
+
+class Help(models.Model):
+    question = models.TextField(max_length=1000)
+    answer = models.CharField(max_length=1000)
+
+    def __str__(self):
+        return self.question
+
+class Settings(models.Model):
+    name_setting = models.TextField(max_length=50)
+    name_setting_status = models.BooleanField(default=True)
+    tumbler_on_off = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name_setting
+
+
+#########End Poland Task 1 & 2 ##############
+
+
 class Client(models.Model):
     user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, verbose_name='Имя')
@@ -246,6 +316,9 @@ class Client(models.Model):
     skype = models.CharField(max_length=100, null=True, blank=True)
     img = models.ImageField(blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
+    # resumes
+    resumes = models.ForeignKey(Resume, on_delete=models.SET_NULL, null=True, blank=True)
+
 
     def __str__(self):
         return "%s %s %s" % (self.last_name, self.name, self.patronymic)
@@ -335,3 +408,6 @@ class SubTasks(models.Model):
 
     # def __str__(self):
     #    return self.telephone_number
+
+
+
