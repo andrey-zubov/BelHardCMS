@@ -26,9 +26,19 @@
 
 <script>
     var auto = false
-    function scroll (ths) {
-        auto = ths.scrollTop(ths.prop('scrollHeight')) + ths.clientHeight == ths.scrollHeight;
-    }
+            function scroll (ths) {
+                auto = ths.scrollTop(ths.prop('scrollHeight')) + ths.clientHeight == ths.scrollHeight;
+            }
+    $('document').ready(function () {
+
+        console.log('fuf');
+
+        setInterval(function(){
+
+        }, 10000);
+
+
+});
 
  </script>
 
