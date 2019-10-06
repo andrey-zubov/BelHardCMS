@@ -1,5 +1,3 @@
-from time import perf_counter
-
 from django.contrib import auth
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -7,12 +5,11 @@ from django.template.context_processors import csrf
 from django.views import View
 from django.views.generic import TemplateView
 
-from client.edit.edit_forms import (EducationFormSet, CertificateForm, SabClassFormSet, CertificateFormSet,
-                                    UploadImgForm)
+from client.edit.edit_forms import (EducationFormSet, CertificateForm, SabClassFormSet, UploadImgForm)
+from client.edit.pages_get import (edit_page_get, skills_page_get, load_cv_edition_page, load_education_page)
+from client.edit.pages_post import (skills_page_post, edit_page_post, photo_page_post, form_edu_post)
 from client.edit.parsers import (pars_cv_request, pars_edu_request, pars_exp_request)
-from client.edit.utility import (check_input_str, check_home_number, check_telegram, check_phone)
-from client.edit.work_with_db import (client_check, load_client_img, load_edit_page, load_skills_page,
-                                      load_cv_edition_page, load_education_page)
+from client.edit.check_clients import (client_check, load_client_img)
 from client.forms import (OpinionForm, AnswerForm, MessageForm)
 from client.models import *
 
@@ -40,174 +37,64 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
 
 
 def client_profile(request):
-    response = csrf(request)
     client_instance = client_check(request.user)
-    response['client_img'] = load_client_img(client_instance)
-
+    response = {'client_img': load_client_img(client_instance),
+                }
     return render(request=request, template_name='client/client_profile.html', context=response)
 
 
-def client_edit_main(request):
-    response = csrf(request)
+# TeamRome
+class ClientEditMain(TemplateView):
+    template_name = 'client/edit_forms/client_edit_main.html'
 
-    client_instance = client_check(request.user)
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    'data': edit_page_get(client_instance)
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
 
-    if request.method == 'POST':
-        time_0 = perf_counter()
-        print('client_edit_main - request.POST')
-
-        """ Входные данные для сохранения: """
-        user = request.user
-        user_name = check_input_str(request.POST['client_first_name'])
-        last_name = check_input_str(request.POST['client_last_name'])
-        patronymic = check_input_str(request.POST['client_middle_name'])
-        sex = Sex.objects.get(sex_word=request.POST['sex']) if request.POST['sex'] else None
-        date = request.POST['date_born'] if request.POST['date_born'] else None
-        citizenship = Citizenship.objects.get(country_word=request.POST['citizenship']) if request.POST[
-            'citizenship'] else None
-        family_state = FamilyState.objects.get(state_word=request.POST['family_state']) if request.POST[
-            'family_state'] else None
-        children = Children.objects.get(children_word=request.POST['children']) if request.POST['children'] else None
-        country = Citizenship.objects.get(country_word=request.POST['country']) if request.POST['country'] else None
-        city = City.objects.get(city_word=request.POST['city']) if request.POST['city'] else None
-        street = check_input_str(request.POST['street'])
-        house = check_home_number(request.POST['house'])
-        flat = check_home_number(request.POST['flat'])
-        telegram_link = check_telegram(request.POST['telegram_link'])
-        skype = check_input_str(request.POST['skype_id'])
-        email = request.POST['email']
-        link_linkedin = request.POST['link_linkedin']
-        state = State.objects.get(state_word=request.POST['state']) if request.POST['state'] else None
-
-        print(user_name, last_name, patronymic, sex, date, citizenship, family_state, children, country, city,
-              street, house, flat, telegram_link, skype, email, link_linkedin, state)
-
-        if not client_instance:
-            """ Если карточки нету - создаём. """
-            print('User Profile DO NOT exists - creating!')
-
-            client = Client(
-                user_client=user,
-                name=user_name,
-                last_name=last_name,
-                patronymic=patronymic,
-                sex=sex,
-                date_born=date,
-                citizenship=citizenship,
-                family_state=family_state,
-                children=children,
-                country=country,
-                city=city,
-                street=street,
-                house=house,
-                flat=flat,
-                telegram_link=telegram_link,
-                skype=skype,
-                email=email,
-                link_linkedin=link_linkedin,
-                state=state,
-            )
-            client.save()
-        else:
-            """ Если карточка есть - достаём из БД Объект = Клиент_id.
-            Перезаписываем (изменяем) существующие данныев. """
-            print('User Profile exists - Overwriting user data')
-
-            client = client_instance
-            client.name = user_name
-            client.last_name = last_name
-            client.patronymic = patronymic
-            client.sex = sex
-            client.date_born = date
-            client.citizenship = citizenship
-            client.family_state = family_state
-            client.children = children
-            client.country = country
-            client.city = city
-            client.street = street
-            client.house = house
-            client.flat = flat
-            client.telegram_link = telegram_link
-            client.skype = skype
-            client.email = email
-            client.link_linkedin = link_linkedin
-            client.state = state
-            client.save()
-
-        """ Сохранение телефонных номеров клиента """
-        tel = request.POST.getlist('phone')
-        if any(tel):
-            Telephone.objects.all().delete()
-            # print("tel: %s" % tel)
-        for t in tel:
-            t = check_phone(t)
-            if t:
-                phone = Telephone(
-                    client_phone=client,
-                    telephone_number=t
-                )
-                phone.save()
-
-        print('client_edit_main - OK; TIME: %s' % (perf_counter() - time_0))
+    def post(self, request):
+        client_instance = client_check(request.user)
+        edit_page_post(client_instance, request)
         return redirect(to='/client/profile')
-    else:
-        """ Загрузка из БД списков для выбора и данных клиента"""
-        response['client_img'] = load_client_img(client_instance)
-        response['data'] = load_edit_page(client_instance)
-
-    return render(request=request, template_name='client/edit_forms/client_edit_main.html', context=response)
 
 
-def client_edit_skills(request):
-    response = csrf(request)
-    client_instance = client_check(request.user)
+# TeamRome
+class ClientEditSkills(TemplateView):
+    template_name = 'client/edit_forms/client_edit_skills.html'
 
-    if request.method == 'POST':
-        skills_arr = request.POST.getlist('skill') if request.POST.getlist('skill') else None
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    'data': skills_page_get(client_instance)
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
 
-        if any(skills_arr):
-            Skills.objects.all().delete()
-            # print("skill: %s" % skills_arr)
-            for s in skills_arr:
-                if s:
-                    """ ОБЪЕДИНЕНИЕ модуля Навыки с конкретным залогиненым клиентом!!! """
-                    skill = Skills(
-                        client_skills=client_instance,
-                        skill=check_input_str(s)
-                    )
-                    skill.save()
-        else:
-            print("No skills")
-
+    def post(self, request):
+        client_instance = client_check(request.user)
+        skills_page_post(client_instance, request)
         return redirect(to='/client/edit')
-    else:
-        response['client_img'] = load_client_img(client_instance)
-        response['data'] = load_skills_page(client_instance)
-
-    return render(request=request, template_name='client/edit_forms/client_edit_skills.html', context=response)
 
 
-def client_edit_photo(request):
-    response = csrf(request)
-    client_instance = client_check(request.user)
+# TeamRome
+class ClientEditPhoto(TemplateView):
+    template_name = 'client/edit_forms/client_edit_photo.html'
 
-    if request.method == 'POST':
-        form = UploadImgForm(request.POST, request.FILES)
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    'form': UploadImgForm()
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
 
-        if form.is_valid():
-            """ в БД сохраняется УНИКАЛЬНОЕ имя картинки (пр: user_2_EntrmQR.png) в папке MEDIA_URL = '/media/' """
-            img = form.cleaned_data.get('img')
-            client_instance.img = img
-            client_instance.save()
-
+    def post(self, request):
+        client_instance = client_check(request.user)
+        photo_page_post(client_instance, request)
         return redirect(to='/client/edit')
-    else:
-        response['client_img'] = load_client_img(client_instance)
-        response['form'] = UploadImgForm()
-
-    return render(request=request, template_name='client/edit_forms/client_edit_photo.html', context=response)
 
 
+# TeamRome
 def client_edit_cv(request):
     response = csrf(request)
     client_instance = client_check(request.user)
@@ -246,6 +133,7 @@ def client_edit_cv(request):
     return render(request, 'client/edit_forms/client_edit_cv.html', response)
 
 
+# TeamRome
 def client_edit_education(request):
     response = csrf(request)
     client_instance = client_check(request.user)
@@ -297,6 +185,7 @@ def client_edit_education(request):
     return render(request, 'client/edit_forms/client_edit_education.html', response)
 
 
+# TeamRome
 def client_edit_experience(request):
     response = csrf(request)
     client_instance = client_check(request.user)
@@ -464,6 +353,7 @@ def tasks(request):
     return render(request, 'client/tasks.html', context={'task': task, 'task_false': task_false})
 
 
+# TeamRome
 class FormEducation(TemplateView):
     template_name = 'client/edit_forms/form_edu.html'
 
@@ -480,42 +370,8 @@ class FormEducation(TemplateView):
         return render(request, self.template_name, response)
 
     def post(self, request):
-        print("FormEducation.POST: %s" % request.POST)
-
         client_instance = client_check(request.user)
-        form_set_edu = EducationFormSet(request.POST)
-        form_set_cert = CertificateFormSet(request.POST, request.FILES)
-
-        edu_inst = None
-        if form_set_edu.is_valid():
-            print('FormSet_Edu - OK')
-            for f in form_set_edu:
-                f_items = f.cleaned_data.items()
-                print("edu_items: %s" % f_items)
-                if f_items:
-                    """ edu_inst - unsaved model instance!
-                    It gives you ability to attach data to the instance before saving to the DB! """
-                    edu_inst = f.save(commit=False)
-                    """ attach ForeignKey == Client instance """
-                    edu_inst.client_edu = client_instance
-                    """ Save Education instance """
-                    edu_inst.save()
-        else:
-            print("FormSet_Edu not Valid")
-
-        if form_set_cert.is_valid():
-            print("FormSet_Cert - OK")
-            for c in form_set_cert:
-                c_items = c.cleaned_data.items()
-                print('cert_items: %s' % c_items)
-                if c_items:
-                    cert_inst = c.save(commit=False)
-                    """ attach ForeignKey == Education instance """
-                    cert_inst.education = edu_inst
-                    cert_inst.save()
-        else:
-            print("FormSet_Cert not Valid")
-
+        form_edu_post(client_instance, request)
         return redirect(to='/client/edit/form_edu')
 
 

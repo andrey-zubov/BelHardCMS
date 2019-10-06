@@ -3,47 +3,13 @@ from collections import defaultdict
 from time import perf_counter
 
 from BelHardCRM.settings import MEDIA_URL
-from client.models import (Client, Sex, Citizenship, FamilyState, Children, City, State, Telephone, Skills, Education,
-                           Certificate, CV)
 from client.edit.utility import check_if_str
+from client.models import (Sex, Citizenship, FamilyState, Children, City, State, Telephone, Skills, Education,
+                           Certificate, CV)
 
 
-def client_check(user):
-    try:
-        """ список карточек c id клиента. """
-        users_id_list = [i['user_client_id'] for i in Client.objects.all().values()]
-        print("client_id_list: %s" % users_id_list)
-
-        """ Current User """
-        print("user_name: %s, user_client_id: %s" % (user, user.id))
-
-        if user.id in users_id_list:
-            client = Client.objects.get(user_client=user)
-            print("user_id: %s" % client.id)
-            return client
-        else:
-            logging.warning('User Profile DO NOT exists')
-            return None
-    except Exception as ex:
-        logging.error('Exception in client_check()\n%s' % ex)
-        return None
-
-
-def load_client_img(client):
-    """ Show Client Img in the Navigation Bar.
-    Img loaded from DB, if user do not have img - load default. """
-    try:
-        if client:
-            if client.img:
-                return "%s%s" % (MEDIA_URL, client.img)
-        return '/media/user_1.png'
-    except Exception as ex:
-        logging.error("Exception in - load_client_img()\n%s" % ex)
-        return '/media/user_1.png'
-
-
-def load_edit_page(client):
-    """ TBA """
+def edit_page_get(client):
+    """ Загрузка из БД списков для выбора данных клиента"""
     try:
         time_0 = perf_counter()
         print("load_edit_page()")
@@ -90,7 +56,7 @@ def load_edit_page(client):
         return None
 
 
-def load_skills_page(client):
+def skills_page_get(client):
     """ TBA """
     try:
         time_0 = perf_counter()
