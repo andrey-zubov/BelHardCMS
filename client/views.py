@@ -1,13 +1,9 @@
-import logging
 from collections import defaultdict
 from time import perf_counter
 import json
 #from PIL import Image
 import logging
 from collections import defaultdict
-from time import perf_counter
-import json
-#from PIL import Image
 from django.contrib import auth
 
 from django.contrib.auth.models import Group
@@ -15,45 +11,17 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.context_processors import csrf
 
-from django.urls import reverse
 from recruit import recruit_url
 
 from django.urls import reverse
 from django.utils.timezone import utc
 from django.views import View
-from django.http import HttpResponse
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView
-from django.http import HttpResponse
 
 from .models import Vacancy
 
-from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
-
 from django.views.generic import View, TemplateView
-from .models import Vacancy
-
-from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
-# from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
-
-from django.views.generic import View, TemplateView
-from .utils_for_mixins import ObjectResumeMixin
-
-
-from BelHardCRM.settings import MEDIA_URL
-# from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
-#                                 load_cv_edition_page)
-from .forms import OpinionForm, AnswerForm, MessageForm
-from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
-from recruit.forms import FileFieldForm
-# from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
-
-from .models import *
-# from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
-#                      pars_edu_request, pars_exp_request)
-from django.core.files.storage import FileSystemStorage
-from tika import parser
-import re
 
 
 from BelHardCRM.settings import MEDIA_URL
@@ -75,7 +43,8 @@ from client.edit.pages_post import (skills_page_post, edit_page_post, photo_page
                                     education_page_post, cv_page_post, experience_page_post)
 from client.forms import (OpinionForm, AnswerForm, MessageForm)
 from client.models import *
-
+from tika import parser
+import re
 
 from django.views.generic import View, TemplateView
 from django.views.generic import TemplateView
@@ -104,15 +73,15 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
     # Poland
-    resumes = CV.objects.all()
-    suggestions = 0
-    for resume in resumes:
-        suggestions += resume.notification.count()
-    response['unread_suggestions'] = suggestions
-    client_instance = client_check(request.user)
-    response['client_img'] = load_client_img(client_instance)
-    context.update(response)
-    print(context['unread_suggestions'])
+    # resumes = CV.objects.all()
+    # suggestions = 0
+    # for resume in resumes:
+    #   suggestions += resume.notification.count()
+    # response['unread_suggestions'] = suggestions
+    # client_instance = client_check(request.user)
+    # response['client_img'] = load_client_img(client_instance)
+    # context.update(response)
+    # print(context['unread_suggestions'])
     return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
@@ -474,7 +443,6 @@ def chat_update(request):
     return JsonResponse(send2, safe=False)
 
 # Poland's views
-
 
 def vacancy_detail(request, id_v):
     vacancy = Vacancy.objects.get(id=id_v)
