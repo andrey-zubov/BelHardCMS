@@ -260,10 +260,10 @@ class Vacancy(models.Model):
         return '{}'.format(self.state)
 
     def get_absolute_url(self):
-        return reverse('vacancy_detail_url', kwargs={'id_v': self.id})
+        return reverse('vacancy_detail_url', kwargs={'id': self.id})
 
 
-"""class Resume(models.Model): ##Test table
+class Resume(models.Model): ##Test table
     state = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
     vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
@@ -284,7 +284,7 @@ class Vacancy(models.Model):
         return reverse('rejected_vacancies_url', kwargs={'id': self.id})
 
     def get_vacancies_list_url(self):
-        return reverse('vacancies_list_url', kwargs={'id': self.id})"""
+        return reverse('vacancies_list_url', kwargs={'id': self.id})
 
 
 class Help(models.Model):
@@ -405,7 +405,6 @@ class Tasks(models.Model):
     checkstatus = models.BooleanField(default=True)    #статус активен, если можем после выоплнения задачи в течении 60 сек вернуть в активную задачу
     readtask = models.BooleanField(default=False)
 
-
     @property
     def show_all(self):
         return self.subtask.all()
@@ -460,6 +459,10 @@ class Settings(models.Model):
     tasks = models.BooleanField(default=True)
     suggestions = models.BooleanField(default=True)
     meetings = models.BooleanField(default=True)
+
+
+    def __str__(self):
+        return self.name_setting
 
 
 
