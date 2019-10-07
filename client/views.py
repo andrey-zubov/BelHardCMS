@@ -31,15 +31,15 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
     # Poland
-    resumes = CV.objects.all()
-    suggestions = 0
-    for resume in resumes:
-        suggestions += resume.notification.count()
-    response['unread_suggestions'] = suggestions
-    client_instance = client_check(request.user)
-    response['client_img'] = load_client_img(client_instance)
-    context.update(response)
-    print(context['unread_suggestions'])
+    # resumes = CV.objects.all()
+    # suggestions = 0
+    # for resume in resumes:
+    #   suggestions += resume.notification.count()
+    # response['unread_suggestions'] = suggestions
+    # client_instance = client_check(request.user)
+    # response['client_img'] = load_client_img(client_instance)
+    # context.update(response)
+    # print(context['unread_suggestions'])
     return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
@@ -349,13 +349,9 @@ def set_settings(request):
 
 # Poland's views ###################################################################################
 
-def vacancies_list(request, slug):
-    resume = Resume.objects.get(id=id)
-    return render(request, 'client/client_vacancies.html', context={'resume': resume})
 
-
-def vacancy_detail(request, id):
-    vacancy = Vacancy.objects.get(id=id)
+def vacancy_detail(request, id_v):
+    vacancy = Vacancy.objects.get(id=id_v)
     first_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.reject_for_resume.all()) else 0
     second_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.accept_for_resume.all()) else 0
     return render(request, 'client/client_vacancy_detail.html', context={
