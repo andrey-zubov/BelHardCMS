@@ -548,6 +548,9 @@ class Settings(models.Model):
     email_reviews = models.BooleanField(default=True)
 
 
+    def __str__(self):
+        return self.name_setting
+
 
 
 

@@ -474,9 +474,13 @@ def chat_update(request):
 
 # Poland's views
 
+def vacancies_list(request, slug):
+    resume = Resume.objects.get(id=id)
+    return render(request, 'client/client_vacancies.html', context={'resume': resume})
 
-def vacancy_detail(request, id_v):
-    vacancy = Vacancy.objects.get(id=id_v)
+
+def vacancy_detail(request, id):
+    vacancy = Vacancy.objects.get(id=id)
     first_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.reject_for_resume.all()) else 0
     second_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.accept_for_resume.all()) else 0
     return render(request, 'client/client_vacancy_detail.html', context={
@@ -491,25 +495,25 @@ def resumes_list(request):
     return render(request, 'client/client_resumes.html', context={'resumes': resumes})
 
 
-def resume_detail(request, id_c):
-    resume = CV.objects.get(id=id_c)
+def resume_detail(request, id):
+    resume = Resume.objects.get(id=id)
     return render(request, 'client/client_resume_detail.html', context={'resume': resume})
 
 
-def accepted_vacancies(request, id_c):
-    resume = CV.objects.get(id=id_c)
+def accepted_vacancies(request, id):
+    resume = Resume.objects.get(id=id)
     return render(request, 'client/client_accepted_vacancies.html', context={'resume': resume})
 
 
-def rejected_vacancies(request, id_c):
-    resume = CV.objects.get(id=id_c)
+def rejected_vacancies(request, id):
+    resume = Resume.objects.get(id=id)
     return render(request, 'client/client_rejected_vacancies.html', context={'resume': resume})
 
 
 def accept_reject(request):
 
     if request.GET['flag'] == 'accept' and Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.all():
-        print(request.GET['id_v'], 1)
+        print(request.GET['id'], 1)
         r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get()
         v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_accept.add(v)
@@ -550,9 +554,30 @@ def help_list(request):
     return render(request, 'client/help.html', context={'faqs': faqs})
 
 
+def settings_list(request):
+    settings = Settings.objects.all()
+    status = 1 if Settings.objects.get().tumbler_on_off == 'on' else 0
+    print('status = ', status)
+    return render(request, 'client/settings.html', context={'settings': settings, 'status': status })
+
+
+#def settings_on_off(request):
+    #status = 1 if SettingsNotification.objects.get().tumbler_on_off == 'on' else 0
+    #print('status = ', status)
+    #return render(request, 'client/client_settings.html', context={'status': status})
+
+
+def on_off(request):
+    status = Settings.objects.get()
+    status.tumbler_on_off = request.GET['status']
+    print(status.tumbler_on_off)
+    status.save()
+    return HttpResponse(status.tumbler_on_off)
+
+
 def viewed(request):
     if request.GET['action'] == 'clear':
-        resumes = CV.objects.all()
+        resumes = Resume.objects.all()
         for resume in resumes:
             r = resume
             r.notification.clear()
