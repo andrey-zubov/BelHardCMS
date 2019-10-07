@@ -31,11 +31,11 @@ urlpatterns = [
     
     ##Poland urls
     path('resumes/', resumes_list, name='resumes_list_url'),
-    path('resumes/<str:slug>/', resume_detail, name='resume_detail_url'),
-    path('resumes/<str:slug>/accepted_vacancies/', accepted_vacancies, name='accepted_vacancies_url'),
-    path('resumes/<str:slug>/rejected_vacancies/', rejected_vacancies, name='rejected_vacancies_url'),
-    path('resumes/<str:slug>/vacancies/', vacancies_list, name='vacancies_list_url'),
-    path('resumes/vacancy/<str:slug>/', vacancy_detail, name='vacancy_detail_url'),
+    path('resumes/<id>/', resume_detail, name='resume_detail_url'),
+    path('resumes/<id>/accepted_vacancies/', accepted_vacancies, name='accepted_vacancies_url'),
+    path('resumes/<id>/rejected_vacancies/', rejected_vacancies, name='rejected_vacancies_url'),
+    path('resumes/<id>/vacancies/', vacancies_list, name='vacancies_list_url'),
+    path('resumes/vacancy/<id>/', vacancy_detail, name='vacancy_detail_url'),
     path('accept_reject/', views.accept_reject),
     path('help/', help_list, name='help_list_url'),
     path('settings/', settings_list, name='settings_list_url'),
