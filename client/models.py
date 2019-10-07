@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
+import re
 from django.utils import timezone
 
 UserModel = get_user_model()
@@ -239,7 +240,7 @@ class Vacancy(models.Model):
         return '{}'.format(self.state)
 
     def get_absolute_url(self):
-        return reverse('vacancy_detail_url', kwargs={'slug': self.slug})
+        return reverse('vacancy_detail_url', kwargs={'id': self.id})
 
 
 class Resume(models.Model):  ##Test table
@@ -254,21 +255,21 @@ class Resume(models.Model):  ##Test table
         return self.state
 
     def get_absolute_url(self):
-        return reverse('resume_detail_url', kwargs={'slug': self.slug})
+        return reverse('resume_detail_url', kwargs={'id': self.id})
 
     def get_accept_url(self):
-        return reverse('accepted_vacancies_url', kwargs={'slug': self.slug})
+        return reverse('accepted_vacancies_url', kwargs={'id': self.id})
 
     def get_reject_url(self):
-        return reverse('rejected_vacancies_url', kwargs={'slug': self.slug})
+        return reverse('rejected_vacancies_url', kwargs={'id': self.id})
 
     def get_vacancies_list_url(self):
-        return reverse('vacancies_list_url', kwargs={'slug': self.slug})
+        return reverse('vacancies_list_url', kwargs={'id': self.id})
 
 
 class Help(models.Model):
     question = models.TextField(max_length=1000)
-    answer = models.CharField(max_length=1000)
+    answer = models.TextField(max_length=1000)
 
     def __str__(self):
         return self.question
@@ -304,6 +305,7 @@ class Client(models.Model):
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
     # resumes
     resumes = models.ForeignKey(Resume, on_delete=models.SET_NULL, null=True, blank=True)
+
 
     def __str__(self):
         return "%s %s %s" % (self.last_name, self.name, self.patronymic)
@@ -370,23 +372,25 @@ class Answer(models.Model):
         return self.text[:10]
 
 
+
+
 class Tasks(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True)
     title = models.TextField(max_length=200)
     time = models.DateTimeField()
     date = models.DateField(null=True, blank=True)
     comment = models.TextField(max_length=300, blank=True)
-    status = models.BooleanField(default=False)  # задача, которая не выполнена
+    status = models.BooleanField(default=False)     #задача, которая не выполнена
     endtime = models.DateTimeField(blank=True, null=True)
-    checkstatus = models.BooleanField(
-        default=True)  # статус активен, если можем после выоплнения задачи в течении 60 сек вернуть в активную задачу
+    checkstatus = models.BooleanField(default=True)    #статус активен, если можем после выоплнения задачи в течении 60 сек вернуть в активную задачу
     readtask = models.BooleanField(default=False)
+
 
     @property
     def show_all(self):
         return self.subtask.all()
 
-    # @property
+    @property
     def checktime(self):
         if self.endtime != None:
             akttime = timezone.now() - self.endtime
@@ -396,11 +400,11 @@ class Tasks(models.Model):
                 self.checkstatus = False
             self.save()
 
-    # @property
+    @property
     def check_readstatus(self):
-        if self.readtask == False:
-            self.readtask = True
-            self.save()
+            if self.readtask == False:
+                self.readtask = True
+                self.save()
 
 
 class SubTasks(models.Model):
