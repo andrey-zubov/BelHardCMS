@@ -253,13 +253,13 @@ class Vacancy(models.Model):
     conditions = models.TextField(max_length=1000, null=True)
 
     def __str__(self):
-        return self.state
+        return '{}'.format(self.state)
 
     def get_absolute_url(self):
-        return reverse('vacancy_detail_url', kwargs={'id_v': self.id})
+        return reverse('vacancy_detail_url', kwargs={'id': self.id})
 
 
-"""class Resume(models.Model): ##Test table
+class Resume(models.Model):  ##Test table
     state = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
     vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
@@ -271,21 +271,21 @@ class Vacancy(models.Model):
         return self.state
 
     def get_absolute_url(self):
-        return reverse('resume_detail_url', kwargs={'id': self.id})
+        return reverse('resume_detail_url', kwargs={'slug': self.slug})
 
     def get_accept_url(self):
-        return reverse('accepted_vacancies_url', kwargs={'id': self.id})
+        return reverse('accepted_vacancies_url', kwargs={'slug': self.slug})
 
     def get_reject_url(self):
-        return reverse('rejected_vacancies_url', kwargs={'id': self.id})
+        return reverse('rejected_vacancies_url', kwargs={'slug': self.slug})
 
     def get_vacancies_list_url(self):
-        return reverse('vacancies_list_url', kwargs={'id': self.id})"""
+        return reverse('vacancies_list_url', kwargs={'id': self.id})
 
 
 class Help(models.Model):
     question = models.TextField(max_length=1000)
-    answer = models.TextField(max_length=1000)
+    answer = models.CharField(max_length=1000)
 
     def __str__(self):
         return self.question
