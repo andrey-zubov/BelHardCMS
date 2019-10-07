@@ -13,6 +13,8 @@ from .edit.load_data_list import (SkillsDataList, InstitutionDataList, CvPositio
 from .views import *
 
 # from BelHardCMS.client.views import ResumesList, ResumeDetail
+from . import views
+from .views import *
 
 urlpatterns = [
     path('', views.client_main_page, name='client'),  # main client page
@@ -50,19 +52,19 @@ urlpatterns = [
 
     # path('edit/form_edu/', views.form_education, name='form_edu'),
 
+    # path('edit/form_edu/', views.form_education, name='form_edu'),
+
     path(r'checktask/', views.checktask),
     path(r'checknotifications/', views.checknotifications),
     path(r'settings/', views.settings_menu, name='settings_menu'),
     path(r'settingsset/', views.set_settings, name='settings_set'),
 
-    
-    ##Poland urls
-    path('resumes/', resumes_list, name='resumes_list_url'),
-    path('resumes/<id>/', resume_detail, name='resume_detail_url'),
-    path('resumes/<id>/accepted_vacancies/', accepted_vacancies, name='accepted_vacancies_url'),
-    path('resumes/<id>/rejected_vacancies/', rejected_vacancies, name='rejected_vacancies_url'),
-    path('resumes/<id>/vacancies/', vacancies_list, name='vacancies_list_url'),
-    path('resumes/vacancy/<id>/', vacancy_detail, name='vacancy_detail_url'),
+    # Poland urls
+    path('cv/', resumes_list, name='resumes_list_url'),
+    path('cv/<id_c>/', resume_detail, name='resume_detail_url'),
+    path('cv/<id_c>/accepted_vacancies/', accepted_vacancies, name='accepted_vacancies_url'),
+    path('cv/<id_c>/rejected_vacancies/', rejected_vacancies, name='rejected_vacancies_url'),
+    path('cv/vacancy/<id_v>/', vacancy_detail, name='vacancy_detail_url'),
     path('accept_reject/', views.accept_reject),
     path('help/', help_list, name='help_list_url'),
     path('settings/', settings_list, name='settings_list_url'),
