@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
+import re
 from django.utils import timezone
 
 UserModel = get_user_model()
@@ -239,7 +240,7 @@ class Vacancy(models.Model):
         return '{}'.format(self.state)
 
     def get_absolute_url(self):
-        return reverse('vacancy_detail_url', kwargs={'slug': self.slug})
+        return reverse('vacancy_detail_url', kwargs={'id': self.id})
 
 
 class Resume(models.Model):  ##Test table
@@ -254,21 +255,21 @@ class Resume(models.Model):  ##Test table
         return self.state
 
     def get_absolute_url(self):
-        return reverse('resume_detail_url', kwargs={'slug': self.slug})
+        return reverse('resume_detail_url', kwargs={'id': self.id})
 
     def get_accept_url(self):
-        return reverse('accepted_vacancies_url', kwargs={'slug': self.slug})
+        return reverse('accepted_vacancies_url', kwargs={'id': self.id})
 
     def get_reject_url(self):
-        return reverse('rejected_vacancies_url', kwargs={'slug': self.slug})
+        return reverse('rejected_vacancies_url', kwargs={'id': self.id})
 
     def get_vacancies_list_url(self):
-        return reverse('vacancies_list_url', kwargs={'slug': self.slug})
+        return reverse('vacancies_list_url', kwargs={'id': self.id})
 
 
 class Help(models.Model):
     question = models.TextField(max_length=1000)
-    answer = models.CharField(max_length=1000)
+    answer = models.TextField(max_length=1000)
 
     def __str__(self):
         return self.question
