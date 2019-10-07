@@ -326,6 +326,8 @@ class Vacancy(models.Model):
     def get_vacancies_list_url(self):
         return reverse('vacancies_list_url', kwargs={'id': self.id})
 """
+        return reverse('vacancies_list_url', kwargs={'id': self.id})
+
 
 class Help(models.Model):
     question = models.TextField(max_length=1000)
@@ -562,6 +564,9 @@ class Settings(models.Model):
     email_meetings = models.BooleanField(default=True)
     email_reviews = models.BooleanField(default=True)
 
+    name_setting = models.TextField(max_length=50, blank=True, null=True)
+    name_setting_status = models.BooleanField(default=True)
+    tumbler_on_off = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return self.name_setting
