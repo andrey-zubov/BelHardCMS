@@ -241,6 +241,20 @@ class CV(models.Model):
 
     # end upgrade from Poland
 
+    def get_absolute_url(self):
+        return reverse('resume_detail_url', kwargs={'id': self.id})
+
+    def get_accept_url(self):
+        return reverse('accepted_vacancies_url', kwargs={'id': self.id})
+
+    def get_reject_url(self):
+        return reverse('rejected_vacancies_url', kwargs={'id': self.id})
+
+    def get_vacancies_list_url(self):
+        return reverse('vacancies_list_url', kwargs={'id': self.id})
+
+    # end upgrade from Poland
+
 
 class State(models.Model):
     """ Стутус клиента. """
@@ -276,7 +290,7 @@ class Vacancy(models.Model):
         return reverse('vacancy_detail_url', kwargs={'id': self.id})
 
 
-class Resume(models.Model): ##Test table
+"""class Resume(models.Model): ##Test table
     state = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
     vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
@@ -297,7 +311,7 @@ class Resume(models.Model): ##Test table
         return reverse('rejected_vacancies_url', kwargs={'slug': self.slug})
 
     def get_vacancies_list_url(self):
-        return reverse('vacancies_list_url', kwargs={'id': self.id})
+        return reverse('vacancies_list_url', kwargs={'id': self.id})"""
 
 
 class Help(models.Model):
@@ -469,10 +483,6 @@ class Settings(models.Model):
     email_suggestions = models.BooleanField(default=True)
     email_meetings = models.BooleanField(default=True)
     email_reviews = models.BooleanField(default=True)
-
-
-    def __str__(self):
-        return self.name_setting
 
 
 

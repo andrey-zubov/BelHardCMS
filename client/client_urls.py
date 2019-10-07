@@ -4,6 +4,8 @@ from django.urls import path
 from client import views
 from client.edit.load_data_list import (SkillsDataList, InstitutionDataList, CvPositionDataList)
 from client.views import *
+from . import views
+from .views import *
 
 urlpatterns = [
     path('', views.client_main_page, name='client'),  # main client page
@@ -37,30 +39,6 @@ urlpatterns = [
     path(r'settings/', views.settings_menu, name='settings_menu'),
     path(r'settingsset/', views.set_settings, name='settings_set'),
 
-    ##Poland urls
-    path('resumes/', resumes_list, name='resumes_list_url'),
-    path('resumes/<id>/', resume_detail, name='resume_detail_url'),
-    path('resumes/<id>/accepted_vacancies/', accepted_vacancies, name='accepted_vacancies_url'),
-    path('resumes/<id>/rejected_vacancies/', rejected_vacancies, name='rejected_vacancies_url'),
-    path('resumes/<id>/vacancies/', vacancies_list, name='vacancies_list_url'),
-    path('resumes/vacancy/<id>/', vacancy_detail, name='vacancy_detail_url'),
-    path('accept_reject/', views.accept_reject),
-    path('help/', help_list, name='help_list_url'),
-    path('settings/', settings_list, name='settings_list_url'),
-    path('on_off/', views.on_off),  # on_off settings for notifications
-    path('viewed/', views.viewed),
-
-    path('login/', client_login),
-    path('logout/', client_logout),
-    path('tasks/', tasks, name='tasks_list'),
-
-    # path('edit/form_edu/', views.form_education, name='form_edu'),
-    path(r'checktask/', views.checktask),
-    path(r'checknotifications/', views.checknotifications),
-    path(r'settings/', views.settings_menu, name='settings_menu'),
-    path(r'settingsset/', views.set_settings, name='settings_set'),
-    path(r'chat_update/', views.chat_update, name='chat_update'),
-
     # Poland urls
     path('cv/', resumes_list, name='resumes_list_url'),
     path('cv/<id_c>/', resume_detail, name='resume_detail_url'),
@@ -74,5 +52,7 @@ urlpatterns = [
     path('viewed/', views.viewed),
     path('upload', views.upload, name='client_cv_upload'),
     path('upload', views.upload, name='upload'),
+
+
 
 ]
