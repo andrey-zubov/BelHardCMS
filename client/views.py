@@ -452,6 +452,7 @@ class OpinionDelete(View):
 def client_login(request):  # ввести логин/пароль -> зайти в систему
     res = csrf(request)
     res['url'] = 'login'
+    print(res)
     if request.POST:
         password = request.POST['password']
         user = request.POST['user']
@@ -472,12 +473,12 @@ def client_login(request):  # ввести логин/пароль -> зайти
         user_settings = Settings.objects.get(user=request.user)
     except Settings.DoesNotExist:
         user_settings = Settings.objects.create(user=request.user)
-    return redirect('/client/')
+    return redirect('client')
 
 
 def client_logout(request):  # выйти из системы, возврат на стартовую страницу
     auth.logout(request)
-    return redirect('/')  # вставить редирект куда требуется
+    return redirect(to='login')  # вставить редирект куда требуется
 
 
 def tasks(request):
