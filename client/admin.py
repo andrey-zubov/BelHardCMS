@@ -36,29 +36,19 @@ class VacancyAdmin(admin.ModelAdmin):
     )
 
 
-class ResumeAdmin(admin.ModelAdmin):
+admin.site.register(Vacancy, VacancyAdmin)
 
-    list_display = (
-        'state', 'slug',
-    )
-    list_display_links = (
-        'state', 'slug',
-    )
-    search_fields = (
-        'state', 'slug',
-    )
 
-## Test settings for Poland
 class SettingsAdmin(admin.ModelAdmin):
 
-    list_display = ('name_setting', )
-    list_display_links = ('name_setting', )
-    search_fields = ('name_setting', )
+    list_display = ('user', 'messages', 'tasks', 'suggestions', 'meetings', )
+    list_display_links = ('user', 'messages', 'tasks', 'suggestions', 'meetings', )
+    search_fields = ('user', 'messages', 'tasks', 'suggestions', 'meetings', )
 
 
-#admin.site.register(Settings, SettingsAdmin)
-admin.site.register(Vacancy, VacancyAdmin)
-admin.site.register(Resume, ResumeAdmin)
+admin.site.register(Settings, SettingsAdmin)
+
+
 admin.site.register(Help)
 
 
@@ -68,7 +58,6 @@ admin.site.register(Answer)
 admin.site.register(Chat)
 admin.site.register(Tasks, Tasks_Admin)
 admin.site.register(Message)
-admin.site.register(Settings)
 
 
 class SexAdmin(admin.ModelAdmin):
