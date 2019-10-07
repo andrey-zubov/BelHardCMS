@@ -1,0 +1,24 @@
+{% extends 'client/client_main_page.html' %}
+
+{% block title %}
+    Client resumes list
+{% endblock %}
+
+{% block content %}
+    <h2 class="mb-5 offset-md-0">Выбор резюме</h2>
+    {% for resume in resumes %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><a href="{{ resume.get_absolute_url }}">{{ resume.state }}</a></h5>
+            </div>
+            <div class="card-body">
+
+                <b>
+                    Всего: {{ resume.vacancies_in_waiting.count|add:resume.vacancies_accept.count|add:resume.vacancies_reject.count }} |
+                    Принято: {{ resume.vacancies_accept.count }}    |
+                    Отклонено: {{ resume.vacancies_reject.count }}
+                </b>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

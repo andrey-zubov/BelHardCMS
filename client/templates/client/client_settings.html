@@ -1,0 +1,107 @@
+{% extends 'client/main_template_client.html' %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/static/client/style/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    {% block title %}Настройки{% endblock %}
+</head>
+
+{% block content %}
+    <article class="main">
+    <h3 class="HeadLine">Всплывающие уведомления</h3>
+    <ul>
+        <li>
+            <section class="container">
+            <p class="paragraph ">О новых сообщениях</p>
+            <label class="switch First">
+                    {% if settings.messages == False %}
+                        <input class="activation" id="messages" type="checkbox">
+                        <span class="slider round"></span>
+                    {% else %}
+                        <input class="activation" id="messages" type="checkbox" checked>
+                        <span class="slider round"></span>
+                    {% endif %}
+                  </label>
+                </section>
+
+        </li>
+        <li>
+            <section class="container">
+            <p class="paragraph ">О новых задачах</p>
+            <label class="switch Second">
+                {% if settings.tasks == False %}
+                    <input class="activation" type="checkbox" id="tasks">
+                    <span class="slider round"></span>
+                {% else %}
+                    <input class="activation" type="checkbox" id="tasks" checked>
+                    <span class="slider round"></span>
+                 {% endif %}
+                  </label>
+                </section>
+
+        </li>
+        <li>
+
+            <section class="container">
+            <p class="paragraph Third">О новых предложениях</p>
+            <label class="switch">
+                {% if settings.suggestions == False %}
+                    <input class="activation" type="checkbox" id="suggestions">
+                    <span class="slider round"></span>
+                {% else %}
+                    <input class="activation" type="checkbox" id="suggestions" checked>
+                    <span class="slider round"></span>
+                {% endif %}
+                  </label>
+                </section>
+
+        </li>
+        <li>
+            <section class="container">
+            <p class="paragraph ">О новых встречах</p>
+            <label class="switch Fourth">
+                {% if settings.meetings == False %}
+                    <input class="activation" type="checkbox" id="meetings">
+                    <span class="slider round"></span>
+                {% else %}
+                    <input class="activation" type="checkbox" id="meetings" checked>
+                    <span class="slider round"></span>
+                {% endif %}
+                  </label>
+                </section>
+
+        </li>
+    </ul>
+    <hr>
+
+{% endblock %}
+    <section>
+        <!-- тут должен быть блок "Скрывать резюме" -->
+    </section>
+    </article>>
+
+    <script>
+        $('document').ready(function () {
+            $('.activation').on('click', function () {
+                let set = this.id;
+                let stat = false;
+                if (this.checked){
+                     stat = true
+                }
+
+                $.ajax({
+                    'url': '/client/settingsset/',
+                    'data': {'setting': set, 'state': stat},
+                    success: function (data) {
+                        console.log(data)
+                    }
+                });
+            })
+        });
+
+    </script>
+</body>
+</html>

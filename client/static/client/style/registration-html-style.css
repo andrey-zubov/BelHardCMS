@@ -1,0 +1,81 @@
+  body{
+      background: #adc6f8
+  }
+.login-plate{
+    width: 450px;
+    height: 329px;
+    background: white;
+    text-align: center;
+    border-radius: 30px;
+    margin: 150px auto 0;
+
+  }
+
+  .article{
+      margin: 15px auto 0;
+      display: inline-flex;
+      flex-direction:row;
+      flex-wrap: nowrap;
+  }
+
+.reg-input{
+    height: 47px;
+    width: 142px;
+    background: #213d4d;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    margin: 20px auto;
+    transition: background .3s linear;
+
+}
+
+.reg-input:hover{
+    background: #8D7171;
+}
+
+.login-form{
+    float: left;
+}
+
+.form-group{
+    margin-top: 15px ;
+    clear:both;
+    text-align:right;
+}
+
+label{
+    float:left;
+    padding-top: 20px;
+    padding-right: 25px;
+    padding-left: 50px;
+    color: #414141;
+    font-size: 20px;
+    font-family:open sans,sans-serif;
+    font-weight: bold
+}
+
+.form-control {
+    border: 2px solid black;
+    border-radius: 40px;
+    width: 258px;
+    height: 47px;
+    transition: border .2s;
+}
+
+.form-control:hover{
+    border: 2px solid #adc6f8;
+}
+
+.hr-sys{
+    font-family:Sans-Serif;
+    font-size: 20px;
+    color:#292929;
+    font-weight: bold;
+}
+
+.version{
+    font-family:Sans-Serif;
+    font-size: 12px;
+    color:#292929;
+}

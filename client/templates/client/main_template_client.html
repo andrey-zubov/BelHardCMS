@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/static/client/style/main_style.css">
+
+    {% load staticfiles %}
+
+    <title>{% block title %}Client{% endblock %} - HR-System</title>
+</head>
+<body>
+<div class="inbody">
+    <header>
+        <nav class="header-bar">
+                            <a class="logo" href="{% url 'client' %}" style="text-decoration: none; ">
+                                <div class="name" style="margin: 15px auto; text-align: center">
+                                    <img src="https://static.wixstatic.com/media/3e33b4_be193070b72743e2a0194222634bd2bf~mv2.png/v1/fill/w_79,h_71,al_c,q_80,usm_0.66_1.00_0.01/31-512.png" style="width: 50px; height: 50px"  >
+                                    <div class="hr-sys">HR-System</div>
+                                    <div class="version">Сборка: 1.0</div>
+                                </div>
+                            </a>
+
+                            <a class="text-bar" href="{% url 'tasks_list' %}"> <div class="task" style="margin-top: 15px;"> Задачи <div class="counter" id="task_count" hidden="true"> {{ readtask }} </div></div></a>
+                            <a class="text-bar" href="{% url 'resumes_list_url' %}" id="clearnotif"><div class="suggestions" style="margin-top: 15px;"> Предложения <div class="counter" id="sug_count" hidden="true">{{ unread_suggestions }}</div></div></a>
+                            <a class="text-bar" href="#"><div class="cv" style="margin-top: 15px;">Собеседования</div></a>
+                            <a class="text-bar" href="{% url 'contact_with_centre' %}"> <div class="messages" style="margin-top: 15px;"> Связаться с КЦ <div class="counter" id="mes_count" hidden="true"> {{ unread_messages }} </div></div></a>
+                            <div class="logo" style="width: 205px; height: 75px">
+                                <a class="text-client" href="{% url 'client_profile' %}" ><img src="{{ client_img }}" alt="img" class="rounded-circle" height="75"></a>
+
+                                <div class="name" style="display: flex; flex-direction: column; text-align: center; margin-top: 5px; margin-left: 5px;">
+                                    <h6>Клиент</h6>
+                                    <a class="logout" href="{% url 'logout' %}"><div style="margin-top: 3px">Выйти</div></a>
+                                </div>
+                            </div>
+
+                        </nav>
+
+    </header>
+
+    <section class="content" >
+    {% block content %}
+        <img src="https://static.wixstatic.com/media/3e33b4_8434f559fcaa44a39ecfd54bf197fba5~mv2.png/v1/fill/w_750,h_350,al_c,q_80,usm_0.66_1.00_0.01/tild6162-3961-4262-b966-316166666133__lo.png">
+            {%if settings.tasks == True %}
+                    {%if readtask != 0 %}
+                        <div class="notification" id="task_notification"><h2> Новые задачи:  {{ readtask }} </h2> <span class="close" id="close_task"></span></div>
+                    {% endif %}
+                {% endif %}
+                <div id="check_notifications">
+                {%if settings.messages == True %}
+                    {% if unread_messages != 0 %}
+                        <div class="notification" id="mes_notification"><h2>Новые сообщения:  {{ unread_messages }} </h2><span class="close" id="close_mes"></span></div>
+                    {% endif %}
+                    </div>
+                {% endif %}
+                {%if settings.suggestions == True %}
+                        {% if unread_suggestions != 0 %}
+                            <div class="notification" id="sug_notification"><h2>Новые предложения:  {{ unread_suggestions }} </h2><span class="close" id="close_sug"></span></div>
+                        {% endif %}
+
+                {% endif %}
+
+
+            <!-- There is KOSTYL from Poland))-->
+
+            {% if status %}
+            <div class="p-sm-5 pt-sm-5 fixed-bottom" >
+                {% if notification %}
+                    <a href="{% url 'resumes_list_url' %}" id="clearnotif1">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                       Новых предложений: <strong> {{ notification }}</strong>.
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                           <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% endblock %}
+
+        </section>
+<nav class="footer-bar">
+         <a class="text-footer" href="{% url 'help_list_url' %}"><div style="margin-top: 9px;">Помощь</div></a>
+         <a class="text-footer" href="{% url 'settings_menu' %}"><div style="margin-top: 9px;">Настройки</div></a>
+         <a class="text-footer" href="{% url 'opinion_create' %}"><div style="margin-top: 9px;">Оставить отзыв</div></a>
+</nav>
+</div>
+</body>
+<script>
+$('document').ready(function () {
+    $('#close_task').on('click', function () {
+        $('#task_notification').hide()
+    });
+    $('#close_mes').on('click', function () {
+            $('#mes_notification').hide();
+    });
+    $('#close_sug').on('click', function () {
+            $('#sug_notification').hide();
+    });
+        console.log('fuf');
+        $.ajax({
+                'url': '/client/checknotifications/',
+                success: function (data) {
+                    if (data[0] != 0) {
+                        document.getElementById('mes_count').hidden = false;
+                        document.getElementById('mes_count').innerHTML =  data[0];
+                    }
+                    else {
+                        document.getElementById('mes_count').hidden = true;
+                    }
+                    if (data[1] != 0) {
+                        document.getElementById('task_count').hidden = false;
+                        document.getElementById('task_count').innerHTML =  data[1];
+                    }
+                    else {
+                        document.getElementById('task_count').hidden = true;
+                    }
+                    if (data[2] != 0) {
+                        document.getElementById('sug_count').hidden = false;
+                        document.getElementById('sug_count').innerHTML =  data[2];
+                    }
+                    else {
+                        document.getElementById('sug_count').hidden = true;
+                    }
+                }
+            });
+        setInterval(function(){
+            $.ajax({
+                'url': '/client/checknotifications/',
+                success: function (data) {
+                    if (data[0] != 0) {
+                        document.getElementById('mes_count').hidden = false;
+                        document.getElementById('mes_count').innerHTML =  data[0];
+                    }
+                    else {
+                        document.getElementById('mes_count').hidden = true;
+                    }
+                    if (data[1] != 0) {
+                        document.getElementById('task_count').hidden = false;
+                        document.getElementById('task_count').innerHTML =  data[1];
+                    }
+                    else {
+                        document.getElementById('task_count').hidden = true;
+                    }
+                    if (data[2] != 0) {
+                        document.getElementById('sug_count').hidden = false;
+                        document.getElementById('sug_count').innerHTML =  data[2];
+                    }
+                    else {
+                        document.getElementById('sug_count').hidden = true;
+                    }
+                }
+            });
+        }, 10000);
+        /*actions for buttons*/
+    $('#clearnotif').on('click',function () {
+        $.ajax({'url':'/client/viewed/',
+                'data':{'action': 'clear'},
+                success:function (data) {
+                    console.log(data);
+                }})
+    });
+    $('#clearnotif1').on('click',function () {
+        $.ajax({'url':'/client/viewed/',
+                'data':{'action': 'clear'},
+                success:function (data) {
+                    console.log(data);
+                }})
+    });
+});
+</script>
+</html>
