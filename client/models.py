@@ -429,6 +429,13 @@ class Settings(models.Model):
     suggestions = models.BooleanField(default=True)
     meetings = models.BooleanField(default=True)
 
+    name_setting = models.TextField(max_length=50, blank=True, null=True)
+    name_setting_status = models.BooleanField(default=True)
+    tumbler_on_off = models.CharField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return self.name_setting
+
 
 
 

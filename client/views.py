@@ -458,12 +458,21 @@ def client_login(request):  # ввести логин/пароль -> зайти
         u = auth.authenticate(username=user, password=password)
         if u:
             auth.login(request, u)
-            return redirect('/')  # переадресация после авторизации
         else:
             res['error'] = "Неверный login/пароль"
             return render(request, 'registration.html', res)
     else:
         return render(request, 'registration.html', res)
+    try:
+        user_chat = Chat.objects.get(members=request.user)
+    except Chat.DoesNotExist:
+        user_chat = Chat.objects.create()
+        user_chat.members.add(request.user) #TODO сюда добавить менеджера, которому, по дефолту, передают юзера
+    try:
+        user_settings = Settings.objects.get(user=request.user)
+    except Settings.DoesNotExist:
+        user_settings = Settings.objects.create(user=request.user)
+    return redirect('/client/')
 
 
 def client_logout(request):  # выйти из системы, возврат на стартовую страницу
