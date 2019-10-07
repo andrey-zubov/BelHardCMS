@@ -49,7 +49,7 @@ class SettingsAdmin(admin.ModelAdmin):
     search_fields = ('name_setting',)
 
 
-# admin.site.register(Settings, SettingsAdmin)
+admin.site.register(Settings, SettingsAdmin)
 admin.site.register(Vacancy, VacancyAdmin)
 admin.site.register(Resume, ResumeAdmin)
 admin.site.register(Help)
@@ -59,7 +59,6 @@ admin.site.register(Answer)
 admin.site.register(Chat)
 admin.site.register(Tasks, Tasks_Admin)
 admin.site.register(Message)
-admin.site.register(Settings)
 
 
 class SexAdmin(admin.ModelAdmin):
