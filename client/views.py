@@ -65,15 +65,15 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
     # Poland
-    # resumes = CV.objects.all()
-    # suggestions = 0
-    # for resume in resumes:
-    #   suggestions += resume.notification.count()
-    # response['unread_suggestions'] = suggestions
-    # client_instance = client_check(request.user)
-    # response['client_img'] = load_client_img(client_instance)
-    # context.update(response)
-    # print(context['unread_suggestions'])
+    resumes = CV.objects.all()
+    suggestions = 0
+    for resume in resumes:
+        suggestions += resume.notification.count()
+    response['unread_suggestions'] = suggestions
+    client_instance = client_check(request.user)
+    response['client_img'] = load_client_img(client_instance)
+    context.update(response)
+    print(context['unread_suggestions'])
     return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
