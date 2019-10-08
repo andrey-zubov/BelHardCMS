@@ -48,15 +48,15 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
     # Poland
-    # resumes = CV.objects.all()
-    # suggestions = 0
-    # for resume in resumes:
-    #   suggestions += resume.notification.count()
-    # response['unread_suggestions'] = suggestions
-    # client_instance = client_check(request.user)
-    # response['client_img'] = load_client_img(client_instance)
-    # context.update(response)
-    # print(context['unread_suggestions'])
+    resumes = CV.objects.all()
+    suggestions = 0
+    for resume in resumes:
+        suggestions += resume.notification.count()
+    response['unread_suggestions'] = suggestions
+    client_instance = client_check(request.user)
+    response['client_img'] = load_client_img(client_instance)
+    context.update(response)
+    print(context['unread_suggestions'])
     return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
@@ -492,30 +492,9 @@ def help_list(request):
                                                         'client_img':load_client_img(client_instance)})
 
 
-def settings_list(request):
-    settings = Settings.objects.all()
-    status = 1 if Settings.objects.get().tumbler_on_off == 'on' else 0
-    print('status = ', status)
-    return render(request, 'client/settings.html', context={'settings': settings, 'status': status})
-
-
-# def settings_on_off(request):
-# status = 1 if SettingsNotification.objects.get().tumbler_on_off == 'on' else 0
-# print('status = ', status)
-# return render(request, 'client/client_settings.html', context={'status': status})
-
-
-def on_off(request):
-    status = Settings.objects.get()
-    status.tumbler_on_off = request.GET['status']
-    print(status.tumbler_on_off)
-    status.save()
-    return HttpResponse(status.tumbler_on_off)
-
-
 def viewed(request):
     if request.GET['action'] == 'clear':
-        resumes = Resume.objects.all()
+        resumes = CV.objects.all()
         for resume in resumes:
             r = resume
             r.notification.clear()
