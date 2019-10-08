@@ -351,8 +351,8 @@ class Message(models.Model):
 
 class Opinion(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
-    title = models.CharField(max_length=100)
-    text = models.TextField(max_length=3000)
+    title = models.CharField(max_length=100, verbose_name='Тема')
+    text = models.TextField(max_length=3000, verbose_name='Текст отзыва')
     date = models.DateTimeField(auto_now_add=True)
 
     def get_adres(self):
@@ -434,7 +434,7 @@ class Settings(models.Model):
     tumbler_on_off = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
-        return self.name_setting
+        return str(self.user)
 
 
 

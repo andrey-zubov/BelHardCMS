@@ -10,15 +10,20 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
             integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh"
             crossorigin="anonymous"></script>
+
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
             integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
             crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>
+
 
     <link rel="stylesheet" href="/static/client/style/main_style.css">
 
@@ -44,7 +49,8 @@
                             <a class="text-bar" href="#"><div class="cv" style="margin-top: 15px;">Собеседования</div></a>
                             <a class="text-bar" href="{% url 'contact_with_centre' %}"> <div class="messages" style="margin-top: 15px;"> Связаться с КЦ <div class="counter" id="mes_count" hidden="true"> {{ unread_messages }} </div></div></a>
                             <div class="logo" style="width: 205px; height: 75px">
-                                <a class="text-client" href="{% url 'client_profile' %}" ><img src="{{ client_img }}" alt="img" class="rounded-circle" height="75"></a>
+                                <a class="text-client" href="{% url 'client_profile' %}" >
+                                    <img src="{{ client_img }}" alt="img" class="rounded-circle" height="75"></a>
 
                                 <div class="name" style="display: flex; flex-direction: column; text-align: center; margin-top: 5px; margin-left: 5px;">
                                     <h6>Клиент</h6>

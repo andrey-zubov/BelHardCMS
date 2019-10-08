@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-</head>
-<body>
+{% extends 'client/main_template_client.html' %}
+{% load staticfiles %}
+
+    {% block title%} Задачи {% endblock %}
+
+
+{% block content %}
 <div class="active">
     {% for tas in task %}
         <div hidden>{{ tas.check_readstatus }}</div>
@@ -48,13 +47,16 @@
     <button class="hide">Скрыть</button>
 </div>
 
-<script>
+<script type="text/javascript">
 $('document').ready(function () {
     $('#show').on('click', function () {
         $('.close').show()
+        console.log(1)
+
     });
     $(".close .hide").click(function(){
         $(this).parents(".close").hide();
+        console.log(2)
     });
     $('.fortask').on('click', function () {
         var id = 'forsubtask' + $(this).attr('id').slice(8);
@@ -64,6 +66,7 @@ $('document').ready(function () {
         } else {
             elem.show();
         }
+        console.log(3)
 
 
     });
@@ -78,11 +81,10 @@ $('document').ready(function () {
                     console.log(data)
                 }
             });
-            console.log(id)
+
 
         })
 
 });
 </script>
-</body>
-</html>
+{% endblock %}

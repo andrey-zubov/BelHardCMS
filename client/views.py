@@ -381,7 +381,8 @@ class MessagesView(View):
 
         unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
         context = {'user_profile': request.user, 'unread_messages': unread_messages, 'chat': chat, 'form': MessageForm()}
-
+        client_instance = client_check(request.user)
+        context['client_img'] = load_client_img(client_instance)
         return render(request, 'client/client_chat.html', context)
 
     def post(self, request):
@@ -420,7 +421,9 @@ def answer_create(request, pk):
 class OpinionCreate(View):
     def get(self, request):
         form = OpinionForm()
-        return render(request, 'opinion/opinion_create.html', context={'form': form})
+        client_instance = client_check(request.user)
+        return render(request, 'opinion/opinion_create.html', context={'form': form,
+                                                                       'client_img':load_client_img(client_instance)})
 
     def post(self, request):
         form = OpinionForm(request.POST)
@@ -430,7 +433,9 @@ class OpinionCreate(View):
             new_opinion.user = request.user
             new_opinion.save()
             return redirect('opinion_detail', pk=new_opinion.pk)
-        return render(request, 'opinion/opinion_create.html', context={'form': form})
+        client_instance = client_check(request.user)
+        return render(request, 'opinion/opinion_create.html', context={'form': form,
+                                                                       'client_img':load_client_img(client_instance)})
 
 
 def opinion_detail(request, pk):
@@ -486,7 +491,10 @@ def tasks(request):
     task = Tasks.objects.filter(user=request.user, status=False)
     task_false = Tasks.objects.filter(user=request.user, status=True) #status=False)
     task_false = sorted(task_false, key=lambda x:x.endtime,  reverse=True)
-    return render(request, 'client/tasks.html', context = {'task' : task,  'task_false': task_false})
+    client_instance = client_check(request.user)
+    return render(request, 'client/tasks.html', context = {'task' : task,
+                                                           'task_false': task_false,
+                                                           'client_img':load_client_img(client_instance)})
 
 
 class FormEducation(TemplateView):
@@ -600,6 +608,8 @@ def checknotifications(request):
 def settings_menu(request):
     settings = Settings.objects.get(user=request.user)
     context = {'settings': settings, }
+    client_instance = client_check(request.user)
+    context['client_img'] = load_client_img(client_instance)
     return render(request=request, template_name='client/client_settings.html', context=context)
 
 
@@ -642,7 +652,9 @@ def vacancy_detail(request, slug):
 
 def resumes_list(request):
     resumes = Resume.objects.all()
-    return render(request, 'client/client_resumes.html', context={'resumes': resumes})
+    client_instance = client_check(request.user)
+    return render(request, 'client/client_resumes.html', context={'resumes': resumes,
+                                                                  'client_img':load_client_img(client_instance)})
 
 
 def resume_detail(request, slug):
@@ -701,7 +713,9 @@ def accept_reject(request):#
 
 def help_list(request):
     faqs = Help.objects.all()
-    return render(request, 'client/help.html', context={'faqs': faqs})
+    client_instance = client_check(request.user)
+    return render(request, 'client/help.html', context={'faqs': faqs,
+                                                        'client_img':load_client_img(client_instance)})
 
 
 def settings_list(request):
