@@ -212,19 +212,19 @@ class CV(models.Model):
     notification = models.ManyToManyField('Vacancy', blank=True, related_name='notifications_for_resume')
 
     def __str__(self):
-        return self.position
+        return '{}'.format(self.position)
 
     def get_absolute_url(self):
-        return reverse('resume_detail_url', kwargs={'id': self.id})
+        return reverse('resume_detail_url', kwargs={'id_c': self.id})
 
     def get_accept_url(self):
-        return reverse('accepted_vacancies_url', kwargs={'id': self.id})
+        return reverse('accepted_vacancies_url', kwargs={'id_c': self.id})
 
     def get_reject_url(self):
-        return reverse('rejected_vacancies_url', kwargs={'id': self.id})
+        return reverse('rejected_vacancies_url', kwargs={'id_c': self.id})
 
     def get_vacancies_list_url(self):
-        return reverse('vacancies_list_url', kwargs={'id': self.id})
+        return reverse('vacancies_list_url', kwargs={'id_c': self.id})
 
     # end upgrade from Poland
 
@@ -261,7 +261,7 @@ class Vacancy(models.Model):
         return '{}'.format(self.state)
 
     def get_absolute_url(self):
-        return reverse('vacancy_detail_url', kwargs={'id': self.id})
+        return reverse('vacancy_detail_url', kwargs={'id_v': self.id})
 
 
 """class Resume(models.Model): ##Test table

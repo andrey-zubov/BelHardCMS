@@ -15,6 +15,20 @@ class Tasks_Admin(admin.ModelAdmin):
     readonly_fields = ['endtime']
 
 
+class CVAdmin(admin.ModelAdmin):
+    list_display = (
+        'client_cv', 'position', 'employment', 'time_job', 'salary', 'type_salary',
+    )
+    list_display_links = (
+        'client_cv', 'position', 'employment', 'time_job', 'salary', 'type_salary',
+    )
+    search_fields = (
+        'client_cv', 'position', 'employment', 'time_job', 'salary', 'type_salary',
+    )
+
+
+
+admin.site.register(CV, CVAdmin)
 
 
 class VacancyAdmin(admin.ModelAdmin):
