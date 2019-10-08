@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.views import View
 from django.http import HttpResponse
 
-from .models import Vacancy, Resume
+from .models import Vacancy
 
 from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 
@@ -37,9 +37,8 @@ def client_main_page(request):  #!!!!!!!!!!!!!!!!!!!!!Alert
     settings = Settings.objects.get(user=request.user)
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
-   
-    #Poland
-    resumes = Resume.objects.all()
+    # Poland
+    resumes = CV.objects.all()
     suggestions = 0
     for resume in resumes:
         suggestions += resume.notification.count()
@@ -49,7 +48,6 @@ def client_main_page(request):  #!!!!!!!!!!!!!!!!!!!!!Alert
     context.update(response)
     print(context['unread_suggestions'])
     return render(request=request, template_name='client/main_template_client.html', context=context)
-
 
 
 def client_profile(request):
@@ -239,10 +237,10 @@ def client_edit_cv(request):
         arr_cv = pars_cv_request(request.POST)
         for cvs in arr_cv:
             position = cvs['position']
-            employment = Employment.objects.get(employment=request.POST['employment'])
-            time_job = TimeJob.objects.get(time_job_word=request.POST['time_job'])
+            employment = None     # Employment.objects.get(employment=request.POST['employment'])
+            time_job = None     # TimeJob.objects.get(time_job_word=request.POST['time_job'])
             salary = cvs['salary']
-            type_salary = TypeSalary.objects.get(type_word=request.POST['type_salary'])
+            type_salary = None    # TypeSalary.objects.get(type_word=request.POST['type_salary'])
 
             if any([position, employment, time_job, salary, type_salary]):
                 cv = CV(
@@ -586,7 +584,7 @@ def checknotifications(request):
     chat = Chat.objects.get(members=request.user)
     unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
     readtask = len(Tasks.objects.filter(user=request.user, readtask=False))
-    resumes = Resume.objects.all()
+    resumes = CV.objects.all()
     suggestions = 0
     for resume in resumes:
         suggestions += resume.notification.count()
@@ -621,15 +619,11 @@ def set_settings(request):
     return HttpResponse(settings)
 
 
-#Poland's views
-
-def vacancies_list(request, slug):
-    resume = Resume.objects.get(slug__iexact=slug)
-    return render(request, 'client/client_vacancies.html', context={'resume': resume})
+# Poland's views ###################################################################################
 
 
-def vacancy_detail(request, slug):
-    vacancy = Vacancy.objects.get(slug__iexact=slug)
+def vacancy_detail(request, id_v):
+    vacancy = Vacancy.objects.get(id=id_v)
     first_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.reject_for_resume.all()) else 0
     second_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.accept_for_resume.all()) else 0
     return render(request, 'client/client_vacancy_detail.html', context={
@@ -640,58 +634,58 @@ def vacancy_detail(request, slug):
 
 
 def resumes_list(request):
-    resumes = Resume.objects.all()
+    resumes = CV.objects.all()
     return render(request, 'client/client_resumes.html', context={'resumes': resumes})
 
 
-def resume_detail(request, slug):
-    resume = Resume.objects.get(slug__iexact=slug)
+def resume_detail(request, id_c):
+    resume = CV.objects.get(id=id_c)
     return render(request, 'client/client_resume_detail.html', context={'resume': resume})
 
 
-def accepted_vacancies(request, slug):########################
-    resume = Resume.objects.get(slug__iexact=slug)
+def accepted_vacancies(request, id_c):
+    resume = CV.objects.get(id=id_c)
     return render(request, 'client/client_accepted_vacancies.html', context={'resume': resume})
 
 
-def rejected_vacancies(request, slug):##############################
-    resume = Resume.objects.get(slug__iexact=slug)
+def rejected_vacancies(request, id_c):
+    resume = CV.objects.get(id=id_c)
     return render(request, 'client/client_rejected_vacancies.html', context={'resume': resume})
 
 
-def accept_reject(request):#
+def accept_reject(request):
 
-    if request.GET['flag'] == 'accept' and Vacancy.objects.get(slug__iexact=request.GET['slug']).in_waiting_for_resume.all():
-        print(request.GET['slug'], 1)
-        r = Vacancy.objects.get(slug__iexact=request.GET['slug']).in_waiting_for_resume.get()
-        v = Vacancy.objects.get(slug__iexact=request.GET['slug'])
+    if request.GET['flag'] == 'accept' and Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.all():
+        print(request.GET['id_v'], 1)
+        r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get()
+        v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_accept.add(v)
         r.vacancies_in_waiting.remove(v)
         r.save()
         return HttpResponse('accept_server')
 
-    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(slug__iexact=request.GET['slug']).in_waiting_for_resume.all():
-        print(request.GET['slug'], 2)
-        r = Vacancy.objects.get(slug__iexact=request.GET['slug']).in_waiting_for_resume.get()
-        v = Vacancy.objects.get(slug__iexact=request.GET['slug'])
+    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.all():
+        print(request.GET['id_v'], 2)
+        r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get()
+        v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_reject.add(v)
         r.vacancies_in_waiting.remove(v)
         r.save()
         return HttpResponse('reject_server')
 
-    elif request.GET['flag'] == 'accept' and Vacancy.objects.get(slug__iexact=request.GET['slug']).reject_for_resume.all():
-        print(request.GET['slug'], 3)
-        r = Vacancy.objects.get(slug__iexact=request.GET['slug']).reject_for_resume.get()
-        v = Vacancy.objects.get(slug__iexact=request.GET['slug'])
+    elif request.GET['flag'] == 'accept' and Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.all():
+        print(request.GET['id_v'], 3)
+        r = Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.get()
+        v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_accept.add(v)
         r.vacancies_reject.remove(v)
         r.save()
         return HttpResponse('accept_server')
 
-    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(slug__iexact=request.GET['slug']).accept_for_resume.all():
-        print(request.GET['slug'], 4)
-        r = Vacancy.objects.get(slug__iexact=request.GET['slug']).accept_for_resume.get()
-        v = Vacancy.objects.get(slug__iexact=request.GET['slug'])
+    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.all():
+        print(request.GET['id_v'], 4)
+        r = Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.get()
+        v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_reject.add(v)
         r.vacancies_accept.remove(v)
         r.save()
@@ -703,30 +697,9 @@ def help_list(request):
     return render(request, 'client/help.html', context={'faqs': faqs})
 
 
-def settings_list(request):
-    settings = Settings.objects.all()
-    status = 1 if Settings.objects.get().tumbler_on_off == 'on' else 0
-    print('status = ', status)
-    return render(request, 'client/settings.html', context={'settings': settings, 'status': status })
-
-
-#def settings_on_off(request):
-    #status = 1 if SettingsNotification.objects.get().tumbler_on_off == 'on' else 0
-    #print('status = ', status)
-    #return render(request, 'client/client_settings.html', context={'status': status})
-
-
-def on_off(request):
-    status = Settings.objects.get()
-    status.tumbler_on_off = request.GET['status']
-    print(status.tumbler_on_off)
-    status.save()
-    return HttpResponse(status.tumbler_on_off)
-
-
 def viewed(request):
     if request.GET['action'] == 'clear':
-        resumes = Resume.objects.all()
+        resumes = CV.objects.all()
         for resume in resumes:
             r = resume
             r.notification.clear()

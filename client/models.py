@@ -205,9 +205,28 @@ class CV(models.Model):
     time_job = models.ForeignKey(TimeJob, on_delete=models.SET_NULL, null=True, blank=True)
     salary = models.CharField(max_length=10, null=True, blank=True)
     type_salary = models.ForeignKey(TypeSalary, on_delete=models.SET_NULL, null=True, blank=True)
+    # There is Poland's upgrade
+    vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
+    vacancies_accept = models.ManyToManyField('Vacancy', blank=True, related_name='accept_for_resume')
+    vacancies_reject = models.ManyToManyField('Vacancy', blank=True, related_name='reject_for_resume')
+    notification = models.ManyToManyField('Vacancy', blank=True, related_name='notifications_for_resume')
 
     def __str__(self):
-        return self.position
+        return '{}'.format(self.position)
+
+    def get_absolute_url(self):
+        return reverse('resume_detail_url', kwargs={'id_c': self.id})
+
+    def get_accept_url(self):
+        return reverse('accepted_vacancies_url', kwargs={'id_c': self.id})
+
+    def get_reject_url(self):
+        return reverse('rejected_vacancies_url', kwargs={'id_c': self.id})
+
+    def get_vacancies_list_url(self):
+        return reverse('vacancies_list_url', kwargs={'id_c': self.id})
+
+    # end upgrade from Poland
 
 
 class State(models.Model):
@@ -242,10 +261,10 @@ class Vacancy(models.Model):
         return '{}'.format(self.state)
 
     def get_absolute_url(self):
-        return reverse('vacancy_detail_url', kwargs={'slug': self.slug})
+        return reverse('vacancy_detail_url', kwargs={'id_v': self.id})
 
 
-class Resume(models.Model): ##Test table
+"""class Resume(models.Model): ##Test table
     state = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
     vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
@@ -257,21 +276,21 @@ class Resume(models.Model): ##Test table
         return self.state
 
     def get_absolute_url(self):
-        return reverse('resume_detail_url', kwargs={'slug': self.slug})
+        return reverse('resume_detail_url', kwargs={'id': self.id})
 
     def get_accept_url(self):
-        return reverse('accepted_vacancies_url', kwargs={'slug': self.slug})
+        return reverse('accepted_vacancies_url', kwargs={'id': self.id})
 
     def get_reject_url(self):
-        return reverse('rejected_vacancies_url', kwargs={'slug': self.slug})
+        return reverse('rejected_vacancies_url', kwargs={'id': self.id})
 
     def get_vacancies_list_url(self):
-        return reverse('vacancies_list_url', kwargs={'slug': self.slug})
+        return reverse('vacancies_list_url', kwargs={'id': self.id})"""
 
 
 class Help(models.Model):
     question = models.TextField(max_length=1000)
-    answer = models.CharField(max_length=1000)
+    answer = models.TextField(max_length=1000)
 
     def __str__(self):
         return self.question
@@ -307,7 +326,7 @@ class Client(models.Model):
     img = models.ImageField(blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
     # resumes
-    resumes = models.ForeignKey(Resume, on_delete=models.SET_NULL, null=True, blank=True)
+    resumes = models.ForeignKey(CV, on_delete=models.SET_NULL, null=True, blank=True)  #  !!!!!!! Надо связать с CV, класса Resume больше нет.
 
 
     def __str__(self):
@@ -382,11 +401,10 @@ class Tasks(models.Model):
     title = models.TextField(max_length=200)
     time = models.DateTimeField()
     comment = models.TextField(max_length=300, blank=True)
-    status = models.BooleanField(default=False) #задача, которая не выполнена
+    status = models.BooleanField(default=False)     #задача, которая не выполнена
     endtime = models.DateTimeField(blank=True, null=True)
-    checkstatus = models.BooleanField(default=True)#статус активен, если можем после выоплнения задачи в течении 60 сек вернуть в активную задачу
+    checkstatus = models.BooleanField(default=True)    #статус активен, если можем после выоплнения задачи в течении 60 сек вернуть в активную задачу
     readtask = models.BooleanField(default=False)
-
 
     @property
     def show_all(self):
@@ -421,20 +439,12 @@ class SubTasks(models.Model):
     #    return self.telephone_number
 
 
-
 class Settings(models.Model):
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
     messages = models.BooleanField(default=True)
     tasks = models.BooleanField(default=True)
     suggestions = models.BooleanField(default=True)
     meetings = models.BooleanField(default=True)
-
-    name_setting = models.TextField(max_length=50, blank=True, null=True)
-    name_setting_status = models.BooleanField(default=True)
-    tumbler_on_off = models.CharField(max_length=50, blank=True, null=True)
-
-    def __str__(self):
-        return self.name_setting
 
 
 

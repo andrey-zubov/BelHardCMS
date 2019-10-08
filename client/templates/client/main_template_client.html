@@ -120,28 +120,12 @@
                 {% endif %}
                 {%if settings.suggestions == True %}
                         {% if unread_suggestions != 0 %}
-                            <div class="notification" id="sug_notification"><h2>Новые предложения:  {{ unread_suggestions }} </h2><span class="close" id="close_sug"></span></div>
+                            <a href="{% url 'resumes_list_url' %}" id="clearnotif1"><div class="notification" id="sug_notification"><h2>Новые предложения:  {{ unread_suggestions }} </h2><span class="close" id="close_sug"></span></div></a>
                         {% endif %}
                         </div>
                 {% endif %}
 
-
-            <!-- There is KOSTYL from Poland))-->
-
-            {% if status %}
-            <div class="p-sm-5 pt-sm-5 fixed-bottom" >
-                {% if notification %}
-                    <a href="{% url 'resumes_list_url' %}" id="clearnotif1">
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                       Новых предложений: <strong> {{ notification }}</strong>.
-                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                           <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    </a>
-                {% endif %}
-            </div>
-            {% endif %}
+        {% endblock %}
         <div class="container">
             <div class="p-sm-3 pt-sm-5">
                 <nav class="nav fixed-bottom" style="background-color: #344955; width: 100%; margin: 0 auto; max-width: 900px; display: flex; justify-content: space-between; align-items: center;">
@@ -151,7 +135,7 @@
                 </nav>
             </div>
         </div>
-        {% endblock %}
+
     </section>
 
 </body>
