@@ -104,15 +104,15 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
     # Poland
-    # resumes = CV.objects.all()
-    # suggestions = 0
-    # for resume in resumes:
-    #   suggestions += resume.notification.count()
-    # response['unread_suggestions'] = suggestions
-    # client_instance = client_check(request.user)
-    # response['client_img'] = load_client_img(client_instance)
-    # context.update(response)
-    # print(context['unread_suggestions'])
+    resumes = CV.objects.all()
+    suggestions = 0
+    for resume in resumes:
+        suggestions += resume.notification.count()
+    response['unread_suggestions'] = suggestions
+    client_instance = client_check(request.user)
+    response['client_img'] = load_client_img(client_instance)
+    context.update(response)
+    print(context['unread_suggestions'])
     return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
@@ -551,80 +551,15 @@ def help_list(request):
     return render(request, 'client/help.html', context={'faqs': faqs})
 
 
-def settings_list(request):
-    settings = Settings.objects.all()
-    status = 1 if Settings.objects.get().tumbler_on_off == 'on' else 0
-    print('status = ', status)
-    return render(request, 'client/settings.html', context={'settings': settings, 'status': status })
-
-
-#def settings_on_off(request):
-    #status = 1 if SettingsNotification.objects.get().tumbler_on_off == 'on' else 0
-    #print('status = ', status)
-    #return render(request, 'client/client_settings.html', context={'status': status})
-
-
-def on_off(request):
-    status = Settings.objects.get()
-    status.tumbler_on_off = request.GET['status']
-    print(status.tumbler_on_off)
-    status.save()
-    return HttpResponse(status.tumbler_on_off)
-
-
 def viewed(request):
     if request.GET['action'] == 'clear':
-        resumes = Resume.objects.all()
+        resumes = CV.objects.all()
         for resume in resumes:
             r = resume
             r.notification.clear()
         return HttpResponse('cleared')
 
-
-def admin_jobinterviews(request):  # for admin panel
-    client = Client.objects.get(id=request.GET['id_client'])
-    resumes = CV.objects.filter(client_cv=client)
-    resumes = {key:val for val,key in [(i.position, i.id) for i in resumes]}
-    resumes = json.dumps(resumes, ensure_ascii=False)
-    return HttpResponse(resumes)
-
-# PDF upload
-def upload(request):
-    context = {}
-    if request.method == 'POST':
-        uploaded_file = request.FILES['document']
-        fs = FileSystemStorage()
-        name = fs.save(uploaded_file.name, uploaded_file)
-        context['url'] = fs.url(name)
-    return render(request, 'upload.html', context)
-
-# PDF Parsing
-
-def parsing():
-    raw = parser.from_file('Astapenka Dima.pdf')
-    text = (raw['content'])
-    client_row = Client.objects.get(id=Client.id)
-    lastname_name_exp = re.findall(r'\w+', text)
-    lastname = lastname_name_exp[0]
-    client_row.lastname = lastname
-    name = lastname_name_exp[1]
-    client_row.name = name
-    sex = lastname_name_exp[2]
-    client_row.sex = sex
-    email_exp = r'[\w\d.-]+@[\w.]+'
-    email = re.findall(email_exp, text)
-    client_row.email = email
-    phone_exp = [i.strip() for i in re.findall(r'\+?[\s\d()-]+', text) if len(i) >= 10][1].strip()
-    client_row.telephone = phone_exp
-    citizenship_exp = re.findall(r'\Г\w+:\s\w+\w', text)
-    citizenship = citizenship_exp[0].split()[1]
-    client_row.citizenship = citizenship
-    city_exp = re.findall(r'\П\w+:\s\w+\w', text)
-    city = city_exp[0].split()[1]
-    client_row.city = city
-
-    client_row.save()
-    # End Poland's views
+#End Poland's views
 
 #PDF upload
 def upload(request):
