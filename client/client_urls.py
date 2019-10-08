@@ -62,15 +62,13 @@ urlpatterns = [
     path(r'chat_update/', views.chat_update, name='chat_update'),
 
     # Poland urls
-    path('cv/', resumes_list, name='resumes_list_url'),
-    path('cv/<id_c>/', resume_detail, name='resume_detail_url'),
+    path('cvs/', resumes_list, name='resumes_list_url'),
+    path('cv_detail/<id_c>/', resume_detail, name='resume_detail_url'),
     path('cv/<id_c>/accepted_vacancies/', accepted_vacancies, name='accepted_vacancies_url'),
     path('cv/<id_c>/rejected_vacancies/', rejected_vacancies, name='rejected_vacancies_url'),
     path('cv/vacancy/<id_v>/', vacancy_detail, name='vacancy_detail_url'),
     path('accept_reject/', views.accept_reject),
     path('help/', help_list, name='help_list_url'),
-    path('settings/', settings_list, name='settings_list_url'),
-    path('on_off/', views.on_off),    # on_off settings for notifications
     path('viewed/', views.viewed),
 
 ]
