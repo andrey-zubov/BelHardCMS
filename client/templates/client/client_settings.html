@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
 {% extends 'client/main_template_client.html' %}
 <head>
     <meta charset="UTF-8">
@@ -8,11 +6,14 @@
     <link rel="stylesheet" href="/static/client/style/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    <title>Настройки</title>
+
+    {% block title %}Настройки{% endblock %}
 </head>
-<body>
+
+{% block content %}
     <article class="main">
-    <h1 class="HeadLine">Всплывающие уведомления</h1>
+    <h3 class="HeadLine">Всплывающие уведомления</h3>
+
     <ul>
         <li>
             <section class="container">
@@ -76,6 +77,10 @@
 
         </li>
     </ul>
+
+    <hr>
+
+{% endblock %}
 
     <section>
         <!-- тут должен быть блок "Скрывать резюме" -->
