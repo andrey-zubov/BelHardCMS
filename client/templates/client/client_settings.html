@@ -1,18 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
 {% extends 'client/main_template_client.html' %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="/static/client/style/style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+{% load staticfiles %}
 
-    <title>Настройки</title>
-</head>
-<body>
+
+    {% block title %}Настройки{% endblock %}
+
+
+{% block content %}
     <article class="main">
-    <h1 class="HeadLine">Всплывающие уведомления</h1>
+    <h3 class="HeadLine">Всплывающие уведомления</h3>
+
     <ul>
         <li>
             <section class="container">
@@ -77,18 +73,23 @@
         </li>
     </ul>
 
+    <hr>
+
+
+
     <section>
         <!-- тут должен быть блок "Скрывать резюме" -->
     </section>
     </article>>
 
-    <script>
+    <script type="text/javascript">
         $('document').ready(function () {
             $('.activation').on('click', function () {
                 let set = this.id;
                 let stat = false;
                 if (this.checked){
                      stat = true
+
                 }
 
                 $.ajax({
@@ -102,5 +103,6 @@
         });
 
     </script>
+{% endblock %}
 </body>
 </html>
