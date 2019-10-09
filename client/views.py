@@ -54,6 +54,19 @@ from django.core.files.storage import FileSystemStorage
 from tika import parser
 import re
 
+
+from BelHardCRM.settings import MEDIA_URL
+from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
+                                 load_cv_edition_page)
+from .forms import OpinionForm, AnswerForm, MessageForm
+from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
+from .models import *
+from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
+                      pars_edu_request, pars_exp_request)
+from django.core.files.storage import FileSystemStorage
+from tika import parser
+import re
+
 from client.edit.check_clients import (client_check, load_client_img)
 from client.edit.edit_forms import (EducationFormSet, CertificateForm, SabClassFormSet, UploadImgForm)
 from client.edit.pages_get import (edit_page_get, skills_page_get, cv_page_get, education_page_get, experience_page_get)
@@ -90,15 +103,15 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
     # Poland
-    # resumes = CV.objects.all()
-    # suggestions = 0
-    # for resume in resumes:
-    #   suggestions += resume.notification.count()
-    # response['unread_suggestions'] = suggestions
-    # client_instance = client_check(request.user)
-    # response['client_img'] = load_client_img(client_instance)
-    # context.update(response)
-    # print(context['unread_suggestions'])
+    resumes = CV.objects.all()
+    suggestions = 0
+    for resume in resumes:
+        suggestions += resume.notification.count()
+    response['unread_suggestions'] = suggestions
+    client_instance = client_check(request.user)
+    response['client_img'] = load_client_img(client_instance)
+    context.update(response)
+    print(context['unread_suggestions'])
     return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
@@ -591,4 +604,42 @@ def parsing():
     client_row.save()
     # End Poland's views
 
+#PDF upload
+def upload(request):
+    context = {}
+    if request.method == 'POST':
+        uploaded_file = request.FILES['document']
+        fs = FileSystemStorage()
+        name = fs.save(uploaded_file.name, uploaded_file)
+        context['url'] = fs.url(name)
+    return render(request, 'upload.html', context)
 
+#PDF Parsing
+
+def parsing():
+    raw = parser.from_file('Astapenka Dima.pdf')
+    text = (raw['content'])
+    client_row = Client.objects.get(id=Client.id)
+    lastname_name_exp = re.findall(r'\w+', text)
+    lastname = lastname_name_exp[0]
+    client_row.lastname = lastname
+    name = lastname_name_exp[1]
+    client_row.name = name
+    sex = lastname_name_exp[2]
+    client_row.sex = sex
+    email_exp = r'[\w\d.-]+@[\w.]+'
+    email = re.findall(email_exp, text)
+    client_row.email = email
+    phone_exp = [i.strip() for i in re.findall(r'\+?[\s\d()-]+', text) if len(i) >= 10][1].strip()
+    client_row.telephone = phone_exp
+    citizenship_exp = re.findall(r'\Г\w+:\s\w+\w', text)
+    citizenship = citizenship_exp[0].split()[1]
+    client_row.citizenship = citizenship
+    city_exp = re.findall(r'\П\w+:\s\w+\w', text)
+    city = city_exp[0].split()[1]
+    client_row.city = city
+
+
+    client_row.save()
+
+    # End Poland's views
