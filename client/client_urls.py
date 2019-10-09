@@ -7,6 +7,7 @@ urlpatterns = [
     path('', views.client_main_page, name='client'),  # main client page
     path('profile', views.client_profile, name='client_profile'),
     path('edit', views.client_edit_main, name='client_edit'),
+    path('upload', views.upload, name='client_cv_upload'),
     path('edit/skills', views.client_edit_skills, name='client_edit_skills'),
     path('edit/photo', views.client_edit_photo, name='client_edit_photo'),
     path('edit/cv', views.client_edit_cv, name='client_edit_cv'),
@@ -38,6 +39,7 @@ urlpatterns = [
     path('accept_reject/', views.accept_reject),
     path('help/', help_list, name='help_list_url'),
     path('viewed/', views.viewed),
+    path('upload', views.upload, name='upload'),
 
 
 
