@@ -8,8 +8,9 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
 
 from django.urls import reverse
+from django.utils.timezone import utc
 from django.views import View
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 from .models import Vacancy, Resume
 
@@ -619,6 +620,22 @@ def set_settings(request):
     settings.save()
 
     return HttpResponse(settings)
+
+
+def chat_update(request):
+
+    last_id = (request.GET['last_id'])
+    chat = Chat.objects.get(members=request.user)
+    messages = Message.objects.filter(chat=chat)
+    mes = (m for m in messages if m.id > int(last_id))
+    if request.user in chat.members.all():
+        chat.message_set.filter(is_read=False).exclude(author=request.user).update(is_read=True)
+
+    send2 = []
+    for s in mes:
+        send2.append({'author_id': s.author.id, 'author_name': s.author.username, 'message': s.message, 'message_id': s.id, 'pub_date': s.pub_date.ctime()})
+
+    return JsonResponse(send2, safe=False)
 
 
 #Poland's views
