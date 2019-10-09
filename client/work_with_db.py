@@ -119,19 +119,31 @@ def load_education_page(client):
             #edus = [i for i in Education.objects.filter(client_edu=client).values()]    #расш
             edus = []
             for i in Education.objects.filter(client_edu=client).values():
-                edus.append(i)
+              edus.append(i)
 
             response['cl_edu'] = edus
             print(edus)
+            #print("test0", response['cl_edu'])
 
             #edu_id = [e['id'] for e in response['cl_edu']]
             edu_id = []
             for e in response['cl_edu']:
                edu_id.append(e['id'])
+            print(edu_id)
 
 
-            certs = [[c for c in Certificate.objects.filter(education_id=i).values()] for i in edu_id]  #расш
-            # print(certs)
+            #certs = [[c for c in Certificate.objects.filter(education_id=i).values()] for i in edu_id]  #расш
+            #print("test1", certs)
+            certs = []
+
+            for i in edu_id:
+                certss = []
+                for c in Certificate.objects.filter(education_id=i).values():
+                   certss.append(c)
+                certs.append(certss)
+
+            print('test2', certs)
+
             for e in edus:
                 # print("e: %s" % e)
                 for c in certs:
