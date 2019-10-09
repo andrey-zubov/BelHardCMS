@@ -25,6 +25,13 @@ urlpatterns = [
     path('edit/institution_data_list/', InstitutionDataList.as_view(), name='institution_data_list'),
     path('edit/cv_position_data_list/', CvPositionDataList.as_view(), name='cv_position_data_list'),
     # Team Rome (end)
+    path('edit', views.client_edit_main, name='client_edit'),
+    path('upload', views.upload, name='client_cv_upload'),
+    path('edit/skills', views.client_edit_skills, name='client_edit_skills'),
+    path('edit/photo', views.client_edit_photo, name='client_edit_photo'),
+    path('edit/cv', views.client_edit_cv, name='client_edit_cv'),
+    path('edit/education', views.client_edit_education, name='client_edit_education'),
+    path('edit/experience', views.client_edit_experience, name='client_edit_experience'),
 
     path('chat/', login_required(views.MessagesView.as_view()), name='contact_with_centre'),
     path(r'opinion/', opinion_list, name='opinion_list'),

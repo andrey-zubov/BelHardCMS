@@ -56,6 +56,10 @@ from client.edit.pages_post import (skills_page_post, edit_page_post, photo_page
                                     education_page_post, cv_page_post, experience_page_post)
 from client.forms import (OpinionForm, AnswerForm, MessageForm)
 from client.models import *
+from django.contrib.auth.models import Group
+from django.core.files.storage import FileSystemStorage
+from tika import parser
+import re
 
 def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     response = csrf(request)
