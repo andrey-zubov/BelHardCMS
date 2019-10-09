@@ -1,3 +1,4 @@
+import logging
 from collections import defaultdict
 from time import perf_counter
 import json
