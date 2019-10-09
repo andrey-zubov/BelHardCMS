@@ -27,6 +27,7 @@ urlpatterns = [
     path(r'checknotifications/', views.checknotifications),
     path(r'settings/', views.settings_menu, name='settings_menu'),
     path(r'settingsset/', views.set_settings, name='settings_set'),
+    path(r'chat_update/', views.chat_update, name='chat_update'),
 
     
     ##Poland urls
