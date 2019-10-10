@@ -1,5 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import path
+from . import views
+
 
 from recruit import views
 
@@ -10,5 +12,8 @@ urlpatterns = [
     path('chat_update/', views.chat_update, name='chat_update'),
     path('check_mes/', views.check_mes, name='check_mes'),
     path('', views.recruit_main_page, name='main_page'),
+
+    path('', views.recruiter_main_page, name='recruiter_url'),     # There is of recruiter's main page
+    path('base_of_clients/', views.base_of_clients, name='base_of_clients'),
 
 ]
