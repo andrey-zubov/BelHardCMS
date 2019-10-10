@@ -23,6 +23,7 @@
                     var element = $(current_div[i]).children('input');
                     var attr_name = $(element).attr('name');
                     $(element).attr('name', attr_name + count);
+                    $(element).attr('value', '');
                     {##}
                     {#if (i === 6) {  // img#}
                     {#    var element_img = $(current_div[i]).children('div').children('div').children('input');#}
