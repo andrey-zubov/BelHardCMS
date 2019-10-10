@@ -6,8 +6,6 @@ from django.views import View
 from django.views.generic import TemplateView
 from django.http import HttpResponse
 
-from .models import Vacancy
-
 from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 
 from django.views.generic import View, TemplateView
