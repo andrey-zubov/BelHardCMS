@@ -296,6 +296,48 @@ class Help(models.Model):
         return self.question
 
 
+class JobInterviews(models.Model):
+    client = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Соискатель')
+    name = models.CharField(max_length=50, verbose_name='Наименование')
+    interview_author = models.CharField(max_length=50, verbose_name='Автор собеседования', blank=True, null=True)
+    time_of_creation = models.DateTimeField(blank=True, null=True, verbose_name='Время создания')
+    period_of_execution = models.DateTimeField(blank=True, null=True, verbose_name='Срок исполнения')
+    reminder = models.DateTimeField(blank=True, null=True, verbose_name='Напоминание')
+    position = models.CharField(max_length=50, verbose_name='Предполагаемая должность')
+    organization = models.CharField(max_length=50, verbose_name='Организация')
+    responsible_person = models.CharField(max_length=50, verbose_name='Ответственное лицо')
+    contact_responsible_person_1str = models.CharField(max_length=50, verbose_name='Контакты ответственного лица (1-я строчка)')
+    contact_responsible_person_2str = models.CharField(max_length=50, blank=True, null=True, verbose_name='Контакты ответственного лица (2-я строчка)')
+    location = models.CharField(max_length=50, verbose_name='Место проведения')
+    additional_information = models.TextField(max_length=3000, blank=True, null=True, verbose_name='Дополнительная информация')
+    add_file = models.FileField(verbose_name='Вложения')
+    status = models.BooleanField(default=False)    #статус собеседования, на которое ещё не ходили
+    check_status = models.BooleanField(default=True)    #статус активен, если можем после успешного собеседования в течении 60 сек вернуть в статус активных собеседований
+    done_interview = models.BooleanField(default=False)    # успешно пройденное собеседование
+
+    #@property
+    #def show_all(self):
+        #return self.subjobinterview.all()
+
+    @property
+    def check_time(self):
+        if self.period_of_execution is not None:
+            active_time = timezone.now() - self.period_of_execution
+            if not self.check_status:
+                pass
+            elif str(active_time)[2:4] >= '01':
+                self.check_status = False
+            self.save()
+
+    @property
+    def check_readstatus(self):
+        if not self.done_interview:
+            self.done_interview = True
+            self.save()
+
+    def str(self):
+        return self.name
+
 
 #########End Poland Task 1 & 2 ##############
 
