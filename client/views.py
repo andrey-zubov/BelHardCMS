@@ -25,6 +25,7 @@ from django.http import HttpResponse
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView
 
+from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 # from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 
 from django.views.generic import View, TemplateView

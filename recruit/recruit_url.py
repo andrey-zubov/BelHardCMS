@@ -4,8 +4,13 @@ from . import views
 
 
 from recruit import views
+from . import views
+
 
 urlpatterns = [
+    path('', views.recruiter_main_page, name='recruiter_url'),     # There is of recruiter's main page
+    path('base_of_clients/', views.base_of_clients, name='base_of_clients'),
+
     path('chat/', login_required(views.recruit_chat), name='contact_with_clients'),
     path('get_messages/', views.get_messages, name='get_messages'),
     path('send_message/', views.send_message, name='send_message'),

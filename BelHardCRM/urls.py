@@ -25,6 +25,7 @@ urlpatterns = [
     path('recruiter/', include('recruit.recruit_url')),
     path('recruit/', include('recruit.recruit_url')),
     path('', client.views.client_login),
+    path('recruiter/', include('recruit.recruit_url')),
 
 ]
 
