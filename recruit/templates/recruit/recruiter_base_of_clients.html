@@ -1,0 +1,27 @@
+{% extends 'recruit/main_template_recruiter.html' %}
+
+{% block title %}
+    База пользователей
+{% endblock %}
+
+{% block content %}
+    <div class="p-sm-5 pt-sm-1">
+        <h2 class="mb-3 offset-md-0"> Выбор соискателя </h2>
+        {% for client in clients %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><a href="#">{{ client.name }} {{ client.last_name }}</a></h5>
+                </div>
+                <div class="card-body">
+                    {% if client.cv_set.all %}
+                        <b>Список резюме клиента </b><br>
+                        {% for cv in client.cv_set.all %}
+                            {{ cv }}<br>
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

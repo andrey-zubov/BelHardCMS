@@ -11,8 +11,6 @@ from django.urls import reverse
 from django.views import View
 from django.http import HttpResponse
 
-from .models import Vacancy
-
 from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 
 from django.views.generic import View, TemplateView
