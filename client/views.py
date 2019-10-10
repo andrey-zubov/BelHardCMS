@@ -22,6 +22,8 @@ from django.views.generic import TemplateView
 
 from .models import Vacancy
 
+from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
+
 from django.views.generic import View, TemplateView
 
 
@@ -528,7 +530,7 @@ def viewed(request):
             r.notification.clear()
         return HttpResponse('cleared')
 
-#End Poland's views
+# End Poland's views
 
 #PDF upload
 def upload(request):
@@ -567,5 +569,3 @@ def parsing():
 
 
     client_row.save()
-
-    # End Poland's views
