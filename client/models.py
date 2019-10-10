@@ -222,6 +222,9 @@ class CV(models.Model):
     def get_reject_url(self):
         return reverse('rejected_vacancies_url', kwargs={'id_c': self.id})
 
+    def get_vacancies_list_url(self):
+        return reverse('vacancies_list_url', kwargs={'id_c': self.id})
+
     # end upgrade from Poland
 
 
@@ -237,7 +240,7 @@ class State(models.Model):
         return self.state_word
 
 
-# #####Poland Task 1 & 2 #############################################################################################
+######Poland Task 1 & 2 ##############
 
 
 class Vacancy(models.Model):
@@ -254,7 +257,7 @@ class Vacancy(models.Model):
     conditions = models.TextField(max_length=1000, null=True)
 
     def __str__(self):
-        return self.state
+        return '{}'.format(self.state)
 
     def get_absolute_url(self):
         return reverse('vacancy_detail_url', kwargs={'id_v': self.id})
@@ -294,8 +297,7 @@ class Help(models.Model):
 
 
 class JobInterviews(models.Model):
-    client = models.ForeignKey(to='Client', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Соискатель')
-    cv = models.ForeignKey(to='CV', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Резюме')
+    client = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Соискатель')
     name = models.CharField(max_length=50, verbose_name='Наименование')
     interview_author = models.CharField(max_length=50, verbose_name='Автор собеседования', blank=True, null=True)
     time_of_creation = models.DateTimeField(blank=True, null=True, verbose_name='Время создания')
@@ -304,27 +306,18 @@ class JobInterviews(models.Model):
     position = models.CharField(max_length=50, verbose_name='Предполагаемая должность')
     organization = models.CharField(max_length=50, verbose_name='Организация')
     responsible_person = models.CharField(max_length=50, verbose_name='Ответственное лицо')
-    contact_responsible_person_1str = models.CharField(max_length=50,
-                                                       verbose_name='Контакты ответственного лица (1-я строчка)')
-    contact_responsible_person_2str = models.CharField(max_length=50, blank=True, null=True,
-                                                       verbose_name='Контакты ответственного лица (2-я строчка)')
+    contact_responsible_person_1str = models.CharField(max_length=50, verbose_name='Контакты ответственного лица (1-я строчка)')
+    contact_responsible_person_2str = models.CharField(max_length=50, blank=True, null=True, verbose_name='Контакты ответственного лица (2-я строчка)')
     location = models.CharField(max_length=50, verbose_name='Место проведения')
-    additional_information = models.TextField(max_length=3000, blank=True, null=True,
-                                              verbose_name='Дополнительная информация')
-    # add_file = models.FileField(verbose_name='Вложения', blank=True, null=True)
-    status = models.BooleanField(default=False)  # статус собеседования, на которое ещё не ходили
-    check_status = models.BooleanField(default=True)  # статус активен, если можем после успешного собеседования
-    # в течении 60 сек вернуть в статус активных собеседований
-    done_interview = models.BooleanField(default=False)  # успешно пройденное собеседование
-    readinterview = models.BooleanField(default=False)
+    additional_information = models.TextField(max_length=3000, blank=True, null=True, verbose_name='Дополнительная информация')
+    add_file = models.FileField(verbose_name='Вложения')
+    status = models.BooleanField(default=False)    #статус собеседования, на которое ещё не ходили
+    check_status = models.BooleanField(default=True)    #статус активен, если можем после успешного собеседования в течении 60 сек вернуть в статус активных собеседований
+    done_interview = models.BooleanField(default=False)    # успешно пройденное собеседование
 
-    @property
-    def show_all(self):
-        to_show = []
-        for val in self.__dict__.values():
-            if val != None and type(val) != bool:
-                to_show.append(val)
-        return to_show[4:14]
+    #@property
+    #def show_all(self):
+        #return self.subjobinterview.all()
 
     @property
     def check_time(self):
@@ -338,25 +331,13 @@ class JobInterviews(models.Model):
 
     @property
     def check_readstatus(self):
-        if not self.readinterview:
-            self.readinterview = True
+        if not self.done_interview:
+            self.done_interview = True
             self.save()
 
     def str(self):
         return self.name
 
-
-    # def get_absolute_url(self):
-    #    return reverse('applicant_url', kwargs={'id_a': self.id})
-
-
-class FilesForJobInterviews(models.Model):
-    jobinterviews_files = models.ForeignKey(to='JobInterviews', on_delete=models.CASCADE)
-    add_file = models.FileField(verbose_name='Вложения', blank=True, null=True)
-
-    class Meta:
-        verbose_name = 'Файл'
-        verbose_name_plural = 'Файлы'
 
 #########End Poland Task 1 & 2 ##############
 
