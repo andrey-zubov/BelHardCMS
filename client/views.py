@@ -22,7 +22,7 @@ from django.views.generic import TemplateView
 
 from .models import Vacancy
 
-# from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
+from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 
 from django.views.generic import View, TemplateView
 from .utils_for_mixins import ObjectResumeMixin
@@ -441,16 +441,6 @@ def vacancy_detail(request, id_v):
         'first_flag': first_flag,
         'second_flag': second_flag
     })
-class VacancyDetail(View):
-    def get(self, request, id_v):
-        vacancy = get_object_or_404(Vacancy, id=id_v)
-        first_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.reject_for_resume.all()) else 0
-        second_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.accept_for_resume.all()) else 0
-        return render(request, 'client/client_vacancy_detail.html', context={
-            'vacancy': vacancy,
-            'first_flag': first_flag,
-            'second_flag': second_flag,
-        })
 
 
 class ResumesList(View):
