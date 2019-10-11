@@ -66,7 +66,7 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
     # Poland
-    resumes = CV.objects.all()
+    resumes = CV.objects.all()   # нужно проверить соответствие Юзеру!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     suggestions = 0
     for resume in resumes:
         suggestions += resume.notification.count()

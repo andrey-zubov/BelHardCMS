@@ -15,6 +15,20 @@ def recruiter_main_page(request):
     return render(request=request, template_name='recruit/main_template_recruiter.html', )
 
 
+def base_of_applicants(request):
+    applicants = Client.objects.all()
+    return render(request=request, template_name='recruit/recruiter_base_of_clients.html',
+                  context={'applicants': applicants})
+
+
+def applicant(request, id_a):
+    applicant_user = Client.objects.get(id=id_a)
+    return render(request, 'recruit/recruiter_applicant.html', context={'applicant_user': applicant_user})
+
+
+def applicant_tasks(request, id_a):
+    applicant_user = Client.objects.get(id=id_a)
+    return render(request, 'recruit/recruiter_tasks_for_applicant.html', context={'applicant_user': applicant_user})
 def base_of_clients(request):
     clients = Client.objects.all()
     return render(request=request, template_name='recruit/recruiter_base_of_clients.html', context={'clients': clients})
