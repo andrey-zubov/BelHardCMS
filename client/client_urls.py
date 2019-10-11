@@ -40,7 +40,8 @@ urlpatterns = [
     path('help/', help_list, name='help_list_url'),
     path('viewed/', views.viewed),
     path('upload', views.upload, name='upload'),
-
+    path('interviews', interviews_list, name='interviews_list_url'),
+    path(r'checkinterviews/', views.checkinterviews),
 
 
 ]

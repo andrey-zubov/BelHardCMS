@@ -198,7 +198,7 @@ class TypeSalary(models.Model):
 
 class CV(models.Model):
     """ Резюме. ForeignKey = Несколько резюме у одного клиента. """
-    client_cv = models.ForeignKey(to='Client', on_delete=models.CASCADE)
+    client_cv = models.ForeignKey(UserModel, on_delete=models.CASCADE)
 
     position = models.CharField(max_length=100, null=True, blank=True)
     employment = models.ForeignKey(Employment, on_delete=models.SET_NULL, null=True, blank=True)
@@ -297,7 +297,7 @@ class Help(models.Model):
 
 
 class JobInterviews(models.Model):
-    client = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Соискатель')
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Соискатель')
     name = models.CharField(max_length=50, verbose_name='Наименование')
     interview_author = models.CharField(max_length=50, verbose_name='Автор собеседования', blank=True, null=True)
     time_of_creation = models.DateTimeField(blank=True, null=True, verbose_name='Время создания')
@@ -310,7 +310,7 @@ class JobInterviews(models.Model):
     contact_responsible_person_2str = models.CharField(max_length=50, blank=True, null=True, verbose_name='Контакты ответственного лица (2-я строчка)')
     location = models.CharField(max_length=50, verbose_name='Место проведения')
     additional_information = models.TextField(max_length=3000, blank=True, null=True, verbose_name='Дополнительная информация')
-    add_file = models.FileField(verbose_name='Вложения')
+    add_file = models.FileField(blank=True, null=True, verbose_name='Вложения')
     status = models.BooleanField(default=False)    #статус собеседования, на которое ещё не ходили
     check_status = models.BooleanField(default=True)    #статус активен, если можем после успешного собеседования в течении 60 сек вернуть в статус активных собеседований
     done_interview = models.BooleanField(default=False)    # успешно пройденное собеседование

@@ -707,6 +707,27 @@ def viewed(request):
             r.notification.clear()
         return HttpResponse('cleared')
 
+
+def interviews_list(request):
+    interviews = JobInterviews.objects.filter(user=request.user, status=False)
+    interviews_false = JobInterviews.objects.filter(user=request.user, status=True)    #status=False
+    interviews_false = sorted(interviews_false, key=lambda x: x.period_of_execution, reverse=True)
+    return render(request, 'client/interviews.html', context={'interviews': interviews, 'interviews_false': interviews_false})
+
+
+def checkinterviews(request):
+    id = (request.GET['id'])
+    interviews = JobInterviews.objects.get(id=id)
+
+    if interviews.status == False:
+        interviews.status = True
+        interviews.period_of_execution = timezone.now()
+    else:
+        interviews.status = False
+        interviews.period_of_execution = None
+    interviews.save()
+    return HttpResponse(interviews)
+
 #End Poland's views
 
 #PDF upload

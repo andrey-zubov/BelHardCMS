@@ -5,20 +5,25 @@
 {% endblock %}
 
 {% block content %}
-    <h2 class="mb-5 offset-md-0">Выбор резюме</h2>
-    {% for resume in resumes %}
-        <div class="card mb-4">
-            <div class="card-header">
-                <!h5><a href="{{ resume.get_absolute_url }}">{{ resume.position }}</a></h5>
-            </div>
-            <div class="card-body">
-
-                <b>
-                    Всего: {{ resume.vacancies_in_waiting.count|add:resume.vacancies_accept.count|add:resume.vacancies_reject.count }} |
-                    Принято: {{ resume.vacancies_accept.count }}    |
-                    Отклонено: {{ resume.vacancies_reject.count }}
-                </b>
-            </div>
+    <div class="content">
+        <div class="p-sm-3 pt-sm-5">
+            <nav class="nav fixed-center" style="background-color: #344955; width: 100%; margin: 0 auto; max-width: 900px; display: flex; justify-content: space-between; align-items: center;">
+                <a class="nav-link text-white offset-md-4"><h2 class="mb-5 offset-md-0">Выбор резюме</h2></a>
+                {% for resume in resumes %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <!h5><a href="{{ resume.get_absolute_url }}">{{ resume.position }}</a></h5>
+                        </div>
+                        <div class="card-body">
+                            <b>
+                                Всего: {{ resume.vacancies_in_waiting.count|add:resume.vacancies_accept.count|add:resume.vacancies_reject.count }} |
+                                Принято: {{ resume.vacancies_accept.count }}    |
+                                Отклонено: {{ resume.vacancies_reject.count }}
+                            </b>
+                        </div>
+                    </div>
+                {% endfor %}
+            </nav>
         </div>
-    {% endfor %}
+    </div>
 {% endblock %}
