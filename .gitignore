@@ -114,3 +114,5 @@ venv.bak/
 .idea/*
 /client/migrations/0001_initial.py
 /client/migrations/0002_auto_20191001_1322.py
+/client/migrations/__init__.py
+/client/migrations/0002_auto_20191005_1136.py
