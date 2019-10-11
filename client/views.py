@@ -1,17 +1,10 @@
 import logging
 from collections import defaultdict
 from time import perf_counter
-#from PIL import Image
-import logging
-from collections import defaultdict
-from time import perf_counter
-import json
+
 #from PIL import Image
 from django.contrib import auth
-
-from django.contrib.auth.models import Group
-
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
 
 from django.urls import reverse
@@ -21,8 +14,7 @@ from recruit import recruit_url
 from django.urls import reverse
 from django.utils.timezone import utc
 from django.views import View
-from django.http import HttpResponse, JsonResponse
-from django.views.generic import TemplateView
+from django.http import HttpResponse
 
 from .models import Vacancy
 
@@ -33,39 +25,13 @@ from .utils_for_mixins import ObjectResumeMixin
 
 
 from BelHardCRM.settings import MEDIA_URL
-# from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
-#                                 load_cv_edition_page)
+from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
+                                 load_cv_edition_page)
 from .forms import OpinionForm, AnswerForm, MessageForm
-# from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
-from recruit.forms import FileFieldForm
-
+from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
 from .models import *
-# from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
-#                      pars_edu_request, pars_exp_request)
-from django.core.files.storage import FileSystemStorage
-from tika import parser
-import re
-
-from client.edit.check_clients import (client_check, load_client_img)
-from client.edit.edit_forms import (EducationFormSet, CertificateForm, SabClassFormSet, UploadImgForm)
-from client.edit.pages_get import (edit_page_get, skills_page_get, cv_page_get, education_page_get, experience_page_get)
-from client.edit.pages_post import (skills_page_post, edit_page_post, photo_page_post, form_edu_post,
-                                    education_page_post, cv_page_post, experience_page_post)
-from client.forms import (OpinionForm, AnswerForm, MessageForm)
-from client.models import *
-
-
-from django.views.generic import View, TemplateView
-from django.views.generic import TemplateView
-
-from client.edit.check_clients import (client_check, load_client_img)
-from client.edit.edit_forms import (EducationFormSet, CertificateForm, SabClassFormSet, UploadImgForm)
-from client.edit.pages_get import (edit_page_get, skills_page_get, cv_page_get, education_page_get, experience_page_get)
-from client.edit.pages_post import (skills_page_post, edit_page_post, photo_page_post, form_edu_post,
-                                    education_page_post, cv_page_post, experience_page_post)
-from client.forms import (OpinionForm, AnswerForm, MessageForm)
-from client.models import *
-from django.contrib.auth.models import Group
+from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
+                      pars_edu_request, pars_exp_request)
 from django.core.files.storage import FileSystemStorage
 from tika import parser
 import re
@@ -83,34 +49,23 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
                'readinterview': readinterview}
 
     # Poland
-    client = get_object_or_404(Client, user_client=request.user)
-    resumes = CV.objects.filter(client_cv=client)
-    # resumes = CV.objects.all()   # нужно проверить соответствие Юзеру!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    resumes = CV.objects.all()
     suggestions = 0
     for resume in resumes:
         suggestions += resume.notification.count()
-    #client = get_object_or_404(Client, user_client=request.user)    # Poland
-    try:
-        client = Client.objects.get(user_client=request.user)
-    except Client.DoesNotExist:
-        Client.objects.create(user_client=request.user)
-        client = Client.objects.get(user_client=request.user)
-    resumes = CV.objects.filter(client_cv=client)                   # Poland
-    suggestions = 0                                                 # Poland
-    for resume in resumes:                                          # Poland
-        suggestions += resume.notification.count()                  # Poland
     response['unread_suggestions'] = suggestions
     client_instance = client_check(request.user)
     response['client_img'] = load_client_img(client_instance)
     context.update(response)
-    # print(context['unread_suggestions'])
+    print(context['unread_suggestions'])
     return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
 def client_profile(request):
+    response = csrf(request)
     client_instance = client_check(request.user)
-    response = {'client_img': load_client_img(client_instance),
-                }
+    response['client_img'] = load_client_img(client_instance)
+
     return render(request=request, template_name='client/client_profile.html', context=response)
 
 
@@ -469,80 +424,69 @@ def chat_update(request):
 # Poland's views ###################################################################################
 
 
-class VacancyDetail(View):   # ##################  There's a lot of work to remove all bugs...
-    def get(self, request, id_v):
-        client = get_object_or_404(Client, user_client=request.user)
-        vacancy = get_object_or_404(Vacancy, id=id_v)
-        resume_for_waiting = vacancy.in_waiting_for_resume.filter(client_cv=client)
-        resume_for_accepted = vacancy.accept_for_resume.filter(client_cv=client)
-        resume_for_rejected = vacancy.reject_for_resume.filter(client_cv=client)
-        first_flag = 1 if bool(resume_for_waiting or resume_for_rejected) else 0
-        second_flag = 1 if bool(resume_for_waiting or resume_for_accepted) else 0
-        return render(request, 'client/client_vacancy_detail.html', context={
-            'vacancy': vacancy,
-            'first_flag': first_flag,
-            'second_flag': second_flag,
-            'resume_for_waiting': resume_for_waiting,
-            'resume_for_accepted': resume_for_accepted,
-            'resume_for_rejected': resume_for_rejected,
-        })
+def vacancy_detail(request, id_v):
+    vacancy = Vacancy.objects.get(id=id_v)
+    first_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.reject_for_resume.all()) else 0
+    second_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.accept_for_resume.all()) else 0
+    return render(request, 'client/client_vacancy_detail.html', context={
+        'vacancy': vacancy,
+        'first_flag': first_flag,
+        'second_flag': second_flag
+    })
 
 
-class ResumesList(View):
-    def get(self, request):
-        client = get_object_or_404(Client, user_client=request.user)
-        resumes = CV.objects.filter(client_cv=client)
-        return render(request, 'client/client_resumes.html', context={'resumes': resumes})
+def resumes_list(request):
+    resumes = CV.objects.all()
+    return render(request, 'client/client_resumes.html', context={'resumes': resumes})
 
 
-class ResumeDetail(ObjectResumeMixin, View):  # Look utils_for_mixins.py
-    template = 'client/client_resume_detail.html'
+def resume_detail(request, id_c):
+    resume = CV.objects.get(id=id_c)
+    return render(request, 'client/client_resume_detail.html', context={'resume': resume})
 
 
-class AcceptedVacancies(ObjectResumeMixin, View):   # Look utils_for_mixins.py
-    template = 'client/client_accepted_vacancies.html'
+def accepted_vacancies(request, id_c):
+    resume = CV.objects.get(id=id_c)
+    return render(request, 'client/client_accepted_vacancies.html', context={'resume': resume})
 
 
-class RejectedVacancies(ObjectResumeMixin, View):    # Look utils_for_mixins.py
-    template = 'client/client_rejected_vacancies.html'
+def rejected_vacancies(request, id_c):
+    resume = CV.objects.get(id=id_c)
+    return render(request, 'client/client_rejected_vacancies.html', context={'resume': resume})
 
 
 def accept_reject(request):
-    client = get_object_or_404(Client, user_client=request.user)
-    if request.GET['flag'] == 'accept' and \
-            Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.filter(client_cv=client):
+
+    if request.GET['flag'] == 'accept' and Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.all():
         print(request.GET['id_v'], 1)
-        r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get(client_cv=client)
+        r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get()
         v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_accept.add(v)
         r.vacancies_in_waiting.remove(v)
         r.save()
         return HttpResponse('accept_server')
 
-    elif request.GET['flag'] == 'reject' and \
-            Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.filter(client_cv=client):
+    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.all():
         print(request.GET['id_v'], 2)
-        r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get(client_cv=client)
+        r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get()
         v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_reject.add(v)
         r.vacancies_in_waiting.remove(v)
         r.save()
         return HttpResponse('reject_server')
 
-    elif request.GET['flag'] == 'accept' and \
-            Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.filter(client_cv=client):
+    elif request.GET['flag'] == 'accept' and Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.all():
         print(request.GET['id_v'], 3)
-        r = Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.get(client_cv=client)
+        r = Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.get()
         v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_accept.add(v)
         r.vacancies_reject.remove(v)
         r.save()
         return HttpResponse('accept_server')
 
-    elif request.GET['flag'] == 'reject' and \
-            Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.filter(client_cv=client):
+    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.all():
         print(request.GET['id_v'], 4)
-        r = Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.get(client_cv=client)
+        r = Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.get()
         v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_reject.add(v)
         r.vacancies_accept.remove(v)
@@ -552,15 +496,12 @@ def accept_reject(request):
 
 def help_list(request):
     faqs = Help.objects.all()
-    client_instance = client_check(request.user)
-    return render(request, 'client/help.html', context={'faqs': faqs,
-                                                        'client_img': load_client_img(client_instance)})
+    return render(request, 'client/help.html', context={'faqs': faqs})
 
 
 def viewed(request):
     if request.GET['action'] == 'clear':
-        client = get_object_or_404(Client, user_client=request.user)
-        resumes = CV.objects.filter(client_cv=client)
+        resumes = CV.objects.all()
         for resume in resumes:
             r = resume
             r.notification.clear()
@@ -600,7 +541,7 @@ def admin_jobinterviews(request):  # for admin panel
     resumes = json.dumps(resumes, ensure_ascii=False)
     return HttpResponse(resumes)
 
-# PDF upload
+#PDF upload
 def upload(request):
     context = {}
     if request.method == 'POST':
@@ -610,7 +551,7 @@ def upload(request):
         context['url'] = fs.url(name)
     return render(request, 'upload.html', context)
 
-# PDF Parsing
+#PDF Parsing
 
 def parsing():
     raw = parser.from_file('Astapenka Dima.pdf')
@@ -634,6 +575,7 @@ def parsing():
     city_exp = re.findall(r'\П\w+:\s\w+\w', text)
     city = city_exp[0].split()[1]
     client_row.city = city
+
 
     client_row.save()
 # End Poland's views ###################################################################################$$$$
