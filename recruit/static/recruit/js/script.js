@@ -81,18 +81,21 @@ let objDiv = document.getElementById("messages");
     }
 
     function send_message() {
-       $.ajax({
+        if (chat_id && document.getElementById('textField').value) {
+            $.ajax({
                 'url': '/recruit/send_message/',
-                'data': {'chat_id' : chat_id, 'message': document.getElementById('textField').value },
+                'data': {'chat_id': chat_id, 'message': document.getElementById('textField').value},
                 success: function (data) {
                     document.getElementById("textField").value = "";
-                    let new_mes = '<div class="list-group-item "><div class="reply-body"><ul class="list-inline" id=' + data.message_id+
-                               '><li class="drop-left-padding"><strong class="list-group-item-heading">' + data.author_name +
-                                '</strong></li><li class="pull-right text-muted"><small>' + data.pub_date +
-                                '</small></li></ul><div>' + data.message + '</div></div></div>';
+                    let new_mes = '<div class="list-group-item "><div class="reply-body"><ul class="list-inline" id=' + data.message_id +
+                        '><li class="drop-left-padding"><strong class="list-group-item-heading">' + data.author_name +
+                        '</strong></li><li class="pull-right text-muted"><small>' + data.pub_date +
+                        '</small></li></ul><div>' + data.message + '</div></div></div>';
 
-                     $("#innerMessages").append(new_mes) ;
+                    $("#innerMessages").append(new_mes);
                     objDiv.scrollTop = objDiv.scrollHeight;
                 }
-        })
+            })
+        }
+
     }
