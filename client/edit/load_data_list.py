@@ -16,7 +16,7 @@ class SkillsDataList(TemplateView):
 
 class InstitutionDataList(TemplateView):
     def get(self, request, *args, **kwargs):
-        print('CityDataList.GET: %s' % request.GET)
+        print('InstitutionDataList.GET: %s' % request.GET)
         words = [i.education_word for i in EducationWord.objects.all()]
         json_data = json.dumps({'words': words}, ensure_ascii=False)
         return HttpResponse(json_data)
@@ -24,7 +24,7 @@ class InstitutionDataList(TemplateView):
 
 class CvPositionDataList(TemplateView):
     def get(self, request, *args, **kwargs):
-        print('CityDataList.GET: %s' % request.GET)
+        print('CvPositionDataList.GET: %s' % request.GET)
         words = [i.position_word for i in CvWord.objects.all()]
         json_data = json.dumps({'words': words}, ensure_ascii=False)
         return HttpResponse(json_data)

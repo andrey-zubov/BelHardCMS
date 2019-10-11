@@ -10,6 +10,7 @@ from client.models import (Skills, Telephone, Sex, Citizenship, FamilyState, Chi
 # TeamRome
 def edit_page_post(client_instance, request):
     """ views.py ClientEditMain(TemplateView) POST method. """
+    print("edit_page_post()")
     time_0 = perf_counter()
 
     """ Входные данные для сохранения: """
@@ -34,9 +35,8 @@ def edit_page_post(client_instance, request):
     email = request.POST['email']
     link_linkedin = request.POST['link_linkedin']
     state = State.objects.get(state_word=request.POST['state']) if request.POST['state'] else None
-
-    print(user_name, last_name, patronymic, sex, date, citizenship, family_state, children, country, city,
-          street, house, flat, telegram_link, skype, email, link_linkedin, state)
+    # print(user_name, last_name, patronymic, sex, date, citizenship, family_state, children, country, city,
+    #       street, house, flat, telegram_link, skype, email, link_linkedin, state)
 
     if not client_instance:
         """ Если карточки нету - создаём. """
@@ -94,7 +94,6 @@ def edit_page_post(client_instance, request):
     tel = request.POST.getlist('phone')
     if any(tel):
         Telephone.objects.all().delete()
-        # print("tel: %s" % tel)
     for t in tel:
         t = check_phone(t)
         if t:
@@ -110,6 +109,8 @@ def edit_page_post(client_instance, request):
 # TeamRome
 def skills_page_post(client_instance, request):
     """" views.py ClientEditSkills(TemplateView) POST method.  """
+    print("skills_page_post()")
+    time_0 = perf_counter()
     skills_arr = request.POST.getlist('skill') if request.POST.getlist('skill') else None
 
     if any(skills_arr):
@@ -120,27 +121,33 @@ def skills_page_post(client_instance, request):
                 """ ОБЪЕДИНЕНИЕ модуля Навыки с конкретным залогиненым клиентом!!! """
                 skill = Skills(
                     client_skills=client_instance,
-                    skill=check_input_str(s)
+                    skill=check_input_str(s, False)
                 )
                 skill.save()
     else:
         print("No skills")
+    print('skills_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
 # TeamRome
 def photo_page_post(client_instance, request):
     """" views.py ClientEditPhoto(TemplateView) POST method.
     В БД сохраняется УНИКАЛЬНОЕ имя картинки (пр: user_2_EntrmQR.png) в папке MEDIA_URL = '/media/' """
+    print("photo_page_post()")
+    time_0 = perf_counter()
     form = UploadImgForm(request.POST, request.FILES)
     if form.is_valid():
         img = form.cleaned_data.get('img')
         client_instance.img = img
         client_instance.save()
+    print('photo_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
 # TeamRome
 def education_page_post(client_instance, request):
     """" views.py ClientEditEducation(TemplateView) POST method.  """
+    print("education_page_post()")
+    time_0 = perf_counter()
     arr_edu = pars_edu_request(request.POST, request.FILES)  # list of dictionaries
 
     if any(arr_edu):
@@ -175,15 +182,18 @@ def education_page_post(client_instance, request):
                 )
                 certificate.save()
 
-                print("Education Form - OK\n", institution, subject_area, specialization, qualification,
-                      date_start if date_start else None, date_end if date_end else None, img, link)
+                # print("Education Form - OK\n", institution, subject_area, specialization, qualification,
+                #       date_start if date_start else None, date_end if date_end else None, img, link)
             else:
                 print('Education Form is Empty')
+    print('education_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
 # TeamRome
 def cv_page_post(client_instance, request):
     """" views.py ClientEditCv(TemplateView) POST method. """
+    print("cv_page_post()")
+    time_0 = perf_counter()
     arr_cv = pars_cv_request(request.POST)  # list of dictionaries
 
     if any(arr_cv):
@@ -209,14 +219,17 @@ def cv_page_post(client_instance, request):
                     type_salary=type_salary,
                 )
                 cv.save()
-                print("CV Form - OK\n", position, employment, time_job, salary, type_salary)
+                # print("CV Form - OK\n", position, employment, time_job, salary, type_salary)
             else:
                 print('Cv form is Empty')
+    print('cv_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
 # TeamRome
 def experience_page_post(client_instance, request):
     """" views.py ClientEditExperience(TemplateView) POST method. """
+    print("experience_page_post()")
+    time_0 = perf_counter()
     arr = pars_exp_request(request.POST)  # list of dictionaries
 
     if any(arr):
@@ -248,16 +261,17 @@ def experience_page_post(client_instance, request):
                         sp.save()
                         experiences.sphere.add(sp)
 
-                print("Experience Form - OK\n", organisation, spheres, position, start_date if start_date else None,
-                      end_date if end_date else None, duties if duties else None)
+                # print("Experience Form - OK\n", organisation, spheres, position, start_date if start_date else None,
+                #       end_date if end_date else None, duties if duties else None)
             else:
                 print('Experience Form is Empty')
+    print('experience_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
 # TeamRome
 def form_edu_post(client_instance, request):
     print("FormEducation.POST: %s" % request.POST)
-
+    time_0 = perf_counter()
     form_set_edu = EducationFormSet(request.POST)
     form_set_cert = CertificateFormSet(request.POST, request.FILES)
 
@@ -290,3 +304,5 @@ def form_edu_post(client_instance, request):
                 cert_inst.save()
     else:
         print("FormSet_Cert not Valid")
+
+    print('form_edu_post() - OK; TIME: %s' % (perf_counter() - time_0))

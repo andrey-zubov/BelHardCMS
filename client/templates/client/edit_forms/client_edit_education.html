@@ -87,11 +87,10 @@
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-
         <div id="div_to_add_new">
             {% for edu in data.cl_edu %}
-
                 <div id="origin_div">
+
                     <h3 id="edu_h">Образование</h3>
                     <div class="form-group">
                         <label for="id_institution">Учебное заведение</label>
@@ -130,9 +129,6 @@
                                name="date_end{{ forloop.counter }}"
                                value="{{ edu.date_end|date:"Y-m-d" }}">
                     </div>
-                    {#                        <div id="cert_to_add">#}
-                    {#                            <h3 id="cert_h">Сертификаты</h3>#}
-                    {#                            <div id="cert_origin">#}
                     <div class="form-group">
                         <label for="id_certificate_img">Сертификат (img)</label>
                         <img src="{{ edu.img }}" alt="img" class="m-2" height="64">
@@ -146,19 +142,11 @@
                                name="certificate_url{{ forloop.counter }}"
                                value="{{ edu.link }}">
                     </div>
-                    {#                            </div>#}
-                    <!-- копироваться будет сюда -->
-                    {#                        </div>#}
-                    {#                        <input type="button" value="Добавить сертификат" id="add_more_cert"#}
-                    {#                               class="btn btn-outline-primary m-2">#}
                 </div>
-
             {% empty %}
                 {% include 'client/edit_forms/education_empty.html' %}
             {% endfor %}
-
         </div>
-
         <div class="text-center">
             <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>
             <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>

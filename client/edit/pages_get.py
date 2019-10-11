@@ -13,8 +13,8 @@ def edit_page_get(client):
     """ views.py ClientEditMain(TemplateView) GET method.
     Загрузка из БД списков для выбора данных клиента. """
     try:
+        print("edit_page_get()")
         time_0 = perf_counter()
-        print("load_edit_page()")
         response = defaultdict()
 
         # default select fields
@@ -50,11 +50,11 @@ def edit_page_get(client):
             response['cl_skype'] = check_if_str(client.skype, '')
             response['cl_state'] = check_if_str(client.state, '')
 
-        print('TIME load_edit_page(): %s' % (perf_counter() - time_0))
+        print('TIME edit_page_get(): %s' % (perf_counter() - time_0))
         return response
 
     except Exception as ex:
-        logging.error("Exception in - load_edit_page()\n %s" % ex)
+        logging.error("Exception in - edit_page_get()\n %s" % ex)
         return None
 
 
@@ -62,18 +62,18 @@ def edit_page_get(client):
 def skills_page_get(client):
     """" views.py ClientEditSkills(TemplateView) GET method.  """
     try:
+        print("skills_page_get()")
         time_0 = perf_counter()
-        print("load_skills_page()")
         response = defaultdict()
 
         if client:
             skills_arr = [i['skill'] for i in Skills.objects.filter(client_skills=client).values()]
             response['cl_skill'] = skills_arr
 
-        print('TIME load_skills_page(): %s' % (perf_counter() - time_0))
+        print('TIME skills_page_get(): %s' % (perf_counter() - time_0))
         return response
     except Exception as ex:
-        logging.error("Exception in load_skills_page()\n%s" % ex)
+        logging.error("Exception in skills_page_get()\n%s" % ex)
         return None
 
 
@@ -81,31 +81,26 @@ def skills_page_get(client):
 def education_page_get(client):
     """" views.py ClientEditEducation(TemplateView) GET method.  """
     try:
+        print("education_page_get()")
         time_0 = perf_counter()
-        print("load_education_page()")
         response = defaultdict()
         if client:
             # edus = [i for i in Education.objects.filter(client_edu=client).values()]
             edus = []
             for i in Education.objects.filter(client_edu=client).values():
                 edus.append(i)
-
             response['cl_edu'] = edus
-            # print(edus)
             # edu_id = [e['id'] for e in response['cl_edu']]
             edu_id = []
             for e in response['cl_edu']:
                 edu_id.append(e['id'])
-            # print(edu_id)
             # certs = [[c for c in Certificate.objects.filter(education_id=i).values()] for i in edu_id]
-            # print("test1", certs)
             certs = []
             for i in edu_id:
                 certss = []
                 for c in Certificate.objects.filter(education_id=i).values():
                     certss.append(c)
                 certs.append(certss)
-            print('test2', certs)
 
             for e in edus:
                 # print("e: %s" % e)
@@ -116,10 +111,10 @@ def education_page_get(client):
                         e['link'] = c[0]['link']
                         e['show_img'] = "%s%s" % (MEDIA_URL, c[0]['img'])
             # print("cl_edu: %s" % response['cl_edu'])
-        print('TIME load_education_page(): %s' % (perf_counter() - time_0))
+        print('TIME education_page_get(): %s' % (perf_counter() - time_0))
         return response
     except Exception as ex:
-        logging.error("Exception in load_education_page()\n%s" % ex)
+        logging.error("Exception in education_page_get()\n%s" % ex)
         return None
 
 
@@ -127,6 +122,7 @@ def education_page_get(client):
 def cv_page_get(client):
     """" views.py ClientEditCv(TemplateView) GET method. """
     try:
+        print("cv_page_get()")
         response = defaultdict()
         if client:
             cvs = [i for i in CV.objects.filter(client_cv=client).values()]
@@ -134,7 +130,7 @@ def cv_page_get(client):
             print("cl_cvs: %s" % response['cl_cvs'])
         return response
     except Exception as ex:
-        logging.error("Exception in load_cv_page()\n%s" % ex)
+        logging.error("Exception in cv_page_get()\n%s" % ex)
         return None
 
 
@@ -142,6 +138,7 @@ def cv_page_get(client):
 def experience_page_get(client):
     """" views.py ClientEditExperience(TemplateView) GET method. """
     try:
+        print("experience_page_get()")
         response = defaultdict()
         if client:
             pass

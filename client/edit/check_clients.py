@@ -9,10 +9,8 @@ def client_check(user):
         """ список карточек c id клиента. """
         users_id_list = [i['user_client_id'] for i in Client.objects.all().values()]
         print("client_id_list: %s" % users_id_list)
-
         """ Current User """
         print("user_name: %s, user_client_id: %s" % (user, user.id))
-
         if user.id in users_id_list:
             client = Client.objects.get(user_client=user)
             print("user_id: %s" % client.id)
