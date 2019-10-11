@@ -1,0 +1,17 @@
+div.wrapper{
+  width: 800px;
+}
+div.left_block{
+  float:left;
+  width:200px;
+}
+div.right_block{
+  float: right;
+  width: 590px;
+}
+.chat_block {
+  background: #007e7e;
+  color: #000000;
+  padding: 10px;
+  border-radius: 5px;
+}
