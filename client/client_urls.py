@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import path
 
 from client import views
+from client.edit.load_data_list import SkillsDataList
 from client.views import *
 
 urlpatterns = [
@@ -16,6 +17,7 @@ urlpatterns = [
     path('edit/education', views.client_edit_education, name='client_edit_education'),
     path('edit/experience', views.client_edit_experience, name='client_edit_experience'),
     path('edit/form_edu/', views.FormEducation.as_view(), name='form_edu'),
+    path('edit/skills_data_list/', SkillsDataList.as_view(), name='skills_data_list'),
     # Team Rome
 
     path('chat/', login_required(views.MessagesView.as_view()), name='contact_with_centre'),

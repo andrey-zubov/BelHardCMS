@@ -55,7 +55,7 @@ ROOT_URLCONF = 'BelHardCRM.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'client/templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'client/templates/client/')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

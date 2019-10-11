@@ -50,7 +50,7 @@ class ClientEditMain(TemplateView):
     def get(self, request, *args, **kwargs):
         client_instance = client_check(request.user)
         response = {'client_img': load_client_img(client_instance),
-                    'data': edit_page_get(client_instance)
+                    'data': edit_page_get(client_instance),
                     }
         return render(request=request, template_name=self.template_name, context=response)
 
@@ -67,7 +67,7 @@ class ClientEditSkills(TemplateView):
     def get(self, request, *args, **kwargs):
         client_instance = client_check(request.user)
         response = {'client_img': load_client_img(client_instance),
-                    'data': skills_page_get(client_instance)
+                    'data': skills_page_get(client_instance),
                     }
         return render(request=request, template_name=self.template_name, context=response)
 
@@ -84,7 +84,7 @@ class ClientEditPhoto(TemplateView):
     def get(self, request, *args, **kwargs):
         client_instance = client_check(request.user)
         response = {'client_img': load_client_img(client_instance),
-                    'form': UploadImgForm()
+                    'form': UploadImgForm(),
                     }
         return render(request=request, template_name=self.template_name, context=response)
 
@@ -107,10 +107,13 @@ def client_edit_cv(request):
 
             for cvs in arr_cv:
                 position = cvs['position']
-                employment = Employment.objects.get(employment=request.POST['employment'])
-                time_job = TimeJob.objects.get(time_job_word=request.POST['time_job'])
+                # employment = Employment.objects.get(employment=request.POST['employment'])
+                employment = None
+                # time_job = TimeJob.objects.get(time_job_word=request.POST['time_job'])
+                time_job = None
                 salary = cvs['salary']
-                type_salary = TypeSalary.objects.get(type_word=request.POST['type_salary'])
+                # type_salary = TypeSalary.objects.get(type_word=request.POST['type_salary'])
+                type_salary = None
 
                 if any(cvs.values()):
                     cv = CV(
