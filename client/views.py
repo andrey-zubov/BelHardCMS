@@ -77,9 +77,7 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
     # Poland
-    client = get_object_or_404(Client, user_client=request.user)
-    resumes = CV.objects.filter(client_cv=client)
-    # resumes = CV.objects.all()   # нужно проверить соответствие Юзеру!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    resumes = CV.objects.all()   # нужно проверить соответствие Юзеру!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     suggestions = 0
     for resume in resumes:
         suggestions += resume.notification.count()
@@ -87,7 +85,7 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     client_instance = client_check(request.user)
     response['client_img'] = load_client_img(client_instance)
     context.update(response)
-    print(context['unread_suggestions'])
+    # print(context['unread_suggestions'])
     return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
