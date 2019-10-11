@@ -1,12 +1,15 @@
 from time import perf_counter
 
 from client.edit.edit_forms import (UploadImgForm, EducationFormSet, CertificateFormSet)
+from client.edit.parsers import (pars_edu_request, pars_cv_request, pars_exp_request)
 from client.edit.utility import (check_input_str, check_phone, check_home_number, check_telegram)
-from client.models import (Skills, Telephone, Sex, Citizenship, FamilyState, Children, City, State, Client)
+from client.models import (Skills, Telephone, Sex, Citizenship, FamilyState, Children, City, State, Client, Education,
+                           Certificate, CV, Experience, Sphere)
 
 
+# TeamRome
 def edit_page_post(client_instance, request):
-    """ TBA """
+    """ views.py ClientEditMain(TemplateView) POST method. """
     time_0 = perf_counter()
 
     """ Входные данные для сохранения: """
@@ -104,7 +107,9 @@ def edit_page_post(client_instance, request):
     print('edit_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
+# TeamRome
 def skills_page_post(client_instance, request):
+    """" views.py ClientEditSkills(TemplateView) POST method.  """
     skills_arr = request.POST.getlist('skill') if request.POST.getlist('skill') else None
 
     if any(skills_arr):
@@ -122,8 +127,10 @@ def skills_page_post(client_instance, request):
         print("No skills")
 
 
+# TeamRome
 def photo_page_post(client_instance, request):
-    """ в БД сохраняется УНИКАЛЬНОЕ имя картинки (пр: user_2_EntrmQR.png) в папке MEDIA_URL = '/media/' """
+    """" views.py ClientEditPhoto(TemplateView) POST method.
+    В БД сохраняется УНИКАЛЬНОЕ имя картинки (пр: user_2_EntrmQR.png) в папке MEDIA_URL = '/media/' """
     form = UploadImgForm(request.POST, request.FILES)
     if form.is_valid():
         img = form.cleaned_data.get('img')
@@ -131,6 +138,123 @@ def photo_page_post(client_instance, request):
         client_instance.save()
 
 
+# TeamRome
+def education_page_post(client_instance, request):
+    """" views.py ClientEditEducation(TemplateView) POST method.  """
+    arr_edu = pars_edu_request(request.POST, request.FILES)  # list of dictionaries
+
+    if any(arr_edu):
+        Education.objects.all().delete()
+
+        for edus in arr_edu:
+            institution = edus['institution']
+            subject_area = edus['subject_area']
+            specialization = edus['specialization']
+            qualification = edus['qualification']
+            date_start = edus['date_start']
+            date_end = edus['date_end']
+            link = edus['certificate_url']
+            img = edus['certificate_img']
+
+            if any(edus.values()):
+                education = Education(
+                    client_edu=client_instance,
+                    institution=institution,
+                    subject_area=subject_area,
+                    specialization=specialization,
+                    qualification=qualification,
+                    date_start=date_start if date_start else None,
+                    date_end=date_end if date_end else None
+                )
+                education.save()
+
+                certificate = Certificate(
+                    education=education,
+                    img=img,
+                    link=link
+                )
+                certificate.save()
+
+                print("Education Form - OK\n", institution, subject_area, specialization, qualification,
+                      date_start if date_start else None, date_end if date_end else None, img, link)
+            else:
+                print('Education Form is Empty')
+
+
+# TeamRome
+def cv_page_post(client_instance, request):
+    """" views.py ClientEditCv(TemplateView) POST method. """
+    arr_cv = pars_cv_request(request.POST)  # list of dictionaries
+
+    if any(arr_cv):
+        CV.objects.all().delete()
+
+        for cvs in arr_cv:
+            position = cvs['position']
+            # employment = Employment.objects.get(employment=request.POST['employment'])
+            employment = None
+            # time_job = TimeJob.objects.get(time_job_word=request.POST['time_job'])
+            time_job = None
+            salary = cvs['salary']
+            # type_salary = TypeSalary.objects.get(type_word=request.POST['type_salary'])
+            type_salary = None
+
+            if any(cvs.values()):
+                cv = CV(
+                    client_cv=client_instance,
+                    position=position,
+                    employment=employment,
+                    time_job=time_job,
+                    salary=salary,
+                    type_salary=type_salary,
+                )
+                cv.save()
+                print("CV Form - OK\n", position, employment, time_job, salary, type_salary)
+            else:
+                print('Cv form is Empty')
+
+
+# TeamRome
+def experience_page_post(client_instance, request):
+    """" views.py ClientEditExperience(TemplateView) POST method. """
+    arr = pars_exp_request(request.POST)  # list of dictionaries
+
+    if any(arr):
+        Experience.objects.all().delete()
+
+        for dic in arr:
+            organisation = dic['experience_1']
+            position = dic['experience_3']
+            start_date = dic['exp_date_start']
+            end_date = dic['exp_date_end']
+            duties = dic['experience_4']
+
+            if any(dic.values()):
+                experiences = Experience(
+                    client_exp=client_instance,
+                    name=organisation,
+                    position=position,
+                    start_date=start_date if start_date else None,
+                    end_date=end_date if end_date else None,
+                    duties=duties if duties else None
+                )
+                experiences.save()
+
+                spheres = dic['experience_2']
+                for s in spheres:
+                    if s:
+                        """ Save ManyToManyField 'sphere' """
+                        sp = Sphere(sphere_word=s)
+                        sp.save()
+                        experiences.sphere.add(sp)
+
+                print("Experience Form - OK\n", organisation, spheres, position, start_date if start_date else None,
+                      end_date if end_date else None, duties if duties else None)
+            else:
+                print('Experience Form is Empty')
+
+
+# TeamRome
 def form_edu_post(client_instance, request):
     print("FormEducation.POST: %s" % request.POST)
 

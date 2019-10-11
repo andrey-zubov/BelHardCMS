@@ -8,8 +8,10 @@ from client.models import (Sex, Citizenship, FamilyState, Children, City, State,
                            Certificate, CV)
 
 
+# TeamRome
 def edit_page_get(client):
-    """ Загрузка из БД списков для выбора данных клиента"""
+    """ views.py ClientEditMain(TemplateView) GET method.
+    Загрузка из БД списков для выбора данных клиента. """
     try:
         time_0 = perf_counter()
         print("load_edit_page()")
@@ -56,8 +58,9 @@ def edit_page_get(client):
         return None
 
 
+# TeamRome
 def skills_page_get(client):
-    """ TBA """
+    """" views.py ClientEditSkills(TemplateView) GET method.  """
     try:
         time_0 = perf_counter()
         print("load_skills_page()")
@@ -74,8 +77,9 @@ def skills_page_get(client):
         return None
 
 
-def load_education_page(client):
-    """ TBA """
+# TeamRome
+def education_page_get(client):
+    """" views.py ClientEditEducation(TemplateView) GET method.  """
     try:
         time_0 = perf_counter()
         print("load_education_page()")
@@ -119,7 +123,9 @@ def load_education_page(client):
         return None
 
 
-def load_cv_edition_page(client):
+# TeamRome
+def cv_page_get(client):
+    """" views.py ClientEditCv(TemplateView) GET method. """
     try:
         response = defaultdict()
         if client:
@@ -129,4 +135,14 @@ def load_cv_edition_page(client):
         return response
     except Exception as ex:
         logging.error("Exception in load_cv_page()\n%s" % ex)
+        return None
+
+
+# TeamRome
+def experience_page_get(client):
+    """" views.py ClientEditExperience(TemplateView) GET method. """
+    try:
+        pass
+    except Exception as ex:
+        logging.error("Exception in experience_page_get()\n%s" % ex)
         return None

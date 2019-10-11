@@ -5,11 +5,11 @@ from django.template.context_processors import csrf
 from django.views import View
 from django.views.generic import TemplateView
 
-from client.edit.edit_forms import (EducationFormSet, CertificateForm, SabClassFormSet, UploadImgForm)
-from client.edit.pages_get import (edit_page_get, skills_page_get, load_cv_edition_page, load_education_page)
-from client.edit.pages_post import (skills_page_post, edit_page_post, photo_page_post, form_edu_post)
-from client.edit.parsers import (pars_cv_request, pars_edu_request, pars_exp_request)
 from client.edit.check_clients import (client_check, load_client_img)
+from client.edit.edit_forms import (EducationFormSet, CertificateForm, SabClassFormSet, UploadImgForm)
+from client.edit.pages_get import (edit_page_get, skills_page_get, cv_page_get, education_page_get, experience_page_get)
+from client.edit.pages_post import (skills_page_post, edit_page_post, photo_page_post, form_edu_post,
+                                    education_page_post, cv_page_post, experience_page_post)
 from client.forms import (OpinionForm, AnswerForm, MessageForm)
 from client.models import *
 
@@ -95,145 +95,54 @@ class ClientEditPhoto(TemplateView):
 
 
 # TeamRome
-def client_edit_cv(request):
-    response = csrf(request)
-    client_instance = client_check(request.user)
+class ClientEditCv(TemplateView):
+    template_name = 'client/edit_forms/client_edit_cv.html'
 
-    if request.method == 'POST':
-        arr_cv = pars_cv_request(request.POST)  # list of dictionaries
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    'data': cv_page_get(client_instance),
+                    }
+        return render(request, self.template_name, response)
 
-        if any(arr_cv):
-            CV.objects.all().delete()
-
-            for cvs in arr_cv:
-                position = cvs['position']
-                # employment = Employment.objects.get(employment=request.POST['employment'])
-                employment = None
-                # time_job = TimeJob.objects.get(time_job_word=request.POST['time_job'])
-                time_job = None
-                salary = cvs['salary']
-                # type_salary = TypeSalary.objects.get(type_word=request.POST['type_salary'])
-                type_salary = None
-
-                if any(cvs.values()):
-                    cv = CV(
-                        client_cv=client_instance,
-                        position=position,
-                        employment=employment,
-                        time_job=time_job,
-                        salary=salary,
-                        type_salary=type_salary,
-                    )
-                    cv.save()
-                    print("CV Form - OK\n", position, employment, time_job, salary, type_salary)
-                else:
-                    print('Cv form is Empty')
+    def post(self, request):
+        client_instance = client_check(request.user)
+        cv_page_post(client_instance, request)
         return redirect(to='/client/edit')
-    else:
-        response['client_img'] = load_client_img(client_instance)
-        response['data'] = load_cv_edition_page(client_instance)
-
-    return render(request, 'client/edit_forms/client_edit_cv.html', response)
 
 
 # TeamRome
-def client_edit_education(request):
-    response = csrf(request)
-    client_instance = client_check(request.user)
+class ClientEditEducation(TemplateView):
+    template_name = 'client/edit_forms/client_edit_education.html'
 
-    if request.method == 'POST':
-        arr_edu = pars_edu_request(request.POST, request.FILES)  # list of dictionaries
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    'data': education_page_get(client_instance),
+                    }
+        return render(request, self.template_name, response)
 
-        if any(arr_edu):
-            Education.objects.all().delete()
-
-            for edus in arr_edu:
-                institution = edus['institution']
-                subject_area = edus['subject_area']
-                specialization = edus['specialization']
-                qualification = edus['qualification']
-                date_start = edus['date_start']
-                date_end = edus['date_end']
-                link = edus['certificate_url']
-                img = edus['certificate_img']
-
-                if any(edus.values()):
-                    education = Education(
-                        client_edu=client_instance,
-                        institution=institution,
-                        subject_area=subject_area,
-                        specialization=specialization,
-                        qualification=qualification,
-                        date_start=date_start if date_start else None,
-                        date_end=date_end if date_end else None
-                    )
-                    education.save()
-
-                    certificate = Certificate(
-                        education=education,
-                        img=img,
-                        link=link
-                    )
-                    certificate.save()
-
-                    print("Education Form - OK\n", institution, subject_area, specialization, qualification,
-                          date_start if date_start else None, date_end if date_end else None, img, link)
-                else:
-                    print('Education Form is Empty')
+    def post(self, request):
+        client_instance = client_check(request.user)
+        education_page_post(client_instance, request)
         return redirect('/client/edit')
-    else:
-        response['client_img'] = load_client_img(client_instance)
-        response['data'] = load_education_page(client_instance)
-
-    return render(request, 'client/edit_forms/client_edit_education.html', response)
 
 
 # TeamRome
-def client_edit_experience(request):
-    response = csrf(request)
-    client_instance = client_check(request.user)
+class ClientEditExperience(TemplateView):
+    template_name = 'client/edit_forms/client_edit_experience.html'
 
-    if request.method == 'POST':
-        arr = pars_exp_request(request.POST)  # list of dictionaries
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    "data": experience_page_get(client_instance),
+                    }
+        return render(request, self.template_name, response)
 
-        if any(arr):
-            Experience.objects.all().delete()
-
-            for dic in arr:
-                organisation = dic['experience_1']
-                position = dic['experience_3']
-                start_date = dic['exp_date_start']
-                end_date = dic['exp_date_end']
-                duties = dic['experience_4']
-
-                if any(dic.values()):
-                    experiences = Experience(
-                        client_exp=client_instance,
-                        name=organisation,
-                        position=position,
-                        start_date=start_date if start_date else None,
-                        end_date=end_date if end_date else None,
-                        duties=duties if duties else None
-                    )
-                    experiences.save()
-
-                    spheres = dic['experience_2']
-                    for s in spheres:
-                        if s:
-                            """ Save ManyToManyField 'sphere' """
-                            sp = Sphere(sphere_word=s)
-                            sp.save()
-                            experiences.sphere.add(sp)
-
-                    print("Experience Form - OK\n", organisation, spheres, position, start_date if start_date else None,
-                          end_date if end_date else None, duties if duties else None)
-                else:
-                    print('Experience Form is Empty')
+    def post(self, request):
+        client_instance = client_check(request.user)
+        experience_page_post(client_instance, request)
         return redirect('/client/edit')
-    else:
-        response['client_img'] = load_client_img(client_instance)
-
-    return render(request, 'client/edit_forms/client_edit_experience.html', response)
 
 
 class MessagesView(View):
@@ -362,7 +271,7 @@ class FormEducation(TemplateView):
 
     def get(self, request, *args, **kwargs):
         client_instance = client_check(request.user)
-        load_data = load_education_page(client_instance)['cl_edu']
+        load_data = education_page_get(client_instance)['cl_edu']
 
         response = {'client_img': load_client_img(client_instance),
                     'edu_form': EducationFormSet(initial=load_data),

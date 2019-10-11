@@ -1,6 +1,7 @@
 import re
 
 
+# TeamRome
 def pars_exp_request(req_post) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели Experience. """
@@ -43,6 +44,7 @@ def pars_exp_request(req_post) -> list:
     return arr
 
 
+# TeamRome
 def pars_cv_request(req_post: dict) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели CV. """
@@ -80,6 +82,7 @@ def pars_cv_request(req_post: dict) -> list:
     return arr
 
 
+# TeamRome
 def pars_edu_request(req_post, _file) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели Education. """
