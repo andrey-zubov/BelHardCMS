@@ -202,10 +202,8 @@ def client_edit_skills(request):
 def client_edit_photo(request):
     response = csrf(request)
     client_instance = client_check(request.user)
-
     if request.method == 'POST':
-        print('client_edit_photo - request.POST')
-
+        print('add file - request.POST')
         form = UploadImgForm(request.POST, request.FILES)
         if form.is_valid():
             img = form.cleaned_data.get('img')
