@@ -60,6 +60,7 @@ admin.site.register(Settings, SettingsAdmin)
 
 admin.site.register(Help)
 
+admin.site.register(JobInterviews)
 
 
 admin.site.register(Opinion)

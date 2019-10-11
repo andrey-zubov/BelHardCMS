@@ -26,7 +26,7 @@ from .utility import (check_input_str, check_home_number, check_telegram, check_
                       pars_edu_request, pars_exp_request)
 
 
-def client_main_page(request):  #!!!!!!!!!!!!!!!!!!!!!Alert 
+def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     response = csrf(request)
 
     readtask = len(Tasks.objects.filter(user = request.user, readtask=False))
@@ -36,7 +36,7 @@ def client_main_page(request):  #!!!!!!!!!!!!!!!!!!!!!Alert
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
     # Poland
-    resumes = CV.objects.all()
+    resumes = CV.objects.all()   # нужно проверить соответствие Юзеру!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     suggestions = 0
     for resume in resumes:
         suggestions += resume.notification.count()
@@ -44,7 +44,7 @@ def client_main_page(request):  #!!!!!!!!!!!!!!!!!!!!!Alert
     client_instance = client_check(request.user)
     response['client_img'] = load_client_img(client_instance)
     context.update(response)
-    print(context['unread_suggestions'])
+    # print(context['unread_suggestions'])
     return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
