@@ -163,4 +163,26 @@ def applicant(request, id_a):
 
 def applicant_tasks(request, id_a):
     applicant_user = Client.objects.get(id=id_a)
-    return render(request, 'recruit/recruiter_tasks_for_applicant.html', context={'applicant_user': applicant_user})
+    response = csrf(request)
+    response['applicant_user'] = applicant_user
+    # client_instance = client_check(request.user)
+    """if request.method == 'POST':
+        print('upload file - request.POST')
+
+        form = UploadImgForm(request.POST, request.FILES)
+        if form.is_valid():
+            img = form.cleaned_data.get('img')
+            client_instance.img = img
+            client_instance.save()
+            """
+            # в БД сохраняется УНИКАЛЬНОЕ имя картинки (пр. user_2_EntrmQR.png)
+            # в папке MEDIA_URL = '/media/'
+
+#            print('client save photo - OK')
+#            return redirect(to='/client/edit')
+#    else:
+#        print('client_edit_photo - request.GET')
+#        response['client_img'] = load_client_img(client_instance)
+#        response['form'] = UploadImgForm()
+
+    return render(request, 'recruit/recruiter_tasks_for_applicant.html', context=response)
