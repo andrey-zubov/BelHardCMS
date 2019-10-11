@@ -70,6 +70,9 @@ admin.site.register(Vacancy, VacancyAdmin)
 admin.site.register(Resume, ResumeAdmin)
 admin.site.register(Help)
 
+admin.site.register(JobInterviews)
+
+
 admin.site.register(Opinion)
 admin.site.register(Answer)
 admin.site.register(Chat)
