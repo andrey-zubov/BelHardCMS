@@ -213,20 +213,6 @@ class CV(models.Model):
     def __str__(self):
         return self.position
 
-    def get_absolute_url(self):
-        return reverse('resume_detail_url', kwargs={'id': self.id})
-
-    def get_accept_url(self):
-        return reverse('accepted_vacancies_url', kwargs={'id': self.id})
-
-    def get_reject_url(self):
-        return reverse('rejected_vacancies_url', kwargs={'id': self.id})
-
-    def get_vacancies_list_url(self):
-        return reverse('vacancies_list_url', kwargs={'id': self.id})
-
-    # end upgrade from Poland
-
 
 class State(models.Model):
     """ Стутус клиента. """
@@ -529,7 +515,3 @@ class Settings(models.Model):
 
     def __str__(self):
         return self.name_setting
-
-
-
-

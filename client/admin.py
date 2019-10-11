@@ -74,6 +74,7 @@ class JobInterviewsAdmin(admin.ModelAdmin):
     class Media:
         js = ['js/scriptJob.js']
 
+admin.site.register(JobInterviews)
 
 admin.site.register(JobInterviews, JobInterviewsAdmin)
 

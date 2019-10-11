@@ -8,7 +8,6 @@ from collections import defaultdict
 from django.contrib import auth
 
 from django.contrib.auth.models import Group
-from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.context_processors import csrf
 
@@ -24,7 +23,6 @@ from .models import Vacancy
 
 from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 
-from django.views.generic import View, TemplateView
 
 
 from BelHardCRM.settings import MEDIA_URL
@@ -76,15 +74,15 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
     # Poland
-    # resumes = CV.objects.all()
-    # suggestions = 0
-    # for resume in resumes:
-    #   suggestions += resume.notification.count()
-    # response['unread_suggestions'] = suggestions
-    # client_instance = client_check(request.user)
-    # response['client_img'] = load_client_img(client_instance)
-    # context.update(response)
-    # print(context['unread_suggestions'])
+    resumes = CV.objects.all()   # нужно проверить соответствие Юзеру!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    suggestions = 0
+    for resume in resumes:
+        suggestions += resume.notification.count()
+    response['unread_suggestions'] = suggestions
+    client_instance = client_check(request.user)
+    response['client_img'] = load_client_img(client_instance)
+    context.update(response)
+    print(context['unread_suggestions'])
     return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
