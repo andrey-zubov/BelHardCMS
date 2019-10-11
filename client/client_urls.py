@@ -2,14 +2,14 @@ from django.contrib.auth.decorators import login_required
 from django.urls import path
 
 from client import views
-from client.edit.load_data_list import SkillsDataList
+from client.edit.load_data_list import (SkillsDataList, InstitutionDataList, CvPositionDataList)
 from client.views import *
 
 urlpatterns = [
     path('', views.client_main_page, name='client'),  # main client page
     path('profile', views.client_profile, name='client_profile'),
 
-    # Team Rome - Edit Forms URLs
+    # Team Rome (start) - Edit Forms URLs
     path('edit', views.ClientEditMain.as_view(), name='client_edit'),
     path('edit/skills', views.ClientEditSkills.as_view(), name='client_edit_skills'),
     path('edit/photo', views.ClientEditPhoto.as_view(), name='client_edit_photo'),
@@ -18,7 +18,9 @@ urlpatterns = [
     path('edit/experience', views.client_edit_experience, name='client_edit_experience'),
     path('edit/form_edu/', views.FormEducation.as_view(), name='form_edu'),
     path('edit/skills_data_list/', SkillsDataList.as_view(), name='skills_data_list'),
-    # Team Rome
+    path('edit/institution_data_list/', InstitutionDataList.as_view(), name='institution_data_list'),
+    path('edit/cv_position_data_list/', CvPositionDataList.as_view(), name='cv_position_data_list'),
+    # Team Rome (end)
 
     path('chat/', login_required(views.MessagesView.as_view()), name='contact_with_centre'),
     path(r'opinion/', opinion_list, name='opinion_list'),

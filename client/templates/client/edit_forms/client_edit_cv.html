@@ -6,14 +6,16 @@
 {% endblock %}
 
 {% block content %}
-
     <!-- JS добавления однотипных форм. ONLY FOR THIS CUSTOM FORM -->
     <script type="text/javascript">
         $(document).ready(function () {
             var count = 1;
             var origin = $("#origin_div").clone();
 
-            $("#add_more").on("click", function () {
+            $("#add_more").on("click", add_cv);
+            $("#id_position").on("change", data_l);
+
+            function add_cv() {
                 var add = origin.clone();
                 var current_div = add.children('div');
 
@@ -23,10 +25,10 @@
                     // Because custom form! Can be optimised!
                     switch (i) {
                         case 0: // input #1
-                            element = $(current_div[i]).children('input');
-                            console.log(element);
+                            element = $(current_div[i]).children('input').on("change", data_l);
+                            console.log("input #1", element);
                             attr_name = $(element).attr('name');
-                            console.log(attr_name);
+                            console.log("input #1", attr_name);
                             $(element).attr('name', attr_name + count);
                             break;
                         case 1: // select #1
@@ -54,139 +56,127 @@
                 count++;
                 // Изменяет вложенный текст
                 var text = add.children("#cv_h");
-                console.log(text);
+                console.log("cv_h text:", text);
                 $(text).attr('innerText', text.text('Резюме ' + count));
 
                 add.appendTo("#div_to_add_new");
-            });
+            }
+
+            function data_l() {
+                var us_in = $(this).val();
+                console.log("us_in:", us_in);
+                $.ajax({
+                    'url': "{% url 'cv_position_data_list' %}",
+                    'data': {'us_in': us_in},
+                    success: function (data) {
+                        var json_data = jQuery.parseJSON(data);
+                        console.log(json_data.words);
+                        {#//$("#data_list_2")#}
+                    }
+                });
+            }
         });
     </script>
 
-
     <form method="post">
         {% csrf_token %}
-
         {% if not data.cl_cvs %}
-
             <div id="div_to_add_new">
-
                 <div id="origin_div">
-                    <div class="row">
-                        <div class="col-md-8">
-
-                            <h3 id="cv_h">Резюме</h3>
-
-                            <div class="form-group">
-                                <label for="id_position">Должность</label>
-                                <input type="text" class="form-control" id="id_position" name="position">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="id_employment">Занятость</label>
-                                <select class="form-control" id="id_employment" name="employment">
-                                    <option selected></option>
-                                    <option value="Полная">Полная</option>
-                                    <option value="Частичная">Частичная</option>
-                                    <option value="Проектная работа">Проектная работа</option>
-                                    <option value="Волонтёрство">Волонтёрство</option>
-                                    <option value="Стажировка">Стажировка</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="id_time_job">График работы</label>
-                                <select class="form-control" id="id_time_job" name="time_job">
-                                    <option selected></option>
-                                    <option value="Полный день">Полный день</option>
-                                    <option value="Сменный график">Сменный график</option>
-                                    <option value="Гибкий график">Гибкий график</option>
-                                    <option value="Удалённая работа">Удалённая работа</option>
-                                    <option value="Вахтовый метод">Вахтовый метод</option>
-                                </select>
-                            </div>
-
-                            <h5>Уровень заработной платы</h5>
-                            <div class="form-group">
-                                <label for="id_salary">Сумма</label>
-                                <input type="text" class="form-control" id="id_salary" name="salary">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="id_type_salary">Валюта</label>
-                                <select class="form-control" id="id_type_salary" name="type_salary">
-                                    <option selected></option>
-                                    <option value="BYN">BYN</option>
-                                    <option value="RUR">RUR</option>
-                                    <option value="USD">USD</option>
-                                    <option value="Euro">Euro</option>
-                                </select>
-                            </div>
-                        </div>
+                    <h3 id="cv_h">Резюме</h3>
+                    <div class="form-group">
+                        <label for="id_position">Должность</label>
+                        <input type="text" class="form-control" id="id_position" name="position">
+                    </div>
+                    <div class="form-group">
+                        <label for="id_employment">Занятость</label>
+                        <select class="form-control" id="id_employment" name="employment">
+                            <option selected></option>
+                            <option value="Полная">Полная</option>
+                            <option value="Частичная">Частичная</option>
+                            <option value="Проектная работа">Проектная работа</option>
+                            <option value="Волонтёрство">Волонтёрство</option>
+                            <option value="Стажировка">Стажировка</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_time_job">График работы</label>
+                        <select class="form-control" id="id_time_job" name="time_job">
+                            <option selected></option>
+                            <option value="Полный день">Полный день</option>
+                            <option value="Сменный график">Сменный график</option>
+                            <option value="Гибкий график">Гибкий график</option>
+                            <option value="Удалённая работа">Удалённая работа</option>
+                            <option value="Вахтовый метод">Вахтовый метод</option>
+                        </select>
+                    </div>
+                    <h5>Уровень заработной платы</h5>
+                    <div class="form-group">
+                        <label for="id_salary">Сумма</label>
+                        <input type="text" class="form-control" id="id_salary" name="salary">
+                    </div>
+                    <div class="form-group">
+                        <label for="id_type_salary">Валюта</label>
+                        <select class="form-control" id="id_type_salary" name="type_salary">
+                            <option selected></option>
+                            <option value="BYN">BYN</option>
+                            <option value="RUR">RUR</option>
+                            <option value="USD">USD</option>
+                            <option value="Euro">Euro</option>
+                        </select>
                     </div>
                 </div>
             </div>
-
         {% else %}
             {% for cv in data.cl_cvs %}
                 <div id="div_to_add_new">
-
                     <div id="origin_div">
-                        <div class="row">
-                            <div class="col-md-8">
-
-                                <h3 id="cv_h">Резюме</h3>
-
-                                <div class="form-group">
-                                    <label for="id_position">Должность</label>
-                                    <input type="text" class="form-control" id="id_position" name="position"
-                                           value="{{ cv.position }}">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="id_employment">Занятость</label>
-                                    <select class="form-control" id="id_employment" name="employment"
-                                            value="{{ cv.employment }}">
-                                        <option selected></option>
-                                        <option value="Полная">Полная</option>
-                                        <option value="Частичная">Частичная</option>
-                                        <option value="Проектная работа">Проектная работа</option>
-                                        <option value="Волонтёрство">Волонтёрство</option>
-                                        <option value="Стажировка">Стажировка</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="id_time_job">График работы</label>
-                                    <select class="form-control" id="id_time_job" name="time_job"
-                                            value="{{ cv.time_job }}">
-                                        <option selected></option>
-                                        <option value="Полный день">Полный день</option>
-                                        <option value="Сменный график">Сменный график</option>
-                                        <option value="Гибкий график">Гибкий график</option>
-                                        <option value="Удалённая работа">Удалённая работа</option>
-                                        <option value="Вахтовый метод">Вахтовый метод</option>
-                                    </select>
-                                </div>
-
-                                <h5>Уровень заработной платы</h5>
-                                <div class="form-group">
-                                    <label for="id_salary">Сумма</label>
-                                    <input type="text" class="form-control" id="id_salary" name="salary"
-                                           value="{{ cv.salary }}">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="id_type_salary">Валюта</label>
-                                    <select class="form-control" id="id_type_salary" name="type_salary"
-                                            value="{{ cv.type_salary }}">
-                                        <option selected></option>
-                                        <option value="BYN">BYN</option>
-                                        <option value="RUR">RUR</option>
-                                        <option value="USD">USD</option>
-                                        <option value="Euro">Euro</option>
-                                    </select>
-                                </div>
-                            </div>
+                        <h3 id="cv_h">Резюме</h3>
+                        <div class="form-group">
+                            <label for="id_position">Должность</label>
+                            <input type="text" class="form-control" id="id_position" name="position"
+                                   value="{{ cv.position }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_employment">Занятость</label>
+                            <select class="form-control" id="id_employment" name="employment"
+                                    value="{{ cv.employment }}">
+                                <option selected></option>
+                                <option value="Полная">Полная</option>
+                                <option value="Частичная">Частичная</option>
+                                <option value="Проектная работа">Проектная работа</option>
+                                <option value="Волонтёрство">Волонтёрство</option>
+                                <option value="Стажировка">Стажировка</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_time_job">График работы</label>
+                            <select class="form-control" id="id_time_job" name="time_job"
+                                    value="{{ cv.time_job }}">
+                                <option selected></option>
+                                <option value="Полный день">Полный день</option>
+                                <option value="Сменный график">Сменный график</option>
+                                <option value="Гибкий график">Гибкий график</option>
+                                <option value="Удалённая работа">Удалённая работа</option>
+                                <option value="Вахтовый метод">Вахтовый метод</option>
+                            </select>
+                        </div>
+                        <h5>Уровень заработной платы</h5>
+                        <div class="form-group">
+                            <label for="id_salary">Сумма</label>
+                            <input type="text" class="form-control" id="id_salary" name="salary"
+                                   value="{{ cv.salary }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_type_salary">Валюта</label>
+                            <select class="form-control" id="id_type_salary" name="type_salary"
+                                    value="{{ cv.type_salary }}">
+                                <option selected></option>
+                                <option value="BYN">BYN</option>
+                                <option value="RUR">RUR</option>
+                                <option value="USD">USD</option>
+                                <option value="Euro">Euro</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -200,7 +190,5 @@
                     id="save">Соранить данные
             </button>
         </div>
-
     </form>
-
 {% endblock %}

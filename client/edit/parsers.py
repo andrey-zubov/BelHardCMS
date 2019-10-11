@@ -83,7 +83,7 @@ def pars_cv_request(req_post: dict) -> list:
 def pars_edu_request(req_post, _file) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели Education. """
-    # print("exp_request.POST: %s" % req_post)
+    print("exp_request.POST: %s" % req_post)
     # print("exp_request.FILE: %s" % _file)
     from time import perf_counter
     time_0 = perf_counter()
@@ -123,12 +123,12 @@ def pars_edu_request(req_post, _file) -> list:
                         dict_up['certificate_img'] = f[1]
                         break
 
-            # print(dict_up)
+            print(dict_up)
             arr.append(dict_up)
             dict_up = {'institution': '', 'subject_area': '', 'specialization': '', 'qualification': '',
                        'date_start': '', 'date_end': '', 'certificate_img': '', 'certificate_url': ''}
             count += 1
-            # print('----')
+            print('----')
 
     print('time_it = %s sec' % (perf_counter() - time_0))
     print("arr: %s" % arr)

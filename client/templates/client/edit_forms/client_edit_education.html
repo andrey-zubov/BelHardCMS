@@ -14,13 +14,16 @@
             var origin = $("#origin_div").clone();
             var cert_origin = $("#cert_origin").clone();
 
-            $("#add_more").on("click", function () {
+            $("#add_more").on("click", add_edu);
+            $("#id_institution").on("change", data_l);
+
+            function add_edu() {
                 var add = origin.clone();
                 var current_div = add.children('div');
 
                 for (var i = 0; i < 8; i++) {
                     // 8 inputs
-                    var element = $(current_div[i]).children('input');
+                    var element = $(current_div[i]).children('input').on("change", data_l);
                     var attr_name = $(element).attr('name');
                     $(element).attr('name', attr_name + count);
                     $(element).attr('value', '');
@@ -46,7 +49,7 @@
                 $(text).attr('innerText', text.text('Образование ' + count));
 
                 add.appendTo("#div_to_add_new");
-            });
+            }
             {##}
             {#$("#add_more_cert").on("click", function () {#}
             {#    var add = cert_origin.clone();#}
@@ -65,6 +68,20 @@
             {#    $(text).attr('innerText', text.text('Сертификат ' + cert_count));#}
             {#    add.appendTo("#cert_to_add");});#}
             {##}
+
+            function data_l() {
+                var us_in = $(this).val();
+                console.log(us_in);
+                $.ajax({
+                    'url': "{% url 'institution_data_list' %}",
+                    'data': {'us_in': us_in},
+                    success: function (data) {
+                        var json_data = jQuery.parseJSON(data);
+                        console.log(json_data.words);
+                        {#//$("#data_list_2")#}
+                    }
+                });
+            }
         });
     </script>
 

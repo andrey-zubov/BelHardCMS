@@ -24,14 +24,15 @@
             }
 
             function data_l() {
-                console.log(count);
                 var us_in = $(this).val();
                 console.log(us_in);
                 $.ajax({
                     'url': "{% url 'skills_data_list' %}",
                     'data': {'us_in': us_in},
                     success: function (data) {
-                        console.log(data);
+                        var json_data = jQuery.parseJSON(data);
+                        console.log(json_data.words);
+                        {#//$("#data_list_2")#}
                     }
                 });
             }
