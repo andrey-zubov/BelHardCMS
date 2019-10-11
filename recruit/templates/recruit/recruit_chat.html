@@ -21,11 +21,15 @@
             <div id="innerChats">
                 {% for chat in chats %}
                     <div class="chat_block" id="{{ chat.id }}" onclick="show_messages(this)" >
-                    {% for m in chat.members.all %}
+                        {% for m in chat.members.all %}
                             {% if m != user %}
                                 {{ m.username }}
                             {% endif %}
+
                         {% endfor %}
+                        <div class="counter" id="count_{{ chat.id }}" hidden="true">
+
+                        </div>
                     </div>
                 {% endfor %}
             </div>
@@ -48,77 +52,8 @@
 
 </div>
 
-    <script>
-    let objDiv = document.getElementById("messages");
-    let chat_id;
-    $('document').ready(function () {
+    <script src="/static/recruit/js/script.js"></script>
 
-        setInterval(function(){
-            var last_id = $('ul.list-inline').last().attr('id');
-            console.log(last_id)
-            $.ajax({
-                'url': '/recruit/chat_update/',
-                'data': {'chat_id': chat_id, 'last_id': last_id},
-                success: function (data) {
-                    for (let dat in data){
-
-                        let new_mes = '<div class="list-group-item "><div class="reply-body"><ul class="list-inline" id=' + data[dat].message_id+
-                               '><li class="drop-left-padding"><strong class="list-group-item-heading">' + data[dat].author_name +
-                                '</strong></li><li class="pull-right text-muted"><small>' + data[dat].pub_date +
-                                '</small></li></ul><div>' + data[dat].message + '</div></div></div>';
-
-                        $("#innerMessages").append(new_mes) ;
-                        objDiv.scrollTop = objDiv.scrollHeight;
-                    }
-
-                }
-            })
-
-        }, 5000);
-
-    });
-
-    function show_messages(Element) {
-        console.log(Element.id);
-        chat_id = Element.id;
-        $.ajax({
-                'url': '/recruit/get_messages/',
-                'data': {'chat_id' : Element.id},
-                success: function (data) {
-                    $("#innerMessages").html("");
-                    for (let dat in data){
-                        let new_mes = '<div class="list-group-item "><div class="reply-body"><ul class="list-inline" id=' + data[dat].message_id+
-                               '><li class="drop-left-padding"><strong class="list-group-item-heading">' + data[dat].author_name +
-                                '</strong></li><li class="pull-right text-muted"><small>' + data[dat].pub_date +
-                                '</small></li></ul><div>' + data[dat].message + '</div></div></div>';
-
-                        $("#innerMessages").append(new_mes) ;
-                        objDiv.scrollTop = objDiv.scrollHeight;
-                    }
-                }
-        })
-    }
-
-    function send_message() {
-        console.log(document.getElementById('textField').value);
-        console.log(chat_id);
-       $.ajax({
-                'url': '/recruit/send_message/',
-                'data': {'chat_id' : chat_id, 'message': document.getElementById('textField').value },
-                success: function (data) {
-                    document.getElementById("textField").value = "";
-                    let new_mes = '<div class="list-group-item "><div class="reply-body"><ul class="list-inline" id=' + data.message_id+
-                               '><li class="drop-left-padding"><strong class="list-group-item-heading">' + data.author_name +
-                                '</strong></li><li class="pull-right text-muted"><small>' + data.pub_date +
-                                '</small></li></ul><div>' + data.message + '</div></div></div>';
-
-                     $("#innerMessages").append(new_mes) ;
-                    objDiv.scrollTop = objDiv.scrollHeight;
-                }
-        })
-    }
-
-    </script>
 {% endblock %}
 
 </body>
