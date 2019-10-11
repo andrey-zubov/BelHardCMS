@@ -5,7 +5,6 @@
 {% endblock %}
 
 {% block content %}
-
     <!-- JS добавления однотипных форм. ONLY FOR THIS CUSTOM FORM -->
     <script type="text/javascript">
         $(document).ready(function () {
@@ -50,6 +49,7 @@
 
                 add.appendTo("#div_to_add_new");
             }
+
             {##}
             {#$("#add_more_cert").on("click", function () {#}
             {#    var add = cert_origin.clone();#}
@@ -88,45 +88,48 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
-        {% for edu in data.cl_edu %}
+        <div id="div_to_add_new">
+            {% for edu in data.cl_edu %}
 
-            <div id="div_to_add_new">
                 <div id="origin_div">
-
                     <h3 id="edu_h">Образование</h3>
-
                     <div class="form-group">
                         <label for="id_institution">Учебное заведение</label>
-                        <input type="text" class="form-control" id="id_institution" name="institution"
-                        value="{{ edu.institution }}">
+                        <input type="text" class="form-control" id="id_institution"
+                               name="institution{{ forloop.counter }}"
+                               value="{{ edu.institution }}">
                     </div>
                     <div class="form-group">
                         <label for="id_subject_area">Предметная область</label>
-                        <input type="text" class="form-control" id="id_subject_area" name="subject_area"
+                        <input type="text" class="form-control" id="id_subject_area"
+                               name="subject_area{{ forloop.counter }}"
                                value="{{ edu.subject_area }}">
                     </div>
                     <div class="form-group">
                         <label for="id_specialization">Специальность</label>
-                        <input type="text" class="form-control" id="id_specialization" name="specialization"
+                        <input type="text" class="form-control" id="id_specialization"
+                               name="specialization{{ forloop.counter }}"
                                value="{{ edu.specialization }}">
                     </div>
                     <div class="form-group">
                         <label for="id_qualification">Квалификация</label>
-                        <input type="text" class="form-control" id="id_qualification" name="qualification"
+                        <input type="text" class="form-control" id="id_qualification"
+                               name="qualification{{ forloop.counter }}"
                                value="{{ edu.qualification }}">
                     </div>
                     <p>Период обучения:</p>
                     <div class="form-group">
                         <label for="id_date_start">Дата начала</label>
-                        <input type="date" class="form-control" id="id_date_start" name="date_start"
+                        <input type="date" class="form-control" id="id_date_start"
+                               name="date_start{{ forloop.counter }}"
                                value="{{ edu.date_start|date:"Y-m-d" }}">
                     </div>
                     <div class="form-group">
                         <label for="id_date_end">Дата окончания</label>
-                        <input type="date" class="form-control" id="id_date_end" name="date_end"
+                        <input type="date" class="form-control" id="id_date_end"
+                               name="date_end{{ forloop.counter }}"
                                value="{{ edu.date_end|date:"Y-m-d" }}">
                     </div>
-
                     {#                        <div id="cert_to_add">#}
                     {#                            <h3 id="cert_h">Сертификаты</h3>#}
                     {#                            <div id="cert_origin">#}
@@ -134,14 +137,13 @@
                         <label for="id_certificate_img">Сертификат (img)</label>
                         <img src="{{ edu.img }}" alt="img" class="m-2" height="64">
                         <input type="file" class="form-control" id="id_certificate_img"
-                               name="certificate_img"
+                               name="certificate_img{{ forloop.counter }}"
                                value="{{ edu.img }}">
                     </div>
-
                     <div class="form-group">
                         <label for="id_certificate_url">Сертификат (ссылка)</label>
                         <input type="url" class="form-control" id="id_certificate_url"
-                               name="certificate_url"
+                               name="certificate_url{{ forloop.counter }}"
                                value="{{ edu.link }}">
                     </div>
                     {#                            </div>#}
@@ -150,18 +152,17 @@
                     {#                        <input type="button" value="Добавить сертификат" id="add_more_cert"#}
                     {#                               class="btn btn-outline-primary m-2">#}
                 </div>
-            </div>
-        {% empty %}
-            {% include 'client/edit_forms/education_empty.html' %}
-        {% endfor %}
+
+            {% empty %}
+                {% include 'client/edit_forms/education_empty.html' %}
+            {% endfor %}
+
+        </div>
 
         <div class="text-center">
             <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>
             <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>
             <input type="button" value="Добавить образование" id="add_more" class="btn btn-outline-primary m-2">
         </div>
-
     </form>
-
 {% endblock %}
-

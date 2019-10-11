@@ -142,7 +142,10 @@ def cv_page_get(client):
 def experience_page_get(client):
     """" views.py ClientEditExperience(TemplateView) GET method. """
     try:
-        pass
+        response = defaultdict()
+        if client:
+            pass
+        return response
     except Exception as ex:
         logging.error("Exception in experience_page_get()\n%s" % ex)
         return None
