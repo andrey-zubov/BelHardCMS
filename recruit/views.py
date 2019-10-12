@@ -10,6 +10,9 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 
 from django.template.context_processors import csrf
+from .forms import FileFieldForm
+from django.views.generic.edit import FormView
+
 from django.urls import reverse
 from django.http import HttpResponse
 from .models import *
@@ -165,24 +168,31 @@ def applicant_tasks(request, id_a):
     applicant_user = Client.objects.get(id=id_a)
     response = csrf(request)
     response['applicant_user'] = applicant_user
-    # client_instance = client_check(request.user)
-    """if request.method == 'POST':
-        print('upload file - request.POST')
+    if request.method == 'POST':
+        response['form'] = FileFieldForm()
 
-        form = UploadImgForm(request.POST, request.FILES)
-        if form.is_valid():
-            img = form.cleaned_data.get('img')
-            client_instance.img = img
-            client_instance.save()
-            """
-            # в БД сохраняется УНИКАЛЬНОЕ имя картинки (пр. user_2_EntrmQR.png)
-            # в папке MEDIA_URL = '/media/'
-
-#            print('client save photo - OK')
-#            return redirect(to='/client/edit')
-#    else:
-#        print('client_edit_photo - request.GET')
-#        response['client_img'] = load_client_img(client_instance)
-#        response['form'] = UploadImgForm()
+    else:
+        response['form'] = FileFieldForm()
 
     return render(request, 'recruit/recruiter_tasks_for_applicant.html', context=response)
+
+"""
+class FileFieldView(FormView):
+    form_class = FileFieldForm
+    template_name = 'recruit/recruiter_tasks_for_applicant.html'  # Replace with your template.
+    success_url = 'applicant_tasks_url'  # Replace with your URL or reverse().
+
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        files = request.FILES.getlist('file_field')
+        if form.is_valid():
+            for f in files:
+                ...  # Do something with each file.
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+
+def uploading_files(request):
+    pass"""
