@@ -124,7 +124,7 @@ def pars_edu_request(req_post, _file) -> list:
 
             """ request.FILE == MultiValueDict{'key': [<InMemoryUploadedFile: x.png (image/png)>]} """
             for f in _file.items():
-                if re.match('certificate_img[0-9]?', f[0]):
+                if re.match('certificate_img[0-9][0-9]?', f[0]):
                     if (str(f[0])[-1] == str(count)) or (count == 0):
                         dict_up['certificate_img'] = f[1]
                         break

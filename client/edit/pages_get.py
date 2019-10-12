@@ -5,7 +5,7 @@ from time import perf_counter
 from BelHardCRM.settings import MEDIA_URL
 from client.edit.utility import check_if_str
 from client.models import (Sex, Citizenship, FamilyState, Children, City, State, Telephone, Skills, Education,
-                           Certificate, CV)
+                           Certificate, CV, Experience, Employment, TimeJob, TypeSalary)
 
 
 # TeamRome
@@ -124,10 +124,9 @@ def cv_page_get(client):
     try:
         print("cv_page_get()")
         response = defaultdict()
-        if client:
-            cvs = [i for i in CV.objects.filter(client_cv=client).values()]
-            response['cl_cvs'] = cvs
-            print("cl_cvs: %s" % response['cl_cvs'])
+
+        pass
+
         return response
     except Exception as ex:
         logging.error("Exception in cv_page_get()\n%s" % ex)
@@ -141,7 +140,22 @@ def experience_page_get(client):
         print("experience_page_get()")
         response = defaultdict()
         if client:
-            pass
+            exp = Experience.objects.filter(client_exp=client)
+            print("exp: %s" % exp)
+
+            exp_dict = [i for i in exp.values()]
+            print("exp_dict: %s" % exp_dict)
+            response['cl_exp'] = exp_dict
+
+            for i, e in enumerate(exp):
+                print("e: %s" % e)
+                # print("e.values(): %s" % e.values())
+                sphere = e.sphere.values()
+                print("sphere: %s" % sphere)
+                exp_dict[i]['sphere'] = sphere
+            # sphere = [s.sphere.values() for s in exp]
+
+            print("response: %s" % response)
         return response
     except Exception as ex:
         logging.error("Exception in experience_page_get()\n%s" % ex)

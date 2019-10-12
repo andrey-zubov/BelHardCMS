@@ -145,9 +145,6 @@ class Experience(models.Model):
     end_date = models.DateField(null=True, blank=True, verbose_name='end_date')
     duties = models.TextField(max_length=3000, null=True, blank=True, verbose_name='duties')
 
-    def __str__(self):
-        return self.name
-
 
 class CvWord(models.Model):
     """ Список должностей. Заполняется Админом + может вводиться клиентом. """
@@ -282,8 +279,8 @@ class Help(models.Model):
 
 class Client(models.Model):
     user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, verbose_name='Имя')
-    last_name = models.CharField(max_length=100, verbose_name='Фамилия')
+    name = models.CharField(max_length=100, verbose_name='Имя')     # TODO
+    last_name = models.CharField(max_length=100, verbose_name='Фамилия')    # TODO
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
 
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
@@ -300,7 +297,7 @@ class Client(models.Model):
 
     telegram_link = models.CharField(max_length=100, blank=True, null=True,
                                      verbose_name='Ник в телеграмме')  # при верстке учесть @
-    email = models.EmailField(max_length=200, null=True, blank=True)
+    email = models.EmailField(max_length=200, null=True, blank=True)    # TODO
     link_linkedin = models.URLField(max_length=200, null=True, blank=True)
     skype = models.CharField(max_length=100, null=True, blank=True)
     img = models.ImageField(blank=True, null=True)

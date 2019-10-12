@@ -4,7 +4,7 @@ from client.edit.edit_forms import (UploadImgForm, EducationFormSet, Certificate
 from client.edit.parsers import (pars_edu_request, pars_cv_request, pars_exp_request)
 from client.edit.utility import (check_input_str, check_phone, check_home_number, check_telegram)
 from client.models import (Skills, Telephone, Sex, Citizenship, FamilyState, Children, City, State, Client, Education,
-                           Certificate, CV, Experience, Sphere)
+                           Certificate, CV, Experience, Sphere, Employment, TimeJob, TypeSalary)
 
 
 # TeamRome
@@ -200,28 +200,7 @@ def cv_page_post(client_instance, request):
         CV.objects.all().delete()
 
         for cvs in arr_cv:
-            position = cvs['position']
-            # employment = Employment.objects.get(employment=request.POST['employment'])
-            employment = None
-            # time_job = TimeJob.objects.get(time_job_word=request.POST['time_job'])
-            time_job = None
-            salary = cvs['salary']
-            # type_salary = TypeSalary.objects.get(type_word=request.POST['type_salary'])
-            type_salary = None
-
-            if any(cvs.values()):
-                cv = CV(
-                    client_cv=client_instance,
-                    position=position,
-                    employment=employment,
-                    time_job=time_job,
-                    salary=salary,
-                    type_salary=type_salary,
-                )
-                cv.save()
-                # print("CV Form - OK\n", position, employment, time_job, salary, type_salary)
-            else:
-                print('Cv form is Empty')
+            pass
     print('cv_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
