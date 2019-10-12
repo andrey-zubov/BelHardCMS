@@ -5,7 +5,7 @@ from time import perf_counter
 from BelHardCRM.settings import MEDIA_URL
 from client.edit.utility import check_if_str
 from client.models import (Sex, Citizenship, FamilyState, Children, City, State, Telephone, Skills, Education,
-                           Certificate, CV)
+                           Certificate, CV, Employment, TimeJob, TypeSalary)
 
 
 # TeamRome
@@ -124,9 +124,23 @@ def cv_page_get(client):
     try:
         print("cv_page_get()")
         response = defaultdict()
+
+        response['employment'] = Employment.objects.all()
+        response['time_job'] = TimeJob.objects.all()
+        response['type_salary'] = TypeSalary.objects.all()
+
+
         if client:
-            cvs = [i for i in CV.objects.filter(client_cv=client).values()]
-            response['cl_cvs'] = cvs
+            cvs = CV.objects.filter(client_cv=client)
+            cvs_val = [i for i in cvs.values()]
+            response['cl_cvs'] = cvs_val
+
+            for c in cvs_val:
+                c['cl_employment'] = Employment.objects.get(id=c['employment_id']).employment
+                c['cl_time_job'] = TimeJob.objects.get(id=c['time_job_id']).time_job_word
+                c['cl_type_salary'] = TypeSalary.objects.get(id=c['type_salary_id']).type_word
+
+
             print("cl_cvs: %s" % response['cl_cvs'])
         return response
     except Exception as ex:
