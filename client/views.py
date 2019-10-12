@@ -451,28 +451,26 @@ class VacancyDetail(View):
         return render(request, 'client/client_vacancy_detail.html', context={
             'vacancy': vacancy,
             'first_flag': first_flag,
-            'second_flag': second_flag,
+            'second_flag': second_flag
         })
 
+class ResumesList(View):
+    def get(self, request):
+        client = get_object_or_404(Client, user_client=request.user)
+        resumes = CV.objects.filter(client_cv=client)
+        return render(request, 'client/client_resumes.html', context={'resumes': resumes})
 
-def resumes_list(request):
-    client = Client.objects.get(user_client=request.user)
-    resumes = CV.objects.filter(client_cv=client)
-    return render(request, 'client/client_resumes.html', context={'resumes': resumes})
 
-
-def resume_detail(request, id_c):
-    resume = CV.objects.get(id=id_c)
-    return render(request, 'client/client_resume_detail.html', context={'resume': resume})
+class ResumeDetail(ObjectResumeMixin, View):  # Look utils_for_mixins.py
+    template = 'client/client_resume_detail.html'
 
 
 class AcceptedVacancies(ObjectResumeMixin, View):   # Look utils_for_mixins.py
     template = 'client/client_accepted_vacancies.html'
 
 
-def rejected_vacancies(request, id_c):
-    resume = CV.objects.get(id=id_c)
-    return render(request, 'client/client_rejected_vacancies.html', context={'resume': resume})
+class RejectedVacancies(ObjectResumeMixin, View):    # Look utils_for_mixins.py
+    template = 'client/client_rejected_vacancies.html'
 
 
 def accept_reject(request):
