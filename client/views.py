@@ -1,6 +1,11 @@
 import logging
 from collections import defaultdict
 from time import perf_counter
+import json
+#from PIL import Image
+import logging
+from collections import defaultdict
+from time import perf_counter
 
 #from PIL import Image
 from django.contrib import auth
@@ -13,6 +18,7 @@ from recruit import recruit_url
 from django.urls import reverse
 from django.utils.timezone import utc
 from django.views import View
+from django.http import HttpResponse
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView
 
@@ -26,6 +32,7 @@ from client.work_with_db import (load_client_img, load_edit_page, client_check, 
                                  load_cv_edition_page)
 from .forms import OpinionForm, AnswerForm, MessageForm
 from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
+from recruit.forms import FileFieldForm
 from .models import *
 from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
                       pars_edu_request, pars_exp_request)
@@ -453,7 +460,8 @@ def vacancy_detail(request, id_v):
 
 
 def resumes_list(request):
-    resumes = CV.objects.all()
+    client = Client.objects.get(user_client=request.user)
+    resumes = CV.objects.filter(client_cv=client)
     return render(request, 'client/client_resumes.html', context={'resumes': resumes})
 
 
@@ -525,6 +533,14 @@ def viewed(request):
             r = resume
             r.notification.clear()
         return HttpResponse('cleared')
+
+
+def admin_jobinterviews(request):  # for admin panel
+    client = Client.objects.get(id=request.GET['id_client'])
+    resumes = CV.objects.filter(client_cv=client)
+    resumes = {key:val for val,key in [(i.position, i.id) for i in resumes]}
+    resumes = json.dumps(resumes, ensure_ascii=False)
+    return HttpResponse(resumes)
 
 #End Poland's views
 

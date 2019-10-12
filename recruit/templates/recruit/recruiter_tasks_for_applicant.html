@@ -34,13 +34,11 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form method="post">
+                        <form method="post" action="applicant_user.get_tasks_url">
                             {% csrf_token %}
                             <h5>
-                                ( <input type="text" class="form-time" id="id_time" name="time">)<input type="text"
-                                                                                                        class="form-heading"
-                                                                                                        id="id_heading"
-                                                                                                        name="heading">
+                                (<input type="text" class="form-time" id="id_time" name="time">)
+                                 <input type="text"  class="form-heading" id="id_heading"  name="heading">
                             </h5><br>
                             <h5>
                                 Предлагаемая должность: <input type="text" class="form-position" id="id_position"
@@ -68,8 +66,7 @@
                                                            name="addition">
                             </h5><br>
                             <h5>
-                               Добавить файл: <input type="file" class="form-addition" id="id_addition"
-                                                           name="document">
+                               Добавить файл: <input type="file" class="form-addition" id="id_addition" name="document">
                             </h5><br>
                             <p>Выберите файл для изменения {{ form }}</p>
                         </form>
