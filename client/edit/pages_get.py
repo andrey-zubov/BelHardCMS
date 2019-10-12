@@ -125,8 +125,21 @@ def cv_page_get(client):
         print("cv_page_get()")
         response = defaultdict()
 
-        pass
+        response['employment'] = Employment.objects.all()
+        response['time_job'] = TimeJob.objects.all()
+        response['type_salary'] = TypeSalary.objects.all()
 
+        if client:
+            cvs = CV.objects.filter(client_cv=client)
+            cvs_val = [i for i in cvs.values()]
+            response['cl_cvs'] = cvs_val
+
+            for c in cvs_val:
+                c['cl_employment'] = Employment.objects.get(id=c['employment_id']).employment
+                c['cl_time_job'] = TimeJob.objects.get(id=c['time_job_id']).time_job_word
+                c['cl_type_salary'] = TypeSalary.objects.get(id=c['type_salary_id']).type_word
+
+            print("cl_cvs: %s" % response['cl_cvs'])
         return response
     except Exception as ex:
         logging.error("Exception in cv_page_get()\n%s" % ex)

@@ -200,7 +200,25 @@ def cv_page_post(client_instance, request):
         CV.objects.all().delete()
 
         for cvs in arr_cv:
-            pass
+            position = cvs['position']
+            employment = Employment.objects.get(employment=cvs['employment'])
+            time_job = TimeJob.objects.get(time_job_word=cvs['time_job'])
+            salary = cvs['salary']
+            type_salary = TypeSalary.objects.get(type_word=cvs['type_salary'])
+
+            if any(cvs.values()):
+                cv = CV(
+                    client_cv=client_instance,
+                    position=position,
+                    employment=employment,
+                    time_job=time_job,
+                    salary=salary,
+                    type_salary=type_salary,
+                )
+                cv.save()
+                # print("CV Form - OK\n", position, employment, time_job, salary, type_salary)
+            else:
+                print('Cv form is Empty')
     print('cv_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
