@@ -6,7 +6,6 @@
 {% endblock %}
 
 {% block content %}
-
     <!-- JS добавления однотипных форм -->
     <script type="text/javascript">
         $(document).ready(function () {
@@ -14,12 +13,9 @@
             var count = 0;
             $("#add_more").on("click", function () {
                 var add = origin.clone();
+                add.children('input').attr('value', '+');
                 count += 1;
-                //console.log(count);
-                // Изменяет вложенный текст
-                var text = add.children('#tel_h');
-                //console.log(text);
-                $(text).attr('innerText', text.text('Телефон ' + count));
+                //inp.attr('name', inp.attr('name') + count);
                 add.attr("id", "new_div");
                 add.appendTo("#div_to_add_new");
             });
@@ -28,7 +24,6 @@
 
     <div class="row">
         <div class="col-md-8">
-
             <form method="post">
                 {% csrf_token %}
 
@@ -166,29 +161,24 @@
                 <div class="mb-3">
                     <div id="div_to_add_new">
                         <h5 id="tel_h">Телефоны</h5>
-                        {% if not data.cl_phone %}
+                        {% for t in data.cl_phone %}
                             <div class="form-group" id="origin_div">
-                                {# <label for="id_phone"></label>#}
+                                <input type="tel" class="form-control" id="id_phone" aria-describedby="small_phone"
+                                       value="{{ t }}" name="phone">
+                                <small class="form-text text-muted" id="small_phone">
+                                    +375291234567 (код страны + код оператора + номер)
+                                </small>
+                            </div>
+                        {% empty %}
+                            <div class="form-group" id="origin_div">
                                 <input type="tel" class="form-control" id="id_phone" aria-describedby="small_phone"
                                        value="+" name="phone">
                                 <small class="form-text text-muted" id="small_phone">
                                     +375291234567 (код страны + код оператора + номер)
                                 </small>
                             </div>
-                        {% else %}
-                            {% for t in data.cl_phone %}
-                                <div class="form-group" id="origin_div">
-                                    {# <label for="id_phone">Телефон</label>#}
-                                    <input type="tel" class="form-control" id="id_phone" aria-describedby="small_phone"
-                                           value="{{ t }}" name="phone">
-                                    <small class="form-text text-muted" id="small_phone">
-                                        +375291234567 (код страны + код оператора + номер)
-                                    </small>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
+                        {% endfor %}
                     </div>
-
                     <input type="button" value="Добавить" id="add_more"
                            class="btn btn-outline-primary">
                 </div>

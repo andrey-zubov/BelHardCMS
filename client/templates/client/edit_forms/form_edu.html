@@ -30,20 +30,23 @@
                         <h4>Образование</h4>
                         {{ form }}
                         <h4>Сертификат</h4>
-                        {% for cert in certificate.forms %}
-                            {{ cert.non_field_errors }}
-                            {{ cert.errors }}
-                            <table class='no_error'>
-                                {% if cert.img.value or cert.link.value %}
-                                    <img src="{{ cert.img.value }}" alt="img" class="m-sm-1" height="64">
-                                    {{ cert.link.value }}
-                                {% else %}
-                                    {{ cert }}
-                                {% endif %}
-                            </table>
-                        {% empty %}
-                            {{ cert }}
-                        {% endfor %}
+                        {{ certificate }}
+
+{#                        {% for cert in certificate.forms %}#}
+{#                            {{ cert.non_field_errors }}#}
+{#                            {{ cert.errors }}#}
+{#                            <table class='no_error'>#}
+{#                                {% if cert.img.value or cert.show_img.value %}#}
+{#                                    <img src="{{ cert.show_img.value }}" alt="img" class="m-sm-1" height="64">#}
+{#                                    {{ cert.link.value }}#}
+{#                                {% else %}#}
+{#                                    {{ cert }}#}
+{#                                {% endif %}#}
+{#                            </table>#}
+{#                        {% empty %}#}
+{#                            {{ cert }}#}
+{#                        {% endfor %}#}
+
                     </table>
                 {% endfor %}
             </div>
@@ -57,6 +60,17 @@
             </div>
             <button type="submit" class="btn btn-outline-success m-sm-1">save</button>
         </form>
+    </div>
+
+    <div>
+    <h1>----------------------------</h1>
+        {{ sab_class_form }}
+    </div>
+
+
+    <div>
+    <h1>----------------------------</h1>
+        {{ certificate }}
     </div>
 
 {% endblock %}
