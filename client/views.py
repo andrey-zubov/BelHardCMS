@@ -5,6 +5,11 @@ import json
 #from PIL import Image
 import logging
 from collections import defaultdict
+import logging
+from collections import defaultdict
+from time import perf_counter
+import json
+#from PIL import Image
 from django.contrib import auth
 
 from django.contrib.auth.models import Group
@@ -30,6 +35,7 @@ from client.work_with_db import (load_client_img, load_edit_page, client_check, 
                                  load_cv_edition_page)
 from .forms import OpinionForm, AnswerForm, MessageForm
 from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
+from recruit.forms import FileFieldForm
 from .models import *
 from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
                       pars_edu_request, pars_exp_request)
@@ -44,25 +50,6 @@ from client.edit.pages_post import (skills_page_post, edit_page_post, photo_page
                                     education_page_post, cv_page_post, experience_page_post)
 from client.forms import (OpinionForm, AnswerForm, MessageForm)
 from client.models import *
-from tika import parser
-import re
-
-from django.views.generic import View, TemplateView
-from django.views.generic import TemplateView
-from django.views.generic import View
-
-from client.edit.check_clients import (client_check, load_client_img)
-from client.edit.edit_forms import (CertificateFormSet)
-from client.edit.edit_forms import (EducationFormSet, SabClassFormSet, UploadImgForm)
-from client.edit.pages_get import (edit_page_get, skills_page_get, cv_page_get, education_page_get, experience_page_get)
-from client.edit.pages_post import (skills_page_post, edit_page_post, photo_page_post, form_edu_post,
-                                    education_page_post, cv_page_post, experience_page_post)
-from client.forms import (OpinionForm, AnswerForm, MessageForm)
-from client.models import *
-from django.contrib.auth.models import Group
-from django.core.files.storage import FileSystemStorage
-from tika import parser
-import re
 
 def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     response = csrf(request)
@@ -457,7 +444,8 @@ def vacancy_detail(request, id_v):
 
 
 def resumes_list(request):
-    resumes = CV.objects.all()
+    client = Client.objects.get(user_client=request.user)
+    resumes = CV.objects.filter(client_cv=client)
     return render(request, 'client/client_resumes.html', context={'resumes': resumes})
 
 
@@ -528,7 +516,15 @@ def viewed(request):
             r.notification.clear()
         return HttpResponse('cleared')
 
-# End Poland's views
+
+def admin_jobinterviews(request):  # for admin panel
+    client = Client.objects.get(id=request.GET['id_client'])
+    resumes = CV.objects.filter(client_cv=client)
+    resumes = {key:val for val,key in [(i.position, i.id) for i in resumes]}
+    resumes = json.dumps(resumes, ensure_ascii=False)
+    return HttpResponse(resumes)
+
+#End Poland's views
 
 #PDF upload
 def upload(request):
