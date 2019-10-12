@@ -13,23 +13,24 @@
                 <div class="active">
                     {% for interview in interviews %}
                         <div hidden class="nav-link text-white">{{ interview.check_readstatus }}</div>
-                        <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox"><button class="forinterviews" id="idforinterview{{ interview.id }}">{{ interview.name }}</button><br><hr>
+                        <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox">
+                        <h5 class="forinterviews" id="idforinterview{{ interview.id }}">{{ interview.name }}</h5>
+
                         <div id="forallinterviews{{ interview.id }}" hidden>
                             {% for all in interview.show_all %}
-                                <input class="check_all" id="check_all{{ all.id }}" type="checkbox">{{ all.name }}<hr>
+                                <input class="check_all" id="check_all{{ all.id }}" type="checkbox">{{ all.name }}
                             {% endfor %}
                         </div>
-                        <hr>
                     {% endfor %}
                 </div>
                 <button id="show">Показать заверешенные собеседования</button>
                 <div>
-                <div class="close" hidden >
-                    {% for interview in interviews_false %}
+                <div class="close" hidden>
+                    {% for interview in interviews %}
                     <div hidden>{{ interview.check_time }}</div>
                         {% if interview.check_status != False %}
-                            <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox"><button class="forinterviews" id="idforinterview{{ interview.id }}">{{ interview.name }}</button><br><hr>
-                            <div id="forallinterview{{ interview.id }}" hidden>
+                            <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox"><button class="forinterviews" id="idforinterview{{ interview.id }}">{{ interview.name }}</button>
+                            <div id="forallinterviews{{ interview.id }}" hidden>
                                 {% for all in interview.show_all %}
                                     <input class="check_all" id="check_all{{ all.id }}" type="checkbox">{{ all.name }}<hr>
                                 {% endfor %}
@@ -45,7 +46,7 @@
                         <hr>
                     {% endfor %}
                     <button class="hide">Скрыть</button>
-                    </div>
+                </div>
                 </div>
             </nav>
         </div>
@@ -55,12 +56,13 @@
     $('document').ready(function () {
         $('#show').on('click', function () {
             $('.close').show()
+            $('.close').attr('hidden', false)
         });
         $(".close.hide").click(function(){
             $(this).parents(".close").hide();
         });
         $('.forinterviews').on('click', function () {
-            var id = 'forallinterviews' + $(this).attr('id').slice(8);
+            var id = 'forallinterviews' + $(this).attr('id').slice(13);
             var elem = $('#' + id);
             if(elem.is(":visible")){
                 elem.hide();
@@ -71,7 +73,7 @@
 
         });
         $('.check_interview').on('click', function () {
-                var id = $(this).attr('id').slice(9);
+                var id = $(this).attr('id').slice(15);
                 $.ajax({
                     'url':'/client/checkinterviews/',
                     'data': {'id': id},

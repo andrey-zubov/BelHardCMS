@@ -59,7 +59,15 @@ admin.site.register(Settings, SettingsAdmin)
 
 
 admin.site.register(Help)
-admin.site.register(JobInterviews)
+
+class JobInterviewsAdmin(admin.ModelAdmin):
+
+    list_display = ('name', )
+    list_display_links = ('name', )
+    search_fields = ('name', )
+
+
+admin.site.register(JobInterviews, JobInterviewsAdmin)
 
 
 admin.site.register(Opinion)

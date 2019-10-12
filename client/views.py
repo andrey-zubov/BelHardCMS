@@ -34,10 +34,16 @@ def client_main_page(request):  #!!!!!!!!!!!!!!!!!!!!!Alert
     response = csrf(request)
 
     readtask = len(Tasks.objects.filter(user = request.user, readtask=False))
+    readinterview = len(JobInterviews.objects.filter(user=request.user, readinterview=False))
+
     chat = Chat.objects.get(members=request.user)
     unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
     settings = Settings.objects.get(user=request.user)
-    context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
+    context = {
+        'unread_messages': unread_messages,
+        'readtask': readtask, 'settings': settings,
+        'readinterview': readinterview
+    }
 
     # Poland
     resumes = CV.objects.all()
@@ -586,12 +592,13 @@ def checknotifications(request):
     chat = Chat.objects.get(members=request.user)
     unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
     readtask = len(Tasks.objects.filter(user=request.user, readtask=False))
+    readinterview = len(JobInterviews.objects.filter(user=request.user, readinterview=False))
     resumes = CV.objects.all()
     suggestions = 0
     for resume in resumes:
         suggestions += resume.notification.count()
 
-    data = [unread_messages, readtask, suggestions]
+    data = [unread_messages, readtask, suggestions, readinterview]
 
     return HttpResponse(data)
 
@@ -710,13 +717,14 @@ def viewed(request):
 
 def interviews_list(request):
     interviews = JobInterviews.objects.filter(user=request.user, status=False)
+    #print(interviews[0].show_all)
     interviews_false = JobInterviews.objects.filter(user=request.user, status=True)    #status=False
     interviews_false = sorted(interviews_false, key=lambda x: x.period_of_execution, reverse=True)
     return render(request, 'client/interviews.html', context={'interviews': interviews, 'interviews_false': interviews_false})
 
 
 def checkinterviews(request):
-    id = (request.GET['id'])
+    id = request.GET['id']
     interviews = JobInterviews.objects.get(id=id)
 
     if interviews.status == False:
