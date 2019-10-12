@@ -8,7 +8,7 @@
 
 {% block content %}
 
-    <div id="messages" class="panel" style="width: 80%; height: 300px; border: 1px solid black; overflow-y: scroll;" onscroll="scroll(this);">
+    <div id="messages" class="panel" style="width: 80%; height: 400px; border: 1px solid black; overflow-y: scroll;" onscroll="scroll(this);">
             <div id="innerMessages">
                 {% for message in chat.message_set.all %}
                     {% include 'client/client_message.html' with message_item=message %}
@@ -18,17 +18,27 @@
     <div id="message_form">
         <form id="message-form" class="panel panel-body" method="post" >
             {% csrf_token %}
-             <input type="text" id="textField" class="form-control" id="message" name="message">
-            {# <input type="submit" value="Отправить" formmethod="post" class="btn btn-outline-success"> #}
+             <input type="text" id="textField" class="form-control" style="width: 80%; height: 10%;" id="message" name="message">
+            {# <input type="submit"  value="Отправить" formmethod="post" class="btn btn-outline-success"> #}
                 <button type="submit" class="btn btn-outline-success">Отправить</button>
         </form>
     </div>
 
 <script>
     var auto = false
-    function scroll (ths) {
-        auto = ths.scrollTop + ths.clientHeight == ths.scrollHeight;
-    }
+            function scroll (ths) {
+                auto = ths.scrollTop(ths.prop('scrollHeight')) + ths.clientHeight == ths.scrollHeight;
+            }
+    $('document').ready(function () {
+
+        console.log('fuf');
+
+        setInterval(function(){
+
+        }, 10000);
+
+
+});
 
  </script>
 
