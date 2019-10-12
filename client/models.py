@@ -297,7 +297,7 @@ class Help(models.Model):
 
 class JobInterviews(models.Model):
     client = models.ForeignKey(to='Client', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Соискатель')
-    # cv = models.ForeignKey(to='CV', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Резюме')
+    cv = models.ForeignKey(to='CV', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Резюме')
     name = models.CharField(max_length=50, verbose_name='Наименование')
     interview_author = models.CharField(max_length=50, verbose_name='Автор собеседования', blank=True, null=True)
     time_of_creation = models.DateTimeField(blank=True, null=True, verbose_name='Время создания')
@@ -313,7 +313,7 @@ class JobInterviews(models.Model):
     location = models.CharField(max_length=50, verbose_name='Место проведения')
     additional_information = models.TextField(max_length=3000, blank=True, null=True,
                                               verbose_name='Дополнительная информация')
-    add_file = models.FileField(verbose_name='Вложения', blank=True, null=True)
+    # add_file = models.FileField(verbose_name='Вложения', blank=True, null=True)
     status = models.BooleanField(default=False)  # статус собеседования, на которое ещё не ходили
     check_status = models.BooleanField(default=True)  # статус активен, если можем после успешного собеседования
     # в течении 60 сек вернуть в статус активных собеседований
@@ -342,9 +342,17 @@ class JobInterviews(models.Model):
     def __str__(self):
         return self.name
 
-    def get_absolute_url(self):
-        return reverse('applicant_url', kwargs={'id_a': self.id})
+    # def get_absolute_url(self):
+    #    return reverse('applicant_url', kwargs={'id_a': self.id})
 
+
+class FilesForJobInterviews(models.Model):
+    jobinterviews_files = models.ForeignKey(to='JobInterviews', on_delete=models.CASCADE)
+    add_file = models.FileField(verbose_name='Вложения', blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Файл'
+        verbose_name_plural = 'Файлы'
 
 #########End Poland Task 1 & 2 ##############
 

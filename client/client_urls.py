@@ -49,6 +49,9 @@ urlpatterns = [
     path('settings/', settings_list, name='settings_list_url'),
     path('on_off/', views.on_off),    # on_off settings for notifications
     path('viewed/', views.viewed),
+    path('admin_jobinterviews/', views.admin_jobinterviews),
+
+
     path('upload', views.upload, name='client_cv_upload'),
     path('upload', views.upload, name='upload'),
 
