@@ -34,6 +34,8 @@ from BelHardCRM.settings import MEDIA_URL
 from .forms import OpinionForm, AnswerForm, MessageForm
 # from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
 
+from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
+from recruit.forms import FileFieldForm
 from .models import *
 # from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
 #                      pars_edu_request, pars_exp_request)
@@ -442,7 +444,8 @@ def vacancy_detail(request, id_v):
 
 
 def resumes_list(request):
-    resumes = CV.objects.all()
+    client = Client.objects.get(user_client=request.user)
+    resumes = CV.objects.filter(client_cv=client)
     return render(request, 'client/client_resumes.html', context={'resumes': resumes})
 
 
@@ -521,40 +524,4 @@ def admin_jobinterviews(request):  # for admin panel
     resumes = json.dumps(resumes, ensure_ascii=False)
     return HttpResponse(resumes)
 
-# PDF upload
-def upload(request):
-    context = {}
-    if request.method == 'POST':
-        uploaded_file = request.FILES['document']
-        fs = FileSystemStorage()
-        name = fs.save(uploaded_file.name, uploaded_file)
-        context['url'] = fs.url(name)
-    return render(request, 'upload.html', context)
-
-# PDF Parsing
-
-def parsing():
-    raw = parser.from_file('Astapenka Dima.pdf')
-    text = (raw['content'])
-    client_row = Client.objects.get(id=Client.id)
-    lastname_name_exp = re.findall(r'\w+', text)
-    lastname = lastname_name_exp[0]
-    client_row.lastname = lastname
-    name = lastname_name_exp[1]
-    client_row.name = name
-    sex = lastname_name_exp[2]
-    client_row.sex = sex
-    email_exp = r'[\w\d.-]+@[\w.]+'
-    email = re.findall(email_exp, text)
-    client_row.email = email
-    phone_exp = [i.strip() for i in re.findall(r'\+?[\s\d()-]+', text) if len(i) >= 10][1].strip()
-    client_row.telephone = phone_exp
-    citizenship_exp = re.findall(r'\Г\w+:\s\w+\w', text)
-    citizenship = citizenship_exp[0].split()[1]
-    client_row.citizenship = citizenship
-    city_exp = re.findall(r'\П\w+:\s\w+\w', text)
-    city = city_exp[0].split()[1]
-    client_row.city = city
-
-    client_row.save()
-    # End Poland's views
+#End Poland's views
