@@ -1,0 +1,35 @@
+div.wrapper{
+  width: 800px;
+}
+div.left_block{
+  float:left;
+  width:200px;
+}
+div.right_block{
+  float: right;
+  width: 590px;
+}
+.chat_block {
+  background: #007e7e;
+  color: #000000;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid black;
+  position: relative;
+}
+
+
+.counter{
+  top: 4px;
+  right: 5px;
+  border-radius: 5px;
+  font-size: 20px;
+  position: absolute;
+  font-weight: bold;
+  width: 20%;
+  height: 80%;
+  color: white;
+  text-align: center;
+  background: #00a5fe;
+  border: 0.5px solid black;
+}

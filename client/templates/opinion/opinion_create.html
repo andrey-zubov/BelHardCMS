@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'client/main_template_client.html' %}
+{% load staticfiles %}
+
+    {% block title %} Opinion {% endblock %}
+
+{% block content %}
     <form action="" method="post">
         {%csrf_token%}
 
@@ -16,5 +15,4 @@
         {%endfor%}
         <button type="submit" class="btn btn-primary">Add</button>
     </form>
-</body>
-</html>
+{% endblock %}

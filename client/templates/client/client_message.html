@@ -1,12 +1,12 @@
-{% url 'users:profile' message_item.author.username as the_user_url%}
+
 {% load tz %}
-<div class="list-group-item {% if not message_item.is_read %}unreaded{% endif %}">
+<div class="list-group-item ">
     <div class="reply-body">
-        <ul class="list-inline">
+        <ul class="list-inline" id="{{ message_item.id }}">
             <li class="drop-left-padding">
-                <strong class="list-group-item-heading"><a href="{{ the_user_url }}">{{ message_item.author.username }}</a></strong>
+                <strong class="list-group-item-heading">{{ message_item.author.username }}</strong>
             </li>
-            <li class="pull-right text-muted"><small>{{ message_item.pub_date|utc }}</small></li>
+            <li class="pull-right text-muted"><small>{{ message_item.pub_date.ctime }}</small></li>
         </ul>
         <div>{{ message_item.message|safe }}</div>
     </div>
