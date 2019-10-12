@@ -38,6 +38,7 @@ urlpatterns = [
     path('accept_reject/', views.accept_reject),
     path('help/', help_list, name='help_list_url'),
     path('viewed/', views.viewed),
+    path('admin_jobinterviews/', views.admin_jobinterviews),
 
 
 
