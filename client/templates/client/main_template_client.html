@@ -5,9 +5,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -15,14 +12,10 @@
             integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh"
             crossorigin="anonymous"></script>
 
-
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
             integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
             crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-            crossorigin="anonymous"></script>
+    
 
 
     <link rel="stylesheet" href="/static/client/style/main_style.css">
@@ -34,8 +27,8 @@
 </head>
 <body>
 <div class="inbody">
-    <header>
-        <nav class="header-bar">
+    <header class="header-bar">
+
                             <a class="logo" href="{% url 'client' %}" style="text-decoration: none; ">
                                 <div class="name" style="margin: 15px auto; text-align: center">
                                     <img src="https://static.wixstatic.com/media/3e33b4_be193070b72743e2a0194222634bd2bf~mv2.png/v1/fill/w_79,h_71,al_c,q_80,usm_0.66_1.00_0.01/31-512.png" style="width: 50px; height: 50px"  >
@@ -50,7 +43,7 @@
                             <a class="text-bar" href="{% url 'contact_with_centre' %}"> <div class="messages" style="margin-top: 15px;"> Связаться с КЦ <div class="counter" id="mes_count" hidden="true"> {{ unread_messages }} </div></div></a>
                             <div class="logo" style="width: 205px; height: 75px">
                                 <a class="text-client" href="{% url 'client_profile' %}" >
-                                    <img src="{{ client_img }}" alt="img" class="rounded-circle" height="75"></a>
+                                    <img src="{{ client_img }}"  height="75" style="border-radius: 50%;"></a>
 
                                 <div class="name" style="display: flex; flex-direction: column; text-align: center; margin-top: 5px; margin-left: 5px;">
                                     <h6>Клиент</h6>
@@ -58,7 +51,7 @@
                                 </div>
                             </div>
 
-                        </nav>
+
 
     </header>
 
