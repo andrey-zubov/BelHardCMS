@@ -69,7 +69,13 @@ admin.site.register(Vacancy, VacancyAdmin)
 admin.site.register(Resume, ResumeAdmin)
 admin.site.register(Help)
 
-admin.site.register(JobInterviews)
+
+class JobInterviewsAdmin(admin.ModelAdmin):
+    class Media:
+        js = ['js/scriptJob.js']
+
+
+admin.site.register(JobInterviews, JobInterviewsAdmin)
 
 class JobInterviewsAdmin(admin.ModelAdmin):
     class Media:
