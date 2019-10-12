@@ -14,6 +14,7 @@ from django.http import HttpResponse
 from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 
 from django.views.generic import View, TemplateView
+from .utils_for_mixins import ObjectResumeMixin
 
 
 from BelHardCRM.settings import MEDIA_URL
@@ -618,37 +619,34 @@ def set_settings(request):
 
 # Poland's views ###################################################################################
 
+class VacancyDetail(View):
+    def get(self, request, id_v):
+        vacancy = get_object_or_404(Vacancy, id=id_v)
+        first_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.reject_for_resume.all()) else 0
+        second_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.accept_for_resume.all()) else 0
+        return render(request, 'client/client_vacancy_detail.html', context={
+            'vacancy': vacancy,
+            'first_flag': first_flag,
+            'second_flag': second_flag
+        })
 
-def vacancy_detail(request, id_v):
-    vacancy = Vacancy.objects.get(id=id_v)
-    first_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.reject_for_resume.all()) else 0
-    second_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.accept_for_resume.all()) else 0
-    return render(request, 'client/client_vacancy_detail.html', context={
-        'vacancy': vacancy,
-        'first_flag': first_flag,
-        'second_flag': second_flag
-    })
-
-
-def resumes_list(request):
-    client = Client.objects.get(user_client=request.user)
-    resumes = CV.objects.filter(client_cv=client)
-    return render(request, 'client/client_resumes.html', context={'resumes': resumes})
-
-
-def resume_detail(request, id_c):
-    resume = CV.objects.get(id=id_c)
-    return render(request, 'client/client_resume_detail.html', context={'resume': resume})
+class ResumesList(View):
+    def get(self, request):
+        client = get_object_or_404(Client, user_client=request.user)
+        resumes = CV.objects.filter(client_cv=client)
+        return render(request, 'client/client_resumes.html', context={'resumes': resumes})
 
 
-def accepted_vacancies(request, id_c):
-    resume = CV.objects.get(id=id_c)
-    return render(request, 'client/client_accepted_vacancies.html', context={'resume': resume})
+class ResumeDetail(ObjectResumeMixin, View):  # Look utils_for_mixins.py
+    template = 'client/client_resume_detail.html'
 
 
-def rejected_vacancies(request, id_c):
-    resume = CV.objects.get(id=id_c)
-    return render(request, 'client/client_rejected_vacancies.html', context={'resume': resume})
+class AcceptedVacancies(ObjectResumeMixin, View):   # Look utils_for_mixins.py
+    template = 'client/client_accepted_vacancies.html'
+
+
+class RejectedVacancies(ObjectResumeMixin, View):    # Look utils_for_mixins.py
+    template = 'client/client_rejected_vacancies.html'
 
 
 def accept_reject(request):
@@ -711,6 +709,4 @@ def admin_jobinterviews(request):  # for admin panel
     resumes = json.dumps(resumes, ensure_ascii=False)
     return HttpResponse(resumes)
 
-#End Poland's views
-
-
+# End Poland's views

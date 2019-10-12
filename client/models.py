@@ -258,7 +258,7 @@ class Vacancy(models.Model):
     conditions = models.TextField(max_length=1000, null=True)
 
     def __str__(self):
-        return '{}'.format(self.state)
+        return self.state
 
     def get_absolute_url(self):
         return reverse('vacancy_detail_url', kwargs={'id_v': self.id})
