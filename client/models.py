@@ -197,7 +197,7 @@ class TypeSalary(models.Model):
 
 class CV(models.Model):
     """ Резюме. ForeignKey = Несколько резюме у одного клиента. """
-    client_cv = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    client_cv = models.ForeignKey(to='Client', on_delete=models.CASCADE)
 
     position = models.CharField(max_length=100, null=True, blank=True)
     employment = models.ForeignKey(Employment, on_delete=models.SET_NULL, null=True, blank=True)
@@ -314,10 +314,15 @@ class JobInterviews(models.Model):
     status = models.BooleanField(default=False)    #статус собеседования, на которое ещё не ходили
     check_status = models.BooleanField(default=True)    #статус активен, если можем после успешного собеседования в течении 60 сек вернуть в статус активных собеседований
     done_interview = models.BooleanField(default=False)    # успешно пройденное собеседование
+    readinterview = models.BooleanField(default=False)
 
-    #@property
-    #def show_all(self):
-        #return self.subjobinterview.all()
+    @property
+    def show_all(self):
+        to_show = []
+        for val in self.__dict__.values():
+            if val != None and type(val) != bool:
+                to_show.append(val)
+        return to_show
 
     @property
     def check_time(self):
@@ -331,8 +336,8 @@ class JobInterviews(models.Model):
 
     @property
     def check_readstatus(self):
-        if not self.done_interview:
-            self.done_interview = True
+        if not self.readinterview:
+            self.readinterview = True
             self.save()
 
     def str(self):

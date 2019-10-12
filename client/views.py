@@ -509,15 +509,11 @@ def viewed(request):
 
 
 def interviews_list(request):
-    client = get_object_or_404(Client, user_client=request.user)
-    interviews = JobInterviews.objects.filter(client=client, status=False)
-    interviews_false = JobInterviews.objects.filter(client=client, status=True)    #status=False
+    interviews = JobInterviews.objects.filter(user=request.user, status=False)
+    #print(interviews[0].show_all)
+    interviews_false = JobInterviews.objects.filter(user=request.user, status=True)    #status=False
     interviews_false = sorted(interviews_false, key=lambda x: x.period_of_execution, reverse=True)
-    client_instance = client_check(request.user)
-
-    return render(request, 'client/interviews.html', context={'interviews': interviews,
-                                                              'interviews_false': interviews_false,
-                                                              'client_img': load_client_img(client_instance)})
+    return render(request, 'client/interviews.html', context={'interviews': interviews, 'interviews_false': interviews_false})
 
 
 def checkinterviews(request):
