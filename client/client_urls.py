@@ -4,19 +4,6 @@ from django.urls import path
 from client import views
 from client.edit.load_data_list import (SkillsDataList, InstitutionDataList, CvPositionDataList)
 from client.views import *
-from . import views
-from .views import *
-from . import views
-from .views import *
-from . import views
-from .edit.load_data_list import (SkillsDataList, InstitutionDataList, CvPositionDataList)
-from .views import *
-
-# from BelHardCMS.client.views import ResumesList, ResumeDetail
-from . import views
-from .views import *
-from . import views
-from .views import *
 
 urlpatterns = [
     path('', views.client_main_page, name='client'),  # main client page
@@ -72,11 +59,5 @@ urlpatterns = [
 
     path('upload', views.upload, name='client_cv_upload'),
     path('upload', views.upload, name='upload'),
-
-
-
-
-
-
 
 ]

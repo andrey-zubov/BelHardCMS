@@ -22,21 +22,21 @@ from django.views.generic import TemplateView
 
 from .models import Vacancy
 
-from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
+# from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 
 from django.views.generic import View, TemplateView
 from .utils_for_mixins import ObjectResumeMixin
 
 
 from BelHardCRM.settings import MEDIA_URL
-from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
-                                 load_cv_edition_page)
+# from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
+#                                 load_cv_edition_page)
 from .forms import OpinionForm, AnswerForm, MessageForm
-from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
-from recruit.forms import FileFieldForm
+# from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
+
 from .models import *
-from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
-                      pars_edu_request, pars_exp_request)
+# from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
+#                      pars_edu_request, pars_exp_request)
 from django.core.files.storage import FileSystemStorage
 from tika import parser
 import re
@@ -59,7 +59,9 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
     # Poland
-    resumes = CV.objects.all()   # нужно проверить соответствие Юзеру!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    client = get_object_or_404(Client, user_client=request.user)
+    resumes = CV.objects.filter(client_cv=client)
+    # resumes = CV.objects.all()   # нужно проверить соответствие Юзеру!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     suggestions = 0
     for resume in resumes:
         suggestions += resume.notification.count()
@@ -447,8 +449,9 @@ class VacancyDetail(View):
         return render(request, 'client/client_vacancy_detail.html', context={
             'vacancy': vacancy,
             'first_flag': first_flag,
-            'second_flag': second_flag
+            'second_flag': second_flag,
         })
+
 
 class ResumesList(View):
     def get(self, request):
@@ -529,9 +532,7 @@ def admin_jobinterviews(request):  # for admin panel
     resumes = json.dumps(resumes, ensure_ascii=False)
     return HttpResponse(resumes)
 
-# End Poland's views
-
-#PDF upload
+# PDF upload
 def upload(request):
     context = {}
     if request.method == 'POST':
@@ -541,7 +542,7 @@ def upload(request):
         context['url'] = fs.url(name)
     return render(request, 'upload.html', context)
 
-#PDF Parsing
+# PDF Parsing
 
 def parsing():
     raw = parser.from_file('Astapenka Dima.pdf')
@@ -566,5 +567,5 @@ def parsing():
     city = city_exp[0].split()[1]
     client_row.city = city
 
-
     client_row.save()
+    # End Poland's views
