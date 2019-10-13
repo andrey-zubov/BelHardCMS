@@ -1,20 +1,112 @@
 body{
     background: #adc6f8;
+    font-family: Sans-Serif;
 }
 
-.task {
-        position: relative;
-    }
+.inbody{
+    max-width: 100%;
+    background: white;
+    width: 980px;
+    margin: 0 auto;
+    height: auto;
+    border-radius: 8px;
+}
+
+.header-bar{
+    background-color: #e8e6e6;
+    width: 100%;
+    height: 111px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px;
+
+}
+
+.logo{
+      display: inline-flex;
+      flex-direction:row;
+      flex-wrap: nowrap;
+  }
+
+.hr-sys{
+    font-family: Sans-Serif;
+    font-size: 16px;
+    color:#292929;
+    font-weight: bold;
+
+}
+
+.version{
+    font-family: Sans-Serif;
+    font-size: 12px;
+    color:#292929;
+}
+
+.text-bar{
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 450;
+    background: #213D4D;
+    width: 120px;
+    height: 55px ;
+    line-height: 55px;
+    border-radius: 8px;
+    text-align: center;
+    transition: background .3s linear;
+    position: relative;
+}
+
+.text-bar:hover{
+    text-decoration: none;
+    color: white;
+    background: #8D7171;
+
+}
+
+.client-bar{
+   display: inline-flex;
+   flex-direction: row;
+   align-items: center;
+   width: 200px;
+   padding-right: 20px;
+}
+
+.client-name-out{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.logout{
+    width: 120px;
+    height: 32px;
+    line-height: 32px;
+    border-radius:5px;
+    color: white;
+    background: #213D4D;
+    text-align: center;
+    transition: background .3s linear;
+    text-decoration: none;
+}
+
+.logout:hover{
+    text-decoration: none;
+    color: white;
+    background: #8D7171;
+}
 
     .counter{
-        top: -22px;
-        right: -6px;
+        top: -8px;
+        right: -8px;
         border-radius: 50%;
         font-size: 12px;
         position: absolute;
         font-weight: bold;
         width: 18px;
         height: 18px;
+        line-height: 18px;
         color: white;
         text-align: center;
         background: #fe6060;
@@ -62,118 +154,31 @@ body{
       transform: rotate(-45deg);
     }
 
-    .messages {
-        position: relative;
-    }
-
-    .suggestions{
-        position: relative;
-    }
-
-.logo{
-      display: inline-flex;
-      flex-direction:row;
-      flex-wrap: nowrap;
-  }
-
-.hr-sys{
-    font-family: Sans-Serif;
-    font-size: 16px;
-    color:#292929;
-    font-weight: bold;
-
-}
-
-.version{
-    font-family: Sans-Serif;
-    font-size: 12px;
-    color:#292929;
-}
-
-.header-bar{
-    background-color: #e8e6e6;
-    width: 100%;
-    margin: 20px auto;
-    max-width: 1500px;
-    display: flex;
-    justify-content: space-between;
-
-    align-items: center;
-    border-radius: 8px;
-}
-
-.inbody{
-    max-width: 100%;
-    background: white;
-    width: 980px;
-    margin:  auto;
-    height: auto;
-    border-radius: 8px;
-}
-
-.text-bar{
-    text-decoration: none;
-    color: white;
-    font-size: 14px;
-    font-weight: 450;
-    background: #213D4D;
-    width: 120px;
-    height: 55px ;
-    border-radius: 8px;
-    text-align: center;
-    transition: background .3s linear;
-
-}
-
-.text-bar:hover{
-    text-decoration: none;
-    color: white;
-    background: #8D7171;
-
-}
-
-.logout{
-    width: 120px;
-    height: 32px;
-    border-radius:5px;
-    color: white;
-    background: #213D4D;
-    text-align: center;
-    transition: background .3s linear;
-}
-
-.logout:hover{
-    text-decoration: none;
-    color: white;
-    background: #8D7171;
-}
 
 .footer-bar{
-
-    padding: 0 60px;
     background-color: #e8e6e6;
     width: 100%;
-    margin: 0 auto;
-    max-width: 980px;
     height: 60px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-radius: 8px;
-
+    text-decoration: none;
 }
 
 .text-footer{
+    margin: 60px;
     color: white;
     font-size: 14px;
-    font-weight: 450;
+    font-weight: 400;
     background: #213D4D;
     width: 111px;
     height: 41px ;
+    line-height: 41px;
     border-radius: 8px;
     text-align: center;
     transition: background .3s linear;
-
+    text-decoration: none;
 }
 
 .text-footer:hover{
@@ -250,6 +255,7 @@ ul{
       align-items: center;
 
   }
+
   .main{
       margin: auto;
       display: flex;
