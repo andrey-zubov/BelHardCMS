@@ -145,7 +145,7 @@
 {% endif %}
 <div id="check_notifications">
     {% if settings.messages == True %}
-        {% if unread_messages != 0 %}
+        {% if unread_messages %}
             <div class="notification" id="mes_notification"><h2>Новые сообщения: {{ unread_messages }} </h2>
                 <span class="close" id="close_mes"></span></div>
         {% endif %}
@@ -153,7 +153,7 @@
     {% endif %}
 {% if settings.suggestions == True %}
     <div>
-        {% if unread_suggestions != 0 %}
+        {% if unread_suggestions %}
             <div class="notification" id="sug_notification"><h2>Новые
                 предложения: {{ unread_suggestions }} </h2>
                 <span class="close" id="close_sug"></span></div>
