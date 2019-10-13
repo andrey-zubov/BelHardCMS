@@ -29,7 +29,6 @@ class CVAdmin(admin.ModelAdmin):
     )
 
 
-
 admin.site.register(CV, CVAdmin)
 
 
