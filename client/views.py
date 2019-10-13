@@ -6,6 +6,7 @@ from time import perf_counter
 from django.contrib import auth
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
+from recruit import recruit_url
 
 from django.urls import reverse
 from django.utils.timezone import utc
@@ -479,8 +480,10 @@ def client_login(request):  # ввести логин/пароль -> зайти
         user_settings = Settings.objects.get(user=request.user)
     except Settings.DoesNotExist:
         user_settings = Settings.objects.create(user=request.user)
-    return redirect('client')
-
+    if u.groups.filter(name='Users').exists():
+        return redirect('client')
+    elif u.groups.filter(name='Recruiters').exists():
+        return redirect('main_page')
 
 def client_logout(request):  # выйти из системы, возврат на стартовую страницу
     auth.logout(request)
