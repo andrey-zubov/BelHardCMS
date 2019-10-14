@@ -1,58 +1,11 @@
-import logging
 import re
 
 
-def check_input_str(string: str) -> str or None:
-    """ pattern: одно-два слова, слова с русскими и английскими буквами,
-    апострафами, двойние слова, слова с цыфрами"""
-    if re.match("^[a-zA-Zа-яА-Я0-9'-_]{1,100}[ ]?[-]?[a-zA-Zа-яА-Я0-9'-_]{0,100}$", string):
-        print("string checked: %s" % string)
-        return string.title()
-    else:
-        logging.error("String Pattern Fail: %s" % string)
-        return None
-
-
-def check_telegram(string: str) -> str or None:
-    """ pattern: @tele, @123qwe, @qwe12, @asd11_sd1 """
-    if re.match("^[@][a-zA-Zа-яА-Я_0-9]{1,100}$", string):
-        print("telegram checked: %s" % string)
-        return string
-    else:
-        logging.error("telegram Pattern Fail: %s" % string)
-        return None
-
-
-def check_home_number(string: str) -> str or None:
-    """ pattern: 12/4, 13-4, 1a, f/2, 5/e, 6-y """
-    if re.match("^[0-9a-zA-Zа-яА-Я/-]{1,10}$", string):
-        print("home_number checked: %s" % string)
-        return string
-    else:
-        logging.error("home_number Pattern Fail: %s" % string)
-        return None
-
-
-def check_phone(phone: str) -> str or None:
-    """ pattern: +375291234567 """
-    if re.match("^[+][0-9]{1,20}$", phone):
-        print("phone: %s" % phone)
-        return phone
-    else:
-        logging.error("Phone Pattern Fail: %s" % phone)
-        return None
-
-
-def check_if_str(string: str, out: str or None) -> str:
-    if string:
-        return string
-    else:
-        return out
-
-
+# TeamRome
 def pars_exp_request(req_post) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели Experience. """
+    print("pars_exp_request()")
     # print("exp_request.POST: %s" % req_post)
     from time import perf_counter
     time_0 = perf_counter()
@@ -92,9 +45,11 @@ def pars_exp_request(req_post) -> list:
     return arr
 
 
+# TeamRome
 def pars_cv_request(req_post: dict) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели CV. """
+    print("pars_cv_request()")
     # print("exp_request.POST: %s" % req_post)
     from time import perf_counter
     time_0 = perf_counter()
@@ -129,9 +84,11 @@ def pars_cv_request(req_post: dict) -> list:
     return arr
 
 
+# TeamRome
 def pars_edu_request(req_post, _file) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели Education. """
+    print("pars_edu_request()")
     # print("exp_request.POST: %s" % req_post)
     # print("exp_request.FILE: %s" % _file)
     from time import perf_counter
@@ -167,7 +124,7 @@ def pars_edu_request(req_post, _file) -> list:
 
             """ request.FILE == MultiValueDict{'key': [<InMemoryUploadedFile: x.png (image/png)>]} """
             for f in _file.items():
-                if re.match('certificate_img[0-9]?', f[0]):
+                if re.match('certificate_img[0-9][0-9]?', f[0]):
                     if (str(f[0])[-1] == str(count)) or (count == 0):
                         dict_up['certificate_img'] = f[1]
                         break
