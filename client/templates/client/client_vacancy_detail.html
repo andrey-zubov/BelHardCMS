@@ -35,17 +35,17 @@
         {{ vacancy.conditions }}
     </p>
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-        {% if vacancy.in_waiting_for_resume.all %}
+        {% if vacancy in  resume_for_waiting.vacancies_in_waiting.all %}
             <div class="btn-group mr-2" role="group" aria-label="First group">
-                <a href="{{ vacancy.in_waiting_for_resume.get.get_absolute_url }}" class="btn btn-secondary">Назад</a>
+                <a href="{{ resume_for_waiting.get_absolute_url }}" class="btn btn-secondary">Назад</a>
             </div>
-        {% elif vacancy.accept_for_resume.all %}
+        {% elif vacancy in resume_for_accepted.vacancies_accept.all %}
             <div class="btn-group mr-2" role="group" aria-label="First group">
-                <a href="{{ vacancy.accept_for_resume.get.get_accept_url }}" class="btn btn-secondary">Назад</a>
+                <a href="{{ resume_for_accepted.get_accept_url }}" class="btn btn-secondary">Назад</a>
             </div>
-        {% elif vacancy.reject_for_resume.all %}
+        {% elif vacancy in resume_for_rejected.vacancies_reject.all %}
             <div class="btn-group mr-2" role="group" aria-label="First group">
-                <a href="{{ vacancy.reject_for_resume.get.get_reject_url }}" class="btn btn-secondary">Назад</a>
+                <a href="{{ resume_for_rejected.get_reject_url }}" class="btn btn-secondary">Назад</a>
             </div>
         <!--Здесь надо подумать есть ли смысл делать ссылку на список всех предложений, чтобы после них вазвращаться сразу на выбор резюме
         % elif vacancy.all_for_resume.all %}
