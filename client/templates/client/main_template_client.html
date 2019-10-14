@@ -25,10 +25,10 @@
 
     <title>{% block title %}Client{% endblock %} - HR-System</title>
 </head>
-<body>
+<body >
 <div class="inbody" >
         <header class="header-bar">
-                                <a class="logo" href="{% url 'client' %}" style="text-decoration: none; padding-left: 40px ">
+                                <a class="logo" href="{% url 'client' %}" style="text-decoration: none; padding-left: 20px ">
                                     <div class="name" style="margin: auto; text-align: center">
                                         <img src="https://static.wixstatic.com/media/3e33b4_be193070b72743e2a0194222634bd2bf~mv2.png/v1/fill/w_79,h_71,al_c,q_80,usm_0.66_1.00_0.01/31-512.png" style="width: 50px; height: 50px"  >
                                         <div class="hr-sys">HR-System</div>
@@ -52,8 +52,8 @@
         </header>
 
         <section class="content" >
-        {% block content %}
         <img src="https://static.wixstatic.com/media/3e33b4_8434f559fcaa44a39ecfd54bf197fba5~mv2.png/v1/fill/w_750,h_350,al_c,q_80,usm_0.66_1.00_0.01/tild6162-3961-4262-b966-316166666133__lo.png" alt="">
+        {% block content %}
                 {%if settings.tasks == True %}
                         {%if readtask != 0 %}
                             <div class="notification" id="task_notification"><h2> Новые задачи:  {{ readtask }} </h2> <span class="close" id="close_task"></span></div>
@@ -97,7 +97,7 @@
         <div class="footer-bar">
                  <a class="text-footer" href="{% url 'help_list_url' %}" >Помощь</a>
                  <a class="text-footer" href="{% url 'settings_menu' %}">Настройки</a>
-                 <a class="text-footer" href="{% url 'opinion_create' %}" >Оставить отзыв</a>
+                 <a class="text-footer" href="{% url 'opinion_create' %}">Оставить отзыв</a>
         </div>
     </div>
 
