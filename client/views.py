@@ -10,7 +10,7 @@ from django.http import HttpResponse, JsonResponse
 
 from .models import Vacancy, Resume
 
-from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
+#from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 
 from django.views.generic import View, TemplateView
 from django.views.generic import TemplateView
