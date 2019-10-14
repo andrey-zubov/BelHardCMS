@@ -67,6 +67,5 @@ def check_mes(request):
         unread_messages = len(Message.objects.filter(chat=c, is_read=False).exclude(author=request.user))
         new_dict = {'chat_id': c.id, 'count': unread_messages}
         send.append(new_dict)
-    print(send)
 
     return JsonResponse(send, safe=False)

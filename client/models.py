@@ -421,6 +421,13 @@ class Settings(models.Model):
     tasks = models.BooleanField(default=True)
     suggestions = models.BooleanField(default=True)
     meetings = models.BooleanField(default=True)
+    reviews = models.BooleanField(default=True)
+    email_messages = models.BooleanField(default=True)
+    email_tasks = models.BooleanField(default=True)
+    email_suggestions = models.BooleanField(default=True)
+    email_meetings = models.BooleanField(default=True)
+    email_reviews = models.BooleanField(default=True)
+
 
     name_setting = models.TextField(max_length=50, blank=True, null=True)
     name_setting_status = models.BooleanField(default=True)
