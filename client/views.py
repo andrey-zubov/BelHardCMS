@@ -61,7 +61,9 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
     # Poland
-    resumes = CV.objects.all()   # нужно проверить соответствие Юзеру!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    client = get_object_or_404(Client, user_client=request.user)
+    resumes = CV.objects.filter(client_cv=client)
+    # resumes = CV.objects.all()   # нужно проверить соответствие Юзеру!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     suggestions = 0
     for resume in resumes:
         suggestions += resume.notification.count()
@@ -69,7 +71,7 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     client_instance = client_check(request.user)
     response['client_img'] = load_client_img(client_instance)
     context.update(response)
-    # print(context['unread_suggestions'])
+    print(context['unread_suggestions'])
     return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
@@ -430,17 +432,26 @@ def chat_update(request):
              'pub_date': s.pub_date.ctime()})
     return JsonResponse(send2, safe=False)
 
-# Poland's views
+class VacancyDetail(View):   # ##################  There's a lot of work to remove all bugs...
+    def get(self, request, id_v):
+        client = get_object_or_404(Client, user_client=request.user)
+        vacancy = get_object_or_404(Vacancy, id=id_v)
+        resume_for_waiting = vacancy.in_waiting_for_resume.filter(client_cv=client)
+        resume_for_accepted = vacancy.accept_for_resume.filter(client_cv=client)
+        resume_for_rejected = vacancy.reject_for_resume.filter(client_cv=client)
+        first_flag = 1 if (vacancy in resume_for_waiting.vacancies_in_waiting.all()) or \
+                          (vacancy in resume_for_rejected.vacancies_reject.all()) else 0
+        second_flag = 1 if (vacancy in resume_for_waiting.vacancies_in_waiting.all()) or \
+                           (vacancy in resume_for_accepted.vacancies_accept.all()) else 0
+        return render(request, 'client/client_vacancy_detail.html', context={
+            'vacancy': vacancy,
+            'first_flag': first_flag,
+            'second_flag': second_flag,
+            'resume_for_waiting': resume_for_waiting,
+            'resume_for_accepted': resume_for_accepted,
+            'resume_for_rejected': resume_for_rejected,
+        })
 
-def vacancy_detail(request, id_v):
-    vacancy = Vacancy.objects.get(id=id_v)
-    first_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.reject_for_resume.all()) else 0
-    second_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.accept_for_resume.all()) else 0
-    return render(request, 'client/client_vacancy_detail.html', context={
-        'vacancy': vacancy,
-        'first_flag': first_flag,
-        'second_flag': second_flag
-    })
 
 class ResumesList(View):
     def get(self, request):
@@ -521,4 +532,40 @@ def admin_jobinterviews(request):  # for admin panel
     resumes = json.dumps(resumes, ensure_ascii=False)
     return HttpResponse(resumes)
 
-# End Poland's views
+# PDF upload
+def upload(request):
+    context = {}
+    if request.method == 'POST':
+        uploaded_file = request.FILES['document']
+        fs = FileSystemStorage()
+        name = fs.save(uploaded_file.name, uploaded_file)
+        context['url'] = fs.url(name)
+    return render(request, 'upload.html', context)
+
+# PDF Parsing
+
+def parsing():
+    raw = parser.from_file('Astapenka Dima.pdf')
+    text = (raw['content'])
+    client_row = Client.objects.get(id=Client.id)
+    lastname_name_exp = re.findall(r'\w+', text)
+    lastname = lastname_name_exp[0]
+    client_row.lastname = lastname
+    name = lastname_name_exp[1]
+    client_row.name = name
+    sex = lastname_name_exp[2]
+    client_row.sex = sex
+    email_exp = r'[\w\d.-]+@[\w.]+'
+    email = re.findall(email_exp, text)
+    client_row.email = email
+    phone_exp = [i.strip() for i in re.findall(r'\+?[\s\d()-]+', text) if len(i) >= 10][1].strip()
+    client_row.telephone = phone_exp
+    citizenship_exp = re.findall(r'\Г\w+:\s\w+\w', text)
+    citizenship = citizenship_exp[0].split()[1]
+    client_row.citizenship = citizenship
+    city_exp = re.findall(r'\П\w+:\s\w+\w', text)
+    city = city_exp[0].split()[1]
+    client_row.city = city
+
+    client_row.save()
+    # End Poland's views
