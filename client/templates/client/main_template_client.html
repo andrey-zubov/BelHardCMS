@@ -15,7 +15,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
             integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
             crossorigin="anonymous"></script>
-    
+
 
 
     <link rel="stylesheet" href="/static/client/style/main_style.css">
@@ -104,86 +104,84 @@
 
 </body>
 <script>
-$('document').ready(function () {
-    $('#close_task').on('click', function () {
-        $('#task_notification').hide()
-    });
-    $('#close_mes').on('click', function () {
+    $('document').ready(function () {
+        $('#close_task').on('click', function () {
+            $('#task_notification').hide()
+        });
+        $('#close_mes').on('click', function () {
             $('#mes_notification').hide();
-    });
-    $('#close_sug').on('click', function () {
+        });
+        $('#close_sug').on('click', function () {
             $('#sug_notification').hide();
-    });
+        });
         console.log('fuf');
         $.ajax({
-                'url': '/client/checknotifications/',
-                success: function (data) {
-                    if (data[0] != 0) {
-                        document.getElementById('mes_count').hidden = false;
-                        document.getElementById('mes_count').innerHTML =  data[0];
-                    }
-                    else {
-                        document.getElementById('mes_count').hidden = true;
-                    }
-                    if (data[1] != 0) {
-                        document.getElementById('task_count').hidden = false;
-                        document.getElementById('task_count').innerHTML =  data[1];
-                    }
-                    else {
-                        document.getElementById('task_count').hidden = true;
-                    }
-                    if (data[2] != 0) {
-                        document.getElementById('sug_count').hidden = false;
-                        document.getElementById('sug_count').innerHTML =  data[2];
-                    }
-                    else {
-                        document.getElementById('sug_count').hidden = true;
-                    }
+            'url': '/client/checknotifications/',
+            success: function (data) {
+                if (data[0] != 0) {
+                    document.getElementById('mes_count').hidden = false;
+                    document.getElementById('mes_count').innerHTML = data[0];
+                } else {
+                    document.getElementById('mes_count').hidden = true;
                 }
-            });
-        setInterval(function(){
+                if (data[1] != 0) {
+                    document.getElementById('task_count').hidden = false;
+                    document.getElementById('task_count').innerHTML = data[1];
+                } else {
+                    document.getElementById('task_count').hidden = true;
+                }
+                if (data[2] != 0) {
+                    document.getElementById('sug_count').hidden = false;
+                    document.getElementById('sug_count').innerHTML = data[2];
+                } else {
+                    document.getElementById('sug_count').hidden = true;
+                }
+            }
+        });
+        setInterval(function () {
             $.ajax({
                 'url': '/client/checknotifications/',
                 success: function (data) {
                     if (data[0] != 0) {
                         document.getElementById('mes_count').hidden = false;
-                        document.getElementById('mes_count').innerHTML =  data[0];
-                    }
-                    else {
+                        document.getElementById('mes_count').innerHTML = data[0];
+                    } else {
                         document.getElementById('mes_count').hidden = true;
                     }
                     if (data[1] != 0) {
                         document.getElementById('task_count').hidden = false;
-                        document.getElementById('task_count').innerHTML =  data[1];
-                    }
-                    else {
+                        document.getElementById('task_count').innerHTML = data[1];
+                    } else {
                         document.getElementById('task_count').hidden = true;
                     }
                     if (data[2] != 0) {
                         document.getElementById('sug_count').hidden = false;
-                        document.getElementById('sug_count').innerHTML =  data[2];
-                    }
-                    else {
+                        document.getElementById('sug_count').innerHTML = data[2];
+                    } else {
                         document.getElementById('sug_count').hidden = true;
                     }
                 }
             });
         }, 10000);
         /*actions for buttons*/
-    $('#clearnotif').on('click',function () {
-        $.ajax({'url':'/client/viewed/',
-                'data':{'action': 'clear'},
-                success:function (data) {
+        $('#clearnotif').on('click', function () {
+            $.ajax({
+                'url': '/client/viewed/',
+                'data': {'action': 'clear'},
+                success: function (data) {
                     console.log(data);
-                }})
-    });
-    $('#clearnotif1').on('click',function () {
-        $.ajax({'url':'/client/viewed/',
-                'data':{'action': 'clear'},
-                success:function (data) {
+                }
+            })
+        });
+        $('#clearnotif1').on('click', function () {
+            $.ajax({
+                'url': '/client/viewed/',
+                'data': {'action': 'clear'},
+                success: function (data) {
                     console.log(data);
-                }})
+                }
+            })
+        });
     });
-});
 </script>
 </html>
