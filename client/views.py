@@ -627,6 +627,16 @@ def set_settings(request):
         settings.suggestions = status
     elif setting == 'meetings':
         settings.meetings = status
+    elif setting == 'reviews':
+        settings.reviews = status
+    elif setting == 'email_messages':
+        settings.email_messages = status
+    elif setting == 'email_tasks':
+        settings.email_tasks = status
+    elif setting == 'email_suggestions':
+        settings.email_suggestions = status
+    elif setting == 'email_reviews':
+        settings.email_reviews = status
 
     settings.save()
 
