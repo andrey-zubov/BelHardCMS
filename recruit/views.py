@@ -3,6 +3,8 @@ from django.shortcuts import render
 
 from client.models import Chat, Message
 
+def recruit_main_page(request):
+    return render(request, template_name='recruit/recruit_main_template.html')
 
 def recruit_chat(request):
     chat_list = Chat.objects.filter(members=request.user)

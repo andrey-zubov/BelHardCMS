@@ -75,6 +75,8 @@ class Certificate(models.Model):
     img = models.ImageField(blank=True, null=True, verbose_name='certificate_img')
     link = models.URLField(blank=True, null=True, max_length=100, verbose_name='certificate_link')
 
+    show_img = models.ImageField(blank=True, null=True)
+
 
 class EducationWord(models.Model):
     """ Список учебных заведений. Заполняется Админом + может вводиться клиентом. """
@@ -143,9 +145,6 @@ class Experience(models.Model):
     start_date = models.DateField(null=True, blank=True, verbose_name='start_date')
     end_date = models.DateField(null=True, blank=True, verbose_name='end_date')
     duties = models.TextField(max_length=3000, null=True, blank=True, verbose_name='duties')
-
-    def __str__(self):
-        return self.name
 
 
 class CvWord(models.Model):
@@ -222,8 +221,7 @@ class State(models.Model):
         return self.state_word
 
 
-######Poland Task 1 & 2 ##############
-
+# Poland Task 1 & 2 ##############
 
 class Vacancy(models.Model):
     state = models.CharField(max_length=100)
@@ -245,7 +243,7 @@ class Vacancy(models.Model):
         return reverse('vacancy_detail_url', kwargs={'slug': self.slug})
 
 
-class Resume(models.Model): ##Test table
+class Resume(models.Model):  ##Test table
     state = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
     vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
@@ -277,14 +275,13 @@ class Help(models.Model):
         return self.question
 
 
-
-#########End Poland Task 1 & 2 ##############
+# End Poland Task 1 & 2 ##############
 
 
 class Client(models.Model):
     user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, verbose_name='Имя')
-    last_name = models.CharField(max_length=100, verbose_name='Фамилия')
+    name = models.CharField(max_length=100, verbose_name='Имя')     # TODO
+    last_name = models.CharField(max_length=100, verbose_name='Фамилия')    # TODO
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
 
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
@@ -301,14 +298,13 @@ class Client(models.Model):
 
     telegram_link = models.CharField(max_length=100, blank=True, null=True,
                                      verbose_name='Ник в телеграмме')  # при верстке учесть @
-    email = models.EmailField(max_length=200, null=True, blank=True)
+    email = models.EmailField(max_length=200, null=True, blank=True)    # TODO
     link_linkedin = models.URLField(max_length=200, null=True, blank=True)
     skype = models.CharField(max_length=100, null=True, blank=True)
     img = models.ImageField(blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
     # resumes
     resumes = models.ForeignKey(Resume, on_delete=models.SET_NULL, null=True, blank=True)
-
 
     def __str__(self):
         return "%s %s %s" % (self.last_name, self.name, self.patronymic)
@@ -375,8 +371,6 @@ class Answer(models.Model):
         return self.text[:10]
 
 
-
-
 class Tasks(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True)
     title = models.TextField(max_length=200)
@@ -386,7 +380,6 @@ class Tasks(models.Model):
     endtime = models.DateTimeField(blank=True, null=True)
     checkstatus = models.BooleanField(default=True)#статус активен, если можем после выоплнения задачи в течении 60 сек вернуть в активную задачу
     readtask = models.BooleanField(default=False)
-
 
     @property
     def show_all(self):
@@ -404,9 +397,9 @@ class Tasks(models.Model):
 
     @property
     def check_readstatus(self):
-            if self.readtask == False:
-                self.readtask = True
-                self.save()
+        if self.readtask == False:
+            self.readtask = True
+            self.save()
 
 
 class SubTasks(models.Model):

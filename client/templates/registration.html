@@ -16,17 +16,17 @@
         </div>
     </div>
        <!--логин-->
-    <form action="/client/{{ url }}/" method="post">
+    <form action="/" method="post">
     {% csrf_token %}
     <div class="login-form">
         <div class="form-group">
           <label for="user" >Логин</label>
-          <input type="text" class="form-control" id="user" name="user">
+          <input type="text" class="form-control" id="user" name="user" style="text-align: center">
         </div>
           <!--пароль-->
         <div class="form-group">
           <label for="pass">Пароль</label>
-          <input type="password" class="form-control" id="pass" name="password">
+          <input type="password" class="form-control" id="pass" name="password" style="text-align: center">
         </div>
     </div>
     <input class="reg-input" type="submit" value="Войти">
