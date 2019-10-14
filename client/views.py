@@ -443,16 +443,26 @@ def chat_update(request):
     return JsonResponse(send2, safe=False)
 # Poland's views ###################################################################################
 
-class VacancyDetail(View):
+class VacancyDetail(View):   # ##################  There's a lot of work to remove all bugs...
     def get(self, request, id_v):
+        client = get_object_or_404(Client, user_client=request.user)
         vacancy = get_object_or_404(Vacancy, id=id_v)
-        first_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.reject_for_resume.all()) else 0
-        second_flag = 1 if bool(vacancy.in_waiting_for_resume.all() or vacancy.accept_for_resume.all()) else 0
+        resume_for_waiting = vacancy.in_waiting_for_resume.filter(client_cv=client)
+        resume_for_accepted = vacancy.accept_for_resume.filter(client_cv=client)
+        resume_for_rejected = vacancy.reject_for_resume.filter(client_cv=client)
+        first_flag = 1 if (vacancy in resume_for_waiting.vacancies_in_waiting.all()) or \
+                          (vacancy in resume_for_rejected.vacancies_reject.all()) else 0
+        second_flag = 1 if (vacancy in resume_for_waiting.vacancies_in_waiting.all()) or \
+                           (vacancy in resume_for_accepted.vacancies_accept.all()) else 0
         return render(request, 'client/client_vacancy_detail.html', context={
             'vacancy': vacancy,
             'first_flag': first_flag,
-            'second_flag': second_flag
+            'second_flag': second_flag,
+            'resume_for_waiting': resume_for_waiting,
+            'resume_for_accepted': resume_for_accepted,
+            'resume_for_rejected': resume_for_rejected,
         })
+
 
 class ResumesList(View):
     def get(self, request):
