@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
-import re
 from django.utils import timezone
 
 UserModel = get_user_model()
@@ -375,17 +374,19 @@ class Tasks(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True)
     title = models.TextField(max_length=200)
     time = models.DateTimeField()
+    date = models.DateField(null=True, blank=True)
     comment = models.TextField(max_length=300, blank=True)
-    status = models.BooleanField(default=False) #задача, которая не выполнена
+    status = models.BooleanField(default=False)  # задача, которая не выполнена
     endtime = models.DateTimeField(blank=True, null=True)
-    checkstatus = models.BooleanField(default=True)#статус активен, если можем после выоплнения задачи в течении 60 сек вернуть в активную задачу
+    checkstatus = models.BooleanField(
+        default=True)  # статус активен, если можем после выоплнения задачи в течении 60 сек вернуть в активную задачу
     readtask = models.BooleanField(default=False)
 
     @property
     def show_all(self):
         return self.subtask.all()
 
-    @property
+    # @property
     def checktime(self):
         if self.endtime != None:
             akttime = timezone.now() - self.endtime
@@ -395,7 +396,7 @@ class Tasks(models.Model):
                 self.checkstatus = False
             self.save()
 
-    @property
+    # @property
     def check_readstatus(self):
         if self.readtask == False:
             self.readtask = True
@@ -414,6 +415,20 @@ class SubTasks(models.Model):
     #    return self.telephone_number
 
 
+# class Settings(models.Model):
+#     user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
+#     messages = models.BooleanField(default=True)
+#     tasks = models.BooleanField(default=True)
+#     suggestions = models.BooleanField(default=True)
+#     meetings = models.BooleanField(default=True)
+#
+#     name_setting = models.TextField(max_length=50, blank=True, null=True)
+#     name_setting_status = models.BooleanField(default=True)
+#     tumbler_on_off = models.CharField(max_length=50, blank=True, null=True)
+#
+#     def __str__(self):
+#         return self.name_setting
+
 
 class Settings(models.Model):
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
@@ -427,15 +442,3 @@ class Settings(models.Model):
     email_suggestions = models.BooleanField(default=True)
     email_meetings = models.BooleanField(default=True)
     email_reviews = models.BooleanField(default=True)
-
-
-    name_setting = models.TextField(max_length=50, blank=True, null=True)
-    name_setting_status = models.BooleanField(default=True)
-    tumbler_on_off = models.CharField(max_length=50, blank=True, null=True)
-
-    def __str__(self):
-        return str(self.user)
-
-
-
-
