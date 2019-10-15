@@ -138,44 +138,29 @@
 </div>
 
 {% if settings.tasks == True %}
-    {% if readtask != 0 %}
+    {% if readtask %}
         <div class="notification" id="task_notification"><h2> Новые задачи: {{ readtask }} </h2> <span
                 class="close" id="close_task"></span></div>
     {% endif %}
 {% endif %}
 <div id="check_notifications">
-    {% if settings.messages == True %}
+    {% if settings.messages %}
         {% if unread_messages %}
             <div class="notification" id="mes_notification"><h2>Новые сообщения: {{ unread_messages }} </h2>
                 <span class="close" id="close_mes"></span></div>
         {% endif %}
         </div>
     {% endif %}
-{% if settings.suggestions == True %}
-    <div>
-        {% if unread_suggestions %}
-            <div class="notification" id="sug_notification"><h2>Новые
-                предложения: {{ unread_suggestions }} </h2>
-                <span class="close" id="close_sug"></span></div>
-        {% endif %}
-    </div>
-{% endif %}
-
-<!-- There is KOSTYL from Poland))-->
-
-{% if status %}
-    <div class="p-sm-5 pt-sm-5 fixed-bottom">
-        {% if notification %}
-            <a href="{% url 'resumes_list_url' %}" id="clearnotif1">
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    Новых предложений: <strong> {{ notification }}</strong>.
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            </a>
-        {% endif %}
-    </div>
+{% if settings.suggestions %}
+    <a class="nav-link text-white" href="{% url 'resumes_list_url' %}" id="clearnotif1">
+        <div>
+            {% if unread_suggestions %}
+                <div class="notification" id="sug_notification"><h2>Новые
+                    предложения: {{ unread_suggestions }} </h2>
+                    <span class="close" id="close_sug"></span></div>
+            {% endif %}
+        </div>
+    </a>
 {% endif %}
 
 <div class="container">
