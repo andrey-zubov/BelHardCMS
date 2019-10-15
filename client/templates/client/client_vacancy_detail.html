@@ -47,11 +47,6 @@
             <div class="btn-group mr-2" role="group" aria-label="First group">
                 <a href="{{ resume_for_rejected.get.get_reject_url }}" class="btn btn-secondary">Назад</a>
             </div>
-        <!--Здесь надо подумать есть ли смысл делать ссылку на список всех предложений, чтобы после них вазвращаться сразу на выбор резюме
-        % elif vacancy.all_for_resume.all %}
-            <div class="btn-group mr-2" role="group" aria-label="First group">
-                <a href="{ vacancy.all_for_resume.get.get_vacancies_list_url }}" class="btn btn-secondary">Назад</a>
-            </div>-->
         {% else %}
             <div class="btn-group mr-2" role="group" aria-label="First group">
                 <a onclick="javascript:history.back(); return false;" class="btn btn-secondary">Назад</a>
