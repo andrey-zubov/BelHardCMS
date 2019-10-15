@@ -1,5 +1,6 @@
 from django.contrib import auth
-from django.shortcuts import redirect, render, get_object_or_404
+from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.context_processors import csrf
 from recruit import recruit_url
 
@@ -7,10 +8,16 @@ from django.urls import reverse
 from django.utils.timezone import utc
 from django.views import View
 from django.http import HttpResponse, JsonResponse
+from django.views.generic import TemplateView
 
-from .models import Vacancy, Resume
+from client.edit.check_clients import (client_check, load_client_img)
+from client.edit.edit_forms import (EducationFormSet, CertificateForm, SabClassFormSet, UploadImgForm)
+from client.edit.pages_get import (edit_page_get, skills_page_get, cv_page_get, education_page_get, experience_page_get)
+from client.edit.pages_post import (skills_page_post, edit_page_post, photo_page_post, form_edu_post,
+                                    education_page_post, cv_page_post, experience_page_post)
+from client.forms import (OpinionForm, AnswerForm, MessageForm)
+from client.models import *
 
-#from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 
 from django.views.generic import View, TemplateView
 from django.views.generic import TemplateView
@@ -259,10 +266,10 @@ def client_login(request):  # ввести логин/пароль -> зайти
     else:
         return render(request, 'registration.html', res)
     try:
-        user_chat = Chat.objects.get(members=request.user)
+        user_chat = Chat.objects.filter(members=request.user)
     except Chat.DoesNotExist:
         user_chat = Chat.objects.create()
-        user_chat.members.add(request.user) #TODO сюда добавить менеджера, которому, по дефолту, передают юзера
+        user_chat.members.add(request.user)  # TODO сюда добавить менеджера, которому, по дефолту, передают юзера
     try:
         user_settings = Settings.objects.get(user=request.user)
     except Settings.DoesNotExist:
@@ -283,7 +290,6 @@ def client_logout(request):  # выйти из системы, возврат н
 
 
 def tasks(request):
-
     task = Tasks.objects.filter(user=request.user, status=False)
     task_false = Tasks.objects.filter(user=request.user, status=True) #status=False)
     task_false = sorted(task_false, key=lambda x:x.endtime,  reverse=True)
@@ -372,6 +378,9 @@ def set_settings(request):
         settings.email_tasks = status
     elif setting == 'email_suggestions':
         settings.email_suggestions = status
+    elif setting == 'email_meetings':
+        settings.email_meetings = status
+
     elif setting == 'email_reviews':
         settings.email_reviews = status
 
@@ -493,10 +502,10 @@ def settings_list(request):
     return render(request, 'client/settings.html', context={'settings': settings, 'status': status})
 
 
-#def settings_on_off(request):
-    #status = 1 if SettingsNotification.objects.get().tumbler_on_off == 'on' else 0
-    #print('status = ', status)
-    #return render(request, 'client/client_settings.html', context={'status': status})
+# def settings_on_off(request):
+# status = 1 if SettingsNotification.objects.get().tumbler_on_off == 'on' else 0
+# print('status = ', status)
+# return render(request, 'client/client_settings.html', context={'status': status})
 
 
 def on_off(request):
@@ -516,5 +525,3 @@ def viewed(request):
         return HttpResponse('cleared')
 
 # End Poland's views
-
-
