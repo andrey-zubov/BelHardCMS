@@ -29,6 +29,7 @@ from client.edit.pages_post import (skills_page_post, edit_page_post, photo_page
                                     education_page_post, cv_page_post, experience_page_post)
 from client.forms import (OpinionForm, AnswerForm, MessageForm)
 from client.models import *
+from django.contrib.auth.models import Group
 
 
 def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
@@ -266,7 +267,7 @@ def client_login(request):  # ввести логин/пароль -> зайти
     else:
         return render(request, 'registration.html', res)
     try:
-        user_chat = Chat.objects.filter(members=request.user)
+        user_chat = Chat.objects.get(members=request.user)
     except Chat.DoesNotExist:
         user_chat = Chat.objects.create()
         user_chat.members.add(request.user)  # TODO сюда добавить менеджера, которому, по дефолту, передают юзера
