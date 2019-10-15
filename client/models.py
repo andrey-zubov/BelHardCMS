@@ -222,9 +222,6 @@ class CV(models.Model):
     def get_reject_url(self):
         return reverse('rejected_vacancies_url', kwargs={'id_c': self.id})
 
-    def get_vacancies_list_url(self):
-        return reverse('vacancies_list_url', kwargs={'id_c': self.id})
-
     # end upgrade from Poland
 
 
