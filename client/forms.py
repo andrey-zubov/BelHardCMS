@@ -1,6 +1,6 @@
 from django import forms
 
-from client.models import Message, Opinion, Answer
+from client.models import (Message, Opinion, Answer)
 
 
 class MessageForm(forms.ModelForm):
