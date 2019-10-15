@@ -72,13 +72,6 @@ class JobInterviewsAdmin(admin.ModelAdmin):
 
 admin.site.register(JobInterviews, JobInterviewsAdmin)
 
-class JobInterviewsAdmin(admin.ModelAdmin):
-    class Media:
-        js = ['js/scriptJob.js']
-
-
-admin.site.register(JobInterviews, JobInterviewsAdmin)
-
 
 admin.site.register(Opinion)
 admin.site.register(Answer)
