@@ -266,7 +266,7 @@ def client_login(request):  # ввести логин/пароль -> зайти
     else:
         return render(request, 'registration.html', res)
     try:
-        user_chat = Chat.objects.get(members=request.user)
+        user_chat = Chat.objects.filter(members=request.user)
     except Chat.DoesNotExist:
         user_chat = Chat.objects.create()
         user_chat.members.add(request.user)  # TODO сюда добавить менеджера, которому, по дефолту, передают юзера
@@ -373,6 +373,9 @@ def set_settings(request):
         settings.email_tasks = status
     elif setting == 'email_suggestions':
         settings.email_suggestions = status
+    elif setting == 'email_meetings':
+        settings.email_meetings = status
+
     elif setting == 'email_reviews':
         settings.email_reviews = status
 
