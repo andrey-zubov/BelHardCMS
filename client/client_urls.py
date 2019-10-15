@@ -1,9 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import path
 
-from client import views
-from client.edit.load_data_list import (SkillsDataList, InstitutionDataList, CvPositionDataList)
-from client.views import *
+from . import views
+from .edit.load_data_list import (SkillsDataList, InstitutionDataList, CvPositionDataList)
+from .views import *
+
+# from BelHardCMS.client.views import ResumesList, ResumeDetail
 
 urlpatterns = [
     path('', views.client_main_page, name='client'),  # main client page
@@ -39,16 +41,17 @@ urlpatterns = [
     path(r'settingsset/', views.set_settings, name='settings_set'),
 
     # Poland urls
-    path('cv/', resumes_list, name='resumes_list_url'),
-    path('cv/<id_c>/', resume_detail, name='resume_detail_url'),
-    path('cv/<id_c>/accepted_vacancies/', accepted_vacancies, name='accepted_vacancies_url'),
-    path('cv/<id_c>/rejected_vacancies/', rejected_vacancies, name='rejected_vacancies_url'),
-    path('cv/vacancy/<id_v>/', vacancy_detail, name='vacancy_detail_url'),
+    path('cvs/', ResumesList.as_view(), name='resumes_list_url'),
+    path('cv_detail/<id_c>/', ResumeDetail.as_view(), name='resume_detail_url'),
+    path('cv/<id_c>/accepted_vacancies/', AcceptedVacancies.as_view(), name='accepted_vacancies_url'),
+    path('cv/<id_c>/rejected_vacancies/', RejectedVacancies.as_view(), name='rejected_vacancies_url'),
+    path('cv/vacancy/<id_v>/', VacancyDetail.as_view(), name='vacancy_detail_url'),
     path('accept_reject/', views.accept_reject),
     path('help/', help_list, name='help_list_url'),
-    path('settings/', settings_list, name='settings_list_url'),
-    path('on_off/', views.on_off),    # on_off settings for notifications
     path('viewed/', views.viewed),
+    path('admin_jobinterviews/', views.admin_jobinterviews),
+
+
     path('upload', views.upload, name='client_cv_upload'),
     path('upload', views.upload, name='upload'),
 

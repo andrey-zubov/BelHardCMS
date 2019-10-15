@@ -1,0 +1,69 @@
+{% extends 'recruit/main_template_recruiter.html' %}
+
+{% block title %}
+    {{applicant_user.name}} {{ applicant_user.last_name }}
+{% endblock %}
+
+{% block content %}
+    <div class="p-sm-5 pt-sm-1">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <a href="{{ applicant_user.get_tasks_url }}" class="btn btn-secondary"> Добывить задачу </a>
+        </div>
+    </div>
+
+    <div class="p-sm-5 pt-sm-1">
+        <h2 class="mb-5"> {{ applicant_user.last_name }} {{ applicant_user.name }} {{ applicant_user.patronymic }}</h2>
+        {% for cv in applicant_user.cv_set.all %}
+            {{ cv }} <br>
+        {% endfor %}
+
+
+
+
+        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+
+            <div class="btn-group mr-2" role="group" aria-label="First group">
+                <a href="{% url 'base_of_clients' %}" class="btn btn-secondary">Назад</a>
+            </div>
+
+        </div>
+
+    </div>
+
+
+<script>/*
+$('document').ready(function () {
+    var first = { first_flag }}
+    var second = { second_flag }}
+    if (first){$('#first').attr('hidden',false)}
+    if (second){$('#second').attr('hidden',false)} */
+
+
+    /*actions for buttons*/
+   /* $('.accept').on('click',function () {
+        var id = $(this).attr('id');
+        $.ajax({'url':'/client/accept_reject/',
+                'data':{'flag':'accept',"id_v":id},
+                success:function (data) {
+                    console.log(data);
+                    $('#first').attr('hidden', true)
+                    $('#second').attr('hidden', false)
+                }})
+
+    });
+    $('.reject').on('click',function () {
+        var id = $(this).attr('id');
+        $.ajax({'url':'/client/accept_reject/',
+                'data':{'flag':'reject','id_v':id},
+                success:function (data) {
+                    console.log(data)
+                    $('#first').attr('hidden', false)
+                    $('#second').attr('hidden', true)
+                }})
+
+    });
+}) */
+
+    </script>
+{% endblock %}
+

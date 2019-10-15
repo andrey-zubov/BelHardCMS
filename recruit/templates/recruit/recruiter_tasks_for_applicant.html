@@ -1,0 +1,117 @@
+{% extends 'recruit/main_template_recruiter.html' %}
+
+{% block title %}
+    {{applicant_user.name}} {{ applicant_user.last_name }}
+{% endblock %}
+
+{% block content %}
+
+
+    <div class="p-sm-5 pt-sm-1">
+        <h2 class="mb-5"> Собеседования </h2>
+        {% for jobinterview in applicant_user.jobinterview_set.all %}
+            {{ jobinterview }} <br>
+        {% endfor %}
+
+
+
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+            + Добавить собеседование...
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade bd-example-modal-xl" id="exampleModal" tabindex="-1" role="dialog"
+             aria-labelledby="myExtraLargeModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"> Данные по собеседованию </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="applicant_user.get_tasks_url">
+                            {% csrf_token %}
+                            <h5>
+                                (<input type="text" class="form-time" id="id_time" name="time">)
+                                 <input type="text"  class="form-heading" id="id_heading"  name="heading">
+                            </h5><br>
+                            <h5>
+                                Предлагаемая должность: <input type="text" class="form-position" id="id_position"
+                                                               name="position">
+                            </h5><br>
+                            <h5>
+                                Организация: <input type="text" class="form-organization" id="id_organization"
+                                                    name="organization">
+                            </h5><br>
+                            <h5>
+                                Ответственное лицо: <input type="text" class="form-responsible-person" id="id_person"
+                                                           name="responsible_person">
+                            </h5><br>
+                            <h5>
+                                Контакты: <br>
+                                Тел: <input type="text" class="form-phone" id="id_time" name="phone"><br>
+                                Telegram: <input type="text" class="form-organization" id="id_time" name="organization">
+                            </h5><br>
+                            <h5>
+                               Место провведения собеседования: <input type="text" class="form-address" id="id_address"
+                                                           name="address">
+                            </h5><br>
+                            <h5>
+                               Дополнительная информация: <input type="text" class="form-addition" id="id_addition"
+                                                           name="addition">
+                            </h5><br>
+                            <h5>
+                               Добавить файл: <input type="file" class="form-addition" id="id_addition" name="document">
+                            </h5><br>
+                            <p>Выберите файл для изменения {{ form }}</p>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>/*
+$('document').ready(function () {
+    var first = { first_flag }}
+    var second = { second_flag }}
+    if (first){$('#first').attr('hidden',false)}
+    if (second){$('#second').attr('hidden',false)} */
+
+
+    /*actions for buttons*/
+   /* $('.accept').on('click',function () {
+        var id = $(this).attr('id');
+        $.ajax({'url':'/client/accept_reject/',
+                'data':{'flag':'accept',"id_v":id},
+                success:function (data) {
+                    console.log(data);
+                    $('#first').attr('hidden', true)
+                    $('#second').attr('hidden', false)
+                }})
+
+    });
+    $('.reject').on('click',function () {
+        var id = $(this).attr('id');
+        $.ajax({'url':'/client/accept_reject/',
+                'data':{'flag':'reject','id_v':id},
+                success:function (data) {
+                    console.log(data)
+                    $('#first').attr('hidden', false)
+                    $('#second').attr('hidden', true)
+                }})
+
+    });
+}) */
+
+    </script>
+{% endblock %}

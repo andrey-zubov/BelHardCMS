@@ -3,9 +3,9 @@ from django.contrib import admin
 from .models import *
 
 
-
-class User(admin.StackedInline):
-    admin.site.register(CV)
+# class User(admin.StackedInline):
+#
+#     admin.site.register(CV)
 
 
 class Subtasks_Inline(admin.StackedInline):
@@ -30,7 +30,6 @@ class CVAdmin(admin.ModelAdmin):
     search_fields = (
         'client_cv', 'position', 'employment', 'time_job', 'salary', 'type_salary',
     )
-
 
 
 admin.site.register(CV, CVAdmin)
@@ -65,6 +64,13 @@ admin.site.register(Settings, SettingsAdmin)
 
 admin.site.register(Help)
 
+
+class JobInterviewsAdmin(admin.ModelAdmin):
+    class Media:
+        js = ['js/scriptJob.js']
+
+
+admin.site.register(JobInterviews, JobInterviewsAdmin)
 
 
 admin.site.register(Opinion)
