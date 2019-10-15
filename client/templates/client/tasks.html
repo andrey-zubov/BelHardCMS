@@ -1,16 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-</head>
-<body>
+{% extends 'client/main_template_client.html' %}
+{% load staticfiles %}
+
+    {% block title%} Задачи {% endblock %}
+
+
+{% block content %}
 <div class="active">
     {% for tas in task %}
         <div hidden>{{ tas.check_readstatus }}</div>
         <input class="check_tas" id="check_tas{{ tas.id }}" type="checkbox"><button class="fortask" id="idfortas{{ tas.id }}">{{ tas.title }}</button><br><hr>
-        <div id="forsubtask{{ tas.id }}" hidden>
+        <div id="forsubtask{{ tas.id }}">
 
             {% for sub in tas.show_all %}
                 <input class="chech_sub" id="check_sub{{ sut.id }}" type="checkbox">{{ sub.title }}<hr>
@@ -21,12 +20,12 @@
     {% endfor %}
 </div>
 <button id="show">Показать заверешенные задачи</button>
-<div class="close" hidden >
+<div class="hide_task">
     {% for tas in task_false %}
-    <div hidden>{{ tas.checktime }}</div>
+    <div id="task_checktime" hidden>{{ tas.checktime }}</div>
         {% if tas.checkstatus != False %}
             <input class="check_tas" id="check_tas{{ tas.id }}" type="checkbox"><button class="fortask" id="idfortas{{ tas.id }}">{{ tas.title }}</button><br><hr>
-            <div id="forsubtask{{ tas.id }}" hidden>
+            <div id="forsubtask{{ tas.id }}">
 
                 {% for sub in tas.show_all %}
                     <input class="chech_sub" id="check_sub{{ sub.id }}" type="checkbox">{{ sub.title }}<hr>
@@ -48,13 +47,21 @@
     <button class="hide">Скрыть</button>
 </div>
 
-<script>
+
+<script type="text/javascript">
+    $('.hide_task').hide()
+    $('.forsubtask').hide()
 $('document').ready(function () {
+
+
     $('#show').on('click', function () {
-        $('.close').show()
+        $('.hide_task').show()
+        console.log(1)
+
     });
-    $(".close .hide").click(function(){
-        $(this).parents(".close").hide();
+    $(".hide_task .hide").click(function(){
+        $(this).parents(".hide_task").hide();
+        console.log(2)
     });
     $('.fortask').on('click', function () {
         var id = 'forsubtask' + $(this).attr('id').slice(8);
@@ -64,6 +71,7 @@ $('document').ready(function () {
         } else {
             elem.show();
         }
+        console.log(3)
 
 
     });
@@ -78,11 +86,10 @@ $('document').ready(function () {
                     console.log(data)
                 }
             });
-            console.log(id)
+
 
         })
 
 });
 </script>
-</body>
-</html>
+{% endblock %}

@@ -346,8 +346,8 @@ class Message(models.Model):
 
 class Opinion(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
-    title = models.CharField(max_length=100)
-    text = models.TextField(max_length=3000)
+    title = models.CharField(max_length=100, verbose_name='Тема')
+    text = models.TextField(max_length=3000, verbose_name='Текст отзыва')
     date = models.DateTimeField(auto_now_add=True)
 
     def get_adres(self):
@@ -436,3 +436,9 @@ class Settings(models.Model):
     tasks = models.BooleanField(default=True)
     suggestions = models.BooleanField(default=True)
     meetings = models.BooleanField(default=True)
+    reviews = models.BooleanField(default=True)
+    email_messages = models.BooleanField(default=True)
+    email_tasks = models.BooleanField(default=True)
+    email_suggestions = models.BooleanField(default=True)
+    email_meetings = models.BooleanField(default=True)
+    email_reviews = models.BooleanField(default=True)

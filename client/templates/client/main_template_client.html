@@ -5,189 +5,102 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
             integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh"
             crossorigin="anonymous"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
             integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
             crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-            crossorigin="anonymous"></script>
+
+
+
+    <link rel="stylesheet" href="/static/client/style/main_style.css">
+
 
     {% load staticfiles %}
-    <style type="text/css" href="{% static 'client/style/style.css' %}"></style>
 
-    <style>
-        .task {
-            position: relative;
-        }
-
-        .counter {
-            top: -8px;
-            right: -8px;
-            border-radius: 50%;
-            font-size: 12px;
-            position: absolute;
-            font-weight: bold;
-            width: 17px;
-            height: 17px;
-            color: #000000;
-            text-align: center;
-            background: red;
-            border: 0.5px solid black;
-        }
-
-        .notification {
-            width: 50%;
-            background: #fe6060;
-            text-align: center;
-            border-radius: 15px;
-            margin: 5px auto;
-            position: relative;
-            color: white;
-            border: 1px #000000 solid;
-        }
-
-        .close {
-            position: absolute;
-            right: 4px;
-            top: 7px;
-            width: 10px;
-            height: 10px;
-            opacity: 0.3;
-        }
-
-        .close:hover {
-            opacity: 1;
-        }
-
-        .close:before, .close:after {
-            position: absolute;
-            left: 0px;
-            content: ' ';
-            height: 10px;
-            width: 2px;
-            background-color: #333;
-        }
-
-        .close:before {
-            transform: rotate(45deg);
-        }
-
-        .close:after {
-            transform: rotate(-45deg);
-        }
-
-        .messages {
-            position: relative;
-        }
-
-        .suggestions {
-            position: relative;
-        }
-    </style>
-
-    <title>{% block title %}{% endblock %} - HR-System</title>
+    <title>{% block title %}Client{% endblock %} - HR-System</title>
 </head>
+<body>
+<div class="inbody" >
+        <header class="header-bar">
+                                <a class="logo" href="{% url 'client' %}" style="text-decoration: none; padding-left: 40px ">
+                                    <div class="name" style="margin: auto; text-align: center">
+                                        <img src="https://static.wixstatic.com/media/3e33b4_be193070b72743e2a0194222634bd2bf~mv2.png/v1/fill/w_79,h_71,al_c,q_80,usm_0.66_1.00_0.01/31-512.png" style="width: 50px; height: 50px"  >
+                                        <div class="hr-sys">HR-System</div>
+                                        <div class="version">Сборка: 1.0</div>
+                                    </div>
+                                </a>
 
-<body style="font-size: large">
+                                <a class="text-bar" href="{% url 'tasks_list' %}" > Задачи <div class="counter" id="task_count" hidden="true"> {{ readtask }}</div></a>
+                                <a class="text-bar" href="{% url 'resumes_list_url' %}" id="clearnotif"> Предложения <div class="counter" id="sug_count" hidden="true">{{ unread_suggestions }}</div></a>
+                                <a class="text-bar" href="#">Собеседования</a>
+                                <a class="text-bar" href="{% url 'contact_with_centre' %}"> Связаться с КЦ <div class="counter" id="mes_count" hidden="true"> {{ unread_messages }} </div></a>
+                                <div class="client-bar">
+                                    <a class="text-client" href="{% url 'client_profile' %}" >
+                                        <img src="{{ client_img }}"  height="75px" style="border-radius: 50%;" alt=""></a>
 
-<header>
-    <div class="container">
-        <nav class="nav "
-             style="background-color: #344955; width: 100%; margin: 0 auto;  display: flex; justify-content: space-between; align-items: center;">
-            <!--class="nav fixed-top" style="max-width: 900px;"-->
-            <a class="nav-link text-white" href="{% url 'client' %}">HR-System</a>
-            <a class="nav-link text-white" href="{% url 'tasks_list' %}">
-                <div class="task"> Задачи
-                    <div class="counter" id="task_count" hidden="true"> {{ readtask }} </div>
+                                    <div class="client-name-out" >
+                                        <h4 style="margin-bottom: 5px">Клиент</h4>
+                                        <a class="logout" href="{% url 'logout' %}" >Выйти</a>
+                                    </div>
+                                </div>
+        </header>
+
+        <section class="content" >
+        {% block content %}
+        <img src="https://static.wixstatic.com/media/3e33b4_8434f559fcaa44a39ecfd54bf197fba5~mv2.png/v1/fill/w_750,h_350,al_c,q_80,usm_0.66_1.00_0.01/tild6162-3961-4262-b966-316166666133__lo.png" alt="">
+                {%if settings.tasks == True %}
+                        {%if readtask != 0 %}
+                            <div class="notification" id="task_notification"><h2> Новые задачи:  {{ readtask }} </h2> <span class="close" id="close_task"></span></div>
+                        {% endif %}
+                    {% endif %}
+                    <div id="check_notifications">
+                    {%if settings.messages == True %}
+                        {% if unread_messages != 0 %}
+                            <div class="notification" id="mes_notification"><h2>Новые сообщения:  {{ unread_messages }} </h2><span class="close" id="close_mes"></span></div>
+                        {% endif %}
+                        </div>
+                    {% endif %}
+                    {%if settings.suggestions == True %}
+                            {% if unread_suggestions != 0 %}
+                                <div class="notification" id="sug_notification"><h2>Новые предложения:  {{ unread_suggestions }} </h2><span class="close" id="close_sug"></span></div>
+                            {% endif %}
+
+                    {% endif %}
+
+                <!-- There is KOSTYL from Poland))-->
+
+                {% if status %}
+                <div class="p-sm-5 pt-sm-5 fixed-bottom" >
+                    {% if notification %}
+                        <a href="{% url 'resumes_list_url' %}" id="clearnotif1">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                           Новых предложений: <strong> {{ notification }}</strong>.
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                               <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        </a>
+                    {% endif %}
                 </div>
-            </a>
-            <a class="nav-link text-white" href="{% url 'resumes_list_url' %}" id="clearnotif">
-                <div class="suggestions"> Предложения
-                    <div class="counter" id="sug_count" hidden="true">{{ unread_suggestions }}</div>
-                </div>
-            </a>
-            <a class="nav-link text-white" href="#">Собеседования</a>
-            <a class="nav-link text-white" href="{% url 'contact_with_centre' %}">
-                <div class="messages"> Связаться с КЦ
-                    <div class="counter" id="mes_count" hidden="true"> {{ unread_messages }} </div>
-                </div>
-            </a>
-            <a class="nav-link text-white" href="{% url 'client_profile' %}">
-                <img src="{{ client_img }}" alt="img" class="rounded-circle" height="64">
-                Клиент
-            </a>
-        </nav>
-    </div>
+                {% endif %}
 
-</header>
+            {% endblock %}
 
-<div class="container my-2" style="min-height: 600px">
-    <section class="content">  <!--style="margin-top: 40px"-->
+        </section>
 
-        {% block content %}{% endblock %}
-
-    </section>
-</div>
-
-{% if settings.tasks == True %}
-    {% if readtask != 0 %}
-        <div class="notification" id="task_notification"><h2> Новые задачи: {{ readtask }} </h2> <span
-                class="close" id="close_task"></span></div>
-    {% endif %}
-{% endif %}
-<div id="check_notifications">
-    {% if settings.messages == True %}
-        {% if unread_messages != 0 %}
-            <div class="notification" id="mes_notification"><h2>Новые сообщения: {{ unread_messages }} </h2>
-                <span class="close" id="close_mes"></span></div>
-        {% endif %}
+        <div class="footer-bar">
+                 <a class="text-footer" href="{% url 'help_list_url' %}" >Помощь</a>
+                 <a class="text-footer" href="{% url 'settings_menu' %}">Настройки</a>
+                 <a class="text-footer" href="{% url 'opinion_create' %}" >Оставить отзыв</a>
         </div>
-    {% endif %}
-{% if settings.suggestions == True %}
-    <div>
-        {% if unread_suggestions != 0 %}
-            <div class="notification" id="sug_notification"><h2>Новые
-                предложения: {{ unread_suggestions }} </h2>
-                <span class="close" id="close_sug"></span></div>
-        {% endif %}
     </div>
-{% endif %}
 
-<!-- There is KOSTYL from Poland))-->
-
-{% if status %}
-    <div class="p-sm-5 pt-sm-5 fixed-bottom">
-        {% if notification %}
-            <a href="{% url 'resumes_list_url' %}" id="clearnotif1">
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    Новых предложений: <strong> {{ notification }}</strong>.
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            </a>
-        {% endif %}
-    </div>
-{% endif %}
-
-<div class="container">
-    <nav class="nav "
-         style="background-color: #344955; width: 100%; margin: 0 auto;  display: flex; justify-content: space-between; align-items: center;">
-        <!--class="nav fixed-bottom" style="max-width: 900px;"-->
-        <a class="nav-link text-white" href="{% url 'help_list_url' %}">Помощь<a
-                class="offset-md-1"></a></a>
-        <a class="nav-link text-white" href="{% url 'settings_menu' %}">Настройки<a class="offset-md-1"></a></a>
-        <a class="nav-link text-white" href="{% url 'opinion_create' %}">Оставить отзыв</a>
-    </nav>
-</div>
 
 </body>
 <script>
