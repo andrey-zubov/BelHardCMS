@@ -259,6 +259,8 @@ def client_login(request):  # ввести логин/пароль -> зайти
         user_settings = Settings.objects.get(user=request.user)
     except Settings.DoesNotExist:
         user_settings = Settings.objects.create(user=request.user)
+    if not Group.objects.filter(name='Users').exists():
+        Group.objects.create(name='Users')
     if u.groups.filter(name='Users').exists():
         return redirect('client')
     elif u.groups.filter(name='Recruiters').exists():
