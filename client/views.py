@@ -271,6 +271,11 @@ def client_login(request):  # ввести логин/пароль -> зайти
         return redirect('client')
     elif u.groups.filter(name='Recruiters').exists():
         return redirect('main_page')
+    else:        # добавляет юзера к группе 'Users' поумолчанию, если у него нет никаких групп
+        user_group = Group.objects.get(name='Users')
+        u.groups.add(user_group)
+        u.save()
+        return redirect('client')
 
 def client_logout(request):  # выйти из системы, возврат на стартовую страницу
     auth.logout(request)
