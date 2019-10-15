@@ -450,10 +450,8 @@ class VacancyDetail(View):   # ##################  There's a lot of work to remo
         resume_for_waiting = vacancy.in_waiting_for_resume.filter(client_cv=client)
         resume_for_accepted = vacancy.accept_for_resume.filter(client_cv=client)
         resume_for_rejected = vacancy.reject_for_resume.filter(client_cv=client)
-        first_flag = 1 if (vacancy in resume_for_waiting.vacancies_in_waiting.all()) or \
-                          (vacancy in resume_for_rejected.vacancies_reject.all()) else 0
-        second_flag = 1 if (vacancy in resume_for_waiting.vacancies_in_waiting.all()) or \
-                           (vacancy in resume_for_accepted.vacancies_accept.all()) else 0
+        first_flag = 1 if bool(resume_for_waiting or resume_for_rejected) else 0
+        second_flag = 1 if bool(resume_for_waiting or resume_for_accepted) else 0
         return render(request, 'client/client_vacancy_detail.html', context={
             'vacancy': vacancy,
             'first_flag': first_flag,
@@ -484,37 +482,37 @@ class RejectedVacancies(ObjectResumeMixin, View):    # Look utils_for_mixins.py
 
 
 def accept_reject(request):
-
-    if request.GET['flag'] == 'accept' and Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.all():
+    client = get_object_or_404(Client, user_client=request.user)
+    if request.GET['flag'] == 'accept' and Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.filter(client_cv=client):
         print(request.GET['id_v'], 1)
-        r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get()
+        r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_accept.add(v)
         r.vacancies_in_waiting.remove(v)
         r.save()
         return HttpResponse('accept_server')
 
-    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.all():
+    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.filter(client_cv=client):
         print(request.GET['id_v'], 2)
-        r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get()
+        r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_reject.add(v)
         r.vacancies_in_waiting.remove(v)
         r.save()
         return HttpResponse('reject_server')
 
-    elif request.GET['flag'] == 'accept' and Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.all():
+    elif request.GET['flag'] == 'accept' and Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.filter(client_cv=client):
         print(request.GET['id_v'], 3)
-        r = Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.get()
+        r = Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_accept.add(v)
         r.vacancies_reject.remove(v)
         r.save()
         return HttpResponse('accept_server')
 
-    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.all():
+    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.filter(client_cv=client):
         print(request.GET['id_v'], 4)
-        r = Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.get()
+        r = Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_reject.add(v)
         r.vacancies_accept.remove(v)
