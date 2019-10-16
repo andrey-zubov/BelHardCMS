@@ -68,10 +68,12 @@
                     {% endif %}
                     </div>
                 {% endif %}
-            {% if settings.suggestions == True %}
-                {% if unread_suggestions != 0 %}
+            {% if settings.suggestions %}
+                {% if unread_suggestions %}
+                    <a class="text-bar" href="{% url 'resumes_list_url' %}" id="clearnotif1">
                     <div class="notification" id="sug_notification"><h2>Новые
                         предложения: {{ unread_suggestions }} </h2><span class="close" id="close_sug"></span></div>
+                    </a>
                 {% endif %}
             {% endif %}
 
