@@ -239,12 +239,16 @@ class OpinionDelete(View):
 def client_login(request):  # ввести логин/пароль -> зайти в систему
     res = csrf(request)
     res['url'] = 'login'
+    if request.user.is_authenticated:  # редирект авторизированых пользователей со страницы логина
+        return redirect(to='client')
     if request.POST:
         password = request.POST['password']
         user = request.POST['user']
         u = auth.authenticate(username=user, password=password)
         if u:
             auth.login(request, u)
+            for i in u.groups.all():
+                return HttpResponse(i)
         else:
             res['error'] = "Неверный login/пароль"
             return render(request, 'registration.html', res)
