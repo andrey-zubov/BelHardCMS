@@ -1,6 +1,10 @@
 import logging
 from collections import defaultdict
 from time import perf_counter
+#from PIL import Image
+import logging
+from collections import defaultdict
+from time import perf_counter
 import json
 #from PIL import Image
 from django.contrib import auth
@@ -32,10 +36,10 @@ from BelHardCRM.settings import MEDIA_URL
 # from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
 #                                 load_cv_edition_page)
 from .forms import OpinionForm, AnswerForm, MessageForm
-# from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
-
 from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
 from recruit.forms import FileFieldForm
+# from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
+
 from .models import *
 # from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
 #                      pars_edu_request, pars_exp_request)
@@ -71,7 +75,7 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     client_instance = client_check(request.user)
     response['client_img'] = load_client_img(client_instance)
     context.update(response)
-    print(context['unread_suggestions'])
+    # print(context['unread_suggestions'])
     return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
@@ -432,6 +436,9 @@ def chat_update(request):
              'pub_date': s.pub_date.ctime()})
     return JsonResponse(send2, safe=False)
 
+# Poland's views ###################################################################################
+
+
 class VacancyDetail(View):   # ##################  There's a lot of work to remove all bugs...
     def get(self, request, id_v):
         client = get_object_or_404(Client, user_client=request.user)
@@ -472,7 +479,8 @@ class RejectedVacancies(ObjectResumeMixin, View):    # Look utils_for_mixins.py
 
 def accept_reject(request):
     client = get_object_or_404(Client, user_client=request.user)
-    if request.GET['flag'] == 'accept' and Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.filter(client_cv=client):
+    if request.GET['flag'] == 'accept' and \
+            Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.filter(client_cv=client):
         print(request.GET['id_v'], 1)
         r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
@@ -481,7 +489,8 @@ def accept_reject(request):
         r.save()
         return HttpResponse('accept_server')
 
-    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.filter(client_cv=client):
+    elif request.GET['flag'] == 'reject' and \
+            Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.filter(client_cv=client):
         print(request.GET['id_v'], 2)
         r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
@@ -490,7 +499,8 @@ def accept_reject(request):
         r.save()
         return HttpResponse('reject_server')
 
-    elif request.GET['flag'] == 'accept' and Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.filter(client_cv=client):
+    elif request.GET['flag'] == 'accept' and \
+            Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.filter(client_cv=client):
         print(request.GET['id_v'], 3)
         r = Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
@@ -499,7 +509,8 @@ def accept_reject(request):
         r.save()
         return HttpResponse('accept_server')
 
-    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.filter(client_cv=client):
+    elif request.GET['flag'] == 'reject' and \
+            Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.filter(client_cv=client):
         print(request.GET['id_v'], 4)
         r = Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
@@ -511,12 +522,15 @@ def accept_reject(request):
 
 def help_list(request):
     faqs = Help.objects.all()
-    return render(request, 'client/help.html', context={'faqs': faqs})
+    client_instance = client_check(request.user)
+    return render(request, 'client/help.html', context={'faqs': faqs,
+                                                        'client_img': load_client_img(client_instance)})
 
 
 def viewed(request):
     if request.GET['action'] == 'clear':
-        resumes = CV.objects.all()
+        client = get_object_or_404(Client, user_client=request.user)
+        resumes = CV.objects.filter(client_cv=client)
         for resume in resumes:
             r = resume
             r.notification.clear()
@@ -567,3 +581,5 @@ def parsing():
 
     client_row.save()
     # End Poland's views
+
+
