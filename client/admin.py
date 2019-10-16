@@ -31,6 +31,7 @@ class CVAdmin(admin.ModelAdmin):
 
 admin.site.register(CV, CVAdmin)
 
+admin.site.register(Client)
 
 class VacancyAdmin(admin.ModelAdmin):
     list_display = (
