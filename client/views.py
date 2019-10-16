@@ -75,12 +75,16 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     settings = Settings.objects.get(user=request.user)
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
-    # Poland
-    client = get_object_or_404(Client, user_client=request.user)    # Poland
+    #client = get_object_or_404(Client, user_client=request.user)    # Poland
+    try:
+        client = Client.objects.get(user_client=request.user)
+    except Client.DoesNotExist:
+        Client.objects.create(user_client=request.user)
+        client = Client.objects.get(user_client=request.user)
     resumes = CV.objects.filter(client_cv=client)                   # Poland
-    suggestions = 0
-    for resume in resumes:
-        suggestions += resume.notification.count()
+    suggestions = 0                                                 # Poland
+    for resume in resumes:                                          # Poland
+        suggestions += resume.notification.count()                  # Poland
     response['unread_suggestions'] = suggestions
     client_instance = client_check(request.user)
     response['client_img'] = load_client_img(client_instance)

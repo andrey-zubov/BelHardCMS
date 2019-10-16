@@ -30,7 +30,7 @@ urlpatterns = [
     path(r'opinion/edit/<int:pk>/', answer_create, name='opinion_answer'),
     path(r'opinion/edit/<int:pk>/delete/', OpinionDelete.as_view(), name='opinion_delete'),
     path('login/', client_login),
-    path('logout/', client_logout),
+    path('logout/', client_logout, name='logout'),
     path('tasks/', tasks, name='tasks_list'),
 
     path(r'checktask/', views.checktask),
