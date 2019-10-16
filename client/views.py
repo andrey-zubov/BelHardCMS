@@ -1,7 +1,6 @@
 import logging
 from collections import defaultdict
 from time import perf_counter
-import json
 #from PIL import Image
 import logging
 from collections import defaultdict
@@ -23,7 +22,6 @@ from django.http import HttpResponse
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView
 
-from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 # from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 
 from django.views.generic import View, TemplateView
@@ -34,9 +32,8 @@ from BelHardCRM.settings import MEDIA_URL
 # from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
 #                                 load_cv_edition_page)
 from .forms import OpinionForm, AnswerForm, MessageForm
-from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
-from recruit.forms import FileFieldForm
 # from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
+from recruit.forms import FileFieldForm
 
 from .models import *
 # from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
@@ -78,11 +75,16 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     settings = Settings.objects.get(user=request.user)
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
-    # Poland
-    resumes = CV.objects.all()   # нужно проверить соответствие Юзеру!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    suggestions = 0
-    for resume in resumes:
-        suggestions += resume.notification.count()
+    #client = get_object_or_404(Client, user_client=request.user)    # Poland
+    try:
+        client = Client.objects.get(user_client=request.user)
+    except Client.DoesNotExist:
+        Client.objects.create(user_client=request.user)
+        client = Client.objects.get(user_client=request.user)
+    resumes = CV.objects.filter(client_cv=client)                   # Poland
+    suggestions = 0                                                 # Poland
+    for resume in resumes:                                          # Poland
+        suggestions += resume.notification.count()                  # Poland
     response['unread_suggestions'] = suggestions
     client_instance = client_check(request.user)
     response['client_img'] = load_client_img(client_instance)
@@ -322,6 +324,7 @@ def client_login(request):  # ввести логин/пароль -> зайти
         u.save()
         return redirect('client')
 
+
 def client_logout(request):  # выйти из системы, возврат на стартовую страницу
     auth.logout(request)
     return redirect(to='login')  # вставить редирект куда требуется
@@ -441,7 +444,9 @@ def chat_update(request):
         send2.append({'author_id': s.author.id, 'author_name': s.author.username, 'message': s.message, 'message_id': s.id, 'pub_date': s.pub_date.ctime()})
 
     return JsonResponse(send2, safe=False)
+
 # Poland's views ###################################################################################
+
 
 class VacancyDetail(View):   # ##################  There's a lot of work to remove all bugs...
     def get(self, request, id_v):
@@ -483,7 +488,8 @@ class RejectedVacancies(ObjectResumeMixin, View):    # Look utils_for_mixins.py
 
 def accept_reject(request):
     client = get_object_or_404(Client, user_client=request.user)
-    if request.GET['flag'] == 'accept' and Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.filter(client_cv=client):
+    if request.GET['flag'] == 'accept' and \
+            Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.filter(client_cv=client):
         print(request.GET['id_v'], 1)
         r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
@@ -492,7 +498,8 @@ def accept_reject(request):
         r.save()
         return HttpResponse('accept_server')
 
-    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.filter(client_cv=client):
+    elif request.GET['flag'] == 'reject' and \
+            Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.filter(client_cv=client):
         print(request.GET['id_v'], 2)
         r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
@@ -501,7 +508,8 @@ def accept_reject(request):
         r.save()
         return HttpResponse('reject_server')
 
-    elif request.GET['flag'] == 'accept' and Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.filter(client_cv=client):
+    elif request.GET['flag'] == 'accept' and \
+            Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.filter(client_cv=client):
         print(request.GET['id_v'], 3)
         r = Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
@@ -510,7 +518,8 @@ def accept_reject(request):
         r.save()
         return HttpResponse('accept_server')
 
-    elif request.GET['flag'] == 'reject' and Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.filter(client_cv=client):
+    elif request.GET['flag'] == 'reject' and \
+            Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.filter(client_cv=client):
         print(request.GET['id_v'], 4)
         r = Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
@@ -524,12 +533,13 @@ def help_list(request):
     faqs = Help.objects.all()
     client_instance = client_check(request.user)
     return render(request, 'client/help.html', context={'faqs': faqs,
-                                                        'client_img':load_client_img(client_instance)})
+                                                        'client_img': load_client_img(client_instance)})
 
 
 def viewed(request):
     if request.GET['action'] == 'clear':
-        resumes = CV.objects.all()
+        client = get_object_or_404(Client, user_client=request.user)
+        resumes = CV.objects.filter(client_cv=client)
         for resume in resumes:
             r = resume
             r.notification.clear()
@@ -579,6 +589,6 @@ def parsing():
     client_row.city = city
 
     client_row.save()
-    # End Poland's views
+# End Poland's views ###################################################################################$$$$
 
 

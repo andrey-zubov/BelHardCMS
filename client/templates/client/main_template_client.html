@@ -54,43 +54,30 @@
         <section class="content" >
         {% block content %}
         <img src="https://static.wixstatic.com/media/3e33b4_8434f559fcaa44a39ecfd54bf197fba5~mv2.png/v1/fill/w_750,h_350,al_c,q_80,usm_0.66_1.00_0.01/tild6162-3961-4262-b966-316166666133__lo.png" alt="">
-                {%if settings.tasks == True %}
-                        {%if readtask != 0 %}
-                            <div class="notification" id="task_notification"><h2> Новые задачи:  {{ readtask }} </h2> <span class="close" id="close_task"></span></div>
-                        {% endif %}
-                    {% endif %}
-                    <div id="check_notifications">
-                    {%if settings.messages == True %}
-                        {% if unread_messages != 0 %}
-                            <div class="notification" id="mes_notification"><h2>Новые сообщения:  {{ unread_messages }} </h2><span class="close" id="close_mes"></span></div>
-                        {% endif %}
-                        </div>
-                    {% endif %}
-                    {%if settings.suggestions == True %}
-                            {% if unread_suggestions != 0 %}
-                                <div class="notification" id="sug_notification"><h2>Новые предложения:  {{ unread_suggestions }} </h2><span class="close" id="close_sug"></span></div>
-                            {% endif %}
-
-                    {% endif %}
-
-                <!-- There is KOSTYL from Poland))-->
-
-                {% if status %}
-                <div class="p-sm-5 pt-sm-5 fixed-bottom" >
-                    {% if notification %}
-                        <a href="{% url 'resumes_list_url' %}" id="clearnotif1">
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                           Новых предложений: <strong> {{ notification }}</strong>.
-                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                               <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        </a>
-                    {% endif %}
-                </div>
+            {% if settings.tasks == True %}
+                {% if readtask != 0 %}
+                    <div class="notification" id="task_notification"><h2> Новые задачи: {{ readtask }} </h2> <span
+                            class="close" id="close_task"></span></div>
                 {% endif %}
+            {% endif %}
+            <div id="check_notifications">
+                {% if settings.messages == True %}
+                    {% if unread_messages != 0 %}
+                        <div class="notification" id="mes_notification"><h2>Новые сообщения: {{ unread_messages }} </h2>
+                            <span class="close" id="close_mes"></span></div>
+                    {% endif %}
+                    </div>
+                {% endif %}
+            {% if settings.suggestions %}
+                {% if unread_suggestions %}
+                    <a class="text-bar" href="{% url 'resumes_list_url' %}" id="clearnotif1">
+                    <div class="notification" id="sug_notification"><h2>Новые
+                        предложения: {{ unread_suggestions }} </h2><span class="close" id="close_sug"></span></div>
+                    </a>
+                {% endif %}
+            {% endif %}
 
-            {% endblock %}
+        {% endblock %}
 
         </section>
 
