@@ -75,7 +75,7 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     settings = Settings.objects.get(user=request.user)
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
 
-    #client = get_object_or_404(Client, user_client=request.user)    # Poland
+    # Poland
     try:
         client = Client.objects.get(user_client=request.user)
     except Client.DoesNotExist:
