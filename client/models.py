@@ -217,7 +217,7 @@ class CV(models.Model):
         return reverse('resume_detail_url', kwargs={'id_c': self.id})
 
     def get_accept_url(self):
-        return reverse('accepted_vacancies_url', kwargs={'id': self.id})
+        return reverse('accepted_vacancies_url', kwargs={'id_c': self.id})
 
     def get_reject_url(self):
         return reverse('rejected_vacancies_url', kwargs={'id_c': self.id})
