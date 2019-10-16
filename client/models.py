@@ -203,7 +203,7 @@ class CV(models.Model):
     position = models.CharField(max_length=100, null=True, blank=True)
     employment = models.ForeignKey(Employment, on_delete=models.SET_NULL, null=True, blank=True)
     time_job = models.ForeignKey(TimeJob, on_delete=models.SET_NULL, null=True, blank=True)
-    salary = models.CharField(max_length=10, null=True, blank=True)
+    salary = models.CharField(max_length=20, null=True, blank=True)
     type_salary = models.ForeignKey(TypeSalary, on_delete=models.SET_NULL, null=True, blank=True)
     # There is Poland's upgrade
     vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
@@ -212,7 +212,7 @@ class CV(models.Model):
     notification = models.ManyToManyField('Vacancy', blank=True, related_name='notifications_for_resume')
 
     def __str__(self):
-        return '{}'.format(self.position)
+        return self.position
 
     def get_absolute_url(self):
         return reverse('resume_detail_url', kwargs={'id_c': self.id})
@@ -478,19 +478,7 @@ class SubTasks(models.Model):
     #    return self.telephone_number
 
 
-# class Settings(models.Model):
-#     user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
-#     messages = models.BooleanField(default=True)
-#     tasks = models.BooleanField(default=True)
-#     suggestions = models.BooleanField(default=True)
-#     meetings = models.BooleanField(default=True)
-#
-#     name_setting = models.TextField(max_length=50, blank=True, null=True)
-#     name_setting_status = models.BooleanField(default=True)
-#     tumbler_on_off = models.CharField(max_length=50, blank=True, null=True)
-#
-#     def __str__(self):
-#         return self.name_setting
+
 
 
 class Settings(models.Model):
