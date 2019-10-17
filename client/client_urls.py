@@ -1,12 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import path
-
-from client import views
+from . import views
 from .edit.load_data_list import (SkillsDataList, InstitutionDataList, CvPositionDataList)
 from .views import *
 
-from client.edit.load_data_list import (SkillsDataList, InstitutionDataList, CvPositionDataList)
-from client.views import *
 
 urlpatterns = [
     path('', views.client_main_page, name='client'),  # main client page
@@ -49,11 +46,13 @@ urlpatterns = [
     path('cv/<id_c>/accepted_vacancies/', AcceptedVacancies.as_view(), name='accepted_vacancies_url'),
     path('cv/<id_c>/rejected_vacancies/', RejectedVacancies.as_view(), name='rejected_vacancies_url'),
     path('cv/vacancy/<id_v>/', VacancyDetail.as_view(), name='vacancy_detail_url'),
-    path('accept_reject/', views.accept_reject),
+    path('accept_reject/', accept_reject),
     path('help/', help_list, name='help_list_url'),
+    path('viewed/', viewed),
+    path('admin_jobinterviews/', admin_jobinterviews),
     path('viewed/', views.viewed),
     path('admin_jobinterviews/', views.admin_jobinterviews),
-    path('interviews', interviews_list, name='interviews_list_url'),
+    path('interviews/', interviews_list, name='interviews_list_url'),
     path(r'checkinterviews/', views.checkinterviews),
 
 

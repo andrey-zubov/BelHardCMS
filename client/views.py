@@ -9,7 +9,6 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
 
 from django.urls import reverse
-
 from recruit import recruit_url
 
 from django.urls import reverse
@@ -18,16 +17,19 @@ from django.views import View
 from django.http import HttpResponse
 from django.http import HttpResponse, JsonResponse
 
-from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet
+# from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 
 from django.views.generic import View, TemplateView
 from .utils_for_mixins import ObjectResumeMixin
 
 
 from BelHardCRM.settings import MEDIA_URL
-from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
-                                 load_cv_edition_page)
+# from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
+#                                 load_cv_edition_page)
 from .forms import OpinionForm, AnswerForm, MessageForm
+# from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
+
+
 from .forms import EducationFormSet, CertificateFormSet
 from .models import *
 from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
@@ -233,8 +235,7 @@ class OpinionCreate(View):
         form = OpinionForm()
         client_instance = client_check(request.user)
         return render(request, 'opinion/opinion_create.html', context={'form': form,
-                                                                       'client_img':load_client_img(client_instance), 'opinions':opinions})
-
+                                                                 'client_img':load_client_img(client_instance), 'opinions':opinions})
 
     def post(self, request):
         opinions = Opinion.objects.all()

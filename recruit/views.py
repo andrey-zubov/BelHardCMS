@@ -4,17 +4,17 @@ from client.models import Client
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
+from django.views.generic import View
 from django.views.generic.edit import FormView
 from django.template.context_processors import csrf
 
-from django.template.context_processors import csrf
 from django.urls import reverse
 from django.http import HttpResponse
 from .models import *
 
-
+# There is Poland's views #################################################################################
 def recruiter_main_page(request):
-    return render(request=request, template_name='recruit/main_template_recruiter.html', )
+    return render(request, template_name='recruit/main_template_recruiter.html', )
 
 
 def base_of_applicants(request):
@@ -28,21 +28,18 @@ def applicant(request, id_a):
     return render(request, 'recruit/recruiter_applicant.html', context={'applicant_user': applicant_user})
 
 
-def applicant_tasks(request, id_a):
-    applicant_user = Client.objects.get(id=id_a)
-    response = csrf(request)
-    response['applicant_user'] = applicant_user
-    if request.method == 'POST':
-        response['form'] = FileFieldForm()
+class CreateJobInterview(View):
+    def get(self, request, id_a):
+        # form = JobInterviewsForm()
+        applicant_user = Client.objects.get(id=id_a)
+        response = csrf(request)
+        response['applicant_user'] = applicant_user
+        if request.method == 'POST':
+            response['form'] = JobInterviewsForm()
+        else:
+            response['form'] = JobInterviewsForm()
+        return render(request, 'recruit/recruiter_tasks_for_applicant.html', context=response)
 
-    else:
-        response['form'] = FileFieldForm()
-
-    return render(request, 'recruit/recruiter_tasks_for_applicant.html', context=response)
-
-
-def recruit_main_page(request):
-    return render(request, template_name='recruit/recruit_main_template.html')
 
 def recruit_chat(request):
     chat_list = Chat.objects.filter(members=request.user)
