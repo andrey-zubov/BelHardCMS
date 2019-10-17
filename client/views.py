@@ -33,7 +33,7 @@ from BelHardCRM.settings import MEDIA_URL
 #                                 load_cv_edition_page)
 from .forms import OpinionForm, AnswerForm, MessageForm
 # from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
-from recruit.forms import FileFieldForm
+
 
 from .models import *
 # from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,

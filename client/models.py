@@ -273,7 +273,7 @@ class JobInterviews(models.Model):
     cv = models.ForeignKey(to='CV', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Резюме')
     name = models.CharField(max_length=50, verbose_name='Наименование')
     interview_author = models.CharField(max_length=50, verbose_name='Автор собеседования', blank=True, null=True)
-    time_of_creation = models.DateTimeField(blank=True, null=True, verbose_name='Время создания')
+    time_of_creation = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
     period_of_execution = models.DateTimeField(blank=True, null=True, verbose_name='Срок исполнения')
     reminder = models.DateTimeField(blank=True, null=True, verbose_name='Напоминание')
     position = models.CharField(max_length=50, verbose_name='Предполагаемая должность')
@@ -320,14 +320,18 @@ class JobInterviews(models.Model):
 
 
 class FilesForJobInterviews(models.Model):
-    jobinterviews_files = models.ForeignKey(to='JobInterviews', on_delete=models.CASCADE)
+    jobinterviews_files = models.ForeignKey(
+        to='JobInterviews',
+        on_delete=models.CASCADE,
+        related_name='files_for_jobinterview'
+    )
     add_file = models.FileField(verbose_name='Вложения', blank=True, null=True)
 
     class Meta:
         verbose_name = 'Файл'
         verbose_name_plural = 'Файлы'
 
-#########End Poland Task 1 & 2 ##############
+# ########End Poland ##############
 
 
 class Client(models.Model):
