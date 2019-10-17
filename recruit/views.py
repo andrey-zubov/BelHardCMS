@@ -1,7 +1,8 @@
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
-from client.models import Chat, Message
+from client.models import Chat, Message, Tasks, UserModel, SubTasks
+from datetime import datetime
 
 def recruit_main_page(request):
     return render(request, template_name='recruit/recruit_main_template.html')
@@ -69,3 +70,27 @@ def check_mes(request):
         send.append(new_dict)
 
     return JsonResponse(send, safe=False)
+
+
+def add_task(request):
+    context = {}
+    context['users_list'] = UserModel.objects.all()
+    #context['newtask'] = newtask
+    return render(request=request, template_name='recruit/add_task.html', context=context)
+
+
+def add_new_task(requset):
+    try:
+        user = UserModel.objects.get(username=requset.POST['name'])
+    except UserModel.DoesNotExist: #TODO сделать проверку в отправек формы?
+        return HttpResponse('Необходимо задать юзера')
+    newtask = Tasks.objects.create()
+    newtask.user = user
+    newtask.title = requset.POST['task_title']
+    newtask.comment = str(requset.POST['task_comment'])
+    #newtask.time = datetime.now()
+    newtask.save()
+    newsubtask = SubTasks(title=requset.POST['task_subtask'], task=newtask) #TODO расширить список подзадач
+    newsubtask.save()
+
+    return redirect(to='add_task')
