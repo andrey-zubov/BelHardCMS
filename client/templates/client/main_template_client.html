@@ -70,10 +70,10 @@
                 {% endif %}
             {% if settings.suggestions %}
                 {% if unread_suggestions %}
-                    <!--<a class="text-bar" href="{% url 'resumes_list_url' %}" id="clearnotif1">-->
+                    <a class="text-bar" href="{% url 'resumes_list_url' %}" id="clearnotif1">
                     <div class="notification" id="sug_notification"><h2>Новые
                         предложения: {{ unread_suggestions }} </h2><span class="close" id="close_sug"></span></div>
-                    <!--</a>-->
+                    </a>
                 {% endif %}
             {% endif %}
             {%if settings.meetings == True %}
@@ -84,14 +84,14 @@
             {% endif %}
         {% endblock %}
 
-        </section>
+    </section>
 
-        <div class="footer-bar">
-                 <a class="text-footer" href="{% url 'help_list_url' %}" >Помощь</a>
-                 <a class="text-footer" href="{% url 'settings_menu' %}">Настройки</a>
-                 <a class="text-footer" href="{% url 'opinion_create' %}" >Оставить отзыв</a>
-        </div>
+    <div class="footer-bar">
+        <a class="text-footer" href="{% url 'help_list_url' %}">Помощь</a>
+        <a class="text-footer" href="{% url 'settings_menu' %}">Настройки</a>
+        <a class="text-footer" href="{% url 'opinion_create' %}">Оставить отзыв</a>
     </div>
+</div>
 
 
 </body>
