@@ -11,10 +11,10 @@ def pars_exp_request(req_post) -> list:
     # print("\texp_request.POST: %s" % req_post)
     time_0 = perf_counter()
 
-    arr = []  # выходной массив
+    arr = []  # output list
     dict_up = {'experience_1': '', 'experience_2': '', 'experience_3': '',
-               'exp_date_start': '', 'exp_date_end': '', 'experience_4': ''}  # временный словарь
-    count = 0  # костыль для обнаружения Сферы деятельности в нескольких формах
+               'exp_date_start': '', 'exp_date_end': '', 'experience_4': ''}  # temporary dictionary
+    count = 0  # crutch for detection Client Spheres in several forms
     for i in dict(req_post).items():
         # print("\ti: %s, %s" % (i[0], i[1]))
         if re.match('experience_11', i[0]):  # i: experience_11, ['qwe1 qwe1']
@@ -95,53 +95,68 @@ def pars_edu_request(req_post, _file) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели Education. """
     print("pars_edu_request()")
-    # print("exp_request.POST: %s" % req_post)
-    # print("exp_request.FILE: %s" % _file)
+    print("\texp_request.POST: %s" % req_post)
+    print("\texp_request.FILE: %s" % _file)
     from time import perf_counter
     time_0 = perf_counter()
 
-    arr = []
+    arr = []  # output list
     dict_up = {'institution': '', 'subject_area': '', 'specialization': '', 'qualification': '',
-               'date_start': '', 'date_end': '', 'certificate_img': '', 'certificate_url': ''}
-    count = 0
-    for i in req_post.items():
-        # print("i: %s, %s" % (i[0], i[1]))
+               'date_start': '', 'date_end': '', 'certificate': ''}  # temporary dictionary
+    count = 0  # crutch for detection Edu. Certificates in several forms
+    count_cert = 0  # crutch for detection Edu. Certificates in several forms
+    cert_arr = []  # temporary certificate array
 
-        if re.match('institution', i[0]):
-            dict_up['institution'] = i[1]
+    for i in dict(req_post).items():
+        print("\ti: %s, %s" % (i[0], i[1]))
 
-        if re.match('subject_area', i[0]):
-            dict_up['subject_area'] = i[1]
+        if re.match('institution1', i[0]):
 
-        if re.match('specialization', i[0]):
-            dict_up['specialization'] = i[1]
+            if any(dict_up.values()):
+                """ If it is a next Edu. dictionary from POST. Clean all temporary objects. """
+                cert_arr = []
+                print(dict_up)
+                arr.append(dict_up)
+                dict_up = {'institution': '', 'subject_area': '', 'specialization': '', 'qualification': '',
+                           'date_start': '', 'date_end': '', 'certificate': ''}
+                print('----')
 
-        if re.match('qualification', i[0]):
-            dict_up['qualification'] = i[1]
+            count += 1
+            dict_up['institution'] = i[1][0]
 
-        if re.match('date_start', i[0]):
-            dict_up['date_start'] = i[1]
+        if re.match('subject_area1', i[0]):
+            dict_up['subject_area'] = i[1][0]
 
-        if re.match('date_end', i[0]):
-            dict_up['date_end'] = i[1]
+        if re.match('specialization1', i[0]):
+            dict_up['specialization'] = i[1][0]
 
-        if re.match('certificate_url', i[0]):
-            dict_up['certificate_url'] = i[1]  # req_post.getlist('certificate_url')
+        if re.match('qualification1', i[0]):
+            dict_up['qualification'] = i[1][0]
+
+        if re.match('date_start1', i[0]):
+            dict_up['date_start'] = i[1][0] if i[1][0] else None
+
+        if re.match('date_end1', i[0]):
+            dict_up['date_end'] = i[1][0] if i[1][0] else None
+
+        if re.match('certificate_url1', i[0]):
+            count_cert += 1
+            url = i[1][0]
+            img = None
 
             """ request.FILE == MultiValueDict{'key': [<InMemoryUploadedFile: x.png (image/png)>]} """
-            for f in _file.items():
-                if re.match('certificate_img[0-9][0-9]?', f[0]):
-                    if (str(f[0])[-1] == str(count)) or (count == 0):
-                        dict_up['certificate_img'] = f[1]
-                        break
+            for f in dict(_file).items():
+                print("\tf: %s, %s" % (f[0], f[1]))
+                if re.match('certificate_img1', f[0]):
+                    img = f[1][0]
 
-            # print(dict_up)
-            arr.append(dict_up)
-            dict_up = {'institution': '', 'subject_area': '', 'specialization': '', 'qualification': '',
-                       'date_start': '', 'date_end': '', 'certificate_img': '', 'certificate_url': ''}
-            count += 1
-            # print('----')
+            cert_arr.append((url, img))
+            dict_up['certificate'] = cert_arr
 
-    print('time_it = %s sec' % (perf_counter() - time_0))
-    print("arr: %s" % arr)
+    """ For loop ends - save temporary dictionary to the output arr. """
+    print("\tdict_up" % dict_up)
+    arr.append(dict_up)
+
+    print('\tpars_edu_request() - OK; Time = %s sec' % (perf_counter() - time_0))
+    print("\tout_arr: %s" % arr)
     return arr

@@ -35,7 +35,7 @@ def edit_page_get(client):
             response['cl_phone'] = phone_arr
             response['client'] = client
 
-        print('TIME edit_page_get(): %s' % (perf_counter() - time_0))
+        print('\tedit_page_get() - OK; Time: %s' % (perf_counter() - time_0))
         return response
     except Exception as ex:
         logging.error("Exception in - edit_page_get()\n %s" % ex)
@@ -54,7 +54,7 @@ def skills_page_get(client):
             skills_arr = [i['skill'] for i in Skills.objects.filter(client_skills=client).values()]
             response['cl_skill'] = skills_arr
 
-        print('TIME skills_page_get(): %s' % (perf_counter() - time_0))
+        print('\tskills_page_get() - OK; Time: %s' % (perf_counter() - time_0))
         return response
     except Exception as ex:
         logging.error("Exception in skills_page_get()\n%s" % ex)
@@ -83,7 +83,7 @@ def education_page_get(client):
                         e['link'] = c[0]['link']
                         e['show_img'] = "%s%s" % (MEDIA_URL, c[0]['img'])
             # print("cl_edu: %s" % response['cl_edu'])
-        print('TIME education_page_get(): %s' % (perf_counter() - time_0))
+        print('\teducation_page_get() - OK; Time: %s' % (perf_counter() - time_0))
         return response
     except Exception as ex:
         logging.error("Exception in education_page_get()\n%s" % ex)
@@ -95,8 +95,9 @@ def cv_page_get(client):
     """" views.py ClientEditCv(TemplateView) GET method. """
     try:
         print("cv_page_get()")
+        time_0 = perf_counter()
         response = defaultdict()
-
+        # default select fields
         response['employment'] = Employment.objects.all()
         response['time_job'] = TimeJob.objects.all()
         response['type_salary'] = TypeSalary.objects.all()
@@ -107,11 +108,12 @@ def cv_page_get(client):
             response['cl_cvs'] = cvs_val
 
             for c in cvs_val:
+                # add more keys to response['cl_cvs'] dictionary
                 c['cl_employment'] = Employment.objects.get(id=c['employment_id']).employment
                 c['cl_time_job'] = TimeJob.objects.get(id=c['time_job_id']).time_job_word
                 c['cl_type_salary'] = TypeSalary.objects.get(id=c['type_salary_id']).type_word
 
-            print("cl_cvs: %s" % response['cl_cvs'])
+            print("\tcv_page_get() - OK; Time: %s" % (perf_counter() - time_0))
         return response
     except Exception as ex:
         logging.error("Exception in cv_page_get()\n%s" % ex)
@@ -123,6 +125,7 @@ def experience_page_get(client):
     """" views.py ClientEditExperience(TemplateView) GET method. """
     try:
         print("experience_page_get()")
+        time_0 = perf_counter()
         response = defaultdict()
         response['sphere'] = Sphere.objects.all()
         if client:
@@ -134,7 +137,7 @@ def experience_page_get(client):
                 sphere = [i['sphere_word'] for i in e.sphere.values()]
                 exp_dict[i]['sphere'] = sphere
 
-            # print("response: %s" % response)
+            print("\texperience_page_get() - OK; Time: %s" % (perf_counter() - time_0))
         return response
     except Exception as ex:
         logging.error("Exception in experience_page_get()\n%s" % ex)

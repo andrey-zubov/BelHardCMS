@@ -40,7 +40,7 @@ def edit_page_post(client_instance, request):
 
     if not client_instance:
         """ Если карточки нету - создаём. """
-        print('User Profile DO NOT exists - creating!')
+        print('\tUser Profile DO NOT exists - creating!')
 
         client = Client(
             user_client=user,
@@ -64,7 +64,7 @@ def edit_page_post(client_instance, request):
     else:
         """ Если карточка есть - достаём из БД Объект = Клиент_id.
         Перезаписываем (изменяем) существующие данныев. """
-        print('User Profile exists - Overwriting user data')
+        print('\tUser Profile exists - Overwriting user data')
 
         user_model = UserModel.objects.get(id=client_instance.user_client_id)
         user_model.first_name = user_name
@@ -106,7 +106,7 @@ def edit_page_post(client_instance, request):
             )
             phone.save()
 
-    print('edit_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
+    print('\tedit_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
 # TeamRome
@@ -118,7 +118,7 @@ def skills_page_post(client_instance, request):
 
     if any(skills_arr):
         Skills.objects.filter(client_skills=client_instance).delete()
-        # print("skill: %s" % skills_arr)
+        # print("\tskill: %s" % skills_arr)
         for s in skills_arr:
             if s:
                 """ ОБЪЕДИНЕНИЕ модуля Навыки с конкретным залогиненым клиентом!!! """
@@ -128,8 +128,8 @@ def skills_page_post(client_instance, request):
                 )
                 skill.save()
     else:
-        print("No skills")
-    print('skills_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
+        print("\tNo skills")
+    print('\tskills_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
 # TeamRome
@@ -143,7 +143,7 @@ def photo_page_post(client_instance, request):
         img = form.cleaned_data.get('img')
         client_instance.img = img
         client_instance.save()
-    print('photo_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
+    print('\tphoto_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
 # TeamRome
@@ -155,41 +155,43 @@ def education_page_post(client_instance, request):
 
     if any(arr_edu):
         Education.objects.filter(client_edu=client_instance).delete()
-
         for edus in arr_edu:
-            institution = edus['institution']
-            subject_area = edus['subject_area']
-            specialization = edus['specialization']
-            qualification = edus['qualification']
-            date_start = edus['date_start']
-            date_end = edus['date_end']
-            link = edus['certificate_url']
-            img = edus['certificate_img']
-
             if any(edus.values()):
+
+                institution = edus['institution']
+                subject_area = edus['subject_area']
+                specialization = edus['specialization']
+                qualification = edus['qualification']
+                date_start = edus['date_start']
+                date_end = edus['date_end']
+                cert_arr = edus['certificate']
+
                 education = Education(
                     client_edu=client_instance,
                     institution=institution,
                     subject_area=subject_area,
                     specialization=specialization,
                     qualification=qualification,
-                    date_start=date_start if date_start else None,
-                    date_end=date_end if date_end else None
+                    date_start=date_start,
+                    date_end=date_end,
                 )
                 education.save()
 
-                certificate = Certificate(
-                    education=education,
-                    img=img,
-                    link=link
-                )
-                certificate.save()
+                for c in cert_arr:  # array of tuples
+                    certificate = Certificate(
+                        education=education,
+                        img=c[1],
+                        link=c[0],
+                    )
+                    certificate.save()
 
-                # print("Education Form - OK\n", institution, subject_area, specialization, qualification,
-                #       date_start if date_start else None, date_end if date_end else None, img, link)
+                print("\tEducation Form - OK:\n\t", institution, subject_area, specialization, qualification,
+                      date_start, date_end, cert_arr)
             else:
-                print('Education Form is Empty')
-    print('education_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
+                print('\tEducation Form is Empty')
+    else:
+        print('\tEducation Parser is Empty')
+    print('\teducation_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
 # TeamRome
@@ -219,10 +221,12 @@ def cv_page_post(client_instance, request):
                     type_salary=type_salary,
                 )
                 cv.save()
-                # print("CV Form - OK\n", position, employment, time_job, salary, type_salary)
+                # print("\tCV Form - OK:\n\t", position, employment, time_job, salary, type_salary)
             else:
-                print('Cv form is Empty')
-    print('cv_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
+                print('\tCv form is Empty')
+    else:
+        print('\tCV Parser is Empty')
+    print('\tcv_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
 # TeamRome
@@ -262,11 +266,12 @@ def experience_page_post(client_instance, request):
                         sp.save()
                         experiences.sphere.add(sp)
 
-                # print("Experience Form - OK:\n", organisation, spheres, position, start_date if start_date else None,
-                #       end_date if end_date else None, duties if duties else None)
+                # print("\tExperience Form - OK:\n\t", organisation, spheres, position, start_date, end_date, duties)
             else:
-                print('Experience Form is Empty')
-    print('experience_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
+                print('\tExperience Form is Empty')
+    else:
+        print('\tExperience Parser is Empty')
+    print('\texperience_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
 # TeamRome
