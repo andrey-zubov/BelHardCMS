@@ -73,16 +73,17 @@ def education_page_get(client):
             response['cl_edu'] = edus
             edu_id = [e['id'] for e in response['cl_edu']]
             certs = [[c for c in Certificate.objects.filter(education_id=i).values()] for i in edu_id]
-
+            # print("\tcerts: %s" % certs)
             for e in edus:
-                # print("e: %s" % e)
+                # print("\te: %s" % e)
                 for c in certs:
-                    # print("c: %s" % c)
-                    if c[0]['education_id'] == e['id']:
-                        e['img'] = "%s%s" % (MEDIA_URL, c[0]['img'])
-                        e['link'] = c[0]['link']
-                        e['show_img'] = "%s%s" % (MEDIA_URL, c[0]['img'])
-            # print("cl_edu: %s" % response['cl_edu'])
+                    # print("\tc: %s" % c)
+                    if c:
+                        if c[0]['education_id'] == e['id']:
+                            e['img'] = "%s%s" % (MEDIA_URL, c[0]['img'])
+                            e['link'] = c[0]['link']
+                            e['show_img'] = "%s%s" % (MEDIA_URL, c[0]['img'])
+            # print("\tcl_edu: %s" % response['cl_edu'])
         print('\teducation_page_get() - OK; Time: %s' % (perf_counter() - time_0))
         return response
     except Exception as ex:

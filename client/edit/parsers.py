@@ -110,51 +110,58 @@ def pars_edu_request(req_post, _file) -> list:
     for i in dict(req_post).items():
         print("\ti: %s, %s" % (i[0], i[1]))
 
-        if re.match('institution1', i[0]):
+        if re.match('institution1', i[0]):  # i: institution11, ['rocket_science_1']
 
             if any(dict_up.values()):
                 """ If it is a next Edu. dictionary from POST. Clean all temporary objects. """
                 cert_arr = []
-                print(dict_up)
+                print("\tdict_up: %s" % dict_up)
                 arr.append(dict_up)
                 dict_up = {'institution': '', 'subject_area': '', 'specialization': '', 'qualification': '',
                            'date_start': '', 'date_end': '', 'certificate': ''}
-                print('----')
+                print('\t----')
 
             count += 1
             dict_up['institution'] = i[1][0]
 
-        if re.match('subject_area1', i[0]):
+        if re.match('subject_area1', i[0]):  # i: subject_area11, ['rocket_science_1']
             dict_up['subject_area'] = i[1][0]
 
-        if re.match('specialization1', i[0]):
+        if re.match('specialization1', i[0]):  # i: specialization11, ['rocket_science_1']
             dict_up['specialization'] = i[1][0]
 
-        if re.match('qualification1', i[0]):
+        if re.match('qualification1', i[0]):  # i: qualification11, ['rocket_science_1']
             dict_up['qualification'] = i[1][0]
 
-        if re.match('date_start1', i[0]):
+        if re.match('date_start1', i[0]):  # i: date_start11, ['2019-10-06'] or date_start11, ['']
             dict_up['date_start'] = i[1][0] if i[1][0] else None
 
-        if re.match('date_end1', i[0]):
+        if re.match('date_end1', i[0]):  # i: date_end11, ['2019-10-23'] or i: date_end11, ['']
             dict_up['date_end'] = i[1][0] if i[1][0] else None
 
-        if re.match('certificate_url1', i[0]):
+        if re.match('certificate_url1', i[0]):  # i: certificate_url11, ['http://192.168.0.51:8000/rocket_science_1']
             count_cert += 1
             url = i[1][0]
             img = None
 
             """ request.FILE == MultiValueDict{'key': [<InMemoryUploadedFile: x.png (image/png)>]} """
             for f in dict(_file).items():
+                if not f[1][0]:
+                    continue
                 print("\tf: %s, %s" % (f[0], f[1]))
-                if re.match('certificate_img1', f[0]):
-                    img = f[1][0]
+                # f: certificate_img11, [<InMemoryUploadedFile: 123.png (image/png)>]
+                if count:
+                    if re.match('certificate_img1%s' % count, f[0]):
+                        img = f[1][0]
+                else:
+                    if re.match('certificate_img1', f[0]):
+                        img = f[1][0]
 
             cert_arr.append((url, img))
             dict_up['certificate'] = cert_arr
 
     """ For loop ends - save temporary dictionary to the output arr. """
-    print("\tdict_up" % dict_up)
+    print("\tdict_up: %s" % dict_up)
     arr.append(dict_up)
 
     print('\tpars_edu_request() - OK; Time = %s sec' % (perf_counter() - time_0))

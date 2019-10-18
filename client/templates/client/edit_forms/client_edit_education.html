@@ -27,11 +27,12 @@
                         var attr_name_0 = $(element_0).attr('name');
                         $(element_0).attr('name', attr_name_0 + count);
                         $(element_0).attr('value', '');
+                    } else {
+                        var element = $(current_div[i]).children('input');
+                        var attr_name = $(element).attr('name');
+                        $(element).attr('name', attr_name + count);
+                        $(element).attr('value', '');
                     }
-                    var element = $(current_div[i]).children('input');
-                    var attr_name = $(element).attr('name');
-                    $(element).attr('name', attr_name + count);
-                    $(element).attr('value', '');
                 }
                 count++;
                 // Изменяет вложенный текст
@@ -68,51 +69,51 @@
                         <div class="form-group">
                             <label for="id_institution">Учебное заведение</label>
                             <input type="text" class="form-control" id="id_institution"
-                                   name="institution{{ forloop.counter }}"
+                                   name="institution1{{ forloop.counter }}"
                                    value="{{ edu.institution }}">
                         </div>
                         <div class="form-group">
                             <label for="id_subject_area">Предметная область</label>
                             <input type="text" class="form-control" id="id_subject_area"
-                                   name="subject_area{{ forloop.counter }}"
+                                   name="subject_area1{{ forloop.counter }}"
                                    value="{{ edu.subject_area }}">
                         </div>
                         <div class="form-group">
                             <label for="id_specialization">Специальность</label>
                             <input type="text" class="form-control" id="id_specialization"
-                                   name="specialization{{ forloop.counter }}"
+                                   name="specialization1{{ forloop.counter }}"
                                    value="{{ edu.specialization }}">
                         </div>
                         <div class="form-group">
                             <label for="id_qualification">Квалификация</label>
                             <input type="text" class="form-control" id="id_qualification"
-                                   name="qualification{{ forloop.counter }}"
+                                   name="qualification1{{ forloop.counter }}"
                                    value="{{ edu.qualification }}">
                         </div>
                         <p>Период обучения:</p>
                         <div class="form-group">
                             <label for="id_date_start">Дата начала</label>
                             <input type="date" class="form-control" id="id_date_start"
-                                   name="date_start{{ forloop.counter }}"
+                                   name="date_start1{{ forloop.counter }}"
                                    value="{{ edu.date_start|date:"Y-m-d" }}">
                         </div>
                         <div class="form-group">
                             <label for="id_date_end">Дата окончания</label>
                             <input type="date" class="form-control" id="id_date_end"
-                                   name="date_end{{ forloop.counter }}"
+                                   name="date_end1{{ forloop.counter }}"
                                    value="{{ edu.date_end|date:"Y-m-d" }}">
                         </div>
                         <div class="form-group">
                             <label for="id_certificate_img">Сертификат (img)</label>
                             <img src="{{ edu.img }}" alt="img" class="m-2" height="64">
                             <input type="file" class="form-control" id="id_certificate_img"
-                                   name="certificate_img{{ forloop.counter }}"
+                                   name="certificate_img1{{ forloop.counter }}"
                                    value="{{ edu.img }}">
                         </div>
                         <div class="form-group">
                             <label for="id_certificate_url">Сертификат (ссылка)</label>
                             <input type="url" class="form-control" id="id_certificate_url"
-                                   name="certificate_url{{ forloop.counter }}"
+                                   name="certificate_url1{{ forloop.counter }}"
                                    value="{{ edu.link }}">
                         </div>
                     </div>
