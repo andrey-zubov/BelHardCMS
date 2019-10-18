@@ -1,5 +1,5 @@
 from django import forms
-from client.models import JobInterviews
+from client.models import JobInterviews, Client
 
 
 # class FileFieldForm(forms.ModelForm):
@@ -17,7 +17,6 @@ class JobInterviewsForm(forms.ModelForm):
     class Meta:
         model = JobInterviews
         fields = [
-            'done_interview',
             'cv',
             'period_of_execution',
             'position',
@@ -29,6 +28,20 @@ class JobInterviewsForm(forms.ModelForm):
             'additional_information',
             # 'files_for_jobinterview',
         ]
+
+    # def save(self):
+    #     new_jobinterview = JobInterviews.objects.create(
+    #         cv=self.cleaned_data['cv'],
+    #         period_of_execution=self.cleaned_data['period_of_execution'],
+    #         position=self.cleaned_data['position'],
+    #         name=self.cleaned_data['name'],
+    #         responsible_person=['responsible_person'],
+    #         contact_responsible_person_1str=self.cleaned_data['contact_responsible_person_1str'],
+    #         contact_responsible_person_2str=self.cleaned_data['contact_responsible_person_2str'],
+    #         location=self.cleaned_data['location'],
+    #         additional_information=self.cleaned_data['additional_information'],
+    #     )
+    #     return new_jobinterview
 #     client = models.ForeignKey(to='Client', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Соискатель')
 #     cv = models.ForeignKey(to='CV', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Резюме')
 #     name = models.CharField(max_length=50, verbose_name='Наименование')

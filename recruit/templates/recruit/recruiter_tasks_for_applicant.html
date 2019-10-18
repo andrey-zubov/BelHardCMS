@@ -9,8 +9,11 @@
 
     <div class="p-sm-5 pt-sm-1">
         <h2 class="mb-5"> Собеседования </h2>
-        {% for jobinterview in applicant_user.jobinterview_set.all %}
-            {{ jobinterview }} <br>
+        {% for jobinterview in applicant_user.jobinterviews_set.all %}
+            -------------------------<br>
+            {{ jobinterview.organization }} <br>
+
+            -------------------------<br>
         {% endfor %}
 
 
@@ -35,7 +38,7 @@
                     </div>
                     <div class="modal-body">
 
-                        <form method="post" action="{{ applicant_user.get_tasks_url }}">
+                        <form action="{{ applicant_user.get_tasks_url }}" method="post">
                             {% csrf_token %}
                             <!--h5>
                                 (<input type="text" class="form-time" id="id_time" name="time">)
@@ -70,12 +73,14 @@
                                Добавить файл: <input type="file" class="form-addition" id="id_addition" name="document">
                             </h5><br-->
                             <p>{{ form }}</p>
-                        </form>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
                         <button type="submit" class="btn btn-primary">Добавить</button>
                     </div>
+                    </form>
+
                 </div>
             </div>
         </div>
