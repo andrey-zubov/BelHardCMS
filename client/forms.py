@@ -2,8 +2,6 @@ from django import forms
 
 from client.models import (Message, Opinion, Answer)
 
-# There is Poland's import
-from client.models import JobInterviews
 
 class MessageForm(forms.ModelForm):
     class Meta:

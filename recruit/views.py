@@ -30,15 +30,20 @@ def applicant(request, id_a):
 
 class CreateJobInterview(View):
     def get(self, request, id_a):
-        # form = JobInterviewsForm()
         applicant_user = Client.objects.get(id=id_a)
-        response = csrf(request)
-        response['applicant_user'] = applicant_user
-        if request.method == 'POST':
-            response['form'] = JobInterviewsForm()
-        else:
-            response['form'] = JobInterviewsForm()
-        return render(request, 'recruit/recruiter_tasks_for_applicant.html', context=response)
+        form = JobInterviewsForm()
+        return render(request, 'recruit/recruiter_tasks_for_applicant.html',
+                      context={'applicant_user': applicant_user, 'form': form})
+
+    def post(self, request):
+        bound_form = JobInterviewsForm(request.POST)
+        print(bound_form)
+        if bound_form.is_valid():
+            print(bound_form)
+            # new_jobinterview = bound_form.save()
+
+
+
 
 
 def recruit_chat(request):
