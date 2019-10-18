@@ -1,8 +1,9 @@
+from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 
-from client.models import Chat, Message, Tasks, UserModel, SubTasks
-from datetime import datetime
+from client.models import Chat, Message, Settings
+
 
 def recruit_main_page(request):
     return render(request, template_name='recruit/recruit_main_template.html')
@@ -37,7 +38,18 @@ def get_messages(request):
 def send_message(request):
     chat = Chat.objects.get(id=request.GET['chat_id'])
     mes = Message(chat=chat, author=request.user, message=request.GET['message'])
+    members = chat.members.all()
     mes.save()
+
+    for m in members:
+        if m != request.user:
+            try:
+                if Settings.objects.get(user=m).email_messages:
+                    send_email = EmailMessage('HR-system', 'У вас новое сообщение', to=[str(m.email)])
+                    send_email.send()
+            except Exception:
+                print('Exception: нет адреса электронной почты')
+
     send = {'author_id': mes.author.id, 'author_name': mes.author.username, 'message': mes.message, 'message_id': mes.id,
              'pub_date': mes.pub_date.ctime()}
     return JsonResponse(send, safe=False)
@@ -70,27 +82,3 @@ def check_mes(request):
         send.append(new_dict)
 
     return JsonResponse(send, safe=False)
-
-
-def add_task(request):
-    context = {}
-    context['users_list'] = UserModel.objects.all()
-    #context['newtask'] = newtask
-    return render(request=request, template_name='recruit/add_task.html', context=context)
-
-
-def add_new_task(requset):
-    try:
-        user = UserModel.objects.get(username=requset.POST['name'])
-    except UserModel.DoesNotExist: #TODO сделать проверку в отправек формы?
-        return HttpResponse('Необходимо задать юзера')
-    newtask = Tasks.objects.create()
-    newtask.user = user
-    newtask.title = requset.POST['task_title']
-    newtask.comment = str(requset.POST['task_comment'])
-    #newtask.time = datetime.now()
-    newtask.save()
-    newsubtask = SubTasks(title=requset.POST['task_subtask'], task=newtask) #TODO расширить список подзадач
-    newsubtask.save()
-
-    return redirect(to='add_task')
