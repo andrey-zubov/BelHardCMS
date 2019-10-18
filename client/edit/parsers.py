@@ -108,9 +108,12 @@ def pars_edu_request(req_post, _file) -> list:
     cert_arr = []  # temporary certificate array
 
     for i in dict(req_post).items():
+        # if (not i[0] == 'certificate_url1%s' % (count)) or (not i[1][0]) or (i[0] == 'csrfmiddlewaretoken'):
+        #     # try to speed up parser
+        #     continue
         print("\ti: %s, %s" % (i[0], i[1]))
 
-        if re.match('institution1', i[0]):  # i: institution11, ['rocket_science_1']
+        if re.match('institution', i[0]):  # i: institution11, ['rocket_science_1']
 
             if any(dict_up.values()):
                 """ If it is a next Edu. dictionary from POST. Clean all temporary objects. """
@@ -124,22 +127,22 @@ def pars_edu_request(req_post, _file) -> list:
             count += 1
             dict_up['institution'] = i[1][0]
 
-        if re.match('subject_area1', i[0]):  # i: subject_area11, ['rocket_science_1']
+        if re.match('subject_area', i[0]):  # i: subject_area11, ['rocket_science_1']
             dict_up['subject_area'] = i[1][0]
 
-        if re.match('specialization1', i[0]):  # i: specialization11, ['rocket_science_1']
+        if re.match('specialization', i[0]):  # i: specialization11, ['rocket_science_1']
             dict_up['specialization'] = i[1][0]
 
-        if re.match('qualification1', i[0]):  # i: qualification11, ['rocket_science_1']
+        if re.match('qualification', i[0]):  # i: qualification11, ['rocket_science_1']
             dict_up['qualification'] = i[1][0]
 
-        if re.match('date_start1', i[0]):  # i: date_start11, ['2019-10-06'] or date_start11, ['']
+        if re.match('date_start', i[0]):  # i: date_start11, ['2019-10-06'] or date_start11, ['']
             dict_up['date_start'] = i[1][0] if i[1][0] else None
 
-        if re.match('date_end1', i[0]):  # i: date_end11, ['2019-10-23'] or i: date_end11, ['']
+        if re.match('date_end', i[0]):  # i: date_end11, ['2019-10-23'] or i: date_end11, ['']
             dict_up['date_end'] = i[1][0] if i[1][0] else None
 
-        if re.match('certificate_url1', i[0]):  # i: certificate_url11, ['http://192.168.0.51:8000/rocket_science_1']
+        if re.match('certificate_url', i[0]):  # i: certificate_url11, ['http://192.168.0.51:8000/rocket_science_1']
             count_cert += 1
             url = i[1][0]
             img = None
@@ -151,10 +154,10 @@ def pars_edu_request(req_post, _file) -> list:
                 print("\tf: %s, %s" % (f[0], f[1]))
                 # f: certificate_img11, [<InMemoryUploadedFile: 123.png (image/png)>]
                 if count:
-                    if re.match('certificate_img1%s' % count, f[0]):
+                    if re.match('certificate_img%s' % count, f[0]):
                         img = f[1][0]
                 else:
-                    if re.match('certificate_img1', f[0]):
+                    if re.match('certificate_img', f[0]):
                         img = f[1][0]
 
             cert_arr.append((url, img))
