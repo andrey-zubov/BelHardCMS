@@ -73,11 +73,14 @@ import re
 def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     response = csrf(request)
 
+    client = get_object_or_404(Client, user_client=request.user)
     readtask = len(Tasks.objects.filter(user=request.user, readtask=False))
+    readinterview = len(JobInterviews.objects.filter(client=client, readinterview=False))
     chat = Chat.objects.get(members=request.user)
     unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
     settings = Settings.objects.get(user=request.user)
-    context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings}
+    context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings,
+               'readinterview': readinterview}
 
     # Poland
     client = get_object_or_404(Client, user_client=request.user)
@@ -394,15 +397,17 @@ def checktask(request):
 
 
 def checknotifications(request):
+    client = get_object_or_404(Client, user_client=request.user)
     chat = Chat.objects.get(members=request.user)
     unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
     readtask = len(Tasks.objects.filter(user=request.user, readtask=False))
+    readinterview = len(JobInterviews.objects.filter(client=client, readinterview=False))
     resumes = CV.objects.all()
     suggestions = 0
     for resume in resumes:
         suggestions += resume.notification.count()
 
-    data = [unread_messages, readtask, suggestions]
+    data = [unread_messages, readtask, suggestions, readinterview]
 
     return HttpResponse(data)
 
@@ -560,6 +565,32 @@ def viewed(request):
             r = resume
             r.notification.clear()
         return HttpResponse('cleared')
+
+
+def interviews_list(request):
+    client = get_object_or_404(Client, user_client=request.user)
+    interviews = JobInterviews.objects.filter(client=client, status=False)
+    interviews_false = JobInterviews.objects.filter(client=client, status=True)    #status=False
+    interviews_false = sorted(interviews_false, key=lambda x: x.period_of_execution, reverse=True)
+    client_instance = client_check(request.user)
+
+    return render(request, 'client/interviews.html', context={'interviews': interviews,
+                                                              'interviews_false': interviews_false,
+                                                              'client_img': load_client_img(client_instance)})
+
+
+def checkinterviews(request):
+    id = request.GET['id']
+    interviews = JobInterviews.objects.get(id=id)
+
+    if interviews.status == False:
+        interviews.status = True
+        interviews.period_of_execution = timezone.now()
+    else:
+        interviews.status = False
+        interviews.period_of_execution = None
+    interviews.save()
+    return HttpResponse(interviews)
 
 
 def admin_jobinterviews(request):  # for admin panel

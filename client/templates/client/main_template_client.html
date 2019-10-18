@@ -38,7 +38,7 @@
 
                                 <a class="text-bar" href="{% url 'tasks_list' %}" > Задачи <div class="counter" id="task_count" hidden="true"> {{ readtask }}</div></a>
                                 <a class="text-bar" href="{% url 'resumes_list_url' %}" id="clearnotif"> Предложения <div class="counter" id="sug_count" hidden="true">{{ unread_suggestions }}</div></a>
-                                <a class="text-bar" href="#">Собеседования</a>
+                                <a class="text-bar" href="{% url 'interviews_list_url' %}"> Собеседования <div class="counter" id="mee_count" hidden="true"> {{ readinterview }} </div></a>
                                 <a class="text-bar" href="{% url 'contact_with_centre' %}"> Связаться с КЦ <div class="counter" id="mes_count" hidden="true"> {{ unread_messages }} </div></a>
                                 <div class="client-bar">
                                     <a class="text-client" href="{% url 'client_profile' %}" >
@@ -56,8 +56,8 @@
         <img src="https://static.wixstatic.com/media/3e33b4_8434f559fcaa44a39ecfd54bf197fba5~mv2.png/v1/fill/w_750,h_350,al_c,q_80,usm_0.66_1.00_0.01/tild6162-3961-4262-b966-316166666133__lo.png" alt="">
             {% if settings.tasks == True %}
                 {% if readtask != 0 %}
-                    <div class="notification" id="task_notification"><h2> Новые задачи: {{ readtask }} </h2> <span
-                            class="close" id="close_task"></span></div>
+                    <div class="notification" id="task_notification"><h2> Новые задачи: {{ readtask }} </h2>
+                        <span class="close" id="close_task"></span></div>
                 {% endif %}
             {% endif %}
             <div id="check_notifications">
@@ -70,13 +70,18 @@
                 {% endif %}
             {% if settings.suggestions %}
                 {% if unread_suggestions %}
-                    <a class="text-bar" href="{% url 'resumes_list_url' %}" id="clearnotif1">
+                    <!--<a class="text-bar" href="{% url 'resumes_list_url' %}" id="clearnotif1">-->
                     <div class="notification" id="sug_notification"><h2>Новые
                         предложения: {{ unread_suggestions }} </h2><span class="close" id="close_sug"></span></div>
-                    </a>
+                    <!--</a>-->
                 {% endif %}
             {% endif %}
-
+            {%if settings.meetings == True %}
+                {% if readinterview != 0 %}
+                    <div class="notification" id="mee_notification"><h2>Новые собеседования: {{ readinterview }} </h2>
+                        <span class="close" id="close_mee"></span></div>
+                {% endif %}
+            {% endif %}
         {% endblock %}
 
         </section>
@@ -101,6 +106,9 @@
         $('#close_sug').on('click', function () {
             $('#sug_notification').hide();
         });
+        $('#close_mee').on('click', function () {
+            $('#mee_notification').hide();
+        });
         console.log('fuf');
         $.ajax({
             'url': '/client/checknotifications/',
@@ -123,6 +131,13 @@
                 } else {
                     document.getElementById('sug_count').hidden = true;
                 }
+                if (data[3] != 0) {
+                        document.getElementById('mee_count').hidden = false;
+                        document.getElementById('mee_count').innerHTML =  data[3];
+                    }
+                    else {
+                        document.getElementById('mee_count').hidden = true;
+                    }
             }
         });
         setInterval(function () {
@@ -146,6 +161,13 @@
                         document.getElementById('sug_count').innerHTML = data[2];
                     } else {
                         document.getElementById('sug_count').hidden = true;
+                    }
+                    if (data[3] != 0) {
+                        document.getElementById('mee_count').hidden = false;
+                        document.getElementById('mee_count').innerHTML =  data[3];
+                    }
+                    else {
+                        document.getElementById('mee_count').hidden = true;
                     }
                 }
             });

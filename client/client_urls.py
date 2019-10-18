@@ -53,6 +53,8 @@ urlpatterns = [
     path('help/', help_list, name='help_list_url'),
     path('viewed/', views.viewed),
     path('admin_jobinterviews/', views.admin_jobinterviews),
+    path('interviews', interviews_list, name='interviews_list_url'),
+    path(r'checkinterviews/', views.checkinterviews),
 
 
     path('upload', views.upload, name='client_cv_upload'),
