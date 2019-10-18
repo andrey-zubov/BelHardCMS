@@ -1,0 +1,14 @@
+{% extends 'recruit/main_template_recruiter.html' %}
+
+{% block title %}
+    База пользователей
+{% endblock %}
+
+{% block content %}
+    <form action="{% url 'test_url' %}">
+        {% csrf_token %}
+        {{ form.title }}
+        {{ form.body }}
+        <input type="submit">
+    </form>
+{% endblock %}

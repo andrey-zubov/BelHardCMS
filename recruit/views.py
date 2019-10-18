@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import View
 from django.views.generic.edit import FormView
 from django.template.context_processors import csrf
-from .forms import JobInterviewsForm
+from .forms import JobInterviewsForm, TestForm
 
 from django.urls import reverse
 from django.http import HttpResponse
@@ -56,6 +56,18 @@ class CreateJobInterview(View):
             # new_jobinterview = bound_form.save()
 
 
+class Test(View):
+    def get(self, request):
+        form = TestForm()
+        print(request.POST)
+        return render(request, 'recruit/test.html', context={'form': form})
+
+    def post(self, request):
+        print()
+        print(request.POST)
+        print()
+        bound_form = TestForm()
+        print(bound_form)
 
 
 
