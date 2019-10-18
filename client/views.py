@@ -263,8 +263,6 @@ def client_login(request):  # ввести логин/пароль -> зайти
         u = auth.authenticate(username=user, password=password)
         if u:
             auth.login(request, u)
-            for i in u.groups.all():
-                return HttpResponse(i)
         else:
             res['error'] = "Неверный login/пароль"
             return render(request, 'registration.html', res)
