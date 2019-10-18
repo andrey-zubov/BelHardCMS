@@ -261,8 +261,8 @@ class Vacancy(models.Model):
 
 
 class Help(models.Model):
-    question = models.TextField(max_length=1000)
-    answer = models.TextField(max_length=1000)
+    question = models.TextField(max_length=1000, verbose_name='Вопрос')
+    answer = models.TextField(max_length=1000, verbose_name='Ответ')
 
     def __str__(self):
         return self.question
@@ -291,10 +291,15 @@ class JobInterviews(models.Model):
     check_status = models.BooleanField(default=True)  # статус активен, если можем после успешного собеседования
     # в течении 60 сек вернуть в статус активных собеседований
     done_interview = models.BooleanField(default=False)  # успешно пройденное собеседование
+    readinterview = models.BooleanField(default=False)
 
-    # @property
-    # def show_all(self):
-    # return self.subjobinterview.all()
+    @property
+    def show_all(self):
+        to_show = []
+        for val in self.__dict__.values():
+            if val != None and type(val) != bool:
+                to_show.append(val)
+        return to_show[4:14]
 
     @property
     def check_time(self):
@@ -308,12 +313,13 @@ class JobInterviews(models.Model):
 
     @property
     def check_readstatus(self):
-        if not self.done_interview:
-            self.done_interview = True
+        if not self.readinterview:
+            self.readinterview = True
             self.save()
 
-    def __str__(self):
+    def str(self):
         return self.name
+
 
     # def get_absolute_url(self):
     #    return reverse('applicant_url', kwargs={'id_a': self.id})
