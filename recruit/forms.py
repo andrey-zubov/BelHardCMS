@@ -15,6 +15,16 @@ class JobInterviewsForm(forms.ModelForm):
         model = JobInterviews
         fields = [
             'done_interview',
+            'cv',
+            'period_of_execution',
+            'position',
+            'name',
+            'responsible_person',
+            'contact_responsible_person_1str',
+            'contact_responsible_person_2str',
+            'location',
+            'additional_information',
+            # 'files_for_jobinterview',
         ]
 #     client = models.ForeignKey(to='Client', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Соискатель')
 #     cv = models.ForeignKey(to='CV', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Резюме')
