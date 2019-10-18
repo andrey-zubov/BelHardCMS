@@ -1,47 +1,53 @@
 import re
 
+from time import perf_counter
+
 
 # TeamRome
 def pars_exp_request(req_post) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели Experience. """
     print("pars_exp_request()")
-    # print("exp_request.POST: %s" % req_post)
-    from time import perf_counter
+    # print("\texp_request.POST: %s" % req_post)
     time_0 = perf_counter()
 
-    arr = []
+    arr = []  # выходной массив
     dict_up = {'experience_1': '', 'experience_2': '', 'experience_3': '',
-               'exp_date_start': '', 'exp_date_end': '', 'experience_4': ''}
-    for i in req_post.items():
-        # print("i: %s, %s" % (i[0], i[1]))
+               'exp_date_start': '', 'exp_date_end': '', 'experience_4': ''}  # временный словарь
+    count = 0  # костыль для обнаружения Сферы деятельности в нескольких формах
+    for i in dict(req_post).items():
+        # print("\ti: %s, %s" % (i[0], i[1]))
+        if re.match('experience_11', i[0]):  # i: experience_11, ['qwe1 qwe1']
+            dict_up['experience_1'] = i[1][0]
 
-        if re.match('experience_1', i[0]):
-            dict_up['experience_1'] = i[1]
+        if re.match('experience_21', i[0]):  # i: experience_21, ['1', '2']
+            if count:  # if count > 0 ->   getlist('experience_21N')
+                dict_up['experience_2'] = req_post.getlist('experience_21%s' % count)
+            else:  # if count == 0
+                dict_up['experience_2'] = req_post.getlist('experience_21')
 
-        if re.match('experience_2', i[0]):
-            dict_up['experience_2'] = req_post.getlist('experience_2')  # TODO: bug
+        if re.match('experience_31', i[0]):  # i: experience_31, ['qwe1 qwe1']
+            dict_up['experience_3'] = i[1][0]
 
-        if re.match('experience_3', i[0]):
-            dict_up['experience_3'] = i[1]
+        if re.match('exp_date_start1', i[0]):  # i: exp_date_start1, [''] or exp_date_start1, ['2019-10-06']
+            dict_up['exp_date_start'] = i[1][0] if i[1][0] else None
 
-        if re.match('exp_date_start', i[0]):
-            dict_up['exp_date_start'] = i[1]
+        if re.match('exp_date_end1', i[0]):  # i: exp_date_end1, [''] or exp_date_end1, ['2019-10-17']
+            dict_up['exp_date_end'] = i[1][0] if i[1][0] else None
 
-        if re.match('exp_date_end', i[0]):
-            dict_up['exp_date_end'] = i[1]
+        if re.match('experience_41', i[0]):  # i: experience_41, ['qwe1 qwe1']
+            dict_up['experience_4'] = i[1][0]
 
-        if re.match('experience_4', i[0]):
-            dict_up['experience_4'] = i[1]
-
-            # print(dict_up)
+            """ Конец первого словаря из request.POST. 
+            Сохраняем временный словарь в массив. Обнуляем временный словарь. """
             arr.append(dict_up)
+            # print("\tdict_up: %s" % dict_up)
             dict_up = {'experience_1': '', 'experience_2': '', 'experience_3': '',
                        'exp_date_start': '', 'exp_date_end': '', 'experience_4': ''}
-            # print('----')
-
-    print('time_it = %s sec' % (perf_counter() - time_0))
-    print("arr: %s" % arr)
+            count += 1
+            # print('\t----')
+    print('\tpars_exp_request() - OK; TIME: %s sec' % (perf_counter() - time_0))
+    print("\tout_arr: %s" % arr)
     return arr
 
 

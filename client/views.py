@@ -1,35 +1,19 @@
 from django.contrib import auth
-from django.http import HttpResponse
+from django.contrib.auth.models import Group
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.context_processors import csrf
-from recruit import recruit_url
-
-from django.urls import reverse
-from django.utils.timezone import utc
-from django.views import View
-from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView
+from django.views.generic import View
 
 from client.edit.check_clients import (client_check, load_client_img)
-from client.edit.edit_forms import (EducationFormSet, CertificateForm, SabClassFormSet, UploadImgForm)
+from client.edit.edit_forms import (CertificateFormSet)
+from client.edit.edit_forms import (EducationFormSet, SabClassFormSet, UploadImgForm)
 from client.edit.pages_get import (edit_page_get, skills_page_get, cv_page_get, education_page_get, experience_page_get)
 from client.edit.pages_post import (skills_page_post, edit_page_post, photo_page_post, form_edu_post,
                                     education_page_post, cv_page_post, experience_page_post)
 from client.forms import (OpinionForm, AnswerForm, MessageForm)
 from client.models import *
-
-
-from django.views.generic import View, TemplateView
-from django.views.generic import TemplateView
-
-from client.edit.check_clients import (client_check, load_client_img)
-from client.edit.edit_forms import (EducationFormSet, CertificateForm, SabClassFormSet, UploadImgForm)
-from client.edit.pages_get import (edit_page_get, skills_page_get, cv_page_get, education_page_get, experience_page_get)
-from client.edit.pages_post import (skills_page_post, edit_page_post, photo_page_post, form_edu_post,
-                                    education_page_post, cv_page_post, experience_page_post)
-from client.forms import (OpinionForm, AnswerForm, MessageForm)
-from client.models import *
-from django.contrib.auth.models import Group
 
 
 def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
@@ -221,7 +205,7 @@ class OpinionCreate(View):
         form = OpinionForm()
         client_instance = client_check(request.user)
         return render(request, 'opinion/opinion_create.html', context={'form': form,
-                                                                       'client_img':load_client_img(client_instance)})
+                                                                       'client_img': load_client_img(client_instance)})
 
     def post(self, request):
         form = OpinionForm(request.POST)
@@ -233,7 +217,7 @@ class OpinionCreate(View):
             return redirect('opinion_detail', pk=new_opinion.pk)
         client_instance = client_check(request.user)
         return render(request, 'opinion/opinion_create.html', context={'form': form,
-                                                                       'client_img':load_client_img(client_instance)})
+                                                                       'client_img': load_client_img(client_instance)})
 
 
 def opinion_detail(request, pk):
@@ -279,11 +263,12 @@ def client_login(request):  # ввести логин/пароль -> зайти
         return redirect('client')
     elif u.groups.filter(name='Recruiters').exists():
         return redirect('main_page')
-    else:        # добавляет юзера к группе 'Users' поумолчанию, если у него нет никаких групп
+    else:  # добавляет юзера к группе 'Users' поумолчанию, если у него нет никаких групп
         user_group = Group.objects.get(name='Users')
         u.groups.add(user_group)
         u.save()
         return redirect('client')
+
 
 def client_logout(request):  # выйти из системы, возврат на стартовую страницу
     auth.logout(request)
@@ -292,12 +277,12 @@ def client_logout(request):  # выйти из системы, возврат н
 
 def tasks(request):
     task = Tasks.objects.filter(user=request.user, status=False)
-    task_false = Tasks.objects.filter(user=request.user, status=True) #status=False)
-    task_false = sorted(task_false, key=lambda x:x.endtime,  reverse=True)
+    task_false = Tasks.objects.filter(user=request.user, status=True)  # status=False)
+    task_false = sorted(task_false, key=lambda x: x.endtime, reverse=True)
     client_instance = client_check(request.user)
-    return render(request, 'client/tasks.html', context = {'task' : task,
-                                                        'task_false': task_false,
-                                                           'client_img':load_client_img(client_instance)})
+    return render(request, 'client/tasks.html', context={'task': task,
+                                                         'task_false': task_false,
+                                                         'client_img': load_client_img(client_instance)})
 
 
 # TeamRome
@@ -310,8 +295,8 @@ class FormEducation(TemplateView):
 
         response = {'client_img': load_client_img(client_instance),
                     'edu_form': EducationFormSet(initial=load_data),
-                    # 'certificate': CertificateFormSet(initial=load_data),
-                    'certificate': CertificateForm(initial=load_data[0]),
+                    'certificate': CertificateFormSet(initial=load_data),
+                    # 'certificate': CertificateForm(initial=load_data[0]),
                     'sab_class_form': SabClassFormSet(initial=load_data),
                     }
         return render(request, self.template_name, response)
@@ -391,7 +376,6 @@ def set_settings(request):
 
 
 def chat_update(request):
-
     last_id = (request.GET['last_id'])
     chat = Chat.objects.get(members=request.user)
     messages = Message.objects.filter(chat=chat)
@@ -401,7 +385,9 @@ def chat_update(request):
 
     send2 = []
     for s in mes:
-        send2.append({'author_id': s.author.id, 'author_name': s.author.username, 'message': s.message, 'message_id': s.id, 'pub_date': s.pub_date.ctime()})
+        send2.append(
+            {'author_id': s.author.id, 'author_name': s.author.username, 'message': s.message, 'message_id': s.id,
+             'pub_date': s.pub_date.ctime()})
 
     return JsonResponse(send2, safe=False)
 
@@ -428,7 +414,7 @@ def resumes_list(request):
     resumes = Resume.objects.all()
     client_instance = client_check(request.user)
     return render(request, 'client/client_resumes.html', context={'resumes': resumes,
-                                                                  'client_img':load_client_img(client_instance)})
+                                                                  'client_img': load_client_img(client_instance)})
 
 
 def resume_detail(request, slug):
@@ -493,7 +479,7 @@ def help_list(request):
     faqs = Help.objects.all()
     client_instance = client_check(request.user)
     return render(request, 'client/help.html', context={'faqs': faqs,
-                                                        'client_img':load_client_img(client_instance)})
+                                                        'client_img': load_client_img(client_instance)})
 
 
 def settings_list(request):

@@ -3,9 +3,8 @@ from collections import defaultdict
 from time import perf_counter
 
 from BelHardCRM.settings import MEDIA_URL
-from client.edit.utility import check_if_str
 from client.models import (Sex, Citizenship, FamilyState, Children, City, State, Telephone, Skills, Education,
-                           Certificate, CV, Experience, Employment, TimeJob, TypeSalary)
+                           Certificate, CV, Experience, Employment, TimeJob, TypeSalary, UserModel, Sphere)
 
 
 # TeamRome
@@ -16,7 +15,6 @@ def edit_page_get(client):
         print("edit_page_get()")
         time_0 = perf_counter()
         response = defaultdict()
-
         # default select fields
         response['sex'] = Sex.objects.all()
         response['citizenship'] = Citizenship.objects.all()
@@ -25,34 +23,20 @@ def edit_page_get(client):
         response['country'] = response['citizenship']
         response['city'] = reversed(City.objects.all())
         response['state'] = reversed(State.objects.all())
-
         #
         if client:
-            print(client)
-            response['cl_name'] = client.name
-            response['cl_last_name'] = client.last_name
-            response['cl_patronymic'] = client.patronymic
-            response['cl_sex'] = check_if_str(client.sex, '')
-            response['cl_date_born'] = check_if_str(client.date_born, '')
-            response['cl_citizenship'] = check_if_str(client.citizenship, '')
-            response['cl_family_state'] = check_if_str(client.family_state, '')
-            response['cl_children'] = check_if_str(client.children, '')
-            response['cl_country'] = check_if_str(client.country, '')
-            response['cl_city'] = check_if_str(client.city, '')
-            response['cl_street'] = check_if_str(client.street, '')
-            response['cl_house'] = check_if_str(client.house, '')
-            response['cl_flat'] = check_if_str(client.flat, '')
+            user_model = UserModel.objects.get(id=client.user_client_id)
+            response['user_model'] = {
+                "first_name": user_model.first_name,
+                "last_name": user_model.last_name,
+                "email": user_model.email,
+            }
             phone_arr = [i['telephone_number'] for i in Telephone.objects.filter(client_phone=client).values()]
             response['cl_phone'] = phone_arr
-            response['cl_telegram'] = check_if_str(client.telegram_link, '@')
-            response['cl_email'] = check_if_str(client.email, '')
-            response['cl_linkedin'] = check_if_str(client.link_linkedin, '')
-            response['cl_skype'] = check_if_str(client.skype, '')
-            response['cl_state'] = check_if_str(client.state, '')
+            response['client'] = client
 
         print('TIME edit_page_get(): %s' % (perf_counter() - time_0))
         return response
-
     except Exception as ex:
         logging.error("Exception in - edit_page_get()\n %s" % ex)
         return None
@@ -85,22 +69,10 @@ def education_page_get(client):
         time_0 = perf_counter()
         response = defaultdict()
         if client:
-            # edus = [i for i in Education.objects.filter(client_edu=client).values()]
-            edus = []
-            for i in Education.objects.filter(client_edu=client).values():
-                edus.append(i)
+            edus = [i for i in Education.objects.filter(client_edu=client).values()]
             response['cl_edu'] = edus
-            # edu_id = [e['id'] for e in response['cl_edu']]
-            edu_id = []
-            for e in response['cl_edu']:
-                edu_id.append(e['id'])
-            # certs = [[c for c in Certificate.objects.filter(education_id=i).values()] for i in edu_id]
-            certs = []
-            for i in edu_id:
-                certss = []
-                for c in Certificate.objects.filter(education_id=i).values():
-                    certss.append(c)
-                certs.append(certss)
+            edu_id = [e['id'] for e in response['cl_edu']]
+            certs = [[c for c in Certificate.objects.filter(education_id=i).values()] for i in edu_id]
 
             for e in edus:
                 # print("e: %s" % e)
@@ -152,23 +124,17 @@ def experience_page_get(client):
     try:
         print("experience_page_get()")
         response = defaultdict()
+        response['sphere'] = Sphere.objects.all()
         if client:
             exp = Experience.objects.filter(client_exp=client)
-            print("exp: %s" % exp)
-
             exp_dict = [i for i in exp.values()]
-            print("exp_dict: %s" % exp_dict)
             response['cl_exp'] = exp_dict
 
             for i, e in enumerate(exp):
-                print("e: %s" % e)
-                # print("e.values(): %s" % e.values())
-                sphere = e.sphere.values()
-                print("sphere: %s" % sphere)
+                sphere = [i['sphere_word'] for i in e.sphere.values()]
                 exp_dict[i]['sphere'] = sphere
-            # sphere = [s.sphere.values() for s in exp]
 
-            print("response: %s" % response)
+            # print("response: %s" % response)
         return response
     except Exception as ex:
         logging.error("Exception in experience_page_get()\n%s" % ex)

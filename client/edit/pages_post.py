@@ -4,7 +4,7 @@ from client.edit.edit_forms import (UploadImgForm, EducationFormSet, Certificate
 from client.edit.parsers import (pars_edu_request, pars_cv_request, pars_exp_request)
 from client.edit.utility import (check_input_str, check_phone, check_home_number, check_telegram)
 from client.models import (Skills, Telephone, Sex, Citizenship, FamilyState, Children, City, State, Client, Education,
-                           Certificate, CV, Experience, Sphere, Employment, TimeJob, TypeSalary)
+                           Certificate, CV, Experience, Sphere, Employment, TimeJob, TypeSalary, UserModel)
 
 
 # TeamRome
@@ -44,8 +44,6 @@ def edit_page_post(client_instance, request):
 
         client = Client(
             user_client=user,
-            name=user_name,
-            last_name=last_name,
             patronymic=patronymic,
             sex=sex,
             date_born=date,
@@ -59,7 +57,6 @@ def edit_page_post(client_instance, request):
             flat=flat,
             telegram_link=telegram_link,
             skype=skype,
-            email=email,
             link_linkedin=link_linkedin,
             state=state,
         )
@@ -68,6 +65,12 @@ def edit_page_post(client_instance, request):
         """ Если карточка есть - достаём из БД Объект = Клиент_id.
         Перезаписываем (изменяем) существующие данныев. """
         print('User Profile exists - Overwriting user data')
+
+        user_model = UserModel.objects.get(id=client_instance.user_client_id)
+        user_model.first_name = user_name
+        user_model.last_name = last_name
+        user_model.email = email
+        user_model.save()
 
         client = client_instance
         client.name = user_name
@@ -93,7 +96,7 @@ def edit_page_post(client_instance, request):
     """ Сохранение телефонных номеров клиента """
     tel = request.POST.getlist('phone')
     if any(tel):
-        Telephone.objects.all().delete()
+        Telephone.objects.filter(client_phone=client_instance).delete()
     for t in tel:
         t = check_phone(t)
         if t:
@@ -114,7 +117,7 @@ def skills_page_post(client_instance, request):
     skills_arr = request.POST.getlist('skill') if request.POST.getlist('skill') else None
 
     if any(skills_arr):
-        Skills.objects.all().delete()
+        Skills.objects.filter(client_skills=client_instance).delete()
         # print("skill: %s" % skills_arr)
         for s in skills_arr:
             if s:
@@ -151,7 +154,7 @@ def education_page_post(client_instance, request):
     arr_edu = pars_edu_request(request.POST, request.FILES)  # list of dictionaries
 
     if any(arr_edu):
-        Education.objects.all().delete()
+        Education.objects.filter(client_edu=client_instance).delete()
 
         for edus in arr_edu:
             institution = edus['institution']
@@ -197,7 +200,7 @@ def cv_page_post(client_instance, request):
     arr_cv = pars_cv_request(request.POST)  # list of dictionaries
 
     if any(arr_cv):
-        CV.objects.all().delete()
+        CV.objects.filter(client_cv=client_instance).delete()
 
         for cvs in arr_cv:
             position = cvs['position']
@@ -230,23 +233,24 @@ def experience_page_post(client_instance, request):
     arr = pars_exp_request(request.POST)  # list of dictionaries
 
     if any(arr):
-        Experience.objects.all().delete()
-
+        """ Delete old data for this client. Bug fix for duplicate date save. """
+        Experience.objects.filter(client_exp=client_instance).delete()
         for dic in arr:
-            organisation = dic['experience_1']
-            position = dic['experience_3']
-            start_date = dic['exp_date_start']
-            end_date = dic['exp_date_end']
-            duties = dic['experience_4']
-
             if any(dic.values()):
+                """ If this dictionary hes any values? than take them and save to Exp. instance. """
+                organisation = dic['experience_1']
+                position = dic['experience_3']
+                start_date = dic['exp_date_start']
+                end_date = dic['exp_date_end']
+                duties = dic['experience_4']
+
                 experiences = Experience(
                     client_exp=client_instance,
                     name=organisation,
                     position=position,
-                    start_date=start_date if start_date else None,
-                    end_date=end_date if end_date else None,
-                    duties=duties if duties else None
+                    start_date=start_date,
+                    end_date=end_date,
+                    duties=duties,
                 )
                 experiences.save()
 
@@ -254,11 +258,11 @@ def experience_page_post(client_instance, request):
                 for s in spheres:
                     if s:
                         """ Save ManyToManyField 'sphere' """
-                        sp = Sphere(sphere_word=s)
+                        sp = Sphere.objects.get(id=s)
                         sp.save()
                         experiences.sphere.add(sp)
 
-                # print("Experience Form - OK\n", organisation, spheres, position, start_date if start_date else None,
+                # print("Experience Form - OK:\n", organisation, spheres, position, start_date if start_date else None,
                 #       end_date if end_date else None, duties if duties else None)
             else:
                 print('Experience Form is Empty')

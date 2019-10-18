@@ -34,8 +34,7 @@
                         <span class="input-group-text">Имя:</span>
                     </div>
                     <input type="text" aria-label="First name" class="form-control" name="client_first_name"
-                           value="{{ data.cl_name }}" required
-                           pattern="^[a-zA-Zа-яА-Я0-9'-]{1,100}[ ]?[a-zA-Zа-яА-Я0-9'-]{0,100}$">
+                           value="{{ data.user_model.first_name|default:'' }}" required>
                 </div>
 
                 <div class="input-group mb-3">
@@ -43,7 +42,7 @@
                         <span class="input-group-text">Фамилия:</span>
                     </div>
                     <input type="text" aria-label="Last name" class="form-control" name="client_last_name"
-                           value="{{ data.cl_last_name }}" required>
+                           value="{{ data.user_model.last_name|default:'' }}" required>
                 </div>
 
                 <div class="input-group mb-3">
@@ -51,7 +50,7 @@
                         <span class="input-group-text">Отчество:</span>
                     </div>
                     <input type="text" aria-label="Middle name" class="form-control" name="client_middle_name"
-                           value="{{ data.cl_patronymic }}" required>
+                           value="{{ data.client.patronymic|default:'' }}" required>
                 </div>
 
                 <div class="input-group mb-3">
@@ -60,7 +59,7 @@
                     </div>
 
                     <select class="custom-select" id="id_sex" name="sex">
-                        <option selected value="{{ data.cl_sex }}">{{ data.cl_sex }}</option>
+                        <option selected value="{{ data.client.sex }}">{{ data.client.sex|default:'' }}</option>
                         {% for s in data.sex %}
                             <option value="{{ s }}">{{ s }}</option>
                         {% endfor %}
@@ -70,14 +69,14 @@
                 <div class="form-group">
                     <label for="id_date_born">Дата рождения</label>
                     <input type="date" class="form-control" id="id_date_born" name="date_born"
-                           value="{{ data.cl_date_born|date:"Y-d-m" }}">
+                           value="{{ data.client.date_born|date:"Y-d-m" }}">
                 </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="id_citizenship">Гражданство:</label>
                     </div>
                     <select class="custom-select" id="id_citizenship" name="citizenship">
-                        <option selected value="{{ data.cl_citizenship }}">{{ data.cl_citizenship }}</option>
+                        <option selected value="{{ data.client.citizenship }}">{{ data.client.citizenship|default:'' }}</option>
                         {% for c in data.citizenship %}
                             <option value="{{ c }}">{{ c }}</option>
                         {% endfor %}
@@ -89,7 +88,7 @@
                         <label class="input-group-text" for="id_family_state">Семейное положение:</label>
                     </div>
                     <select class="custom-select" id="id_family_state" name="family_state">
-                        <option selected value="{{ data.cl_family_state }}">{{ data.cl_family_state }}</option>
+                        <option selected value="{{ data.client.family_state }}">{{ data.client.family_state|default:'' }}</option>
                         {% for fs in data.family_state %}
                             <option value="{{ fs }}">{{ fs }}</option>
                         {% endfor %}
@@ -100,7 +99,7 @@
                         <label class="input-group-text" for="id_children">Дети:</label>
                     </div>
                     <select class="custom-select" id="id_children" name="children">
-                        <option selected value="{{ data.cl_children }}">{{ data.cl_children }}</option>
+                        <option selected value="{{ data.client.children }}">{{ data.client.children|default:'' }}</option>
                         {% for ch in data.children %}
                             <option value="{{ ch }}">{{ ch }}</option>
                         {% endfor %}
@@ -114,7 +113,7 @@
                         <label class="input-group-text" for="id_country">Страна:</label>
                     </div>
                     <select class="custom-select" id="id_country" name="country">
-                        <option selected value="{{ data.cl_country }}">{{ data.cl_country }}</option>
+                        <option selected value="{{ data.client.country }}">{{ data.client.country|default:'' }}</option>
                         {% for ct in data.country %}
                             <option value="{{ ct }}">{{ ct }}</option>
                         {% endfor %}
@@ -125,7 +124,7 @@
                         <label class="input-group-text" for="id_city">Город:</label>
                     </div>
                     <select class="custom-select" id="id_city" name="city">
-                        <option selected value="{{ data.cl_city }}">{{ data.cl_city }}</option>
+                        <option selected value="{{ data.client.city }}">{{ data.client.city|default:'' }}</option>
                         {% for ci in data.city %}
                             <option value="{{ ci }}">{{ ci }}</option>
                         {% endfor %}
@@ -137,7 +136,7 @@
                         <span class="input-group-text">Улица:</span>
                     </div>
                     <input type="text" aria-label="First name" class="form-control" name="street"
-                           value="{{ data.cl_street }}">
+                           value="{{ data.client.street|default:'' }}">
                 </div>
 
                 <div class="input-group mb-3">
@@ -145,7 +144,7 @@
                         <span class="input-group-text">Дом:</span>
                     </div>
                     <input type="text" aria-label="House" class="form-control" name="house"
-                           value="{{ data.cl_house }}">
+                           value="{{ data.client.house|default:'' }}">
                 </div>
 
                 <div class="input-group mb-3">
@@ -153,7 +152,7 @@
                         <span class="input-group-text">Квартира:</span>
                     </div>
                     <input type="text" aria-label="Flat" class="form-control" name="flat"
-                           value="{{ data.cl_flat }}">
+                           value="{{ data.client.flat|default:'' }}">
                 </div>
 
                 <h3>Контакты</h3>
@@ -164,7 +163,7 @@
                         {% for t in data.cl_phone %}
                             <div class="form-group" id="origin_div">
                                 <input type="tel" class="form-control" id="id_phone" aria-describedby="small_phone"
-                                       value="{{ t }}" name="phone">
+                                       value="{{ t|default:'+' }}" name="phone">
                                 <small class="form-text text-muted" id="small_phone">
                                     +375291234567 (код страны + код оператора + номер)
                                 </small>
@@ -188,7 +187,7 @@
                         <span class="input-group-text">Telegram:</span>
                     </div>
                     <input type="text" aria-label="Telegram" class="form-control" name="telegram_link"
-                           value="{{ data.cl_telegram }}">
+                           value="{{ data.client.telegram_link|default:'@' }}">
                 </div>
 
                 <div class="input-group mb-3">
@@ -196,7 +195,7 @@
                         <span class="input-group-text">Skype:</span>
                     </div>
                     <input type="text" aria-label="Skype" class="form-control" name="skype_id"
-                           value="{{ data.cl_skype }}">
+                           value="{{ data.client.skype|default:'' }}">
                 </div>
 
                 <div class="input-group mb-3">
@@ -204,7 +203,7 @@
                         <span class="input-group-text">E-mail:</span>
                     </div>
                     <input type="email" aria-label="E-mail" class="form-control" name="email"
-                           value="{{ data.cl_email }}">
+                           value="{{ data.user_model.email|default:'' }}">
                 </div>
 
                 <div class="input-group mb-3">
@@ -212,7 +211,7 @@
                         <span class="input-group-text">Linkedin:</span>
                     </div>
                     <input type="url" aria-label="Linkedin" class="form-control" name="link_linkedin"
-                           value="{{ data.cl_linkedin }}">
+                           value="{{ data.client.link_linkedin|default:'' }}">
                 </div>
 
                 <div class="input-group mb-3">
@@ -220,7 +219,7 @@
                         <label class="input-group-text" for="id_state">Статус:</label>
                     </div>
                     <select class="custom-select" id="id_state" name="state">
-                        <option selected value="{{ data.cl_state }}">{{ data.cl_state }}</option>
+                        <option selected value="{{ data.client.state }}">{{ data.client.state|default:'' }}</option>
                         {% for st in data.state %}
                             <option value="{{ st }}">{{ st }}</option>
                         {% endfor %}
