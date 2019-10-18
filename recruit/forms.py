@@ -9,6 +9,9 @@ from client.models import JobInterviews
 #
 #     file_field = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
+class TestForm(forms.Form):
+    title = forms.CharField(max_length=50)
+    body = forms.CharField(max_length=50)
 
 class JobInterviewsForm(forms.ModelForm):
     class Meta:

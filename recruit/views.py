@@ -43,9 +43,6 @@ class CreateJobInterview(View):
             # new_jobinterview = bound_form.save()
 
 
-
-
-
 def recruit_chat(request):
     chat_list = Chat.objects.filter(members=request.user)
     for chat in chat_list:
