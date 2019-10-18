@@ -80,9 +80,9 @@ def education_page_get(client):
                     # print("\tc: %s" % c)
                     if c:
                         if c[0]['education_id'] == e['id']:
-                            e['img'] = "%s%s" % (MEDIA_URL, c[0]['img'])
-                            e['link'] = c[0]['link']
-                            e['show_img'] = "%s%s" % (MEDIA_URL, c[0]['img'])
+                            for cert in c:
+                                cert['img'] = "%s%s" % (MEDIA_URL, cert['img'])
+                            e['cert'] = c
             # print("\tcl_edu: %s" % response['cl_edu'])
         print('\teducation_page_get() - OK; Time: %s' % (perf_counter() - time_0))
         return response

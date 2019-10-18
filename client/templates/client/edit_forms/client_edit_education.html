@@ -10,8 +10,6 @@
         $(document).ready(function () {
             var count = 1;
             var origin = $("#origin_div").clone();
-            var cert_count = 1;
-            var cert_origin = $("#cert_origin").clone();
 
             $("#add_more").on("click", add_edu);
             $("#id_institution").on("change", data_l);
@@ -37,7 +35,6 @@
                 count++;
                 // Изменяет вложенный текст
                 var text = add.children('#edu_h');
-                console.log(text);
                 $(text).attr('innerText', text.text('Образование ' + count));
 
                 add.appendTo("#div_to_add_new");
@@ -66,6 +63,7 @@
                     <div id="origin_div">
 
                         <h3 id="edu_h">Образование</h3>
+
                         <div class="form-group">
                             <label for="id_institution">Учебное заведение</label>
                             <input type="text" class="form-control" id="id_institution"
@@ -104,22 +102,59 @@
                                    value="{{ edu.date_end|date:"Y-m-d" }}">
                         </div>
 
+                        {# <!-- Div Добавление сертификатов -->#}
+                        <div id="cert_to_add{{ forloop.counter }}">
+                            <h3 id="cert_h{{ forloop.counter }}">Сертификаты:</h3>
 
-                        <div class="form-group">
-                            <label for="id_certificate_img">Сертификат (img)</label>
-                            <img src="{{ edu.img }}" alt="img" class="m-2" height="64">
-                            <input type="file" class="form-control" id="id_certificate_img"
-                                   name="certificate_img{{ forloop.counter }}"
-                                   value="{{ edu.img }}">
+                            {% for c in edu.cert %}
+
+                                <div id="cert_origin{{ forloop.counter }}">
+                                    <div class="form-group">
+                                        <label for="id_certificate_img">Сертификат (img)</label>
+                                        <img src="{{ c.img }}" alt="img" class="m-2" height="64">
+                                        <input type="file" class="form-control" id="id_certificate_img"
+                                               name="certificate_img
+                                                       {{ forloop.parentloop.counter }}{{ forloop.counter }}"
+                                               value="{{ c.img.name }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="id_certificate_url">Сертификат (ссылка)</label>
+                                        <input type="url" class="form-control" id="id_certificate_url"
+                                               name="certificate_url
+                                                       {{ forloop.parentloop.counter }}{{ forloop.counter }}"
+                                               value="{{ c.link }}">
+                                    </div>
+                                </div>
+
+                            {% endfor %}
+                            {# <!-- копироваться будет сюда -->#}
                         </div>
-                        <div class="form-group">
-                            <label for="id_certificate_url">Сертификат (ссылка)</label>
-                            <input type="url" class="form-control" id="id_certificate_url"
-                                   name="certificate_url{{ forloop.counter }}"
-                                   value="{{ edu.link }}">
-                        </div>
+                        {# <!-- Script Добавление сертификатов -->#}
+                        <script type="text/javascript">
+                            $(document).ready(function () {
+                                $("#add_more_cert{{ forloop.counter }}").on("click", add_cert);
+                                var cert_count = 1;
+                                var cert_origin = $('#cert_origin{{ forloop.counter }}').clone();
 
+                                function add_cert() {
+                                    var cert_add = cert_origin.clone();
+                                    var cert_current_div = cert_add.children('div');
 
+                                    for (var i = 0; i < 2; i++) {
+                                        // 2 inputs
+                                        var cert_element = $(cert_current_div[i]).children('input');
+                                        var cert_attr_name = $(cert_element).attr('name');
+                                        $(cert_element).attr('name', cert_attr_name + cert_count);
+                                        $(cert_element).attr('value', '');
+                                    }
+                                    cert_count++;
+                                    cert_add.appendTo('#cert_to_add{{ forloop.counter }}');
+                                }
+                            });
+                        </script>
+                        {# <!-- Button Добавление сертификатов -->#}
+                        <input type="button" value="Добавить сертификат" id="add_more_cert{{ forloop.counter }}"
+                               class="btn btn-outline-primary m-2">
                     </div>
                 {% empty %}
                     {% include 'client/edit_forms/education_empty.html' %}

@@ -185,8 +185,8 @@ def education_page_post(client_instance, request):
                     )
                     certificate.save()
 
-                print("\tEducation Form - OK:\n\t", institution, subject_area, specialization, qualification,
-                      date_start, date_end, cert_arr)
+                # print("\tEducation Form - OK:\n\t", institution, subject_area, specialization, qualification,
+                #       date_start, date_end, cert_arr)
             else:
                 print('\tEducation Form is Empty')
     else:

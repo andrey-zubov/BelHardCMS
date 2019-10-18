@@ -95,36 +95,31 @@ def pars_edu_request(req_post, _file) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели Education. """
     print("pars_edu_request()")
-    print("\texp_request.POST: %s" % req_post)
-    print("\texp_request.FILE: %s" % _file)
+    # print("\texp_request.POST: %s" % req_post)
+    # print("\texp_request.FILE: %s" % _file)
     from time import perf_counter
     time_0 = perf_counter()
 
     arr = []  # output list
     dict_up = {'institution': '', 'subject_area': '', 'specialization': '', 'qualification': '',
                'date_start': '', 'date_end': '', 'certificate': ''}  # temporary dictionary
-    count = 0  # crutch for detection Edu. Certificates in several forms
     count_cert = 0  # crutch for detection Edu. Certificates in several forms
     cert_arr = []  # temporary certificate array
 
     for i in dict(req_post).items():
-        # if (not i[0] == 'certificate_url1%s' % (count)) or (not i[1][0]) or (i[0] == 'csrfmiddlewaretoken'):
-        #     # try to speed up parser
-        #     continue
-        print("\ti: %s, %s" % (i[0], i[1]))
+        # print("\ti: %s, %s" % (i[0], i[1]))
 
         if re.match('institution', i[0]):  # i: institution11, ['rocket_science_1']
 
             if any(dict_up.values()):
                 """ If it is a next Edu. dictionary from POST. Clean all temporary objects. """
                 cert_arr = []
-                print("\tdict_up: %s" % dict_up)
+                # print("\tdict_up: %s" % dict_up)
                 arr.append(dict_up)
                 dict_up = {'institution': '', 'subject_area': '', 'specialization': '', 'qualification': '',
                            'date_start': '', 'date_end': '', 'certificate': ''}
-                print('\t----')
+                # print('\t----')
 
-            count += 1
             dict_up['institution'] = i[1][0]
 
         if re.match('subject_area', i[0]):  # i: subject_area11, ['rocket_science_1']
@@ -143,28 +138,27 @@ def pars_edu_request(req_post, _file) -> list:
             dict_up['date_end'] = i[1][0] if i[1][0] else None
 
         if re.match('certificate_url', i[0]):  # i: certificate_url11, ['http://192.168.0.51:8000/rocket_science_1']
-            count_cert += 1
             url = i[1][0]
             img = None
-
+            count_img = 0
+            count_cert += 1
             """ request.FILE == MultiValueDict{'key': [<InMemoryUploadedFile: x.png (image/png)>]} """
             for f in dict(_file).items():
-                if not f[1][0]:
-                    continue
-                print("\tf: %s, %s" % (f[0], f[1]))
-                # f: certificate_img11, [<InMemoryUploadedFile: 123.png (image/png)>]
-                if count:
-                    if re.match('certificate_img%s' % count, f[0]):
-                        img = f[1][0]
-                else:
-                    if re.match('certificate_img', f[0]):
-                        img = f[1][0]
+                count_img += 1
+                if count_img == count_cert:
+                    """ URL and Img gos in pairs. 
+                    So we need to compare url № and take img with this number:
+                    1st url and 1st img, than 2d url and 2d img from FILE dictionary. """
+                    # print("\tf: %s, %s" % (f[0], f[1]))
+                    # f: certificate_img11, [<InMemoryUploadedFile: 123.png (image/png)>]
+                    img = f[1][0]
+                    break
 
             cert_arr.append((url, img))
             dict_up['certificate'] = cert_arr
 
     """ For loop ends - save temporary dictionary to the output arr. """
-    print("\tdict_up: %s" % dict_up)
+    # print("\tdict_up: %s" % dict_up)
     arr.append(dict_up)
 
     print('\tpars_edu_request() - OK; Time = %s sec' % (perf_counter() - time_0))
