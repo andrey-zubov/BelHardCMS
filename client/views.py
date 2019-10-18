@@ -375,7 +375,6 @@ def set_settings(request):
         settings.email_suggestions = status
     elif setting == 'email_meetings':
         settings.email_meetings = status
-
     elif setting == 'email_reviews':
         settings.email_reviews = status
 
