@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <form action="{% url 'test_url' %}">
+    <form action="{% url 'test_url' %}" method="post">
         {% csrf_token %}
         {{ form.title }}
         {{ form.body }}

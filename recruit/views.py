@@ -48,18 +48,20 @@ class CreateJobInterview(View):
         return render(request, 'recruit/recruiter_tasks_for_applicant.html',
                       context={'applicant_user': applicant_user, 'form': form})
 
-    def post(self, request):
+    def post(self, request, id_a):
+        applicant_user = Client.objects.get(id=id_a)
         bound_form = JobInterviewsForm(request.POST)
-        print(bound_form)
         if bound_form.is_valid():
             print(bound_form)
-            # new_jobinterview = bound_form.save()
-
+            new_jobinterview = bound_form.save()
+            return redirect(applicant_user.get_tasks_url())
+        return render(request, 'recruit/recruiter_tasks_for_applicant.html',
+                      context={'applicant_user': applicant_user, 'form': bound_form})
 
 class Test(View):
     def get(self, request):
         form = TestForm()
-        print(request.POST)
+
         return render(request, 'recruit/test.html', context={'form': form})
 
     def post(self, request):
