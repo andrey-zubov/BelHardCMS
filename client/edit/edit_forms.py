@@ -92,5 +92,3 @@ class SabClassForm(EducationForm, CertificateForm):
 SabClassFormSet = formset_factory(SabClassForm)
 EducationFormSet = formset_factory(EducationForm)
 CertificateFormSet = formset_factory(CertificateForm)
-# inlineEduCert = inlineformset_factory(Education, Certificate,
-#                                       fields=('education', 'img', 'link',))
