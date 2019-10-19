@@ -4,6 +4,20 @@
     {% block title %} Opinion {% endblock %}
 
 {% block content %}
+        {% for opinion in opinions %}
+
+        <h2>{{opinion.title}}</h2>
+
+        <h4>{{opinion.text}}</h4>
+        <h5>{{opinion.date}}</h5>
+
+
+
+        <a href="{{opinion.get_adres}}" class="btn btn-primary">More</a>
+
+    {%endfor%}<hr>
+    <button id="add_opinion" type="submit">Оставить отзыв</button>
+   <div class="create_opinion" hidden=>
     <form action="" method="post">
         {%csrf_token%}
 
@@ -15,4 +29,19 @@
         {%endfor%}
         <button type="submit" class="btn btn-primary">Add</button>
     </form>
+    </div>
+
+
+<script>
+    $('document').ready(function () {
+            let op = document.getElementsByClassName('create_opinion');
+            $('#add_opinion').on('click', function () {
+                $('.create_opinion').toggle();
+
+
+        });
+
+        });
+
+</script>
 {% endblock %}
