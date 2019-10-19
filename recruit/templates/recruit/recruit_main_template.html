@@ -1,11 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Main page</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh"
+            crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="/static/recruit/style/style.css">
+
+    <title>Recruit - HR-System</title>
 </head>
 <body>
-    <a href="{%url 'contact_with_clients' %}">Чат</a>
+
+<div class="inbody" >
+        <header class="header-bar">
+                                <a class="logo" href="#" style="text-decoration: none; padding-left: 40px ">
+                                    <div class="name" style="margin: auto; text-align: center">
+                                        <img src="https://static.wixstatic.com/media/3e33b4_be193070b72743e2a0194222634bd2bf~mv2.png/v1/fill/w_79,h_71,al_c,q_80,usm_0.66_1.00_0.01/31-512.png" style="width: 50px; height: 50px"  >
+                                        <div class="hr-sys">HR-System</div>
+                                        <div class="version">Сборка: 1.0</div>
+                                    </div>
+                                </a>
+
+                                <a class="text-bar" href="#" > Избранное  <div class="counter" id="task_count" hidden="true"> {{ readtask }}</div></a>
+                                <a class="text-bar" href="#" id="clearnotif"> База <div class="counter" id="sug_count" hidden="true">{{ unread_suggestions }}</div></a>
+                                <a class="text-bar" href="#">Задачи</a>
+                                <a class="text-bar" href="#">Отчеты</a>
+                                <a class="text-bar" href="{% url 'add_task' %}">Добавить задачу</a>
+                                <a class="text-bar" href="{%url 'contact_with_clients' %}"> Сообщения <div class="counter" id="mes_count" hidden="true"> {{ unread_messages }} </div></a>
+                                <div class="client-bar">
+                                    <a class="text-client" href="#" >
+                                        <img src="{{ client_img }}"  height="75px" style="border-radius: 50%;" alt=""></a>
+
+                                    <div class="client-name-out" >
+                                        <h4 style="margin-bottom: 5px">Клиент</h4>
+                                        <a class="logout" href="{% url 'logout' %}" >Выйти</a>
+                                    </div>
+                                </div>
+        </header>
+
+        <section class="content" >
+
+        <img src="https://static.wixstatic.com/media/3e33b4_8434f559fcaa44a39ecfd54bf197fba5~mv2.png/v1/fill/w_750,h_350,al_c,q_80,usm_0.66_1.00_0.01/tild6162-3961-4262-b966-316166666133__lo.png" alt="">
+
+        </section>
+
+        <div class="footer-bar">
+                 <a class="text-footer" href="#">Настройки</a>
+        </div>
+    </div>
+
+
+     
+
 
 </body>
 </html>

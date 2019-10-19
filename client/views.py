@@ -179,11 +179,6 @@ class MessagesView(View):
         return redirect(reverse('contact_with_centre'))
 
 
-def opinion_list(request):
-    opinion = Opinion.objects.all()
-    return render(request, 'opinion/index.html', context={'opinion': opinion})
-
-
 def answer_create(request, pk):
     opinion = get_object_or_404(Opinion, id=pk)
     answer = Answer.objects.filter(pk=pk)
@@ -199,15 +194,22 @@ def answer_create(request, pk):
             return redirect('opinion_detail', pk)
     return render(request, 'opinion/answer_create.html', context={'form': form, 'opinion': opinion, "answer": answer})
 
+def opinion_list(request):
+    opinion = Opinion.objects.all()
+    return render(request, 'opinion/index.html', context={'opinion': opinion})
 
 class OpinionCreate(View):
+
     def get(self, request):
+        opinions = Opinion.objects.all()
         form = OpinionForm()
         client_instance = client_check(request.user)
         return render(request, 'opinion/opinion_create.html', context={'form': form,
-                                                                       'client_img': load_client_img(client_instance)})
+                                                                       'client_img':load_client_img(client_instance), 'opinions':opinions})
+
 
     def post(self, request):
+        opinions = Opinion.objects.all()
         form = OpinionForm(request.POST)
 
         if form.is_valid():
@@ -217,7 +219,7 @@ class OpinionCreate(View):
             return redirect('opinion_detail', pk=new_opinion.pk)
         client_instance = client_check(request.user)
         return render(request, 'opinion/opinion_create.html', context={'form': form,
-                                                                       'client_img': load_client_img(client_instance)})
+                                                                       'client_img':load_client_img(client_instance), 'opinions':opinions})
 
 
 def opinion_detail(request, pk):
@@ -239,6 +241,8 @@ class OpinionDelete(View):
 def client_login(request):  # ввести логин/пароль -> зайти в систему
     res = csrf(request)
     res['url'] = 'login'
+    if request.user.is_authenticated:  # редирект авторизированых пользователей со страницы логина
+        return redirect(to='client')
     if request.POST:
         password = request.POST['password']
         user = request.POST['user']
@@ -259,6 +263,8 @@ def client_login(request):  # ввести логин/пароль -> зайти
         user_settings = Settings.objects.get(user=request.user)
     except Settings.DoesNotExist:
         user_settings = Settings.objects.create(user=request.user)
+    if not Group.objects.filter(name='Users').exists():
+        Group.objects.create(name='Users')
     if u.groups.filter(name='Users').exists():
         return redirect('client')
     elif u.groups.filter(name='Recruiters').exists():
@@ -366,7 +372,6 @@ def set_settings(request):
         settings.email_suggestions = status
     elif setting == 'email_meetings':
         settings.email_meetings = status
-
     elif setting == 'email_reviews':
         settings.email_reviews = status
 
