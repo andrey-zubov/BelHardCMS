@@ -380,7 +380,9 @@ def checknotifications(request):
     chat = Chat.objects.get(members=request.user)
     unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
     readtask = len(Tasks.objects.filter(user=request.user, readtask=False))
-    resumes = CV.objects.all()   # ########################################################################################################################################
+    # resumes = CV.objects.all() ###################################### Spain, check this place ########################
+    client = Client.objects.get(user_client=request.user)
+    resumes = CV.objects.filter(client_cv=client)
     suggestions = 0
     for resume in resumes:
         suggestions += resume.notification.count()

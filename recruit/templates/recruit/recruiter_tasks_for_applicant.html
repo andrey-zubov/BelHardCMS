@@ -40,10 +40,13 @@
 
                         <form action="{{ applicant_user.get_tasks_url }}" method="post">
                             {% csrf_token %}
-                            <!--h5>
-                                (<input type="text" class="form-time" id="id_time" name="time">)
-                                 <input type="text"  class="form-heading" id="id_heading"  name="heading">
+                            <h5>
+                                (<input type="time" class="time" id="id_time" name="time">)
+                                 <input type="text"  class="name" id="id_name"  name="name">
                             </h5><br>
+                            <h5>
+                                <input type="date"  class="form-heading" id="id_heading"  name="heading">
+                            </h5>
                             <h5>
                                 Предлагаемая должность: <input type="text" class="form-position" id="id_position"
                                                                name="position">
@@ -71,8 +74,8 @@
                             </h5><br>
                             <h5>
                                Добавить файл: <input type="file" class="form-addition" id="id_addition" name="document">
-                            </h5><br-->
-                            <p>{{ form }}</p>
+                            </h5><br>
+                            <!--p>{ form }}</p-->
 
                     </div>
                     <div class="modal-footer">

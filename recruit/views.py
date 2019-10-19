@@ -1,12 +1,12 @@
 from time import perf_counter
 
-from client.models import Client
+from client.models import Client, CV
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import View
 from django.views.generic.edit import FormView
 from django.template.context_processors import csrf
-from .forms import JobInterviewsForm, TestForm
+from .forms import JobInterviewsForm
 
 from django.urls import reverse
 from django.http import HttpResponse
@@ -28,50 +28,48 @@ def applicant(request, id_a):
     return render(request, 'recruit/recruiter_applicant.html', context={'applicant_user': applicant_user})
 
 
-# def applicant_tasks(request, id_a):
-#     applicant_user = Client.objects.get(id=id_a)
-#     response = csrf(request)
-#     response['applicant_user'] = applicant_user
-    # if request.method == 'POST':
-    #     response['form'] = FileFieldForm()
-    #
-    # else:
-    #     response['form'] = FileFieldForm()
-
-#    return render(request, 'recruit/recruiter_tasks_for_applicant.html', context=response)
-
-
 class CreateJobInterview(View):
     def get(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
-        form = JobInterviewsForm()
+        response = {'applicant_user': applicant_user}
+        accepted_vacancies = applicant_user.cv_set.all()[0].vacancies_accept.all()
+        for resume in applicant_user.cv_set.all()[1:]:
+            accepted_vacancies |= resume.vacancies_accept.all()
+        response['accepted_vacancies'] = accepted_vacancies
         return render(request, 'recruit/recruiter_tasks_for_applicant.html',
-                      context={'applicant_user': applicant_user, 'form': form})
+                      context=response)
 
     def post(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
-        bound_form = JobInterviewsForm(request.POST)
-        if bound_form.is_valid():
-            print(bound_form)
-            new_jobinterview = bound_form.save()
-            return redirect(applicant_user.get_tasks_url())
-        return render(request, 'recruit/recruiter_tasks_for_applicant.html',
-                      context={'applicant_user': applicant_user, 'form': bound_form})
-
-class Test(View):
-    def get(self, request):
-        form = TestForm()
-
-        return render(request, 'recruit/test.html', context={'form': form})
-
-    def post(self, request):
-        print()
-        print(request.POST)
-        print()
-        bound_form = TestForm()
-        print(bound_form)
+        name = request.POST['name']
+        print(name)
 
 
+
+        return redirect(applicant_user.get_tasks_url())
+        # return render(request, 'recruit/recruiter_tasks_for_applicant.html',
+        #              context={'applicant_user': applicant_user, 'form': bound_form})
+
+# ########################################################################################################
+# class CreateJobInterview(View):
+#     def get(self, request, id_a):
+#         applicant_user = Client.objects.get(id=id_a)
+#         form = JobInterviewsForm()
+#
+#         return render(request, 'recruit/recruiter_tasks_for_applicant.html',
+#                       context={'applicant_user': applicant_user, 'form': form})
+#
+#     def post(self, request, id_a):
+#         applicant_user = Client.objects.get(id=id_a)
+#         bound_form = JobInterviewsForm(request.POST)
+#         if bound_form.is_valid():
+#             print(bound_form)
+#             new_jobinterview = bound_form.save()
+#             return redirect(applicant_user.get_tasks_url())
+#         return render(request, 'recruit/recruiter_tasks_for_applicant.html',
+#                       context={'applicant_user': applicant_user, 'form': bound_form})
+
+# ##########################################################################################################
 
 """
 class FileFieldView(FormView):
