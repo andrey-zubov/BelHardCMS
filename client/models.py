@@ -3,6 +3,8 @@ from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
 
+from recruit.models import Recruiter
+
 UserModel = get_user_model()
 
 
@@ -300,6 +302,9 @@ class Client(models.Model):
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
     # resumes
     resumes = models.ForeignKey(Resume, on_delete=models.SET_NULL, null=True, blank=True)
+    # spain recruit
+    is_reserved = models.BooleanField(default=False)
+    own_recruiter = models.ForeignKey(Recruiter, on_delete=models.SET_NULL, null=True, blank=True)
 
     def delete(self, *args, **kwargs):
         self.img.delete()

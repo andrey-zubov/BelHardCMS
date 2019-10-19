@@ -3,8 +3,10 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 
 
-from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings
+from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings, Client
 from datetime import datetime
+
+from recruit.models import Recruiter
 
 
 def recruit_main_page(request):
@@ -123,3 +125,12 @@ def add_new_task(requset):
 
 
     return redirect(to='add_task')
+
+
+def favorites(request):
+    recruit = Recruiter.objects.get(recruiter=request.user)
+    clients = Client.objects.filter(own_recruiter=recruit)
+    context = {'clients': clients}
+    print(context)
+
+    return render(request, template_name='recruit/favorites.html', context=context)
