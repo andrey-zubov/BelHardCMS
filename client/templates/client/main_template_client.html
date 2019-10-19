@@ -78,7 +78,7 @@
             {% endif %}
             {%if settings.meetings == True %}
                 {% if readinterview != 0 %}
-                    <div class="notification" id="mee_notification"><h2>Новые собеседования: {{ readinterview }} </h2>
+            <div class="notification" id="mee_notification"><a href="{% url 'interviews_list_url' %}" style="text-decoration: none; color: #fff"><h2>Новые собеседования:  {{ readinterview }} </h2></a>
                         <span class="close" id="close_mee"></span></div>
                 {% endif %}
             {% endif %}
