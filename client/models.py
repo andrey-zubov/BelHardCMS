@@ -255,7 +255,7 @@ class Vacancy(models.Model):
     conditions = models.TextField(max_length=1000, null=True)
 
     def __str__(self):
-        return '{}'.format(self.state)
+        return self.state
 
     def get_absolute_url(self):
         return reverse('vacancy_detail_url', kwargs={'id_v': self.id})
@@ -271,7 +271,10 @@ class Help(models.Model):
 
 class JobInterviews(models.Model):
     client = models.ForeignKey(to='Client', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Соискатель')
-    cv = models.ForeignKey(to='CV', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Резюме')
+    vacancies = models.ForeignKey(to='Vacancy', on_delete=models.CASCADE, blank=True, null=True,
+                                  verbose_name='Вакансии')
+    jobinterviewtime = models.TimeField(max_length=10, verbose_name='Время проведения собеседования')
+    jobinterviewdate = models.DateField(max_length=20, verbose_name='Дата проведения собеседования')
     name = models.CharField(max_length=50, verbose_name='Наименование')
     interview_author = models.CharField(max_length=50, verbose_name='Автор собеседования', blank=True, null=True)
     time_of_creation = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
@@ -287,12 +290,11 @@ class JobInterviews(models.Model):
     location = models.CharField(max_length=50, verbose_name='Место проведения')
     additional_information = models.TextField(max_length=3000, blank=True, null=True,
                                               verbose_name='Дополнительная информация')
-    # add_file = models.FileField(verbose_name='Вложения', blank=True, null=True)
+      # add_file = models.FileField(verbose_name='Вложения', blank=True, null=True)
     status = models.BooleanField(default=False)  # статус собеседования, на которое ещё не ходили
     check_status = models.BooleanField(default=True)  # статус активен, если можем после успешного собеседования
-    # в течении 60 сек вернуть в статус активных собеседований
-    done_interview = models.BooleanField(default=False)  # успешно пройденное собеседование
-    readinterview = models.BooleanField(default=False)
+      # в течении 60 сек вернуть в статус активных собеседований
+    # readinterview = models.BooleanField(default=False)
 
     @property
     def show_all(self):
@@ -347,7 +349,10 @@ class FilesForJobInterviews(models.Model):
 
 class Client(models.Model):
     user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, verbose_name='Имя')     # TODO
+    last_name = models.CharField(max_length=100, verbose_name='Фамилия')    # TODO
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
+
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
     date_born = models.DateField(null=True, blank=True)
     citizenship = models.ForeignKey(Citizenship, related_name='citizenship', on_delete=models.SET_NULL,
@@ -362,6 +367,7 @@ class Client(models.Model):
 
     telegram_link = models.CharField(max_length=100, blank=True, null=True,
                                      verbose_name='Ник в телеграмме')  # при верстке учесть @
+    email = models.EmailField(max_length=200, null=True, blank=True)    # TODO
     link_linkedin = models.URLField(max_length=200, null=True, blank=True)
     skype = models.CharField(max_length=100, null=True, blank=True)
     img = models.ImageField(blank=True, null=True)

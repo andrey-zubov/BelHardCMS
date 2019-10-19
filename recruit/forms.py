@@ -9,25 +9,28 @@ from client.models import JobInterviews, Client
 #
 #     file_field = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
-class TestForm(forms.Form):
-    title = forms.CharField(max_length=50)
-    body = forms.CharField(max_length=50)
-
+# class TestForm(forms.Form):
+#     title = forms.CharField(max_length=50)
+#     body = forms.CharField(max_length=50)
+#
+#
 class JobInterviewsForm(forms.ModelForm):
     class Meta:
         model = JobInterviews
         fields = [
-            'cv',
-            'period_of_execution',
-            'position',
-            'name',
-            'responsible_person',
-            'contact_responsible_person_1str',
-            'contact_responsible_person_2str',
-            'location',
+#             'cv',
+#             #'get_cv',
+#             'period_of_execution',
+#             'position',
+#             'name',
+#             'responsible_person',
+#             'contact_responsible_person_1str',
+#             'contact_responsible_person_2str',
+#             'location',
             'additional_information',
-            # 'files_for_jobinterview',
+#             # 'files_for_jobinterview',
         ]
+
 
     # def save(self):
     #     new_jobinterview = JobInterviews.objects.create(

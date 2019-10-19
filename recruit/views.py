@@ -31,19 +31,24 @@ def applicant(request, id_a):
 class CreateJobInterview(View):
     def get(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
-        form = JobInterviewsForm()
+        response = {'applicant_user': applicant_user}
+        accepted_vacancies = applicant_user.cv_set.all()[0].vacancies_accept.all()
+        for resume in applicant_user.cv_set.all()[1:]:
+            accepted_vacancies |= resume.vacancies_accept.all()
+        response['accepted_vacancies'] = accepted_vacancies
         return render(request, 'recruit/recruiter_tasks_for_applicant.html',
-                      context={'applicant_user': applicant_user, 'form': form})
+                      context=response)
 
     def post(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
-        bound_form = JobInterviewsForm(request.POST)
-        if bound_form.is_valid():
-            print(bound_form)
-            new_jobinterview = bound_form.save()
-            return redirect(applicant_user.get_tasks_url())
-        return render(request, 'recruit/recruiter_tasks_for_applicant.html',
-                      context={'applicant_user': applicant_user, 'form': bound_form})
+        name = request.POST['name']
+        print(name)
+
+
+
+        return redirect(applicant_user.get_tasks_url())
+
+# End Poland's views #######################################################################################
 
 
 def recruit_chat(request):
