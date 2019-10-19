@@ -255,6 +255,8 @@ class OpinionDelete(View):
 def client_login(request):  # ввести логин/пароль -> зайти в систему
     res = csrf(request)
     res['url'] = 'login'
+    if request.user.is_authenticated:  # редирект авторизированых пользователей со страницы логина
+        return redirect(to='client')
     if request.POST:
         password = request.POST['password']
         user = request.POST['user']
@@ -383,7 +385,6 @@ def set_settings(request):
         settings.email_suggestions = status
     elif setting == 'email_meetings':
         settings.email_meetings = status
-
     elif setting == 'email_reviews':
         settings.email_reviews = status
 

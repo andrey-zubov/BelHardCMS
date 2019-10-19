@@ -21,6 +21,7 @@
     <title>Recruit - HR-System</title>
 </head>
 <body>
+
 <div class="inbody" >
         <header class="header-bar">
                                 <a class="logo" href="#" style="text-decoration: none; padding-left: 40px ">
@@ -35,6 +36,7 @@
                                 <a class="text-bar" href="#" id="clearnotif"> База <div class="counter" id="sug_count" hidden="true">{{ unread_suggestions }}</div></a>
                                 <a class="text-bar" href="#">Задачи</a>
                                 <a class="text-bar" href="#">Отчеты</a>
+                                <a class="text-bar" href="{% url 'add_task' %}">Добавить задачу</a>
                                 <a class="text-bar" href="{%url 'contact_with_clients' %}"> Сообщения <div class="counter" id="mes_count" hidden="true"> {{ unread_messages }} </div></a>
                                 <div class="client-bar">
                                     <a class="text-client" href="#" >
@@ -57,6 +59,9 @@
                  <a class="text-footer" href="#">Настройки</a>
         </div>
     </div>
+
+
+     
 
 
 </body>
