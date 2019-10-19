@@ -22,79 +22,8 @@
 
 
     {% load staticfiles %}
-    <style type="text/css" href="{% static 'client/style/style.css' %}"></style>
 
-    <style>
-        .task {
-            position: relative;
-        }
-
-        .counter {
-            top: -8px;
-            right: -8px;
-            border-radius: 50%;
-            font-size: 12px;
-            position: absolute;
-            font-weight: bold;
-            width: 17px;
-            height: 17px;
-            color: #000000;
-            text-align: center;
-            background: red;
-            border: 0.5px solid black;
-        }
-
-        .notification {
-            width: 50%;
-            background: #fe6060;
-            text-align: center;
-            border-radius: 15px;
-            margin: 5px auto;
-            position: relative;
-            color: white;
-            border: 1px #000000 solid;
-        }
-
-        .close {
-            position: absolute;
-            right: 4px;
-            top: 7px;
-            width: 10px;
-            height: 10px;
-            opacity: 0.3;
-        }
-
-        .close:hover {
-            opacity: 1;
-        }
-
-        .close:before, .close:after {
-            position: absolute;
-            left: 0px;
-            content: ' ';
-            height: 10px;
-            width: 2px;
-            background-color: #333;
-        }
-
-        .close:before {
-            transform: rotate(45deg);
-        }
-
-        .close:after {
-            transform: rotate(-45deg);
-        }
-
-        .messages {
-            position: relative;
-        }
-
-        .suggestions {
-            position: relative;
-        }
-    </style>
-
-    <title>{% block title %}{% endblock %} - HR-System</title>
+    <title>{% block title %}Client{% endblock %} - HR-System</title>
 </head>
 <body>
 <div class="inbody" >

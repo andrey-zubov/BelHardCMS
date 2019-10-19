@@ -10,5 +10,7 @@ urlpatterns = [
     path('chat_update/', views.chat_update, name='chat_update'),
     path('check_mes/', views.check_mes, name='check_mes'),
     path('', views.recruit_main_page, name='main_page'),
+    path('add_task', views.add_task, name='add_task'),
+    path(r'add_new_task',views.add_new_task)
 
 ]

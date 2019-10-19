@@ -29,6 +29,7 @@ from client.edit.pages_post import (skills_page_post, edit_page_post, photo_page
                                     education_page_post, cv_page_post, experience_page_post)
 from client.forms import (OpinionForm, AnswerForm, MessageForm)
 from client.models import *
+from django.contrib.auth.models import Group
 
 
 def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
@@ -254,6 +255,8 @@ class OpinionDelete(View):
 def client_login(request):  # ввести логин/пароль -> зайти в систему
     res = csrf(request)
     res['url'] = 'login'
+    if request.user.is_authenticated:  # редирект авторизированых пользователей со страницы логина
+        return redirect(to='client')
     if request.POST:
         password = request.POST['password']
         user = request.POST['user']
@@ -266,7 +269,7 @@ def client_login(request):  # ввести логин/пароль -> зайти
     else:
         return render(request, 'registration.html', res)
     try:
-        user_chat = Chat.objects.filter(members=request.user)
+        user_chat = Chat.objects.get(members=request.user)
     except Chat.DoesNotExist:
         user_chat = Chat.objects.create()
         user_chat.members.add(request.user)  # TODO сюда добавить менеджера, которому, по дефолту, передают юзера
@@ -274,10 +277,17 @@ def client_login(request):  # ввести логин/пароль -> зайти
         user_settings = Settings.objects.get(user=request.user)
     except Settings.DoesNotExist:
         user_settings = Settings.objects.create(user=request.user)
+    if not Group.objects.filter(name='Users').exists():
+        Group.objects.create(name='Users')
     if u.groups.filter(name='Users').exists():
         return redirect('client')
     elif u.groups.filter(name='Recruiters').exists():
         return redirect('main_page')
+    else:        # добавляет юзера к группе 'Users' поумолчанию, если у него нет никаких групп
+        user_group = Group.objects.get(name='Users')
+        u.groups.add(user_group)
+        u.save()
+        return redirect('client')
 
 def client_logout(request):  # выйти из системы, возврат на стартовую страницу
     auth.logout(request)

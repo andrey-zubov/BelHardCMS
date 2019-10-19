@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh"
+            crossorigin="anonymous"></script>
+</head>
+<body>
+
+<!---->
+<div class="add_task">
+    <form action="/recruit/add_new_task" method="post">
+        {% csrf_token %}
+
+        <h1>Добавить новую задачу пользователю</h1><br>
+        <select name="name" id="username">
+            <option>--выбрать пользователя--</option>
+            {% for user in users_list %}
+                <option>{{ user }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label for="task_title">Заголовок задачи:</label><br>
+        <input type="text" name="task_title" id="task_title"><br>
+
+        <label for="task_comment">Комментарий к задаче</label><br>
+        <input type="text" name="task_comment" id="task_comment"><br>
+        <label for="task_subtask1">Задать подзадачи</label><br>
+        <div id="origin1">
+            <input type="text" name="task_subtask1" id="task_subtask_q"><br>
+        </div>
+        <div class="put_here">1</div>
+
+        <input type="button" value="Добавить еще подзадачу" id="add_more_tasks">
+
+
+        <input type="submit" value="Назначить задачу">
+    </form>
+</div>
+
+<script>
+        <!--TODO добработать это -->
+        $(document).ready(function () {
+            let count = 2;
+
+            $("#add_more_tasks").on("click", function () {
+                let origin ='<div id="origin1"><input type="text" name="task_subtask'+ count +'"id="task_subtask_q"><br></div>';
+                $('.put_here').append(origin);
+                count++;
+                console.log(count);
+                });
+        });
+
+</script>
+</body>
+</html>

@@ -1,8 +1,10 @@
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
-from client.models import Chat, Message, Settings
+
+from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings
+from datetime import datetime
 
 
 def recruit_main_page(request):
@@ -82,3 +84,34 @@ def check_mes(request):
         send.append(new_dict)
 
     return JsonResponse(send, safe=False)
+
+
+def add_task(request):
+    context = {}
+    context['users_list'] = UserModel.objects.all()
+    #context['newtask'] = newtask
+    return render(request=request, template_name='recruit/add_task.html', context=context)
+
+
+def add_new_task(requset):
+    try:
+        user = UserModel.objects.get(username=requset.POST['name'])
+    except UserModel.DoesNotExist: #TODO сделать проверку в отправек формы?
+        return HttpResponse('Необходимо задать юзера')
+    newtask = Tasks.objects.create()
+    newtask.user = user
+    newtask.title = requset.POST['task_title']
+    newtask.comment = str(requset.POST['task_comment'])
+    #newtask.time = datetime.now() TODO
+    newtask.save()
+    i = 1
+    reqpost = requset.POST
+    while True:
+        try:
+            newsubtask = SubTasks(title=reqpost['task_subtask' + str(i)], task=newtask)
+        except:
+            break
+        i += 1
+        newsubtask.save()
+
+    return redirect(to='add_task')
