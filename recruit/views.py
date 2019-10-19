@@ -114,4 +114,12 @@ def add_new_task(requset):
         i += 1
         newsubtask.save()
 
+        try:
+            if Settings.objects.get(user=user).email_messages:
+                send_email = EmailMessage('HR-system', 'У вас новая задача', to=[str(user.email)])
+                send_email.send()
+        except Exception:
+            print('Exception: нет адреса электронной почты')
+
+
     return redirect(to='add_task')
