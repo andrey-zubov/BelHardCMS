@@ -195,11 +195,6 @@ class MessagesView(View):
         return redirect(reverse('contact_with_centre'))
 
 
-def opinion_list(request):
-    opinion = Opinion.objects.all()
-    return render(request, 'opinion/index.html', context={'opinion': opinion})
-
-
 def answer_create(request, pk):
     opinion = get_object_or_404(Opinion, id=pk)
     answer = Answer.objects.filter(pk=pk)
@@ -215,15 +210,21 @@ def answer_create(request, pk):
             return redirect('opinion_detail', pk)
     return render(request, 'opinion/answer_create.html', context={'form': form, 'opinion': opinion, "answer": answer})
 
+def opinion_list(request):
+    opinion = Opinion.objects.all()
+    return render(request, 'opinion/index.html', context={'opinion': opinion})
 
 class OpinionCreate(View):
+
     def get(self, request):
+        opinions = Opinion.objects.all()
         form = OpinionForm()
         client_instance = client_check(request.user)
         return render(request, 'opinion/opinion_create.html', context={'form': form,
-                                                                       'client_img':load_client_img(client_instance)})
+                                                                       'client_img':load_client_img(client_instance), 'opinions':opinions})
 
     def post(self, request):
+        opinions = Opinion.objects.all()
         form = OpinionForm(request.POST)
 
         if form.is_valid():
@@ -233,8 +234,7 @@ class OpinionCreate(View):
             return redirect('opinion_detail', pk=new_opinion.pk)
         client_instance = client_check(request.user)
         return render(request, 'opinion/opinion_create.html', context={'form': form,
-                                                                       'client_img':load_client_img(client_instance)})
-
+                                                                       'client_img':load_client_img(client_instance), 'opinions':opinions})
 
 def opinion_detail(request, pk):
     opinion = get_object_or_404(Opinion, pk=pk)
