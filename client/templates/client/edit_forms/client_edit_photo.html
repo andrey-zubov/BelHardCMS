@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+    {% include 'client/edit_forms/tot_samui_bootstrap.html' %}
 <div class="container">
     <form enctype="multipart/form-data" method="post">
         {% csrf_token %}
