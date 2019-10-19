@@ -1,0 +1,59 @@
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+                integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh"
+                crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+                integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/static/recruit/style/style.css">
+{% block title %}
+    Recruit chat
+{% endblock %}
+</head>
+<body>
+{% block content %}
+<div class="wrapper">
+    <div class="left_block">
+          <div id="chats" class="panel" style="width: 100%; height: 400px; border: 1px solid black; overflow-y: scroll;" onscroll="scroll(this);" >
+            <div id="innerChats">
+                {% for chat in chats %}
+                    <div class="chat_block" id="{{ chat.id }}" onclick="show_messages(this)" >
+                        {% for m in chat.members.all %}
+                            {% if m != user %}
+                                {{ m.username }}
+                            {% endif %}
+
+                        {% endfor %}
+                        <div class="counter" id="count_{{ chat.id }}" hidden="true">
+
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+          </div>
+    </div>
+    <div class="right_block">
+        <div id="messages" class="panel" style="width: 100%; height: 400px; border: 1px solid black; overflow-y: scroll;" onscroll="scroll(this);" >
+          <div id="innerMessages">
+
+          </div>
+        </div>
+        <div id="message_form">
+          <form id="message-form" class="panel panel-body" >
+            {% csrf_token %}
+            <input type="text" id="textField" class="form-control" style="width: 100%; height: 50px;" id="message" name="message">
+            <button type="button" class="btn btn-outline-success" id="button_send" onclick="send_message()">Отправить</button>
+          </form>
+        </div>
+    </div>
+
+</div>
+
+    <script src="/static/recruit/js/script.js"></script>
+
+{% endblock %}
+
+</body>

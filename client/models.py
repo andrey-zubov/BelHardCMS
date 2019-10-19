@@ -279,10 +279,7 @@ class Help(models.Model):
 
 class Client(models.Model):
     user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, verbose_name='Имя')     # TODO
-    last_name = models.CharField(max_length=100, verbose_name='Фамилия')    # TODO
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
-
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
     date_born = models.DateField(null=True, blank=True)
     citizenship = models.ForeignKey(Citizenship, related_name='citizenship', on_delete=models.SET_NULL,
@@ -297,16 +294,12 @@ class Client(models.Model):
 
     telegram_link = models.CharField(max_length=100, blank=True, null=True,
                                      verbose_name='Ник в телеграмме')  # при верстке учесть @
-    email = models.EmailField(max_length=200, null=True, blank=True)    # TODO
     link_linkedin = models.URLField(max_length=200, null=True, blank=True)
     skype = models.CharField(max_length=100, null=True, blank=True)
     img = models.ImageField(blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
     # resumes
     resumes = models.ForeignKey(Resume, on_delete=models.SET_NULL, null=True, blank=True)
-
-    def __str__(self):
-        return "%s %s %s" % (self.last_name, self.name, self.patronymic)
 
     def delete(self, *args, **kwargs):
         self.img.delete()
@@ -346,8 +339,8 @@ class Message(models.Model):
 
 class Opinion(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
-    title = models.CharField(max_length=100)
-    text = models.TextField(max_length=3000)
+    title = models.CharField(max_length=100, verbose_name='Тема')
+    text = models.TextField(max_length=3000, verbose_name='Текст отзыва')
     date = models.DateTimeField(auto_now_add=True)
 
     def get_adres(self):
@@ -436,3 +429,9 @@ class Settings(models.Model):
     tasks = models.BooleanField(default=True)
     suggestions = models.BooleanField(default=True)
     meetings = models.BooleanField(default=True)
+    reviews = models.BooleanField(default=True)
+    email_messages = models.BooleanField(default=True)
+    email_tasks = models.BooleanField(default=True)
+    email_suggestions = models.BooleanField(default=True)
+    email_meetings = models.BooleanField(default=True)
+    email_reviews = models.BooleanField(default=True)

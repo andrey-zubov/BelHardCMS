@@ -28,6 +28,28 @@ urlpatterns = [
     path(r'opinion/<int:pk>/', opinion_detail, name='opinion_detail'),
     path(r'opinion/edit/<int:pk>/', answer_create, name='opinion_answer'),
     path(r'opinion/edit/<int:pk>/delete/', OpinionDelete.as_view(), name='opinion_delete'),
+    path('login/', client_login, name='login'),
+    path('logout/', client_logout, name='logout'),
+    path('tasks/', tasks, name='tasks_list'),
+
+    path(r'checktask/', views.checktask),
+    path(r'checknotifications/', views.checknotifications),
+    path(r'settings/', views.settings_menu, name='settings_menu'),
+    path(r'settingsset/', views.set_settings, name='settings_set'),
+
+    ##Poland urls
+    path('resumes/', resumes_list, name='resumes_list_url'),
+    path('resumes/<str:slug>/', resume_detail, name='resume_detail_url'),
+    path('resumes/<str:slug>/accepted_vacancies/', accepted_vacancies, name='accepted_vacancies_url'),
+    path('resumes/<str:slug>/rejected_vacancies/', rejected_vacancies, name='rejected_vacancies_url'),
+    path('resumes/<str:slug>/vacancies/', vacancies_list, name='vacancies_list_url'),
+    path('resumes/vacancy/<str:slug>/', vacancy_detail, name='vacancy_detail_url'),
+    path('accept_reject/', views.accept_reject),
+    path('help/', help_list, name='help_list_url'),
+    path('settings/', settings_list, name='settings_list_url'),
+    path('on_off/', views.on_off),  # on_off settings for notifications
+    path('viewed/', views.viewed),
+
     path('login/', client_login),
     path('logout/', client_logout),
     path('tasks/', tasks, name='tasks_list'),
@@ -36,6 +58,7 @@ urlpatterns = [
     path(r'checknotifications/', views.checknotifications),
     path(r'settings/', views.settings_menu, name='settings_menu'),
     path(r'settingsset/', views.set_settings, name='settings_set'),
+    path(r'chat_update/', views.chat_update, name='chat_update'),
 
     ##Poland urls
     path('resumes/', resumes_list, name='resumes_list_url'),
