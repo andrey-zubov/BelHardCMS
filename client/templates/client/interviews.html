@@ -1,0 +1,121 @@
+{% extends 'client/main_template_client.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    Interviews
+{% endblock %}
+
+{% block content %}
+<nav class="nav fixed-center" style="background-color: #344955; width: 100%; margin: 0 auto; max-width: 900px; display: flex; justify-content: space-between; align-items: center;">
+    <a class="nav-link text-white offset-md-4"><h3>Собеседования</h3><a class="offset-md-4"><a href="{% url 'client' %}" class="btn btn-secondary">X</a></a></a>
+</nav>
+<div class="active">
+    {% for interview in interviews %}
+        <div hidden>{{ interview.check_readstatus }}</div>
+        <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox">
+        <button class="forinterviews" id="idforinterview{{ interview.id }}">{{ interview.name }}</button>
+        <div class="show_interviews" id="forallinterviews{{ interview.id }}">
+
+            {% for all in interview.show_all %}
+                <div class="check_all" id="check_all{{ all.id }}" type="checkbox">{{ all }}</div>
+            {% endfor %}
+
+            <button class="hide">Скрыть</button>
+        </div>
+        <hr>
+    {% endfor %}
+</div>
+<div class="done">
+<button class="show_done_interviews" id="id_show_done_interviews">Показать заверешенные собеседования</button>
+<div class="hide_interviews" id="forhideinterviews{{ interview.id }}">
+    {% for interview in interviews_false %}
+        <div id="interviews_check_time" hidden>{{ interview.check_time }}</div>
+            {% if interview.check_status != False %}
+                <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox">
+                <button class="forinterviews" id="idforinterview{{ interview.id }}">{{ interview.name }}</button>
+                <div class="show_interviews" id="forallinterviews{{ interview.id }}">
+
+                    {% for all in interview.show_all %}
+                        <div class="check_all" id="check_all{{ all.id }}" type="checkbox">{{ all }}</div>
+                    {% endfor %}
+
+                </div>
+                <hr>
+            {% endif %}
+        {% if interview.check_status == False %}
+            {{interview.name}}
+            {% for all in interviews.show_all %}
+                {{ all }}
+            {% endfor %}
+        {% endif %}
+            <br>
+    {% endfor %}
+    <button class="hide">Скрыть</button>
+</div>
+</div>
+
+
+
+<script type="text/javascript">
+    $('.show_interviews').hide()
+    $('.hide_interviews').hide()
+
+
+$('document').ready(function () {
+
+    $('.show_done_interviews').on('click', function () {
+
+        var elem = $('.' + 'hide_interviews');
+
+        if(elem.is(":visible")){
+            elem.hide();
+        } else {
+            elem.show();
+        }
+        console.log(1)
+    });
+
+
+    $(".hide_interviews .hide").click(function(){
+        $(this).parents(".hide_interviews").hide();
+        console.log(2)
+    });
+
+
+    $('.forinterviews').on('click', function () {
+        var id = 'forallinterviews' + $(this).attr('id').slice(14);
+        var elem = $('#' + id);
+
+        if(elem.is(":visible")){
+            elem.hide();
+        } else {
+            elem.show();
+        }
+        console.log(3)
+
+
+    });
+
+
+    $(".show_interviews .hide").click(function(){
+        $(this).parents(".show_interviews").hide();
+        console.log(4)
+    });
+
+
+    $('.check_interview').on('click', function () {
+            var id = $(this).attr('id').slice(15);
+            $.ajax({
+                'url':'/client/checkinterviews/',
+                'data': {'id': id},
+                success: function (data) {
+                    console.log(data)
+                }
+            });
+
+
+        })
+
+});
+</script>
+{% endblock %}

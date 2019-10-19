@@ -67,6 +67,11 @@ admin.site.register(Help)
 
 
 class JobInterviewsAdmin(admin.ModelAdmin):
+
+    list_display = ('name',)
+    list_display_links = ('name',)
+    search_fields = ('name',)
+
     class Media:
         js = ['js/scriptJob.js']
 
