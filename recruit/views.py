@@ -1,6 +1,7 @@
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.views.generic import TemplateView
 
 from client.models import Chat, Message, Settings
 
@@ -82,3 +83,20 @@ def check_mes(request):
         send.append(new_dict)
 
     return JsonResponse(send, safe=False)
+
+
+# TeamRome
+class RecruitEditMain(TemplateView):
+    template_name = 'recruit/edit_pages/recruit_edit_main.html'
+
+    def get(self, request, *args, **kwargs):
+        client_instance = 'foo()'
+        response = {'client_img': 'foo()',
+                    'data': 'foo()',
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        client_instance = 'foo()'
+        'foo()'
+        return redirect('/client/edit')
