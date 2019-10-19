@@ -366,7 +366,7 @@ class Answer(models.Model):
 class Tasks(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True)
     title = models.TextField(max_length=200)
-    time = models.DateTimeField(auto_now_add=True) # TODO добавден auno_now, временно
+    time = models.DateTimeField(null=True, blank=True) # TODO добавден auno_now, временно
     date = models.DateField(null=True, blank=True)
     comment = models.TextField(max_length=300, blank=True)
     status = models.BooleanField(default=False)  # задача, которая не выполнена

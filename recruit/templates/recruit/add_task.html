@@ -28,9 +28,9 @@
 
         <label for="task_comment">Комментарий к задаче</label><br>
         <input type="text" name="task_comment" id="task_comment"><br>
-        <label for="task_subtask">Задать подзадачи</label><br>
+        <label for="task_subtask1">Задать подзадачи</label><br>
         <div id="origin1">
-            <input type="text" name="task_subtask" id="task_subtask"><br>
+            <input type="text" name="task_subtask1" id="task_subtask_q"><br>
         </div>
         <div class="put_here">1</div>
 
@@ -44,27 +44,13 @@
 <script>
         <!--TODO добработать это -->
         $(document).ready(function () {
-            var count = 1
-            var origin = $("#origin1").clone();  //сохранение в памяти копии оригинала пустой ячейки
+            let count = 2;
 
             $("#add_more_tasks").on("click", function () {
-                var add = origin.clone //не копирует?
-                console.log(origin)
-                console.log(add)
-                //
-                currentinput = origin.children('input')[count];  //добавляет count к name=task_subtask
-                console.log(currentinput)
-                console.log('qqq')
-                attrname = $(currentinput).attr('name');       //выдает ориинальное name=task_subtask
-                console.log(attrname)
-                console.log('zzz')
-                $(currentinput).attr('name', attrname + count);
-                console.log(currentinput)
-                console.log('ww')
-                //
+                let origin ='<div id="origin1"><input type="text" name="task_subtask'+ count +'"id="task_subtask_q"><br></div>';
                 $('.put_here').append(origin);
-                count++
-                console.log(count)
+                count++;
+                console.log(count);
                 });
         });
 
