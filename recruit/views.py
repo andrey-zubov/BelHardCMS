@@ -88,9 +88,16 @@ def add_new_task(requset):
     newtask.user = user
     newtask.title = requset.POST['task_title']
     newtask.comment = str(requset.POST['task_comment'])
-    #newtask.time = datetime.now()
+    #newtask.time = datetime.now() TODO
     newtask.save()
-    newsubtask = SubTasks(title=requset.POST['task_subtask'], task=newtask) #TODO расширить список подзадач
-    newsubtask.save()
+    i = 1
+    reqpost = requset.POST
+    while True:
+        try:
+            newsubtask = SubTasks(title=reqpost['task_subtask' + str(i)], task=newtask)
+        except:
+            break
+        i += 1
+        newsubtask.save()
 
     return redirect(to='add_task')
