@@ -13,7 +13,7 @@
             var origin = $("#origin_div").clone();
 
             $("#add_more").on("click", add_cv);
-            $("#id_position").on("change", data_l);
+            $("#id_position").on("click", data_l);
 
             function add_cv() {
                 var add = origin.clone();
@@ -25,7 +25,7 @@
                     // Because custom form! Can be optimised!
                     switch (i) {
                         case 0: // input #1
-                            element = $(current_div[i]).children('input').on("change", data_l);
+                            element = $(current_div[i]).children('input').on("click", data_l);
                             console.log("input #1", element);
                             attr_name = $(element).attr('name');
                             console.log("input #1", attr_name);
@@ -71,7 +71,9 @@
                     success: function (data) {
                         var json_data = jQuery.parseJSON(data);
                         console.log(json_data.words);
-                        {#//$("#data_list_2")#}
+                        $.each(json_data.words, function (i, item) {
+                            $("#data_list").append($("<option>").attr('value', item).text(item));
+                        });
                     }
                 });
             }
@@ -91,7 +93,10 @@
                             <label for="id_position">Должность</label>
                             <input type="text" class="form-control" id="id_position"
                                    name="position{{ forloop.counter }}"
-                                   value="{{ cv.position }}">
+                                   value="{{ cv.position }}" list="data_list">
+                            <datalist id="data_list">
+                                <option id="dl_option" value=""></option>
+                            </datalist>
                         </div>
                         <div class="form-group">
                             <label for="id_employment">Занятость</label>
