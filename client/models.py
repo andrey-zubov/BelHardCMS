@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
 import re
+import datetime as dt
 from django.utils import timezone
 
 UserModel = get_user_model()
@@ -295,11 +296,15 @@ class JobInterviews(models.Model):
 
     @property
     def show_all(self):
+        print(self.period_of_execution.__class__.__name__)
         to_show = []
-        for val in self.__dict__.values():
-            if val != None and type(val) != bool:
-                to_show.append(val)
-        return to_show[4:14]
+        for key in self.__dict__:
+            if self.__dict__[key].__class__.__name__ == 'str' or self.__dict__[key].__class__.__name__ == 'datetime':
+                to_show.append(self.__dict__[key])
+                print(self._meta.get_field(key).verbose_name)
+        to_show.remove(self.time_of_creation)
+        return to_show[1:]
+
 
     @property
     def check_time(self):

@@ -14,56 +14,64 @@
         <div hidden>{{ interview.check_readstatus }}</div>
         <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox">
         <button class="forinterviews" id="idforinterview{{ interview.id }}">{{ interview.name }}</button>
-        <div class="show_interviews">
-            <div id="forallinterviews{{ interview.id }}">
+        <div class="show_interviews" id="forallinterviews{{ interview.id }}">
 
-                {% for all in interview.show_all %}
-                    <div class="check_all" id="check_all{{ all.id }}" type="checkbox">{{ all }}</div>
-                {% endfor %}
+            {% for all in interview.show_all %}
+                <div class="check_all" id="check_all{{ all.id }}" type="checkbox">{{ all }}</div>
+            {% endfor %}
 
             <button class="hide">Скрыть</button>
-            </div>
         </div>
         <hr>
     {% endfor %}
 </div>
-
-<button id="show_done_interviews">Показать заверешенные собеседования</button>
-<div class="hide_interviews">
+<div class="done">
+<button class="show_done_interviews" id="id_show_done_interviews">Показать заверешенные собеседования</button>
+<div class="hide_interviews" id="forhideinterviews{{ interview.id }}">
     {% for interview in interviews_false %}
-    <div id="interviews_check_time" hidden>{{ interview.check_time }}</div>
-        {% if interview.check_status != False %}
-            <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox">
-            <button class="forinterviews" id="idforinterview{{ interview.id }}">{{ interview.name }}</button>
+        <div id="interviews_check_time" hidden>{{ interview.check_time }}</div>
+            {% if interview.check_status != False %}
+                <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox">
+                <button class="forinterviews" id="idforinterview{{ interview.id }}">{{ interview.name }}</button>
+                <div class="show_interviews" id="forallinterviews{{ interview.id }}">
 
-            <div id="forallinterviews{{ interview.id }}">
                     {% for all in interview.show_all %}
                         <div class="check_all" id="check_all{{ all.id }}" type="checkbox">{{ all }}</div>
                     {% endfor %}
-            </div>
-            <hr>
+
+                </div>
+                <hr>
+            {% endif %}
+        {% if interview.check_status == False %}
+            {{interview.name}}
+            {% for all in interviews.show_all %}
+                {{ all }}
+            {% endfor %}
         {% endif %}
-    {% if interview.check_status == False %}
-        {{interview.name}}
-        {% for all in interviews.show_all %}
-            {{ all }}
-        {% endfor %}
-    {% endif %}
-        <br>
+            <br>
     {% endfor %}
     <button class="hide">Скрыть</button>
 </div>
+</div>
+
 
 
 <script type="text/javascript">
-    $('.hide_interviews').hide()
-    $('forallinterviews').hide()
     $('.show_interviews').hide()
+    $('.hide_interviews').hide()
+
 
 $('document').ready(function () {
 
-    $('#show_done_interviews').on('click', function () {
-        $('.hide_interviews').show()
+    $('.show_done_interviews').on('click', function () {
+
+        var elem = $('.' + 'hide_interviews');
+
+        if(elem.is(":visible")){
+            elem.hide();
+        } else {
+            elem.show();
+        }
         console.log(1)
     });
 
@@ -75,15 +83,16 @@ $('document').ready(function () {
 
 
     $('.forinterviews').on('click', function () {
-        var id = 'forallinterviews' + $(this).attr('id').slice(13);
+        var id = 'forallinterviews' + $(this).attr('id').slice(14);
         var elem = $('#' + id);
+
         if(elem.is(":visible")){
             elem.hide();
         } else {
             elem.show();
         }
-        $('.show_interviews').show()
         console.log(3)
+
 
     });
 
