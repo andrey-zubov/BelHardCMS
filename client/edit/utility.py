@@ -1,6 +1,8 @@
 import logging
 import re
 
+from time import perf_counter
+
 
 # TeamRome
 def check_input_str(string: str, title=True) -> str or None:
@@ -57,3 +59,35 @@ def check_if_str(string: str, out: str or None) -> str:
         return string
     else:
         return out
+
+
+# TeamRome
+def try_except(foo_name):
+    """ Handle exceptions in a selected function = foo_name. """
+    def decor(foo):
+        def wrapper(*args, **kwargs):
+            try:
+                return foo(*args, **kwargs)
+            except Exception as ex:
+                logging.error("Exception in - %s\n %s" % (foo_name, ex))
+                return None
+
+        return wrapper
+
+    return decor
+
+
+# TeamRome
+def time_it(foo_name):
+    """ Return the value (in fractional seconds) of a performance counter for a function = foo_name. """
+    def decor(foo):
+        def wrapper(*args, **kwargs):
+            time_0 = perf_counter()
+            print(foo_name)
+            result = foo(*args, **kwargs)
+            print('\t%s - OK; Time: %s' % (foo_name, perf_counter() - time_0))
+            return result
+
+        return wrapper
+
+    return decor
