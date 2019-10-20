@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 from client.edit.check_clients import (load_client_img)
 from client.models import (Chat, Message, Settings)
 from recruit.edit_pages.check_recruit import (recruit_check)
-from recruit.edit_pages.r_forms import RecruitUploadImgForm
+from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
 from recruit.edit_pages.r_pages_ger import (recruit_edit_page_get)
 from recruit.edit_pages.r_pages_post import (recruit_edit_page_post)
 
