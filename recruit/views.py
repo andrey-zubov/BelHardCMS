@@ -1,13 +1,31 @@
 from django.core.mail import EmailMessage
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 
-from client.models import Chat, Message, Settings
+from client.edit.check_clients import (load_client_img)
+from client.models import (Chat, Message, Settings)
+from recruit.edit_pages.check_recruit import (recruit_check)
+from recruit.edit_pages.r_forms import RecruitUploadImgForm
+from recruit.edit_pages.r_pages_ger import (recruit_edit_page_get)
+from recruit.edit_pages.r_pages_post import (recruit_edit_page_post)
 
 
 def recruit_main_page(request):
-    return render(request, template_name='recruit/recruit_main_template.html')
+    recruit_instance = recruit_check(request.user)
+    response = {'recruit_img': load_client_img(recruit_instance),
+                'data': 'foo()',
+                }
+    return render(request, template_name='recruit/recruit_main_template.html', context=response)
+
+
+def recruit_profile(request):
+    recruit_instance = recruit_check(request.user)
+    response = {'recruit_img': load_client_img(recruit_instance),
+                'data': 'foo()',
+                }
+    return render(request=request, template_name='recruit/recruit_profile.html', context=response)
+
 
 def recruit_chat(request):
     chat_list = Chat.objects.filter(members=request.user)
@@ -51,13 +69,13 @@ def send_message(request):
             except Exception:
                 print('Exception: нет адреса электронной почты')
 
-    send = {'author_id': mes.author.id, 'author_name': mes.author.username, 'message': mes.message, 'message_id': mes.id,
-             'pub_date': mes.pub_date.ctime()}
+    send = {'author_id': mes.author.id, 'author_name': mes.author.username, 'message': mes.message,
+            'message_id': mes.id,
+            'pub_date': mes.pub_date.ctime()}
     return JsonResponse(send, safe=False)
 
 
 def chat_update(request):
-
     last_id = (request.GET['last_id'])
     chat = Chat.objects.get(id=request.GET['chat_id'])
     messages = Message.objects.filter(chat=chat)
@@ -90,13 +108,81 @@ class RecruitEditMain(TemplateView):
     template_name = 'recruit/edit_pages/recruit_edit_main.html'
 
     def get(self, request, *args, **kwargs):
-        client_instance = 'foo()'
-        response = {'client_img': 'foo()',
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'data': recruit_edit_page_get(recruit_instance),
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        recruit_instance = recruit_check(request.user)
+        recruit_edit_page_post(recruit_instance, request)
+        return redirect(to='/recruit/profile/')
+
+
+# TeamRome
+class RecruitEditExperience(TemplateView):
+    template_name = ''
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    "data": 'foo()',
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        recruit_instance = recruit_check(request.user)
+        'foo()'
+        return redirect(to='/recruit/edit/')
+
+
+# TeamRome
+class RecruitEditEducation(TemplateView):
+    template_name = ''
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
                     'data': 'foo()',
                     }
         return render(request, self.template_name, response)
 
     def post(self, request):
-        client_instance = 'foo()'
+        recruit_instance = recruit_check(request.user)
         'foo()'
-        return redirect('/client/edit')
+        return redirect(to='/recruit/edit/')
+
+
+# TeamRome
+class RecruitEditSkills(TemplateView):
+    template_name = ''
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'data': 'foo()',
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        recruit_instance = recruit_check(request.user)
+        'foo()'
+        return redirect(to='/recruit/edit/')
+
+
+# TeamRome
+class RecruitEditPhoto(TemplateView):
+    template_name = ''
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'form': RecruitUploadImgForm(),
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
+
+    def post(self, request):
+        recruit_instance = recruit_check(request.user)
+        'foo()'
+        return redirect(to='/recruit/edit/')
