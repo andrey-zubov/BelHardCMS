@@ -5,7 +5,7 @@ from client.edit.utility import try_except
 from client.models import Client
 
 
-@try_except("client_check()")
+@try_except
 def client_check(user):
     """ список карточек c id клиента. """
     users_id_list = [i['user_client_id'] for i in Client.objects.all().values()]
@@ -21,7 +21,7 @@ def client_check(user):
         return None
 
 
-@try_except("load_client_img()")
+@try_except
 def load_client_img(client):
     """ Show Client Img in the Navigation Bar.
     Img loaded from DB, if user do not have img - load default. """

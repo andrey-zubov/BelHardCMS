@@ -4,7 +4,7 @@ from client.edit.utility import try_except
 from recruit.models import (Recruit)
 
 
-@try_except("recruit_check()")
+@try_except
 def recruit_check(user):
     """ список карточек c id recruit. """
     users_id_list = [i['user_recruit_id'] for i in Recruit.objects.all().values()]

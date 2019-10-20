@@ -4,8 +4,8 @@ from client.edit.utility import (time_it, try_except)
 
 
 # TeamRome
-@try_except('pars_exp_request()')
-@time_it('pars_exp_request()')
+@try_except
+@time_it
 def pars_exp_request(req_post) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели Experience. """
@@ -50,8 +50,8 @@ def pars_exp_request(req_post) -> list:
 
 
 # TeamRome
-@try_except('pars_cv_request()')
-@time_it('pars_cv_request()')
+@try_except
+@time_it
 def pars_cv_request(req_post: dict) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели CV. """
@@ -86,8 +86,8 @@ def pars_cv_request(req_post: dict) -> list:
 
 
 # TeamRome
-@try_except('pars_edu_request()')
-@time_it('pars_edu_request()')
+@try_except
+@time_it
 def pars_edu_request(req_post, _file) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели Education. """
