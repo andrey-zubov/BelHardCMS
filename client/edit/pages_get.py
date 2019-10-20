@@ -7,8 +7,8 @@ from client.models import (Sex, Citizenship, FamilyState, Children, City, State,
 
 
 # TeamRome
-@try_except('edit_page_get()')
-@time_it('edit_page_get()')
+@try_except
+@time_it
 def edit_page_get(client):
     """ views.py ClientEditMain(TemplateView) GET method.
     Загрузка из БД списков для выбора данных клиента. """
@@ -37,8 +37,8 @@ def edit_page_get(client):
 
 
 # TeamRome
-@try_except("skills_page_get()")
-@time_it("skills_page_get()")
+@try_except
+@time_it
 def skills_page_get(client):
     """" views.py ClientEditSkills(TemplateView) GET method.  """
     response = defaultdict()
@@ -50,8 +50,8 @@ def skills_page_get(client):
 
 
 # TeamRome
-@try_except("education_page_get()")
-@time_it("education_page_get()")
+@try_except
+@time_it
 def education_page_get(client):
     """" views.py ClientEditEducation(TemplateView) GET method.  """
     response = defaultdict()
@@ -75,8 +75,8 @@ def education_page_get(client):
 
 
 # TeamRome
-@try_except("cv_page_get()")
-@time_it("cv_page_get()")
+@try_except
+@time_it
 def cv_page_get(client):
     """" views.py ClientEditCv(TemplateView) GET method. """
     response = defaultdict()
@@ -100,8 +100,8 @@ def cv_page_get(client):
 
 
 # TeamRome
-@try_except("experience_page_get()")
-@time_it("experience_page_get()")
+@try_except
+@time_it
 def experience_page_get(client):
     """" views.py ClientEditExperience(TemplateView) GET method. """
     response = defaultdict()
