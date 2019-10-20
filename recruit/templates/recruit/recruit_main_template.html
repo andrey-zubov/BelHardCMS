@@ -39,8 +39,8 @@
                                 <a class="text-bar" href="{% url 'add_task' %}">Добавить задачу</a>
                                 <a class="text-bar" href="{%url 'contact_with_clients' %}"> Сообщения <div class="counter" id="mes_count" hidden="true"> {{ unread_messages }} </div></a>
                                 <div class="client-bar">
-                                    <a class="text-client" href="#" >
-                                        <img src="{{ client_img }}"  height="75px" style="border-radius: 50%;" alt=""></a>
+                                    <a class="text-client" href="{% url 'recruit_profile' %}" >
+                                        <img src="{{ recruit_img }}"  height="75px" style="border-radius: 50%;" alt=""></a>
 
                                     <div class="client-name-out" >
                                         <h4 style="margin-bottom: 5px">Клиент</h4>

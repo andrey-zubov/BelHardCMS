@@ -16,9 +16,40 @@
     </script>
 
     <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <h1>Recruit edit main</h1>
 
-        <h1>Recruit edit main</h1>
+                <form method="post">
+                    {% csrf_token %}
+                    <h3>Общая информация</h3>
 
+                    <div class="text-center">
+                        <a class="btn btn-outline-warning m-2" href="{% url 'recruit_profile' %}">Назад</a>
+                        <button type="submit" class="btn btn-outline-success m-2">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-4">
+                <h3>Дополнительно:</h3>
+
+                <div class="list-group">
+                    <a href="#" id="edit_education"
+                       class="list-group-item list-group-item-action list-group-item-primary">
+                        Образование +</a>
+                    <a href="#" id="edit_skills"
+                       class="list-group-item list-group-item-action list-group-item-secondary">
+                        Навыки +</a>
+                    <a href="#" id="edit_experience"
+                       class="list-group-item list-group-item-action list-group-item-warning">
+                        Опыт работы +</a>
+                    <a href="#" id="edit_photo"
+                       class="list-group-item list-group-item-action list-group-item-danger">
+                        Фото +</a>
+                </div>
+            </div>
+        </div>
     </div>
 
 {% endblock %}
