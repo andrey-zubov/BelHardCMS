@@ -122,12 +122,12 @@ class RecruitEditMain(TemplateView):
 
 # TeamRome
 class RecruitEditExperience(TemplateView):
-    template_name = ''
+    template_name = 'recruit/edit_pages/recruit_edit_experience.html'
 
     def get(self, request, *args, **kwargs):
         recruit_instance = recruit_check(request.user)
-        response = {'recruit_img': load_client_img(recruit_instance),
-                    "data": 'foo()',
+        response = {'recruit_img': load_recruit_img(recruit_instance),
+                    "data": experience_page_get(recruit_instance),
                     }
         return render(request, self.template_name, response)
 

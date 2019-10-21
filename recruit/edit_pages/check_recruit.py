@@ -19,3 +19,12 @@ def recruit_check(user):
     else:
         log_error('\tUser Profile DO NOT exists')
         return None
+
+
+
+def load_recruit_img(recruit):
+
+    if recruit:
+        if recruit.img:
+            return "%s%s" % (MEDIA_URL, recruit.img)
+    return '/media/user_1.png'

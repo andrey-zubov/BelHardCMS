@@ -14,3 +14,20 @@ def recruit_edit_page_get(client):
     #
 
     return response
+
+
+
+def experience_page_get(recruit):
+
+    response = defaultdict()
+    response['sphere'] = RecruitEducation.objects.filter(recruit_exp=recruit)
+    if recruit:
+        exp = RecruitExperience.objects.filter(recruit_exp=recruit)
+        exp_dict = [i for i in exp.values()]
+        response['rec_exp'] = exp_dict
+
+        for i, e in enumerate(exp):
+            sphere = [i['sphere_word'] for i in e.sphere.values()]
+            exp_dict[i]['sphere'] = sphere
+
+    return response
