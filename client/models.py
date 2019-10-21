@@ -290,7 +290,6 @@ class JobInterviews(models.Model):
     location = models.CharField(max_length=50, verbose_name='Место проведения')
     additional_information = models.TextField(max_length=3000, blank=True, null=True,
                                               verbose_name='Дополнительная информация')
-      # add_file = models.FileField(verbose_name='Вложения', blank=True, null=True)
     status = models.BooleanField(default=False)  # статус собеседования, на которое ещё не ходили
     check_status = models.BooleanField(default=True)  # статус активен, если можем после успешного собеседования
       # в течении 60 сек вернуть в статус активных собеседований
