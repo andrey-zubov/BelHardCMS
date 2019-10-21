@@ -31,20 +31,24 @@ def applicant(request, id_a):
 class CreateJobInterview(View):
     def get(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
-        response = {'applicant_user': applicant_user}
-        accepted_vacancies = applicant_user.cv_set.all()[0].vacancies_accept.all()
-        for resume in applicant_user.cv_set.all()[1:]:
-            accepted_vacancies |= resume.vacancies_accept.all()
-        response['accepted_vacancies'] = accepted_vacancies
+        if CV.objects.filter(client_cv=applicant_user):
+            accepted_vacancies = applicant_user.cv_set.all()[0].vacancies_accept.all()
+            for resume in applicant_user.cv_set.all()[1:]:
+                accepted_vacancies |= resume.vacancies_accept.all()
+            print(accepted_vacancies)
+        else:
+            accepted_vacancies = None
         return render(request, 'recruit/recruiter_tasks_for_applicant.html',
-                      context=response)
+                      context={'applicant_user': applicant_user, 'accepted_vacancies': accepted_vacancies})
 
     def post(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
-        name = request.POST['name']
-        print(name)
-
-
+        vac = request.POST.get('vacancy')
+        files = request.FILES.getlist('files')
+        print('vacancy_id  ', vac)
+        print(len(files))
+        for file in files:
+            print(file)
 
         return redirect(applicant_user.get_tasks_url())
 

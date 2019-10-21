@@ -6,7 +6,6 @@
 
 {% block content %}
 
-
     <div class="p-sm-5 pt-sm-1">
         <h2 class="mb-5"> Собеседования </h2>
         {% for jobinterview in applicant_user.jobinterviews_set.all %}
@@ -25,63 +24,82 @@
         </button>
 
         <!-- Modal -->
-        <div class="modal fade bd-example-modal-xl" id="exampleModal" tabindex="-1" role="dialog"
-             aria-labelledby="myExtraLargeModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel"> Данные по собеседованию </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
+    <div class="modal fade bd-example-modal-xl" id="exampleModal" tabindex="-1" role="dialog"
+         aria-labelledby="myExtraLargeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"> Данные по собеседованию </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
 
-                        <form action="{{ applicant_user.get_tasks_url }}" method="post">
-                            {% csrf_token %}
-                            <h5>
-                                (<input type="time" class="time" id="id_time" name="time">)
-                                 <input type="text"  class="name" id="id_name"  name="name">
-                            </h5><br>
-                            <h5>
-                                <input type="date"  class="form-heading" id="id_heading"  name="heading">
+                    <form enctype='multipart/form-data' action="{{ applicant_user.get_tasks_url }}" method="post">
+                        {% csrf_token %}
+                        <h5>
+                            (<input type="time" class="time" id="id_time" name="time" required/>)*
+                            <input type="text" class="name" id="id_name" name="name" required/>*
+                        </h5><br>
+                        <h5>
+                            <input type="date" class="form-date" id="id_heading" name="date" required/>*
+                        </h5>
+                        {% if accepted_vacancies %}
+                            <h5>Выберите подтвержденную соискателем вакансию:
+                                <select name="vacancy" size="3" class="custom-select" required>
+                                    {% for vacancy in accepted_vacancies %}
+                                        <option value="{{ vacancy.id }}">{{ vacancy }}</option>
+                                    {% endfor %}
+
+                                </select>*
                             </h5>
+                        {% endif %}
+                        <h5>
+                            Предлагаемая должность: <input type="text" class="form-position" id="id_position"
+                                                           name="position" required/>*
+                        </h5><br>
+                        <h5>
+                            Организация: <input type="text" class="form-organization" id="id_organization"
+                                                name="organization" required/>*
+                        </h5><br>
+                        <h5>
+                            Ответственное лицо: <input type="text" class="form-responsible-person" id="id_person"
+                                                       name="responsible_person"/>
+                        </h5><br>
+                        <h5>
+                            Контакты: <br>
+                            Тел: <input type="text" class="form-phone" id="id_time" name="phone" placeholder="+375XXXXXXXXX"/><br>
+                            Telegram: <input type="text" class="form-organization" id="id_time" name="organization"/>
+                        </h5><br>
+                        <h5>
+                            Место провведения собеседования: <input type="text" class="form-address" id="id_address"
+                                                                    name="address"/>
+                        </h5><br>
+                        <h5>
+                            Дополнительная информация:
+                            <input type="text" class="form-addition" id="id_addition"  name="addition"/>
+                        </h5><br>
+                        <div id="files-div">
                             <h5>
-                                Предлагаемая должность: <input type="text" class="form-position" id="id_position"
-                                                               name="position">
-                            </h5><br>
-                            <h5>
-                                Организация: <input type="text" class="form-organization" id="id_organization"
-                                                    name="organization">
-                            </h5><br>
-                            <h5>
-                                Ответственное лицо: <input type="text" class="form-responsible-person" id="id_person"
-                                                           name="responsible_person">
-                            </h5><br>
-                            <h5>
-                                Контакты: <br>
-                                Тел: <input type="text" class="form-phone" id="id_time" name="phone"><br>
-                                Telegram: <input type="text" class="form-organization" id="id_time" name="organization">
-                            </h5><br>
-                            <h5>
-                               Место провведения собеседования: <input type="text" class="form-address" id="id_address"
-                                                           name="address">
-                            </h5><br>
-                            <h5>
-                               Дополнительная информация: <input type="text" class="form-addition" id="id_addition"
-                                                           name="addition">
-                            </h5><br>
-                            <h5>
-                               Добавить файл: <input type="file" class="form-addition" id="id_addition" name="document">
-                            </h5><br>
-                            <!--p>{ form }}</p-->
+                                Добавить файл(ы): <input type='file' class="btn btn-secondary form-files" name='files' multiple="multiple"
+                                                         id="form-files" value=""/>
+                                <button type="button" class="btn btn-secondary" id="reset-file">Удалить файл(ы)
+                                </button>
+                                <br>
+                            </h5>
+                        </div>
 
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                        <button type="submit" class="btn btn-primary">Добавить</button>
-                    </div>
+
+
+                        <div class="modal-footer">
+                            <button type="reset" class="btn btn-secondary" data-dismiss="all-form">
+                                Очистить
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-primary">Добавить</button>
+                        </div>
                     </form>
 
                 </div>
@@ -89,7 +107,16 @@
         </div>
     </div>
 
-<script>/*
+<script>
+
+    $(document).ready(function () {
+        $('#reset-file').on('click', function () {
+            $('#form-files').val('');
+        });
+    });
+
+
+    /*
 $('document').ready(function () {
     var first = { first_flag }}
     var second = { second_flag }}
