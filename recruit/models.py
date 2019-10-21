@@ -65,6 +65,5 @@ class RecruitSkills(models.Model):
 
 
 class RecruitSphere(models.Model):
-    """ Сфера деятельности. Заполняется Админом.
-    ManyToMany отношение с Опытом. """
+    
     sphere_word = models.CharField(max_length=100)
