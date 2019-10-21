@@ -62,3 +62,14 @@ class RecruitSkills(models.Model):
     recruit_skills = models.ForeignKey(to='Recruit', on_delete=models.CASCADE)
 
     skill = models.CharField(max_length=100, blank=True, null=True)
+
+
+class RecruitCertificate(models.Model):
+    """ Сертификат: ссылка или картинка.
+    ForeignKey = Несколько сертификатов может относиться к одному образованию. """
+    education = models.ForeignKey(to='RecruitEducation', on_delete=models.CASCADE)
+
+    img = models.ImageField(blank=True, null=True, verbose_name='certificate_img')
+    link = models.URLField(blank=True, null=True, max_length=100, verbose_name='certificate_link')
+
+    show_img = models.ImageField(blank=True, null=True)

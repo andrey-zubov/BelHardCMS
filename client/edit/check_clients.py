@@ -7,18 +7,23 @@ from client.models import Client
 # TeamRome
 @try_except
 @time_it
-def client_check(user):
-    """ список карточек c id клиента. """
-    users_id_list = [i['user_client_id'] for i in Client.objects.all().values()]
-    log_info("\tclient_id_list: %s" % users_id_list)
-    """ Current User """
-    log_info("\tuser_name: %s, user_client_id: %s" % (user, user.id))
-    if user.id in users_id_list:
-        client = Client.objects.get(user_client=user)
-        log_info("\tuser_id: %s" % client.id)
+def client_check(some_one):
+    """ список карточек c id клиента.
+    Список Юзеров с зарегистрированной карточкой клиента. """
+    client_id_list = [i.user_client_id for i in Client.objects.all()]
+    log_info("\tclient_id_list: %s" % client_id_list)
+
+    """ Имя юзера и его ID. """
+    log_info("\tuser_name: %s, user_id: %s" % (some_one, some_one.id))
+
+    """ Проверка: есть ли текущий Юзер в списке Клиентов. """
+    if some_one.id in client_id_list:
+        """ Если он есть - возвращаем Объект Клиента. """
+        client = Client.objects.get(user_client=some_one)
+        log_info("\tclient_id: %s" % client.id)
         return client
     else:
-        log_error('\tUser Profile DO NOT exists')
+        log_error('\tClient profile DOES NOT exists!')
         return None
 
 
