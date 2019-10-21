@@ -1,7 +1,7 @@
 {% extends 'recruit/main_template_recruiter.html' %}
 
 {% block title %}
-    {{applicant_user.name}} {{ applicant_user.last_name }}
+    {{applicant_user.user_client.first_name}} {{ applicant_user.user_client.last_name }}
 {% endblock %}
 
 {% block content %}
@@ -12,7 +12,7 @@
     </div>
 
     <div class="p-sm-5 pt-sm-1">
-        <h2 class="mb-5"> {{ applicant_user.last_name }} {{ applicant_user.name }} {{ applicant_user.patronymic }}</h2>
+        <h2 class="mb-5"> {{ applicant_user.user_client.last_name }} {{ applicant_user.user_client.first_name }} {{ applicant_user.patronymic }}</h2>
         {% for cv in applicant_user.cv_set.all %}
             {{ cv }} <br>
         {% endfor %}

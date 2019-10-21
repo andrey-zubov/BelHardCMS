@@ -1,6 +1,6 @@
 from time import perf_counter
-
-from client.models import Client
+from collections import defaultdict
+from client.models import Client, CV
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404

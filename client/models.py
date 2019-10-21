@@ -348,8 +348,6 @@ class FilesForJobInterviews(models.Model):
 
 class Client(models.Model):
     user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, verbose_name='Имя')     # TODO
-    last_name = models.CharField(max_length=100, verbose_name='Фамилия')    # TODO
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
 
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
@@ -366,13 +364,12 @@ class Client(models.Model):
 
     telegram_link = models.CharField(max_length=100, blank=True, null=True,
                                      verbose_name='Ник в телеграмме')  # при верстке учесть @
-    email = models.EmailField(max_length=200, null=True, blank=True)    # TODO
     link_linkedin = models.URLField(max_length=200, null=True, blank=True)
     skype = models.CharField(max_length=100, null=True, blank=True)
     img = models.ImageField(blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
     # resumes
-    resumes = models.ForeignKey(CV, on_delete=models.SET_NULL, null=True, blank=True)  #  !!!!!!! Надо связать с CV, класса Resume больше нет.
+    resumes = models.ForeignKey(CV, on_delete=models.SET_NULL, null=True, blank=True)
 
     def delete(self, *args, **kwargs):
         self.img.delete()

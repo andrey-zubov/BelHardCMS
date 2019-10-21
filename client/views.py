@@ -24,16 +24,12 @@ from .utils_for_mixins import ObjectResumeMixin
 
 
 from BelHardCRM.settings import MEDIA_URL
-# from client.work_with_db import (load_client_img, load_edit_page, client_check, load_skills_page, load_education_page,
-#                                 load_cv_edition_page)
+from client.edit.check_clients import (client_check, load_client_img)
 from .forms import OpinionForm, AnswerForm, MessageForm
 # from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
 
-
-from .forms import EducationFormSet, CertificateFormSet
 from .models import *
-from .utility import (check_input_str, check_home_number, check_telegram, check_phone, pars_cv_request,
-                      pars_edu_request, pars_exp_request)
+from django.contrib.auth.models import Group
 from django.core.files.storage import FileSystemStorage
 from tika import parser
 import re
@@ -51,7 +47,7 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     for resume in resumes:  # Poland
         suggestions += resume.notification.count()
     readtask = len(Tasks.objects.filter(user=request.user, readtask=False))
-    readinterview = len(JobInterviews.objects.filter(client=client, readinterview=False))
+    readinterview = None # len(JobInterviews.objects.filter(client=client, readinterview=False))
     chat = Chat.objects.get(members=request.user)
     unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
     settings = Settings.objects.get(user=request.user)
