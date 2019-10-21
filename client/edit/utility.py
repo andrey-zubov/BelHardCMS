@@ -74,7 +74,7 @@ def time_it(foo):
         time_0 = perf_counter()
         log_verbose("%s()" % foo.__name__)
         result = foo(*args, **kwargs)
-        log_info('\t%s() - OK; TimeIt: %s sec.' % (foo.__name__, perf_counter() - time_0))
+        log_info('\t%s() - OK; TimeIt: %.6f sec.' % (foo.__name__, perf_counter() - time_0))
         return result
 
     return wrapper
