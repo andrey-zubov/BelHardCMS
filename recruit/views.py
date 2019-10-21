@@ -6,7 +6,6 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import View
 from django.views.generic.edit import FormView
 from django.template.context_processors import csrf
-from .forms import JobInterviewsForm
 
 from django.urls import reverse
 from django.http import HttpResponse
@@ -31,66 +30,26 @@ def applicant(request, id_a):
 class CreateJobInterview(View):
     def get(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
-        response = {'applicant_user': applicant_user}
-        accepted_vacancies = applicant_user.cv_set.all()[0].vacancies_accept.all()
-        for resume in applicant_user.cv_set.all()[1:]:
-            accepted_vacancies |= resume.vacancies_accept.all()
-        response['accepted_vacancies'] = accepted_vacancies
+        if CV.objects.filter(client_cv=applicant_user):
+            accepted_vacancies = applicant_user.cv_set.all()[0].vacancies_accept.all()
+            for resume in applicant_user.cv_set.all()[1:]:
+                accepted_vacancies |= resume.vacancies_accept.all()
+            print(accepted_vacancies)
+        else:
+            accepted_vacancies = None
         return render(request, 'recruit/recruiter_tasks_for_applicant.html',
-                      context=response)
+                      context={'applicant_user': applicant_user, 'accepted_vacancies': accepted_vacancies})
 
     def post(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
-        name = request.POST['name']
-        print(name)
-
-
+        vac = request.POST.get('vacancy')
+        files = request.FILES.getlist('files')
+        print('vacancy_id  ', vac)
+        print(len(files))
+        for file in files:
+            print(file)
 
         return redirect(applicant_user.get_tasks_url())
-        # return render(request, 'recruit/recruiter_tasks_for_applicant.html',
-        #              context={'applicant_user': applicant_user, 'form': bound_form})
-
-# ########################################################################################################
-# class CreateJobInterview(View):
-#     def get(self, request, id_a):
-#         applicant_user = Client.objects.get(id=id_a)
-#         form = JobInterviewsForm()
-#
-#         return render(request, 'recruit/recruiter_tasks_for_applicant.html',
-#                       context={'applicant_user': applicant_user, 'form': form})
-#
-#     def post(self, request, id_a):
-#         applicant_user = Client.objects.get(id=id_a)
-#         bound_form = JobInterviewsForm(request.POST)
-#         if bound_form.is_valid():
-#             print(bound_form)
-#             new_jobinterview = bound_form.save()
-#             return redirect(applicant_user.get_tasks_url())
-#         return render(request, 'recruit/recruiter_tasks_for_applicant.html',
-#                       context={'applicant_user': applicant_user, 'form': bound_form})
-
-# ##########################################################################################################
-
-"""
-class FileFieldView(FormView):
-    form_class = FileFieldForm
-    template_name = 'recruit/recruiter_tasks_for_applicant.html'  # Replace with your template.
-    success_url = 'applicant_tasks_url'  # Replace with your URL or reverse().
-
-    def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        files = request.FILES.getlist('file_field')
-        if form.is_valid():
-            for f in files:
-                ...  # Do something with each file.
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-
-
-def uploading_files(request):
-    pass"""
 
 # End Poland's views #######################################################################################
 
