@@ -224,8 +224,8 @@ def opinion_list(request):
     opinion = Opinion.objects.all()
     return render(request, 'opinion/index.html', context={'opinion': opinion})
 
-class OpinionCreate(View):
 
+class OpinionCreate(View):
     def get(self, request):
         opinions = Opinion.objects.all()
         form = OpinionForm()

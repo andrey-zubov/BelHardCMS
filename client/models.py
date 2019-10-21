@@ -295,6 +295,7 @@ class JobInterviews(models.Model):
       # в течении 60 сек вернуть в статус активных собеседований
     # readinterview = models.BooleanField(default=False)
 
+
     @property
     def show_all(self):
         print(self.period_of_execution.__class__.__name__)
@@ -306,6 +307,10 @@ class JobInterviews(models.Model):
         to_show.remove(self.time_of_creation)
         return to_show[1:]
 
+
+    @property
+    def get_cv(self):
+        return CV.objects.filter(client_cv=self.client)
 
     @property
     def check_time(self):
@@ -323,7 +328,7 @@ class JobInterviews(models.Model):
             self.readinterview = True
             self.save()
 
-    def str(self):
+    def __str__(self):
         return self.name
 
 
@@ -369,7 +374,10 @@ class Client(models.Model):
     img = models.ImageField(blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
     # resumes
-    resumes = models.ForeignKey(CV, on_delete=models.SET_NULL, null=True, blank=True)
+    resumes = models.ForeignKey(CV, on_delete=models.SET_NULL, null=True, blank=True)  # СвязьCV
+
+    def __str__(self):
+        return "%s %s %s" % (self.last_name, self.name, self.patronymic)
 
     def delete(self, *args, **kwargs):
         self.img.delete()
@@ -455,7 +463,7 @@ class Tasks(models.Model):
     def show_all(self):
         return self.subtask.all()
 
-    # @property
+    @property
     def checktime(self):
         if self.endtime != None:
             akttime = timezone.now() - self.endtime
@@ -465,7 +473,7 @@ class Tasks(models.Model):
                 self.checkstatus = False
             self.save()
 
-    # @property
+    @property
     def check_readstatus(self):
         if self.readtask == False:
             self.readtask = True
@@ -484,9 +492,6 @@ class SubTasks(models.Model):
     #    return self.telephone_number
 
 
-
-
-
 class Settings(models.Model):
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
     messages = models.BooleanField(default=True)
@@ -499,11 +504,4 @@ class Settings(models.Model):
     email_suggestions = models.BooleanField(default=True)
     email_meetings = models.BooleanField(default=True)
     email_reviews = models.BooleanField(default=True)
-
-    name_setting = models.TextField(max_length=50, blank=True, null=True)
-    name_setting_status = models.BooleanField(default=True)
-    tumbler_on_off = models.CharField(max_length=50, blank=True, null=True)
-
-    def __str__(self):
-        return self.name_setting
 
