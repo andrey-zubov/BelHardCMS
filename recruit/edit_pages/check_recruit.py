@@ -1,3 +1,5 @@
+from BelHardCRM.settings import MEDIA_URL
+
 from client.edit.log_color import (log_info, log_error)
 from client.edit.utility import try_except, time_it
 from recruit.models import (Recruit)
