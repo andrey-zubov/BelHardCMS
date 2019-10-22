@@ -273,9 +273,9 @@ class JobInterviews(models.Model):
     client = models.ForeignKey(to='Client', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Соискатель')
     vacancies = models.ForeignKey(to='Vacancy', on_delete=models.CASCADE, blank=True, null=True,
                                   verbose_name='Вакансии')
+    name = models.CharField(max_length=50, verbose_name='Наименование')
     jobinterviewtime = models.TimeField(max_length=10, verbose_name='Время проведения собеседования')
     jobinterviewdate = models.DateField(max_length=20, verbose_name='Дата проведения собеседования')
-    name = models.CharField(max_length=50, verbose_name='Наименование')
     interview_author = models.CharField(max_length=50, verbose_name='Автор собеседования', blank=True, null=True)
     time_of_creation = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
     period_of_execution = models.DateTimeField(blank=True, null=True, verbose_name='Срок исполнения')
@@ -293,20 +293,22 @@ class JobInterviews(models.Model):
     status = models.BooleanField(default=False)  # статус собеседования, на которое ещё не ходили
     check_status = models.BooleanField(default=True)  # статус активен, если можем после успешного собеседования
       # в течении 60 сек вернуть в статус активных собеседований
-    # readinterview = models.BooleanField(default=False)
-
+    readinterview = models.BooleanField(default=False)  #cтатус собеседования для определения отображения в оповещениях
 
     @property
     def show_all(self):
-        print(self.period_of_execution.__class__.__name__)
-        to_show = []
+        to_show_name = []
+        to_show_verbose_name = []
         for key in self.__dict__:
-            if self.__dict__[key].__class__.__name__ == 'str' or self.__dict__[key].__class__.__name__ == 'datetime':
-                to_show.append(self.__dict__[key])
-                print(self._meta.get_field(key).verbose_name)
-        to_show.remove(self.time_of_creation)
-        return to_show[1:]
-
+            if self.__dict__[key].__class__.__name__ == 'str' or self.__dict__[key].__class__.__name__ == 'datetime'\
+                    or self.__dict__[key].__class__.__name__ == 'time' or self.__dict__[key].__class__.__name__ == 'date':
+                to_show_verbose_name.append(self._meta.get_field(key).verbose_name)
+                to_show_name.append(self.__dict__[key])
+        to_show_name.remove(self.time_of_creation)
+        to_show_verbose_name.remove(self._meta.get_field('time_of_creation').verbose_name)
+        to_show_name.remove(self.reminder)
+        to_show_verbose_name.remove(self._meta.get_field('reminder').verbose_name)
+        return zip(to_show_verbose_name, to_show_name)
 
     @property
     def get_cv(self):
@@ -377,7 +379,7 @@ class Client(models.Model):
     resumes = models.ForeignKey(CV, on_delete=models.SET_NULL, null=True, blank=True)  # СвязьCV
 
     def __str__(self):
-        return "%s %s %s" % (self.last_name, self.name, self.patronymic)
+        return "%s %s %s" % (self.user_client.first_name, self.user_client.last_name, self.patronymic)
 
     def delete(self, *args, **kwargs):
         self.img.delete()
