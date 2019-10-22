@@ -5,10 +5,10 @@ from django.views.generic import TemplateView
 
 from client.edit.check_clients import (load_client_img)
 from client.models import (Chat, Message, Settings)
-from recruit.edit_pages.check_recruit import (recruit_check)
+from recruit.edit_pages.check_recruit import (recruit_check, load_recruit_img)
 from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
-from recruit.edit_pages.r_pages_get import (recruit_edit_page_get)
-from recruit.edit_pages.r_pages_post import (recruit_edit_page_post)
+from recruit.edit_pages.r_pages_get import (recruit_edit_page_get, experience_page_get)
+from recruit.edit_pages.r_pages_post import (recruit_edit_page_post, experience_page_post)
 
 
 def recruit_main_page(request):
@@ -133,7 +133,7 @@ class RecruitEditExperience(TemplateView):
 
     def post(self, request):
         recruit_instance = recruit_check(request.user)
-        'foo()'
+        experience_page_post(recruit_instance, request)
         return redirect(to='/recruit/edit/')
 
 

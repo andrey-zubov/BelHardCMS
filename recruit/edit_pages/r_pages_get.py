@@ -23,7 +23,7 @@ def recruit_edit_page_get(client):
 def experience_page_get(recruit):
 
     response = defaultdict()
-    response['sphere'] = Sphere.objects.filter(recruit_exp=recruit)
+    response['sphere'] = Sphere.objects.all()
     if recruit:
         exp = RecruitExperience.objects.filter(recruit_exp=recruit)
         exp_dict = [i for i in exp.values()]

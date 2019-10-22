@@ -1,3 +1,5 @@
+from BelHardCRM.settings import MEDIA_URL
+
 from client.edit.log_color import (log_info, log_error)
 from client.edit.utility import try_except, time_it
 from recruit.models import (Recruit)
@@ -6,18 +8,23 @@ from recruit.models import (Recruit)
 # TeamRome
 @try_except
 @time_it
-def recruit_check(user):
-    """ список карточек c id recruit. """
-    users_id_list = [i['user_recruit_id'] for i in Recruit.objects.all().values()]
-    log_info("\trecruit_id_list: %s" % users_id_list)
-    """ Current Recruit """
-    log_info("\trecruit_name: %s, user_recruit_id: %s" % (user, user.id))
-    if user.id in users_id_list:
-        recruit = Recruit.objects.get(user_recruit=user)
+def recruit_check(some_one):
+    """ список карточек c id клиента.
+    Список Юзеров с зарегистрированной карточкой Сотрудника КЦ. """
+    recruit_id_list = [i.user_recruit_id for i in Recruit.objects.all()]
+    log_info("\trecruit_id_list: %s" % recruit_id_list)
+
+    """ Имя юзера и его ID. """
+    log_info("\tuser_name: %s, user_id: %s" % (some_one, some_one.id))
+
+    """ Проверка: есть ли текущий Юзер в списке Сотрудников КЦ. """
+    if some_one.id in recruit_id_list:
+        """ Если он есть - возвращаем Объект Сотрудника/рекрутера. """
+        recruit = Recruit.objects.get(user_recruit=some_one)
         log_info("\trecruit_id: %s" % recruit.id)
         return recruit
     else:
-        log_error('\tUser Profile DO NOT exists')
+        log_error('\tRecruit profile DO NOT exists!')
         return None
 
 
