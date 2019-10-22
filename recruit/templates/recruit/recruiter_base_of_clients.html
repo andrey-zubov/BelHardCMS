@@ -10,7 +10,7 @@
         {% for applicant in applicants %}
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5><a href="{{ applicant.get_absolute_url }}" id="{{ applicant.id }}"> {{ applicant.name }} {{ applicant.last_name }}</a></h5>
+                    <h5><a href="{{ applicant.get_absolute_url }}" id="{{ applicant.id }}"> {{ applicant.user_client.first_name }} {{ applicant.user_client.last_name }}  {{ applicant.patronymic }}</a></h5>
                 </div>
                 <div class="card-body">
                     {% if applicant.cv_set.all %}
@@ -25,11 +25,11 @@
         {% endfor %}
     </div>
 
-    <script>
-        $('document').ready(function () {
+    <script>/*
+        $('document').ready(function () {*/
 
             /*actions for links*/
-            $('.detail_job_seeker').on('click', function () {
+           /* $('.detail_job_seeker').on('click', function () {
                 var id = $(this).attr('id');
                 $.ajax({
                     'url': '/client/accept_reject/',
@@ -55,7 +55,7 @@
                 })
 
             });
-        })
+        }) */
 
     </script>
 {% endblock %}

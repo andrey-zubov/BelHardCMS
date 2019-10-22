@@ -203,7 +203,7 @@ class CV(models.Model):
     position = models.CharField(max_length=100, null=True, blank=True)
     employment = models.ForeignKey(Employment, on_delete=models.SET_NULL, null=True, blank=True)
     time_job = models.ForeignKey(TimeJob, on_delete=models.SET_NULL, null=True, blank=True)
-    salary = models.CharField(max_length=10, null=True, blank=True)
+    salary = models.CharField(max_length=20, null=True, blank=True)
     type_salary = models.ForeignKey(TypeSalary, on_delete=models.SET_NULL, null=True, blank=True)
     # There is Poland's upgrade
     vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
@@ -212,7 +212,7 @@ class CV(models.Model):
     notification = models.ManyToManyField('Vacancy', blank=True, related_name='notifications_for_resume')
 
     def __str__(self):
-        return '{}'.format(self.position)
+        return self.position
 
     def get_absolute_url(self):
         return reverse('resume_detail_url', kwargs={'id_c': self.id})
@@ -255,7 +255,7 @@ class Vacancy(models.Model):
     conditions = models.TextField(max_length=1000, null=True)
 
     def __str__(self):
-        return '{}'.format(self.state)
+        return self.state
 
     def get_absolute_url(self):
         return reverse('vacancy_detail_url', kwargs={'id_v': self.id})
@@ -271,10 +271,13 @@ class Help(models.Model):
 
 class JobInterviews(models.Model):
     client = models.ForeignKey(to='Client', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Соискатель')
-    cv = models.ForeignKey(to='CV', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Резюме')
+    vacancies = models.ForeignKey(to='Vacancy', on_delete=models.CASCADE, blank=True, null=True,
+                                  verbose_name='Вакансии')
+    jobinterviewtime = models.TimeField(max_length=10, verbose_name='Время проведения собеседования')
+    jobinterviewdate = models.DateField(max_length=20, verbose_name='Дата проведения собеседования')
     name = models.CharField(max_length=50, verbose_name='Наименование')
     interview_author = models.CharField(max_length=50, verbose_name='Автор собеседования', blank=True, null=True)
-    time_of_creation = models.DateTimeField(blank=True, null=True, verbose_name='Время создания')
+    time_of_creation = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
     period_of_execution = models.DateTimeField(blank=True, null=True, verbose_name='Срок исполнения')
     reminder = models.DateTimeField(blank=True, null=True, verbose_name='Напоминание')
     position = models.CharField(max_length=50, verbose_name='Предполагаемая должность')
@@ -287,12 +290,11 @@ class JobInterviews(models.Model):
     location = models.CharField(max_length=50, verbose_name='Место проведения')
     additional_information = models.TextField(max_length=3000, blank=True, null=True,
                                               verbose_name='Дополнительная информация')
-    # add_file = models.FileField(verbose_name='Вложения', blank=True, null=True)
     status = models.BooleanField(default=False)  # статус собеседования, на которое ещё не ходили
     check_status = models.BooleanField(default=True)  # статус активен, если можем после успешного собеседования
-    # в течении 60 сек вернуть в статус активных собеседований
-    done_interview = models.BooleanField(default=False)  # успешно пройденное собеседование
-    readinterview = models.BooleanField(default=False)
+      # в течении 60 сек вернуть в статус активных собеседований
+    # readinterview = models.BooleanField(default=False)
+
 
     @property
     def show_all(self):
@@ -305,6 +307,10 @@ class JobInterviews(models.Model):
         to_show.remove(self.time_of_creation)
         return to_show[1:]
 
+
+    @property
+    def get_cv(self):
+        return CV.objects.filter(client_cv=self.client)
 
     @property
     def check_time(self):
@@ -322,7 +328,7 @@ class JobInterviews(models.Model):
             self.readinterview = True
             self.save()
 
-    def str(self):
+    def __str__(self):
         return self.name
 
 
@@ -331,19 +337,24 @@ class JobInterviews(models.Model):
 
 
 class FilesForJobInterviews(models.Model):
-    jobinterviews_files = models.ForeignKey(to='JobInterviews', on_delete=models.CASCADE)
+    jobinterviews_files = models.ForeignKey(
+        to='JobInterviews',
+        on_delete=models.CASCADE,
+        related_name='files_for_jobinterview'
+    )
     add_file = models.FileField(verbose_name='Вложения', blank=True, null=True)
 
     class Meta:
         verbose_name = 'Файл'
         verbose_name_plural = 'Файлы'
 
-#########End Poland Task 1 & 2 ##############
+# ########End Poland ##############
 
 
 class Client(models.Model):
     user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE)
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
+
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
     date_born = models.DateField(null=True, blank=True)
     citizenship = models.ForeignKey(Citizenship, related_name='citizenship', on_delete=models.SET_NULL,
@@ -363,7 +374,10 @@ class Client(models.Model):
     img = models.ImageField(blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
     # resumes
-    resumes = models.ForeignKey(CV, on_delete=models.SET_NULL, null=True, blank=True)  #  !!!!!!! Надо связать с CV, класса Resume больше нет.
+    resumes = models.ForeignKey(CV, on_delete=models.SET_NULL, null=True, blank=True)  # СвязьCV
+
+    def __str__(self):
+        return "%s %s %s" % (self.last_name, self.name, self.patronymic)
 
     def delete(self, *args, **kwargs):
         self.img.delete()
@@ -449,7 +463,7 @@ class Tasks(models.Model):
     def show_all(self):
         return self.subtask.all()
 
-    # @property
+    @property
     def checktime(self):
         if self.endtime != None:
             akttime = timezone.now() - self.endtime
@@ -459,7 +473,7 @@ class Tasks(models.Model):
                 self.checkstatus = False
             self.save()
 
-    # @property
+    @property
     def check_readstatus(self):
         if self.readtask == False:
             self.readtask = True
@@ -478,21 +492,6 @@ class SubTasks(models.Model):
     #    return self.telephone_number
 
 
-# class Settings(models.Model):
-#     user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
-#     messages = models.BooleanField(default=True)
-#     tasks = models.BooleanField(default=True)
-#     suggestions = models.BooleanField(default=True)
-#     meetings = models.BooleanField(default=True)
-#
-#     name_setting = models.TextField(max_length=50, blank=True, null=True)
-#     name_setting_status = models.BooleanField(default=True)
-#     tumbler_on_off = models.CharField(max_length=50, blank=True, null=True)
-#
-#     def __str__(self):
-#         return self.name_setting
-
-
 class Settings(models.Model):
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
     messages = models.BooleanField(default=True)
@@ -505,11 +504,4 @@ class Settings(models.Model):
     email_suggestions = models.BooleanField(default=True)
     email_meetings = models.BooleanField(default=True)
     email_reviews = models.BooleanField(default=True)
-
-    name_setting = models.TextField(max_length=50, blank=True, null=True)
-    name_setting_status = models.BooleanField(default=True)
-    tumbler_on_off = models.CharField(max_length=50, blank=True, null=True)
-
-    def __str__(self):
-        return self.name_setting
 

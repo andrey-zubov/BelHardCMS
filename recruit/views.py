@@ -1,43 +1,20 @@
 from time import perf_counter
-
-from django.shortcuts import redirect, render, get_object_or_404
-from client.models import Client
-from time import perf_counter
-
-from django.shortcuts import redirect, render, get_object_or_404
-from client.models import Client
+from collections import defaultdict
+from client.models import Client, CV
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render, redirect
-
-
-from django.template.context_processors import csrf
-from .forms import FileFieldForm
+from django.shortcuts import redirect, render, get_object_or_404
+from django.views.generic import View
 from django.views.generic.edit import FormView
+from django.template.context_processors import csrf
 
 from django.urls import reverse
 from django.http import HttpResponse
 from .models import *
 
-
+# There is Poland's views #################################################################################
 def recruiter_main_page(request):
-    return render(request=request, template_name='recruit/main_template_recruiter.html', )
-
-
-def base_of_clients(request):
-    clients = Client.objects.all()
-    return render(request=request, template_name='recruit/recruiter_base_of_clients.html', context={'clients': clients})
-from django.template.context_processors import csrf
-from .forms import FileFieldForm
-from django.views.generic.edit import FormView
-
-from django.urls import reverse
-from django.http import HttpResponse
-from .models import *
-
-
-def recruiter_main_page(request):
-    return render(request=request, template_name='recruit/main_template_recruiter.html', )
+    return render(request, template_name='recruit/main_template_recruiter.html', )
 
 
 def base_of_applicants(request):
@@ -51,28 +28,32 @@ def applicant(request, id_a):
     return render(request, 'recruit/recruiter_applicant.html', context={'applicant_user': applicant_user})
 
 
-def applicant_tasks(request, id_a):
-    applicant_user = Client.objects.get(id=id_a)
-    response = csrf(request)
-    response['applicant_user'] = applicant_user
-    if request.method == 'POST':
-        response['form'] = FileFieldForm()
+class CreateJobInterview(View):
+    def get(self, request, id_a):
+        applicant_user = Client.objects.get(id=id_a)
+        if CV.objects.filter(client_cv=applicant_user):
+            accepted_vacancies = applicant_user.cv_set.all()[0].vacancies_accept.all()
+            for resume in applicant_user.cv_set.all()[1:]:
+                accepted_vacancies |= resume.vacancies_accept.all()
+            print(accepted_vacancies)
+        else:
+            accepted_vacancies = None
+        return render(request, 'recruit/recruiter_tasks_for_applicant.html',
+                      context={'applicant_user': applicant_user, 'accepted_vacancies': accepted_vacancies})
 
-    else:
-        response['form'] = FileFieldForm()
+    def post(self, request, id_a):
+        applicant_user = Client.objects.get(id=id_a)
+        vac = request.POST.get('vacancy')
+        files = request.FILES.getlist('files')
+        print('vacancy_id  ', vac)
+        print(len(files))
+        for file in files:
+            print(file)
 
-    return render(request, 'recruit/recruiter_tasks_for_applicant.html', context=response)
-    return render(request, 'recruit/recruiter_tasks_for_applicant.html', context={'applicant_user': applicant_user})
-def base_of_clients(request):
-    clients = Client.objects.all()
-    return render(request=request, template_name='recruit/recruiter_base_of_clients.html', context={'clients': clients})
-from client.models import Chat, Message
-from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings
-from datetime import datetime
+        return redirect(applicant_user.get_tasks_url())
 
+# End Poland's views #######################################################################################
 
-def recruit_main_page(request):
-    return render(request, template_name='recruit/recruit_main_template.html')
 
 def recruit_chat(request):
     chat_list = Chat.objects.filter(members=request.user)
@@ -185,68 +166,7 @@ def add_new_task(requset):
         except Exception:
             print('Exception: нет адреса электронной почты')
 
-
     return redirect(to='add_task')
-"""
-class FileFieldView(FormView):
-    form_class = FileFieldForm
-    template_name = 'recruit/recruiter_tasks_for_applicant.html'  # Replace with your template.
-    success_url = 'applicant_tasks_url'  # Replace with your URL or reverse().
-
-    def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        files = request.FILES.getlist('file_field')
-        if form.is_valid():
-            for f in files:
-                ...  # Do something with each file.
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
 
 
-def uploading_files(request):
-    pass"""
-def base_of_applicants(request):
-    applicants = Client.objects.all()
-    return render(request=request, template_name='recruit/recruiter_base_of_clients.html',
-                  context={'applicants': applicants})
 
-
-def applicant(request, id_a):
-    applicant_user = Client.objects.get(id=id_a)
-    return render(request, 'recruit/recruiter_applicant.html', context={'applicant_user': applicant_user})
-
-
-def applicant_tasks(request, id_a):
-    applicant_user = Client.objects.get(id=id_a)
-    response = csrf(request)
-    response['applicant_user'] = applicant_user
-    if request.method == 'POST':
-        response['form'] = FileFieldForm()
-
-    else:
-        response['form'] = FileFieldForm()
-
-    return render(request, 'recruit/recruiter_tasks_for_applicant.html', context=response)
-
-"""
-class FileFieldView(FormView):
-    form_class = FileFieldForm
-    template_name = 'recruit/recruiter_tasks_for_applicant.html'  # Replace with your template.
-    success_url = 'applicant_tasks_url'  # Replace with your URL or reverse().
-
-    def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        files = request.FILES.getlist('file_field')
-        if form.is_valid():
-            for f in files:
-                ...  # Do something with each file.
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-
-
-def uploading_files(request):
-    pass"""
