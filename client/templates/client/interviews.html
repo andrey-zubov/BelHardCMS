@@ -12,15 +12,17 @@
 <div class="active">
     {% for interview in interviews %}
         <div hidden>{{ interview.check_readstatus }}</div>
-        <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox">
-        <button class="forinterviews" id="idforinterview{{ interview.id }}">{{ interview.name }}</button>
+        <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox"> <a>({{ interview.jobinterviewtime }})</a>
+        <button class="forinterviews" id="idforinterview{{ interview.id }}">{{ interview.name }}</button> <a>{{ interview.jobinterviewdate }}</a>
         <div class="show_interviews" id="forallinterviews{{ interview.id }}">
 
-            {% for all in interview.show_all %}
-                <div class="check_all" id="check_all{{ all.id }}" type="checkbox">{{ all }}</div>
+            {% for verbose_name, field in interview.show_all %}
+                <div class="check_all" id="check_all{{ all.id }}" type="checkbox">
+                    <b>{{ verbose_name }}:</b> {{ field }}<br>
+                </div>
             {% endfor %}
-
             <button class="hide">Скрыть</button>
+
         </div>
         <hr>
     {% endfor %}
@@ -35,25 +37,28 @@
                 <button class="forinterviews" id="idforinterview{{ interview.id }}">{{ interview.name }}</button>
                 <div class="show_interviews" id="forallinterviews{{ interview.id }}">
 
-                    {% for all in interview.show_all %}
-                        <div class="check_all" id="check_all{{ all.id }}" type="checkbox">{{ all }}</div>
+                    {% for verbose_name, field in interview.show_all %}
+                        <div class="check_all" id="check_all{{ all.id }}" type="checkbox">
+                            <b>{{ verbose_name }}:</b> {{ field }}<br>
+                        </div>
                     {% endfor %}
 
                 </div>
-                <hr>
+
             {% endif %}
         {% if interview.check_status == False %}
-            {{interview.name}}
-            {% for all in interviews.show_all %}
-                {{ all }}
+            <b>{{interview.name}}</b>
+            {% for verbose_name, field in interview.show_all %}
+                <div class="check_all" id="check_all{{ all.id }}" type="checkbox">
+                    <b>{{ verbose_name }}:</b> {{ field }}<br>
+                </div>
             {% endfor %}
         {% endif %}
-            <br>
+    <hr>
     {% endfor %}
     <button class="hide">Скрыть</button>
 </div>
 </div>
-
 
 
 <script type="text/javascript">
@@ -62,11 +67,8 @@
 
 
 $('document').ready(function () {
-
     $('.show_done_interviews').on('click', function () {
-
         var elem = $('.' + 'hide_interviews');
-
         if(elem.is(":visible")){
             elem.hide();
         } else {
@@ -85,15 +87,12 @@ $('document').ready(function () {
     $('.forinterviews').on('click', function () {
         var id = 'forallinterviews' + $(this).attr('id').slice(14);
         var elem = $('#' + id);
-
         if(elem.is(":visible")){
             elem.hide();
         } else {
             elem.show();
         }
         console.log(3)
-
-
     });
 
 
@@ -104,18 +103,18 @@ $('document').ready(function () {
 
 
     $('.check_interview').on('click', function () {
-            var id = $(this).attr('id').slice(15);
-            $.ajax({
-                'url':'/client/checkinterviews/',
-                'data': {'id': id},
-                success: function (data) {
-                    console.log(data)
-                }
-            });
+        var id = $(this).attr('id').slice(15);
+        $.ajax({
+            'url':'/client/checkinterviews/',
+            'data': {'id': id},
+            success: function (data) {
+                console.log(data)
+            }
+        });
+    })
 
-
-        })
 
 });
 </script>
 {% endblock %}
+

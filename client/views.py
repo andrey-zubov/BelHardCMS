@@ -47,7 +47,7 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     for resume in resumes:  # Poland
         suggestions += resume.notification.count()
     readtask = len(Tasks.objects.filter(user=request.user, readtask=False))
-    readinterview = None # len(JobInterviews.objects.filter(client=client, readinterview=False))
+    readinterview = len(JobInterviews.objects.filter(client=client, readinterview=False))
     chat = Chat.objects.get(members=request.user)
     unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
     settings = Settings.objects.get(user=request.user)
@@ -449,8 +449,9 @@ class ResumesList(View):
     def get(self, request):
         client = get_object_or_404(Client, user_client=request.user)
         resumes = CV.objects.filter(client_cv=client)
-        return render(request, 'client/client_resumes.html', context={'resumes': resumes})
-
+        client_instance = client_check(request.user)
+        return render(request, 'client/client_resumes.html', context={'resumes': resumes,
+                                                                      'client_img': load_client_img(client_instance)})
 
 class ResumeDetail(ObjectResumeMixin, View):  # Look utils_for_mixins.py
     template = 'client/client_resume_detail.html'
@@ -525,11 +526,15 @@ def viewed(request):
 
 
 def interviews_list(request):
-    interviews = JobInterviews.objects.filter(user=request.user, status=False)
-    #print(interviews[0].show_all)
-    interviews_false = JobInterviews.objects.filter(user=request.user, status=True)    #status=False
+    client = get_object_or_404(Client, user_client=request.user)
+    interviews = JobInterviews.objects.filter(client=client, status=False)
+    interviews_false = JobInterviews.objects.filter(client=client, status=True)  # status=False
     interviews_false = sorted(interviews_false, key=lambda x: x.period_of_execution, reverse=True)
-    return render(request, 'client/interviews.html', context={'interviews': interviews, 'interviews_false': interviews_false})
+    client_instance = client_check(request.user)
+
+    return render(request, 'client/interviews.html', context={'interviews': interviews,
+                                                              'interviews_false': interviews_false,
+                                                              'client_img': load_client_img(client_instance)})
 
 
 def checkinterviews(request):
