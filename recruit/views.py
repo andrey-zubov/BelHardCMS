@@ -3,7 +3,7 @@ from collections import defaultdict
 from client.models import Client, CV
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import redirect, render
 from django.views.generic import View
 from django.views.generic.edit import FormView
 from django.template.context_processors import csrf

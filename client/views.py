@@ -11,13 +11,10 @@ from django.template.context_processors import csrf
 from django.urls import reverse
 from recruit import recruit_url
 
-from django.urls import reverse
 from django.utils.timezone import utc
-from django.views import View
-from django.http import HttpResponse
 from django.http import HttpResponse, JsonResponse
 
-# from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
+from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm, EducationFormSet, CertificateFormSet
 
 from django.views.generic import View, TemplateView
 from .utils_for_mixins import ObjectResumeMixin
@@ -26,7 +23,7 @@ from .utils_for_mixins import ObjectResumeMixin
 from BelHardCRM.settings import MEDIA_URL
 from client.edit.check_clients import (client_check, load_client_img)
 from .forms import OpinionForm, AnswerForm, MessageForm
-# from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
+
 
 from .models import *
 from django.contrib.auth.models import Group

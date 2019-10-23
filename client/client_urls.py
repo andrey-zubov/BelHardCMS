@@ -50,8 +50,6 @@ urlpatterns = [
     path('admin_jobinterviews/', admin_jobinterviews),
     path('interviews/', interviews_list, name='interviews_list_url'),
     path(r'checkinterviews/', views.checkinterviews),
-
-
     path('upload', views.upload, name='client_cv_upload'),
     path('upload', views.upload, name='upload'),
 
