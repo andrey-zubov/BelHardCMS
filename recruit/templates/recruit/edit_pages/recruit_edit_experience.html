@@ -1,0 +1,119 @@
+{% extends 'recruit/recruit_main_template.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    Edit Experience
+{% endblock %}
+
+{% block content %}
+    {% include 'recruit/edit_pages/tot_samui_bootstrap.html' %}
+    <!-- JS добавления однотипных форм. ONLY FOR THIS CUSTOM FORM -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var count = 1;
+            var origin = $("#origin_div").clone();
+
+            $("#add_more").on("click", function () {
+                var add = origin.clone();
+                var current_div = add.children('div');
+
+                for (var i = 0; i < 6; i++) {
+                    if (i === 1) {  // 1 select
+                        var element_select = $(current_div).children('select');
+                        console.log(element_select);
+                        var attr_name_s = $(element_select).attr('name');
+                        console.log(attr_name_s);
+                        $(element_select).attr('name', attr_name_s + count);
+                    } else {    // 5 inputs
+                        var element_input = $(current_div[i]).children('input');
+                        console.log(element_input);
+                        var attr_name_i = $(element_input).attr('name');
+                        $(element_input).attr('value', '');
+                        console.log(attr_name_i);
+                        $(element_input).attr('name', attr_name_i + count);
+                    }
+                }
+                count++;
+                {#// Изменяет вложенный текст#}
+                var text = add.children('#id_exp_h');
+                $(text).attr('innerText', text.text('Опыт работы ' + count));
+
+                add.appendTo("#div_to_add_new");
+            });
+        });
+    </script>
+
+    <div class="container">
+        <form method="post">
+            {% csrf_token %}
+            <div id="div_to_add_new">
+                {% for exp in data.rec_exp %}
+                    <div id="origin_div">
+
+                        <h3 id="id_exp_h">Опыт работы {{ forloop.counter }}</h3>
+
+                        <div class="form-group">
+                            <label for="id_experience_1">Название организации</label>
+                            <input type="text" class="form-control" id="id_experience_1"
+                                   name="experience_1{{ forloop.counter }}"
+                                   value="{{ exp.name }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_experience_2">Область работы (сфера)</label>
+                            <select multiple class="form-control" id="id_experience_2"
+                                    name="experience_2{{ forloop.counter }}">
+                                {% for i in data.sphere %}
+                                    <option value="{{ i.id }}"
+                                            {% for cl_sp in exp.sphere %}{% if i.sphere_word  ==  cl_sp %}selected
+                                            {% endif %}{% endfor %}>
+                                        {{ i.sphere_word }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_experience_3">Должность</label>
+                            <input type="text" class="form-control" id="id_experience_3"
+                                   name="experience_3{{ forloop.counter }}"
+                                   value="{{ exp.position }}">
+                        </div>
+
+                        <h5>Период работы:</h5>
+
+                        <div class="form-group">
+                            <label for="id_exp_date_start">Дата начала</label>
+                            <input type="date" class="form-control" id="id_exp_date_start"
+                                   name="exp_date_start{{ forloop.counter }}"
+                                   value="{{ exp.start_date|date:"Y-m-d" }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_exp_date_end">Дата окончания</label>
+                            <input type="date" class="form-control" id="id_exp_date_end"
+                                   name="exp_date_end{{ forloop.counter }}"
+                                   value="{{ exp.end_date|date:"Y-m-d" }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_experience_4">Обязанности на рабочем месте</label>
+                            <input type="text" class="form-control" id="id_experience_4"
+                                   name="experience_4{{ forloop.counter }}"
+                                   value="{{ exp.duties }}">
+                        </div>
+
+                    </div>
+                {% empty %}
+                    {% include 'recruit/edit_pages/experience_empty.html' %}
+                {% endfor %}
+            </div>
+            <div class="text-center">
+                <a class="btn btn-outline-warning m-2" href="{% url 'recruit_edit' %}">Назад</a>
+                <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>
+                <input type="button" value="Добавить опыт работы" id="add_more" class="btn btn-outline-primary m-2">
+            </div>
+        </form>
+    </div>
+
+
+{% endblock %}
