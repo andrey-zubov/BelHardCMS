@@ -342,11 +342,16 @@ class FilesForJobInterviews(models.Model):
         on_delete=models.CASCADE,
         related_name='files_for_jobinterview'
     )
-    add_file = models.FileField(verbose_name='Вложения', blank=True, null=True)
+    add_file = models.FileField(upload_to='files_for_jobinterviewes/',
+                                verbose_name='Вложения', blank=True, null=True)
+
+    def __str__(self):
+        return self.add_file.name
 
     class Meta:
         verbose_name = 'Файл'
         verbose_name_plural = 'Файлы'
+
 
 # ########End Poland ##############
 
@@ -377,7 +382,7 @@ class Client(models.Model):
     resumes = models.ForeignKey(CV, on_delete=models.SET_NULL, null=True, blank=True)  # СвязьCV
 
     def __str__(self):
-        return "%s %s %s" % (self.last_name, self.name, self.patronymic)
+        return "%s %s %s" % (self.user_client.first_name, self.user_client.last_name, self.patronymic)
 
     def delete(self, *args, **kwargs):
         self.img.delete()
@@ -390,6 +395,12 @@ class Client(models.Model):
 
     def get_tasks_url(self):
         return reverse('applicant_tasks_url', kwargs={'id_a': self.id})
+
+    def get_edit_jobi_url(self):
+        return reverse('applicant_edit_interviews_url', kwargs={'id_a': self.id})
+
+    def get_del_jobi_url(self):
+        return reverse('applicant_del_interviews_url', kwargs={'id_a': self.id})
 
 
 class Telephone(models.Model):

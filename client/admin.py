@@ -32,20 +32,6 @@ class VacancyAdmin(admin.ModelAdmin):
 admin.site.register(Vacancy, VacancyAdmin)
 admin.site.register(Help)
 
-
-class JobInterviewsAdmin(admin.ModelAdmin):
-
-    list_display = ('name',)
-    list_display_links = ('name',)
-    search_fields = ('name',)
-
-    #class Media:
-    #    js = ['js/scriptJob.js']
-
-
-admin.site.register(JobInterviews, JobInterviewsAdmin)
-
-
 admin.site.register(Opinion)
 admin.site.register(Answer)
 admin.site.register(Chat)
@@ -143,3 +129,28 @@ class ClientAdmin(admin.ModelAdmin):
 
 # TeamRome
 admin.site.register(Client, ClientAdmin)
+
+
+class InlineFilesForJobInterviews(admin.TabularInline):
+    model = FilesForJobInterviews
+
+# TeamPoland
+class JobInterviewsAdmin(admin.ModelAdmin):
+    list_display = (
+        'client', 'name', 'location'
+    )
+    list_display_links = (
+        'client', 'name', 'location'
+    )
+    search_fields = (
+        'client', 'name', 'location'
+    )
+
+    model = JobInterviews
+    inlines = [InlineFilesForJobInterviews]
+
+    #class Media:
+    #    js = ['js/scriptJob.js']
+
+
+admin.site.register(JobInterviews, JobInterviewsAdmin)
