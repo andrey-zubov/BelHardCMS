@@ -15,7 +15,7 @@ urlpatterns = [
     path('profile/', views.recruit_profile, name='recruit_profile'),
 
     # Team Rome (start)
-    path('edit/', views.RecruitEditMain.as_view(), name='recruit_edit'),
+    path('edit', views.RecruitEditMain.as_view(), name='recruit_edit'),
     path('edit/experience', views.RecruitEditExperience.as_view(), name='recruit_edit_experience'),
     # Team Rome (end)
 ]

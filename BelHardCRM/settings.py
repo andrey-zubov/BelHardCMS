@@ -55,7 +55,10 @@ ROOT_URLCONF = 'BelHardCRM.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'client/templates/client/')],
+        'DIRS': [
+            os.path.join(BASE_DIR, '/client/templates/client/'),
+            os.path.join(BASE_DIR, '/recruit/templates/recruit/'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -101,7 +104,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'Europe/Minsk'
 
@@ -122,14 +125,9 @@ EMAIL_PORT = 587
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'client/static'),
+    os.path.join(BASE_DIR, '/client/static/client/'),
+    os.path.join(BASE_DIR, '/recruit/static/recruit/'),
 ]
 
-MEDIA_ROOT = [
-    os.path.join(BASE_DIR, 'client/media'),
-    os.path.join(BASE_DIR, 'recruit/media'),
-
-]
+MEDIA_ROOT = os.path.join(BASE_DIR, '/client/media/')
 MEDIA_URL = '/media/'
-
-
