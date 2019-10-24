@@ -8,7 +8,7 @@ from recruit.models import (RecruitExperience)
 # TeamRome
 @try_except
 @time_it
-def recruit_edit_page_get(client):
+def recruit_edit_page_get(recruit):
     """ views.py RecruitEditMain(TemplateView) GET method.
     Загрузка из БД списков для выбора данных Recruit. """
     response = defaultdict()
