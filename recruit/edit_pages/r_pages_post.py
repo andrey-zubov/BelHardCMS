@@ -1,5 +1,8 @@
-from client.edit.parsers import (pars_exp_request, pars_edu_request)
+from client.edit.parsers import (pars_exp_request)
 from client.edit.utility import (time_it, try_except)
+
+from client.models import (Sphere)
+from recruit.models import (RecruitExperience)
 
 
 # TeamRome
@@ -8,3 +11,46 @@ from client.edit.utility import (time_it, try_except)
 def recruit_edit_page_post(recruit_instance, request):
     """ views.py RecruitEditMain(TemplateView) POST method. """
     #
+    pass
+
+
+# TeamRome
+@try_except
+@time_it
+def recruit_experience_page_post(recruit_instance, request):
+    """" views.py ClientEditExperience(TemplateView) POST method. """
+    arr = pars_exp_request(request.POST)  # list of dictionaries
+
+    if any(arr):
+        """ Delete old data for this client. Bug fix for duplicate date save. """
+        RecruitExperience.objects.filter(recruit_exp=recruit_instance).delete()
+        for dic in arr:
+            if any(dic.values()):
+                """ If this dictionary hes any values? than take them and save to Exp. instance. """
+                organisation = dic['experience_1']
+                position = dic['experience_3']
+                start_date = dic['exp_date_start']
+                end_date = dic['exp_date_end']
+                duties = dic['experience_4']
+
+                experiences = RecruitExperience(
+                    recruit_exp=recruit_instance,
+                    name=organisation,
+                    position=position,
+                    start_date=start_date,
+                    end_date=end_date,
+                    duties=duties,
+                )
+                experiences.save()
+
+                spheres = dic['experience_2']
+                for s in spheres:
+                    if s:
+                        """ Save ManyToManyField 'sphere' """
+                        sp = Sphere.objects.get(id=s)
+                        sp.save()
+                        experiences.sphere.add(sp)
+            else:
+                print('\tExperience Form is Empty')
+    else:
+        print('\tExperience Parser is Empty')

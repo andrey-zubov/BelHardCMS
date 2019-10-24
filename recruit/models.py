@@ -57,6 +57,7 @@ class RecruitEducation(models.Model):
     date_end = models.DateField(null=True, blank=True, verbose_name='дата окончания')
 
 
+# TeamRome
 class RecruitSkills(models.Model):
     """ Навыки. ForeignKey = несколько навыков у одного recruit. """
     recruit_skills = models.ForeignKey(to='Recruit', on_delete=models.CASCADE)
@@ -64,6 +65,7 @@ class RecruitSkills(models.Model):
     skill = models.CharField(max_length=100, blank=True, null=True)
 
 
+# TeamRome
 class RecruitCertificate(models.Model):
     """ Сертификат: ссылка или картинка.
     ForeignKey = Несколько сертификатов может относиться к одному образованию. """
