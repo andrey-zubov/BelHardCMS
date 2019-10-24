@@ -2,11 +2,11 @@
 {% load staticfiles %}
 
 {% block title %}
-    {{resume.state}}
+    {{resume.position}}
 {% endblock %}
 
 {% block content %}
-    <h2 class="mb-5">{{ resume.state }}</h2>
+    <h2 class="mb-5">{{ resume.position }}</h2>
     {% for vacancy in resume.vacancies_in_waiting.all %}
         {% include 'client/includes/vacancy_template.html' %}
     {% endfor %}

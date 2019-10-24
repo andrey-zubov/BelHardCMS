@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
+import re
+import datetime as dt
 from django.utils import timezone
 
 UserModel = get_user_model()
@@ -201,11 +203,27 @@ class CV(models.Model):
     position = models.CharField(max_length=100, null=True, blank=True)
     employment = models.ForeignKey(Employment, on_delete=models.SET_NULL, null=True, blank=True)
     time_job = models.ForeignKey(TimeJob, on_delete=models.SET_NULL, null=True, blank=True)
-    salary = models.CharField(max_length=10, null=True, blank=True)
+    salary = models.CharField(max_length=20, null=True, blank=True)
     type_salary = models.ForeignKey(TypeSalary, on_delete=models.SET_NULL, null=True, blank=True)
+    # There is Poland's upgrade
+    vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
+    vacancies_accept = models.ManyToManyField('Vacancy', blank=True, related_name='accept_for_resume')
+    vacancies_reject = models.ManyToManyField('Vacancy', blank=True, related_name='reject_for_resume')
+    notification = models.ManyToManyField('Vacancy', blank=True, related_name='notifications_for_resume')
 
     def __str__(self):
         return self.position
+
+    def get_absolute_url(self):
+        return reverse('resume_detail_url', kwargs={'id_c': self.id})
+
+    def get_accept_url(self):
+        return reverse('accepted_vacancies_url', kwargs={'id_c': self.id})
+
+    def get_reject_url(self):
+        return reverse('rejected_vacancies_url', kwargs={'id_c': self.id})
+
+    # end upgrade from Poland
 
 
 class State(models.Model):
@@ -220,7 +238,8 @@ class State(models.Model):
         return self.state_word
 
 
-# Poland Task 1 & 2 ##############
+# #####Poland Task 1 & 2 #############################################################################################
+
 
 class Vacancy(models.Model):
     state = models.CharField(max_length=100)
@@ -236,50 +255,108 @@ class Vacancy(models.Model):
     conditions = models.TextField(max_length=1000, null=True)
 
     def __str__(self):
-        return '{}'.format(self.state)
-
-    def get_absolute_url(self):
-        return reverse('vacancy_detail_url', kwargs={'slug': self.slug})
-
-
-class Resume(models.Model):  ##Test table
-    state = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True)
-    vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
-    vacancies_accept = models.ManyToManyField('Vacancy', blank=True, related_name='accept_for_resume')
-    vacancies_reject = models.ManyToManyField('Vacancy', blank=True, related_name='reject_for_resume')
-    notification = models.ManyToManyField('Vacancy', blank=True, related_name='notifications_for_resume')
-
-    def __str__(self):
         return self.state
 
     def get_absolute_url(self):
-        return reverse('resume_detail_url', kwargs={'slug': self.slug})
-
-    def get_accept_url(self):
-        return reverse('accepted_vacancies_url', kwargs={'slug': self.slug})
-
-    def get_reject_url(self):
-        return reverse('rejected_vacancies_url', kwargs={'slug': self.slug})
-
-    def get_vacancies_list_url(self):
-        return reverse('vacancies_list_url', kwargs={'slug': self.slug})
+        return reverse('vacancy_detail_url', kwargs={'id_v': self.id})
 
 
 class Help(models.Model):
-    question = models.TextField(max_length=1000)
-    answer = models.CharField(max_length=1000)
+    question = models.TextField(max_length=1000, verbose_name='Вопрос')
+    answer = models.TextField(max_length=1000, verbose_name='Ответ')
 
     def __str__(self):
         return self.question
 
 
-# End Poland Task 1 & 2 ##############
+class JobInterviews(models.Model):
+    client = models.ForeignKey(to='Client', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Соискатель')
+    vacancies = models.ForeignKey(to='Vacancy', on_delete=models.CASCADE, blank=True, null=True,
+                                  verbose_name='Вакансии')
+    name = models.CharField(max_length=50, verbose_name='Наименование')
+    jobinterviewtime = models.TimeField(max_length=10, verbose_name='Время проведения собеседования')
+    jobinterviewdate = models.DateField(max_length=20, verbose_name='Дата проведения собеседования')
+    interview_author = models.CharField(max_length=50, verbose_name='Автор собеседования', blank=True, null=True)
+    time_of_creation = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
+    period_of_execution = models.DateTimeField(blank=True, null=True, verbose_name='Срок исполнения')
+    reminder = models.DateTimeField(blank=True, null=True, verbose_name='Напоминание')
+    position = models.CharField(max_length=50, verbose_name='Предполагаемая должность')
+    organization = models.CharField(max_length=50, verbose_name='Организация')
+    responsible_person = models.CharField(max_length=50, verbose_name='Ответственное лицо')
+    contact_responsible_person_1str = models.CharField(max_length=50,
+                                                       verbose_name='Контакты ответственного лица (1-я строчка)')
+    contact_responsible_person_2str = models.CharField(max_length=50, blank=True, null=True,
+                                                       verbose_name='Контакты ответственного лица (2-я строчка)')
+    location = models.CharField(max_length=50, verbose_name='Место проведения')
+    additional_information = models.TextField(max_length=3000, blank=True, null=True,
+                                              verbose_name='Дополнительная информация')
+    status = models.BooleanField(default=False)  # статус собеседования, на которое ещё не ходили
+    check_status = models.BooleanField(default=True)  # статус активен, если можем после успешного собеседования
+      # в течении 60 сек вернуть в статус активных собеседований
+    readinterview = models.BooleanField(default=False)  #cтатус собеседования для определения отображения в оповещениях
+
+    @property
+    def show_all(self):
+        to_show_name = []
+        to_show_verbose_name = []
+        for key in self.__dict__:
+            if self.__dict__[key].__class__.__name__ == 'str' or self.__dict__[key].__class__.__name__ == 'datetime'\
+                    or self.__dict__[key].__class__.__name__ == 'time' or self.__dict__[key].__class__.__name__ == 'date':
+                to_show_verbose_name.append(self._meta.get_field(key).verbose_name)
+                to_show_name.append(self.__dict__[key])
+        to_show_name.remove(self.time_of_creation)
+        to_show_verbose_name.remove(self._meta.get_field('time_of_creation').verbose_name)
+        to_show_name.remove(self.reminder)
+        to_show_verbose_name.remove(self._meta.get_field('reminder').verbose_name)
+        return zip(to_show_verbose_name, to_show_name)
+
+    @property
+    def get_cv(self):
+        return CV.objects.filter(client_cv=self.client)
+
+    @property
+    def check_time(self):
+        if self.period_of_execution is not None:
+            active_time = timezone.now() - self.period_of_execution
+            if not self.check_status:
+                pass
+            elif str(active_time)[2:4] >= '01':
+                self.check_status = False
+            self.save()
+
+    @property
+    def check_readstatus(self):
+        if not self.readinterview:
+            self.readinterview = True
+            self.save()
+
+    def __str__(self):
+        return self.name
+
+
+    # def get_absolute_url(self):
+    #    return reverse('applicant_url', kwargs={'id_a': self.id})
+
+
+class FilesForJobInterviews(models.Model):
+    jobinterviews_files = models.ForeignKey(
+        to='JobInterviews',
+        on_delete=models.CASCADE,
+        related_name='files_for_jobinterview'
+    )
+    add_file = models.FileField(verbose_name='Вложения', blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Файл'
+        verbose_name_plural = 'Файлы'
+
+# ########End Poland ##############
 
 
 class Client(models.Model):
     user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE)
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
+
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
     date_born = models.DateField(null=True, blank=True)
     citizenship = models.ForeignKey(Citizenship, related_name='citizenship', on_delete=models.SET_NULL,
@@ -299,13 +376,22 @@ class Client(models.Model):
     img = models.ImageField(blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
     # resumes
-    resumes = models.ForeignKey(Resume, on_delete=models.SET_NULL, null=True, blank=True)
+    resumes = models.ForeignKey(CV, on_delete=models.SET_NULL, null=True, blank=True)  # СвязьCV
+
+    def __str__(self):
+        return "%s %s %s" % (self.user_client.first_name, self.user_client.last_name, self.patronymic)
 
     def delete(self, *args, **kwargs):
         self.img.delete()
         # add client_CV.pdf
         # add certificate.pdf
         super().delete(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('applicant_url', kwargs={'id_a': self.id})
+
+    def get_tasks_url(self):
+        return reverse('applicant_tasks_url', kwargs={'id_a': self.id})
 
 
 class Telephone(models.Model):
@@ -379,7 +465,7 @@ class Tasks(models.Model):
     def show_all(self):
         return self.subtask.all()
 
-    # @property
+    @property
     def checktime(self):
         if self.endtime != None:
             akttime = timezone.now() - self.endtime
@@ -389,7 +475,7 @@ class Tasks(models.Model):
                 self.checkstatus = False
             self.save()
 
-    # @property
+    @property
     def check_readstatus(self):
         if self.readtask == False:
             self.readtask = True
@@ -408,21 +494,6 @@ class SubTasks(models.Model):
     #    return self.telephone_number
 
 
-# class Settings(models.Model):
-#     user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
-#     messages = models.BooleanField(default=True)
-#     tasks = models.BooleanField(default=True)
-#     suggestions = models.BooleanField(default=True)
-#     meetings = models.BooleanField(default=True)
-#
-#     name_setting = models.TextField(max_length=50, blank=True, null=True)
-#     name_setting_status = models.BooleanField(default=True)
-#     tumbler_on_off = models.CharField(max_length=50, blank=True, null=True)
-#
-#     def __str__(self):
-#         return self.name_setting
-
-
 class Settings(models.Model):
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
     messages = models.BooleanField(default=True)
@@ -435,3 +506,4 @@ class Settings(models.Model):
     email_suggestions = models.BooleanField(default=True)
     email_meetings = models.BooleanField(default=True)
     email_reviews = models.BooleanField(default=True)
+
