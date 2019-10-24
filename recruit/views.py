@@ -126,7 +126,7 @@ class RecruitEditExperience(TemplateView):
 
     def get(self, request, *args, **kwargs):
         recruit_instance = recruit_check(request.user)
-        response = {'recruit_img': load_recruit_img(recruit_instance),
+        response = {'recruit_img': load_client_img(recruit_instance),
                     "data": experience_page_get(recruit_instance),
                     }
         return render(request, self.template_name, response)

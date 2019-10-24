@@ -47,7 +47,7 @@
         <form method="post">
             {% csrf_token %}
             <div id="div_to_add_new">
-                {% for exp in data.cl_exp %}
+                {% for exp in data.rec_exp %}
                     <div id="origin_div">
 
                         <h3 id="id_exp_h">Опыт работы {{ forloop.counter }}</h3>
@@ -108,7 +108,7 @@
                 {% endfor %}
             </div>
             <div class="text-center">
-                <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>
+                <a class="btn btn-outline-warning m-2" href="{% url 'recruit_edit' %}">Назад</a>
                 <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>
                 <input type="button" value="Добавить опыт работы" id="add_more" class="btn btn-outline-primary m-2">
             </div>

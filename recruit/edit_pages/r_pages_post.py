@@ -4,6 +4,7 @@ from client.edit.utility import (time_it, try_except)
 
 # TeamRome
 from client.models import Experience, Sphere
+from recruit.models import RecruitExperience
 
 
 @try_except
@@ -19,7 +20,7 @@ def experience_page_post(recruit_instance, request):
 
     if any(arr):
         """ Delete old data for this client. Bug fix for duplicate date save. """
-        Experience.objects.filter(client_exp=recruit_instance).delete()
+        RecruitExperience.objects.filter(recruit_exp=recruit_instance).delete()
         for dic in arr:
             if any(dic.values()):
                 """ If this dictionary hes any values? than take them and save to Exp. instance. """
@@ -29,7 +30,7 @@ def experience_page_post(recruit_instance, request):
                 end_date = dic['exp_date_end']
                 duties = dic['experience_4']
 
-                experiences = Experience(
+                experiences = RecruitExperience(
                     recruit_exp=recruit_instance,
                     name=organisation,
                     position=position,
