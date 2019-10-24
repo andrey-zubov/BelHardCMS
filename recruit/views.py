@@ -131,6 +131,14 @@ def favorites(request):
     recruit = Recruiter.objects.get(recruiter=request.user)
     clients = Client.objects.filter(own_recruiter=recruit)
     context = {'clients': clients}
-    print(context)
 
     return render(request, template_name='recruit/favorites.html', context=context)
+
+def check_favor(request):
+    client_id = (request.GET['client'])
+    client = Client.objects.get(id=client_id)
+    client.is_reserved = False
+    client.own_recruiter = None
+    client.save()
+
+    return HttpResponse(client_id)

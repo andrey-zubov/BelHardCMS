@@ -312,6 +312,10 @@ class Client(models.Model):
         # add certificate.pdf
         super().delete(*args, **kwargs)
 
+    #add by spain
+    def __str__(self):
+        return str(self.user_client)
+
 
 class Telephone(models.Model):
     """ Номера телефонов. ForeignKey = несколько телефонов у одного Клиента. """
