@@ -1,3 +1,5 @@
+from BelHardCRM.settings import MEDIA_URL
+
 from client.edit.log_color import (log_info, log_error)
 from client.edit.utility import try_except, time_it
 from recruit.models import (Recruit)
@@ -24,3 +26,12 @@ def recruit_check(some_one):
     else:
         log_error('\tRecruit profile DO NOT exists!')
         return None
+
+
+
+def load_recruit_img(recruit):
+
+    if recruit:
+        if recruit.img:
+            return "%s%s" % (MEDIA_URL, recruit.img)
+    return '/media/user_1.png'
