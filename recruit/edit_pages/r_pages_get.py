@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from client.edit.utility import (time_it, try_except)
 from client.models import (Sphere)
-from recruit.models import (Recruit, RecruitEducation, RecruitExperience, RecruitSkills, RecruitSphere)
+from recruit.models import (Recruit, RecruitEducation, RecruitExperience, RecruitSkills)
 
 
 
