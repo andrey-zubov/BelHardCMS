@@ -6,10 +6,9 @@ from client.models import (Skills, Telephone, Sex, Citizenship, FamilyState, Chi
                            Certificate, CV, Experience, Sphere, Employment, TimeJob, TypeSalary, UserModel)
 
 
-# TeamRome
 @try_except
 @time_it
-def edit_page_post(client_instance, request):
+def edit_page_post(client_instance, request):  # TeamRome
     """ views.py ClientEditMain(TemplateView) POST method. """
     """ Входные данные для сохранения: """
     user = request.user
@@ -100,15 +99,14 @@ def edit_page_post(client_instance, request):
         if t:
             phone = Telephone(
                 client_phone=client,
-                telephone_number=t
+                telephone_number=t,
             )
             phone.save()
 
 
-# TeamRome
 @try_except
 @time_it
-def skills_page_post(client_instance, request):
+def skills_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditSkills(TemplateView) POST method.  """
     skills_arr = request.POST.getlist('skill') if request.POST.getlist('skill') else None
 
@@ -127,10 +125,9 @@ def skills_page_post(client_instance, request):
         print("\tNo skills")
 
 
-# TeamRome
 @try_except
 @time_it
-def photo_page_post(client_instance, request):
+def photo_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditPhoto(TemplateView) POST method.
     В БД сохраняется УНИКАЛЬНОЕ имя картинки (пр: user_2_EntrmQR.png) в папке MEDIA_URL = '/media/' """
     form = UploadImgForm(request.POST, request.FILES)
@@ -140,10 +137,9 @@ def photo_page_post(client_instance, request):
         client_instance.save()
 
 
-# TeamRome
 @try_except
 @time_it
-def education_page_post(client_instance, request):
+def education_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditEducation(TemplateView) POST method.  """
     arr_edu = pars_edu_request(request.POST, request.FILES)  # list of dictionaries
 
@@ -187,10 +183,9 @@ def education_page_post(client_instance, request):
         print('\tEducation Parser is Empty')
 
 
-# TeamRome
 @try_except
 @time_it
-def cv_page_post(client_instance, request):
+def cv_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditCv(TemplateView) POST method. """
     arr_cv = pars_cv_request(request.POST)  # list of dictionaries
 
@@ -221,10 +216,9 @@ def cv_page_post(client_instance, request):
         print('\tCV Parser is Empty')
 
 
-# TeamRome
 @try_except
 @time_it
-def experience_page_post(client_instance, request):
+def experience_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditExperience(TemplateView) POST method. """
     arr = pars_exp_request(request.POST)  # list of dictionaries
 
@@ -265,10 +259,9 @@ def experience_page_post(client_instance, request):
         print('\tExperience Parser is Empty')
 
 
-# TeamRome
 @try_except
 @time_it
-def form_edu_post(client_instance, request):
+def form_edu_post(client_instance, request):  # TeamRome
     print("FormEducation.POST: %s" % request.POST)
     form_set_edu = EducationFormSet(request.POST)
     form_set_cert = CertificateFormSet(request.POST, request.FILES)
