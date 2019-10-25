@@ -162,6 +162,3 @@ def recruit_base(request):
     return render(request, template_name='recruit/recruit_base.html', context=context)
 
 
-def recruit_search(request):
-    search_request = request.GET.get('reqcuit_search', '')
-    pass
