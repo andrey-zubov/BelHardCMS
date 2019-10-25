@@ -56,8 +56,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, '/client/templates/client/'),
-            os.path.join(BASE_DIR, '/recruit/templates/recruit/'),
+            os.path.join(BASE_DIR, 'client/templates/client/'),
+            os.path.join(BASE_DIR, 'recruit/templates/recruit/'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -125,9 +125,9 @@ EMAIL_PORT = 587
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, '/client/static/client/'),
-    os.path.join(BASE_DIR, '/recruit/static/recruit/'),
+    os.path.join(BASE_DIR, 'client/static/client/'),
+    os.path.join(BASE_DIR, 'recruit/static/recruit/'),
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, '/client/media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'client/media/')
 MEDIA_URL = '/media/'

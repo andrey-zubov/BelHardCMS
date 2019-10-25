@@ -12,7 +12,7 @@
         <p>
             <a href="{% url 'recruit_edit' %}" class="btn btn-outline-primary">Редактировать</a>
 
-            <img src="{{ recruit_img }}" alt="img" class="m-sm-1" height="64">
+            <img src="{{ recruit_img|default:'/media/user_1.png' }}" alt="img" class="m-sm-1" height="64">
 
             text....
 
