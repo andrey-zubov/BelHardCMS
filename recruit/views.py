@@ -3,7 +3,7 @@ from collections import defaultdict
 from client.models import Client, CV, JobInterviews, FilesForJobInterviews, Vacancy
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import View
 from django.views.generic.edit import FormView
 from django.template.context_processors import csrf
@@ -15,6 +15,10 @@ from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings, C
 from datetime import datetime
 
 # There is Poland's views #################################################################################
+
+
+def recruiter_main_page(request):
+    return render(request, template_name='recruit/main_template_recruiter.html', )
 def recruit_main_page(request):
     return render(request, template_name='recruit/recruit_main_template.html', )
 
@@ -123,6 +127,17 @@ class DelJobInterview(View):
         j = JobInterviews.objects.get(id=request.POST['id_job'])
         j.delete()
         return redirect(applicant_user.get_tasks_url())
+
+
+class Vacancies(View):
+    def get(self, request):
+        vacancies = Vacancy.objects.all()
+        return render(request, 'recruit/recruiter_vacancies.html', context={'vacancies': vacancies})
+
+    def post(self, request):
+        pass
+
+
 # End Poland's views #######################################################################################
 
 

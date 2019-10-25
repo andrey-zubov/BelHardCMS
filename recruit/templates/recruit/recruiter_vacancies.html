@@ -1,0 +1,28 @@
+{% extends 'recruit/main_template_recruiter.html' %}
+
+{% block title %}
+    Вакансии
+{% endblock %}
+
+{% block content %}
+    <div class="p-sm-5 pt-sm-1" align="middle">
+        <div class="container">
+            {% for vacancy in vacancies %}
+                <div class="card mb-5">
+                    <div class="card-header">
+                        <b>{{ vacancy.organization }}</b>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ vacancy.state }}</h5>
+                        <p class="card-text"><b>{{ vacancy.salary }}</b></p>
+                        <p class="card-text">{{ vacancy.description | truncatewords:20 }}</p>
+                        <a href="{{ vacancy.get_absolute_url }}" class="btn btn-secondary">Подробнее</a>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+
+{% endblock %}
