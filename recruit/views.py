@@ -3,8 +3,10 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 
 
-from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings
+from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings, Client
 from datetime import datetime
+
+from recruit.models import Recruiter
 
 
 def recruit_main_page(request):
@@ -123,3 +125,36 @@ def add_new_task(requset):
 
 
     return redirect(to='add_task')
+
+
+def favorites(request):
+    recruit = Recruiter.objects.get(recruiter=request.user)
+    clients = Client.objects.filter(own_recruiter=recruit)
+    context = {'clients': clients}
+
+    return render(request, template_name='recruit/favorites.html', context=context)
+
+#обработка избранного рекрутера
+def check_favor(request):
+    client_id = (request.GET['client'])
+    client = Client.objects.get(id=client_id)
+    recruit_id = (request.GET['recruit'])
+    recruit = Recruiter.objects.get(id=recruit_id)
+    if client.is_reserved == True:
+        client.is_reserved = False
+        client.own_recruiter = None
+    else:
+        client.is_reserved = True
+        client.own_recruiter = recruit
+    client.save()
+    recruit.save()
+    return HttpResponse(client_id)
+
+
+def recruit_base(request):
+    recruit = Recruiter.objects.get(recruiter=request.user)
+    free_clients = Client.objects.filter(own_recruiter=None)
+    context = {'free_clients':free_clients}
+    return render(request, template_name='recruit/recruit_base.html', context=context)
+
+

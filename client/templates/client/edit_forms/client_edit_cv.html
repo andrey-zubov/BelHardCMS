@@ -13,7 +13,7 @@
             var origin = $("#origin_div").clone();
 
             $("#add_more").on("click", add_cv);
-            $("#id_position").on("change", data_l);
+            $("#id_position").on("click", data_l);
 
             function add_cv() {
                 var add = origin.clone();
@@ -25,7 +25,7 @@
                     // Because custom form! Can be optimised!
                     switch (i) {
                         case 0: // input #1
-                            element = $(current_div[i]).children('input').on("change", data_l);
+                            element = $(current_div[i]).children('input').on("click", data_l);
                             console.log("input #1", element);
                             attr_name = $(element).attr('name');
                             console.log("input #1", attr_name);
@@ -71,76 +71,84 @@
                     success: function (data) {
                         var json_data = jQuery.parseJSON(data);
                         console.log(json_data.words);
-                        {#//$("#data_list_2")#}
+                        $.each(json_data.words, function (i, item) {
+                            $("#data_list").append($("<option>").attr('value', item).text(item));
+                        });
                     }
                 });
             }
         });
     </script>
 
-    <form method="post">
-        {% csrf_token %}
-        <div id="div_to_add_new">
-            {% for cv in data.cl_cvs %}
-                <div id="origin_div">
+    <div class="container">
+        <form method="post">
+            {% csrf_token %}
+            <div id="div_to_add_new">
+                {% for cv in data.cl_cvs %}
+                    <div id="origin_div">
 
-                    <h3 id="cv_h">Резюме</h3>
-                    <div class="form-group">
-                        <label for="id_position">Должность</label>
-                        <input type="text" class="form-control" id="id_position"
-                               name="position{{ forloop.counter }}"
-                               value="{{ cv.position }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="id_employment">Занятость</label>
-                        <select class="form-control" id="id_employment"
-                                name="employment{{ forloop.counter }}">
-                            <option selected value="{{ cv.cl_employment }}">{{ cv.cl_employment }}</option>
-                            {% for emp in data.employment %}
-                            <option value="{{ emp }}">{{ emp }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="id_time_job">График работы</label>
-                        <select class="form-control" id="id_time_job"
-                                name="time_job{{ forloop.counter }}">
+                        <h3 id="cv_h">Резюме {{ forloop.counter }}</h3>
 
-                            <option selected value="{{ cv.cl_time_job }}">{{ cv.cl_time_job }}</option>
-                            {% for tj in data.time_job %}
-                            <option selected value="{{ tj }}">{{ tj }}</option>
-                            {% endfor %}
+                        <div class="form-group">
+                            <label for="id_position">Должность</label>
+                            <input type="text" class="form-control" id="id_position"
+                                   name="position{{ forloop.counter }}"
+                                   value="{{ cv.position }}" list="data_list">
+                            <datalist id="data_list">
+                                <option id="dl_option" value=""></option>
+                            </datalist>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_employment">Занятость</label>
+                            <select class="form-control" id="id_employment"
+                                    name="employment{{ forloop.counter }}">
+                                <option selected value="{{ cv.cl_employment }}">{{ cv.cl_employment }}</option>
+                                {% for emp in data.employment %}
+                                    <option value="{{ emp }}">{{ emp }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_time_job">График работы</label>
+                            <select class="form-control" id="id_time_job"
+                                    name="time_job{{ forloop.counter }}">
 
-                        </select>
-                    </div>
-                    <h5>Уровень заработной платы</h5>
-                    <div class="form-group">
-                        <label for="id_salary">Сумма</label>
-                        <input type="text" class="form-control" id="id_salary"
-                               name="salary{{ forloop.counter }}"
-                               value="{{ cv.salary }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="id_type_salary">Валюта</label>
-                        <select class="form-control" id="id_type_salary"
-                                name="type_salary{{ forloop.counter }}">
+                                <option selected value="{{ cv.cl_time_job }}">{{ cv.cl_time_job }}</option>
+                                {% for tj in data.time_job %}
+                                    <option selected value="{{ tj }}">{{ tj }}</option>
+                                {% endfor %}
 
-                            <option selected value="{{ cv.cl_type_salary }}">{{ cv.cl_type_salary }}</option>
-                            {% for ts in data.type_salary %}
-                            <option value="{{ ts }}">{{ ts }}</option>
-                            {% endfor %}
+                            </select>
+                        </div>
+                        <h5>Уровень заработной платы</h5>
+                        <div class="form-group">
+                            <label for="id_salary">Сумма</label>
+                            <input type="text" class="form-control" id="id_salary"
+                                   name="salary{{ forloop.counter }}"
+                                   value="{{ cv.salary }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_type_salary">Валюта</label>
+                            <select class="form-control" id="id_type_salary"
+                                    name="type_salary{{ forloop.counter }}">
 
-                        </select>
+                                <option selected value="{{ cv.cl_type_salary }}">{{ cv.cl_type_salary }}</option>
+                                {% for ts in data.type_salary %}
+                                    <option value="{{ ts }}">{{ ts }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
                     </div>
-                </div>
-            {% empty %}
-                {% include 'client/edit_forms/cv_empty.html' %}
-            {% endfor %}
-        </div>
-        <div class="text-center">
-            <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>
-            <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>
-            <input type="button" value="Добавить резюме" id="add_more" class="btn btn-outline-primary m-2">
-        </div>
-    </form>
+                {% empty %}
+                    {% include 'client/edit_forms/cv_empty.html' %}
+                {% endfor %}
+            </div>
+            <div class="text-center">
+                <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>
+                <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>
+                <input type="button" value="Добавить резюме" id="add_more" class="btn btn-outline-primary m-2">
+            </div>
+        </form>
+    </div>
 {% endblock %}

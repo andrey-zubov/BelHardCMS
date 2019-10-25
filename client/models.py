@@ -3,6 +3,8 @@ from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
 
+from recruit.models import Recruiter
+
 UserModel = get_user_model()
 
 
@@ -279,10 +281,7 @@ class Help(models.Model):
 
 class Client(models.Model):
     user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, verbose_name='Имя')     # TODO
-    last_name = models.CharField(max_length=100, verbose_name='Фамилия')    # TODO
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
-
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
     date_born = models.DateField(null=True, blank=True)
     citizenship = models.ForeignKey(Citizenship, related_name='citizenship', on_delete=models.SET_NULL,
@@ -297,22 +296,25 @@ class Client(models.Model):
 
     telegram_link = models.CharField(max_length=100, blank=True, null=True,
                                      verbose_name='Ник в телеграмме')  # при верстке учесть @
-    email = models.EmailField(max_length=200, null=True, blank=True)    # TODO
     link_linkedin = models.URLField(max_length=200, null=True, blank=True)
     skype = models.CharField(max_length=100, null=True, blank=True)
     img = models.ImageField(blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
     # resumes
     resumes = models.ForeignKey(Resume, on_delete=models.SET_NULL, null=True, blank=True)
-
-    def __str__(self):
-        return "%s %s %s" % (self.last_name, self.name, self.patronymic)
+    # spain recruit
+    is_reserved = models.BooleanField(default=False)
+    own_recruiter = models.ForeignKey(Recruiter, on_delete=models.SET_NULL, null=True, blank=True)
 
     def delete(self, *args, **kwargs):
         self.img.delete()
         # add client_CV.pdf
         # add certificate.pdf
         super().delete(*args, **kwargs)
+
+    #add by spain
+    def __str__(self):
+        return str(self.user_client)
 
 
 class Telephone(models.Model):

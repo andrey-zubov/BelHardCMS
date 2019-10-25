@@ -9,12 +9,10 @@
     <script type="text/javascript">
         $(document).ready(function () {
             var count = 1;
-            var cert_count = 1;
             var origin = $("#origin_div").clone();
-            var cert_origin = $("#cert_origin").clone();
 
             $("#add_more").on("click", add_edu);
-            $("#id_institution").on("change", data_l);
+            $("#id_institution").on("click", data_l);
 
             function add_edu() {
                 var add = origin.clone();
@@ -22,52 +20,29 @@
 
                 for (var i = 0; i < 8; i++) {
                     // 8 inputs
-                    var element = $(current_div[i]).children('input').on("change", data_l);
-                    var attr_name = $(element).attr('name');
-                    $(element).attr('name', attr_name + count);
-                    $(element).attr('value', '');
-                    {##}
-                    {#if (i === 6) {  // img#}
-                    {#    var element_img = $(current_div[i]).children('div').children('div').children('input');#}
-                    {#    console.log(element_img);#}
-                    {#    var attr_name_i = $(element_img).attr('name');#}
-                    {#    console.log(attr_name_i);#}
-                    {#    $(element_img).attr('name', attr_name_i + count);}#}
-                    {#if (i === 7) {  // url#}
-                    {#    var element_url = $(current_div[i]).children('div').children('div').children('input');#}
-                    {#    console.log(element_img);#}
-                    {#    var attr_name_u = $(element_url).attr('name');#}
-                    {#    console.log(attr_name_u);#}
-                    {#    $(element_url).attr('name', attr_name_u + count);}#}
-                    {##}
+                    if (i === 0) {
+                        var element_0 = $(current_div[i]).children('input').on("change", data_l);
+                        var attr_name_0 = $(element_0).attr('name');
+                        $(element_0).attr('name', attr_name_0 + count);
+                        $(element_0).attr('value', '');
+                        var attr_id_0 = $(element_0).attr('id');
+                        $(element_0).attr('id', attr_id_0 + count);
+                    } else {
+                        var element = $(current_div[i]).children('input');
+                        var attr_name = $(element).attr('name');
+                        $(element).attr('name', attr_name + count);
+                        $(element).attr('value', '');
+                        var attr_id = $(element).attr('id');
+                        $(element).attr('id', attr_id + count);
+                    }
                 }
                 count++;
                 // Изменяет вложенный текст
                 var text = add.children('#edu_h');
-                console.log(text);
                 $(text).attr('innerText', text.text('Образование ' + count));
 
                 add.appendTo("#div_to_add_new");
             }
-
-            {##}
-            {#$("#add_more_cert").on("click", function () {#}
-            {#    var add = cert_origin.clone();#}
-            {#    var current_div = add.children('div');#}
-            {##}
-            {#    for (var i = 0; i < 2; i++) {#}
-            {#        // 2 inputs#}
-            {#        var element = $(current_div[i]).children('input');#}
-            {#        var attr_name = $(element).attr('name');#}
-            {#        $(element).attr('name', attr_name + cert_count);#}
-            {#    }#}
-            {#    cert_count++;#}
-            {#    // Изменяет вложенный текст#}
-            {#    var text = add.children('#cert_h');#}
-            {#    console.log(text);#}
-            {#    $(text).attr('innerText', text.text('Сертификат ' + cert_count));#}
-            {#    add.appendTo("#cert_to_add");});#}
-            {##}
 
             function data_l() {
                 var us_in = $(this).val();
@@ -78,79 +53,151 @@
                     success: function (data) {
                         var json_data = jQuery.parseJSON(data);
                         console.log(json_data.words);
-                        {#//$("#data_list_2")#}
+                        $.each(json_data.words, function (i, item) {
+                            $("#data_list_" + count).append($("<option>").attr('value', item).text(item));
+                        });
                     }
                 });
             }
         });
     </script>
+    <div class="container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div id="div_to_add_new">
+                {% for edu in data.cl_edu %}
+                    <div id="origin_div">
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div id="div_to_add_new">
-            {% for edu in data.cl_edu %}
-                <div id="origin_div">
+                        <h3 id="edu_h">Образование</h3>
 
-                    <h3 id="edu_h">Образование</h3>
-                    <div class="form-group">
-                        <label for="id_institution">Учебное заведение</label>
-                        <input type="text" class="form-control" id="id_institution"
-                               name="institution{{ forloop.counter }}"
-                               value="{{ edu.institution }}">
+                        <div class="form-group">
+                            <label for="id_institution">Учебное заведение</label>
+                            <input type="text" class="form-control" id="id_institution{{ forloop.counter }}"
+                                   name="institution{{ forloop.counter }}"
+                                   value="{{ edu.institution }}" list="data_list{{ forloop.counter }}">
+                            <datalist id="data_list{{ forloop.counter }}">
+                                <option id="dl_option" value=""></option>
+                            </datalist>
+
+                            {# <!-- Script Добавление сертификатов -->#}
+                            <script type="text/javascript">
+                                $(document).ready(function () {
+                                    $("#id_institution{{ forloop.counter }}").on("click", data_l);
+
+                                    function data_l() {
+                                        var us_in = $(this).val();
+                                        console.log(us_in);
+                                        $.ajax({
+                                            'url': "{% url 'institution_data_list' %}",
+                                            'data': {'us_in': us_in},
+                                            success: function (data) {
+                                                var json_data = jQuery.parseJSON(data);
+                                                console.log(json_data.words);
+                                                $.each(json_data.words, function (i, item) {
+                                                    $("#data_list{{ forloop.counter }}").append($("<option>").attr('value', item).text(item));
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            </script>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="id_subject_area">Предметная область</label>
+                            <input type="text" class="form-control" id="id_subject_area"
+                                   name="subject_area{{ forloop.counter }}"
+                                   value="{{ edu.subject_area }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_specialization">Специальность</label>
+                            <input type="text" class="form-control" id="id_specialization"
+                                   name="specialization{{ forloop.counter }}"
+                                   value="{{ edu.specialization }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_qualification">Квалификация</label>
+                            <input type="text" class="form-control" id="id_qualification"
+                                   name="qualification{{ forloop.counter }}"
+                                   value="{{ edu.qualification }}">
+                        </div>
+                        <p>Период обучения:</p>
+                        <div class="form-group">
+                            <label for="id_date_start">Дата начала</label>
+                            <input type="date" class="form-control" id="id_date_start"
+                                   name="date_start{{ forloop.counter }}"
+                                   value="{{ edu.date_start|date:"Y-m-d" }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_date_end">Дата окончания</label>
+                            <input type="date" class="form-control" id="id_date_end"
+                                   name="date_end{{ forloop.counter }}"
+                                   value="{{ edu.date_end|date:"Y-m-d" }}">
+                        </div>
+
+                        {# <!-- Div Добавление сертификатов -->#}
+                        <div id="cert_to_add{{ forloop.counter }}">
+                            <h3 id="cert_h{{ forloop.counter }}">Сертификаты:</h3>
+
+                            {% for c in edu.cert %}
+
+                                <div id="cert_origin{{ forloop.counter }}">
+                                    <div class="form-group">
+                                        <label for="id_certificate_img">Сертификат (img)</label>
+                                        <img src="{{ c.img }}" alt="img" class="m-2" height="64">
+                                        <input type="file" class="form-control" id="id_certificate_img"
+                                               name="certificate_img
+                                                       {{ forloop.parentloop.counter }}{{ forloop.counter }}"
+                                               value="{{ c.img.name }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="id_certificate_url">Сертификат (ссылка)</label>
+                                        <input type="url" class="form-control" id="id_certificate_url"
+                                               name="certificate_url
+                                                       {{ forloop.parentloop.counter }}{{ forloop.counter }}"
+                                               value="{{ c.link }}">
+                                    </div>
+                                </div>
+
+                            {% endfor %}
+                            {# <!-- копироваться будет сюда -->#}
+                        </div>
+                        {# <!-- Script Добавление сертификатов -->#}
+                        <script type="text/javascript">
+                            $(document).ready(function () {
+                                $("#add_more_cert{{ forloop.counter }}").on("click", add_cert);
+                                var cert_count = 1;
+                                var cert_origin = $('#cert_origin{{ forloop.counter }}').clone();
+
+                                function add_cert() {
+                                    var cert_add = cert_origin.clone();
+                                    var cert_current_div = cert_add.children('div');
+
+                                    for (var i = 0; i < 2; i++) {
+                                        // 2 inputs
+                                        var cert_element = $(cert_current_div[i]).children('input');
+                                        var cert_attr_name = $(cert_element).attr('name');
+                                        $(cert_element).attr('name', cert_attr_name + cert_count);
+                                        $(cert_element).attr('value', '');
+                                    }
+                                    cert_count++;
+                                    cert_add.appendTo('#cert_to_add{{ forloop.counter }}');
+                                }
+                            });
+                        </script>
+                        {# <!-- Button Добавление сертификатов -->#}
+                        <input type="button" value="Добавить сертификат" id="add_more_cert{{ forloop.counter }}"
+                               class="btn btn-outline-primary m-2">
                     </div>
-                    <div class="form-group">
-                        <label for="id_subject_area">Предметная область</label>
-                        <input type="text" class="form-control" id="id_subject_area"
-                               name="subject_area{{ forloop.counter }}"
-                               value="{{ edu.subject_area }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="id_specialization">Специальность</label>
-                        <input type="text" class="form-control" id="id_specialization"
-                               name="specialization{{ forloop.counter }}"
-                               value="{{ edu.specialization }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="id_qualification">Квалификация</label>
-                        <input type="text" class="form-control" id="id_qualification"
-                               name="qualification{{ forloop.counter }}"
-                               value="{{ edu.qualification }}">
-                    </div>
-                    <p>Период обучения:</p>
-                    <div class="form-group">
-                        <label for="id_date_start">Дата начала</label>
-                        <input type="date" class="form-control" id="id_date_start"
-                               name="date_start{{ forloop.counter }}"
-                               value="{{ edu.date_start|date:"Y-m-d" }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="id_date_end">Дата окончания</label>
-                        <input type="date" class="form-control" id="id_date_end"
-                               name="date_end{{ forloop.counter }}"
-                               value="{{ edu.date_end|date:"Y-m-d" }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="id_certificate_img">Сертификат (img)</label>
-                        <img src="{{ edu.img }}" alt="img" class="m-2" height="64">
-                        <input type="file" class="form-control" id="id_certificate_img"
-                               name="certificate_img{{ forloop.counter }}"
-                               value="{{ edu.img }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="id_certificate_url">Сертификат (ссылка)</label>
-                        <input type="url" class="form-control" id="id_certificate_url"
-                               name="certificate_url{{ forloop.counter }}"
-                               value="{{ edu.link }}">
-                    </div>
-                </div>
-            {% empty %}
-                {% include 'client/edit_forms/education_empty.html' %}
-            {% endfor %}
-        </div>
-        <div class="text-center">
-            <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>
-            <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>
-            <input type="button" value="Добавить образование" id="add_more" class="btn btn-outline-primary m-2">
-        </div>
-    </form>
+                {% empty %}
+                    {% include 'client/edit_forms/education_empty.html' %}
+                {% endfor %}
+            </div>
+            <div class="text-center">
+                <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>
+                <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>
+                <input type="button" value="Добавить образование" id="add_more" class="btn btn-outline-primary m-2">
+            </div>
+        </form>
+    </div>
 {% endblock %}

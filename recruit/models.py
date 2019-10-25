@@ -1,4 +1,16 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
-# Create your models here.
+RecruiterModel = get_user_model()
+
+
+class Recruiter(models.Model):
+    recruiter = models.OneToOneField(RecruiterModel, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.recruiter)
+
+
+
+
 
