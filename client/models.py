@@ -243,22 +243,28 @@ class State(models.Model):
 
 class Vacancy(models.Model):
     state = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True)
     salary = models.CharField(max_length=20)
     organization = models.CharField(max_length=100)
-    address = models.CharField(max_length=200, null=True)
-    employment = models.CharField(max_length=100, null=True)
-    description = models.TextField(max_length=1000)
-    skills = models.CharField(max_length=100, null=True)
-    requirements = models.TextField(max_length=1000, null=True)
-    duties = models.TextField(max_length=1000, null=True)
-    conditions = models.TextField(max_length=1000, null=True)
+    address = models.CharField(max_length=200, blank=True, null=True)
+    employment = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(max_length=1000, blank=True, null=True)
+    skills = models.CharField(max_length=100, blank=True, null=True)
+    requirements = models.TextField(max_length=1000, blank=True, null=True)
+    duties = models.TextField(max_length=1000, blank=True, null=True)
+    conditions = models.TextField(max_length=1000, blank=True, null=True)
+    creating_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
         return self.state
 
-    def get_absolute_url(self):
+    def get_absolute_url(self):  # for client
         return reverse('vacancy_detail_url', kwargs={'id_v': self.id})
+
+    def get_absolute_url2(self): # for recruiter looking and editing vacancy
+        return reverse('vacancy_recr_url', kwargs={'id_v': self.id})
+
+    def get_del_url(self):
+        return reverse('vacancy_del_recr_url', kwargs={'id_v': self.id})
 
 
 class Help(models.Model):
