@@ -153,8 +153,15 @@ def check_favor(request):
 
 def recruit_base(request):
     recruit = Recruiter.objects.get(recruiter=request.user)
-    free_clients = Client.objects.filter(own_recruiter=None)
+    search_request = request.GET.get('reqcuit_search', '')
+    if search_request:
+        free_clients = Client.objects.filter(own_recruiter=None, user_client=search_request) #выдает поиск по id но не user-у
+    else:
+        free_clients = Client.objects.filter(own_recruiter=None)
     context = {'free_clients':free_clients}
     return render(request, template_name='recruit/recruit_base.html', context=context)
 
 
+def recruit_search(request):
+    search_request = request.GET.get('reqcuit_search', '')
+    pass
