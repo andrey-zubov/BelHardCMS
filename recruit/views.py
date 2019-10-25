@@ -17,6 +17,10 @@ def recruiter_main_page(request):
     return render(request, template_name='recruit/main_template_recruiter.html', )
 
 
+def recruiter_base(request):
+    return render(request, template_name='recruit/recruiter_base.html', )
+
+
 def base_of_applicants(request):
     applicants = Client.objects.all()
     return render(request=request, template_name='recruit/recruiter_base_of_clients.html',
