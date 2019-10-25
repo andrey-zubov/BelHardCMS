@@ -472,10 +472,6 @@ class client_task_adding(View):
         client_activ_tasks = Tasks.objects.filter(user=client_user, status=False) #просмотр активных задач клинета
         client_closed_tasks = Tasks.objects.filter(user=client_user, status=True)
         return render(request, template_name='recruit/adding_task_to_client.html', context={'client':client,
-                                                                                            'client_user': client_user,
-                                                                                            'client_activ_tasks':client_activ_tasks,
-                                                                                            'client_closed_tasks': client_closed_tasks})
-
 
     def post(self, request, id_a):
         client = Client.objects.get(id=id_a)
