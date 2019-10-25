@@ -6,10 +6,9 @@ from client.models import (Sex, Citizenship, FamilyState, Children, City, State,
                            Certificate, CV, Experience, Employment, TimeJob, TypeSalary, UserModel, Sphere)
 
 
-# TeamRome
 @try_except
 @time_it
-def edit_page_get(client):
+def edit_page_get(client):  # TeamRome
     """ views.py ClientEditMain(TemplateView) GET method.
     Загрузка из БД списков для выбора данных клиента. """
     response = defaultdict()
@@ -36,10 +35,9 @@ def edit_page_get(client):
     return response
 
 
-# TeamRome
 @try_except
 @time_it
-def skills_page_get(client):
+def skills_page_get(client):  # TeamRome
     """" views.py ClientEditSkills(TemplateView) GET method.  """
     response = defaultdict()
     if client:
@@ -49,10 +47,9 @@ def skills_page_get(client):
     return response
 
 
-# TeamRome
 @try_except
 @time_it
-def education_page_get(client):
+def education_page_get(client):  # TeamRome
     """" views.py ClientEditEducation(TemplateView) GET method.  """
     response = defaultdict()
     if client:
@@ -74,10 +71,9 @@ def education_page_get(client):
     return response
 
 
-# TeamRome
 @try_except
 @time_it
-def cv_page_get(client):
+def cv_page_get(client):  # TeamRome
     """" views.py ClientEditCv(TemplateView) GET method. """
     response = defaultdict()
     # default select fields
@@ -99,10 +95,9 @@ def cv_page_get(client):
     return response
 
 
-# TeamRome
 @try_except
 @time_it
-def experience_page_get(client):
+def experience_page_get(client):  # TeamRome
     """" views.py ClientEditExperience(TemplateView) GET method. """
     response = defaultdict()
     response['sphere'] = Sphere.objects.all()

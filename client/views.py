@@ -38,15 +38,20 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
-def client_profile(request):
-    client_instance = client_check(request.user)
-    response = {'client_img': load_client_img(client_instance),
-                }
-    return render(request=request, template_name='client/client_profile.html', context=response)
+class ClientProfile(TemplateView):  # TeamRome
+    template_name = 'client/client_profile.html'
+
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
+
+    def post(self, request):
+        pass
 
 
-# TeamRome
-class ClientEditMain(TemplateView):
+class ClientEditMain(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_main.html'
 
     def get(self, request, *args, **kwargs):
@@ -62,8 +67,7 @@ class ClientEditMain(TemplateView):
         return redirect(to='/client/profile')
 
 
-# TeamRome
-class ClientEditSkills(TemplateView):
+class ClientEditSkills(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_skills.html'
 
     def get(self, request, *args, **kwargs):
@@ -79,8 +83,7 @@ class ClientEditSkills(TemplateView):
         return redirect(to='/client/edit')
 
 
-# TeamRome
-class ClientEditPhoto(TemplateView):
+class ClientEditPhoto(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_photo.html'
 
     def get(self, request, *args, **kwargs):
@@ -96,8 +99,7 @@ class ClientEditPhoto(TemplateView):
         return redirect(to='/client/edit')
 
 
-# TeamRome
-class ClientEditCv(TemplateView):
+class ClientEditCv(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_cv.html'
 
     def get(self, request, *args, **kwargs):
@@ -113,8 +115,7 @@ class ClientEditCv(TemplateView):
         return redirect(to='/client/edit')
 
 
-# TeamRome
-class ClientEditEducation(TemplateView):
+class ClientEditEducation(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_education.html'
 
     def get(self, request, *args, **kwargs):
@@ -130,8 +131,7 @@ class ClientEditEducation(TemplateView):
         return redirect('/client/edit')
 
 
-# TeamRome
-class ClientEditExperience(TemplateView):
+class ClientEditExperience(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_experience.html'
 
     def get(self, request, *args, **kwargs):
@@ -289,8 +289,7 @@ def tasks(request):
                                                          'client_img': load_client_img(client_instance)})
 
 
-# TeamRome
-class FormEducation(TemplateView):
+class FormEducation(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/form_edu.html'
 
     def get(self, request, *args, **kwargs):

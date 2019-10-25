@@ -7,9 +7,9 @@ from client.views import *
 
 urlpatterns = [
     path('', views.client_main_page, name='client'),  # main client page
-    path('profile', views.client_profile, name='client_profile'),
 
     # Team Rome (start) - Edit Forms URLs
+    path('profile', views.ClientProfile, name='client_profile'),
     path('edit/', views.ClientEditMain.as_view(), name='client_edit'),
     path('edit/skills/', views.ClientEditSkills.as_view(), name='client_edit_skills'),
     path('edit/photo/', views.ClientEditPhoto.as_view(), name='client_edit_photo'),

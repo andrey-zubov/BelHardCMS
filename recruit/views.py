@@ -19,12 +19,18 @@ def recruit_main_page(request):
     return render(request, template_name='recruit/recruit_main_template.html', context=response)
 
 
-def recruit_profile(request):
-    recruit_instance = recruit_check(request.user)
-    response = {'recruit_img': load_client_img(recruit_instance),
-                'data': 'foo()',
-                }
-    return render(request=request, template_name='recruit/recruit_profile.html', context=response)
+class RecruitProfile(TemplateView):  # TeamRome
+    template_name = 'recruit/recruit_profile.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'data': 'foo()',
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
+
+    def post(self, request):
+        pass
 
 
 def recruit_chat(request):
@@ -103,8 +109,7 @@ def check_mes(request):
     return JsonResponse(send, safe=False)
 
 
-# TeamRome
-class RecruitEditMain(TemplateView):
+class RecruitEditMain(TemplateView):  # TeamRome
     template_name = 'recruit/edit_pages/recruit_edit_main.html'
 
     def get(self, request, *args, **kwargs):
@@ -120,8 +125,7 @@ class RecruitEditMain(TemplateView):
         return redirect(to='/recruit/profile/')
 
 
-# TeamRome
-class RecruitEditExperience(TemplateView):
+class RecruitEditExperience(TemplateView):  # TeamRome
     template_name = 'recruit/edit_pages/recruit_edit_experience.html'
 
     def get(self, request, *args, **kwargs):
@@ -137,8 +141,7 @@ class RecruitEditExperience(TemplateView):
         return redirect(to='/recruit/edit/')
 
 
-# TeamRome
-class RecruitEditEducation(TemplateView):
+class RecruitEditEducation(TemplateView):  # TeamRome
     template_name = ''
 
     def get(self, request, *args, **kwargs):
@@ -154,8 +157,7 @@ class RecruitEditEducation(TemplateView):
         return redirect(to='/recruit/edit/')
 
 
-# TeamRome
-class RecruitEditSkills(TemplateView):
+class RecruitEditSkills(TemplateView):  # TeamRome
     template_name = ''
 
     def get(self, request, *args, **kwargs):
@@ -171,8 +173,7 @@ class RecruitEditSkills(TemplateView):
         return redirect(to='/recruit/edit/')
 
 
-# TeamRome
-class RecruitEditPhoto(TemplateView):
+class RecruitEditPhoto(TemplateView):  # TeamRome
     template_name = ''
 
     def get(self, request, *args, **kwargs):

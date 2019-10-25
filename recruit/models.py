@@ -6,8 +6,7 @@ from client.models import (Citizenship, Sex, FamilyState, Children, City, State,
 UserModel = get_user_model()
 
 
-# TeamRome
-class Recruit(models.Model):
+class Recruit(models.Model):  # TeamRome
     user_recruit = models.OneToOneField(UserModel, on_delete=models.CASCADE)
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
@@ -30,8 +29,7 @@ class Recruit(models.Model):
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
 
 
-# TeamRome
-class RecruitExperience(models.Model):
+class RecruitExperience(models.Model):  # TeamRome
     """ Опыт работы. ForeignKey = несколько видов опыта работы у одного recruit. """
     recruit_exp = models.ForeignKey(to='Recruit', on_delete=models.CASCADE)
 
@@ -43,8 +41,7 @@ class RecruitExperience(models.Model):
     duties = models.TextField(max_length=3000, null=True, blank=True, verbose_name='duties')
 
 
-# TeamRome
-class RecruitEducation(models.Model):
+class RecruitEducation(models.Model):  # TeamRome
     """ Образование / Курсы / Университеты / Коледжы.
         ForeignKey = несколько образований у одного recruit."""
     recruit_edu = models.ForeignKey(to='Recruit', on_delete=models.CASCADE)
@@ -57,16 +54,14 @@ class RecruitEducation(models.Model):
     date_end = models.DateField(null=True, blank=True, verbose_name='дата окончания')
 
 
-# TeamRome
-class RecruitSkills(models.Model):
+class RecruitSkills(models.Model):  # TeamRome
     """ Навыки. ForeignKey = несколько навыков у одного recruit. """
     recruit_skills = models.ForeignKey(to='Recruit', on_delete=models.CASCADE)
 
     skill = models.CharField(max_length=100, blank=True, null=True)
 
 
-# TeamRome
-class RecruitCertificate(models.Model):
+class RecruitCertificate(models.Model):  # TeamRome
     """ Сертификат: ссылка или картинка.
     ForeignKey = Несколько сертификатов может относиться к одному образованию. """
     education = models.ForeignKey(to='RecruitEducation', on_delete=models.CASCADE)
@@ -75,3 +70,13 @@ class RecruitCertificate(models.Model):
     link = models.URLField(blank=True, null=True, max_length=100, verbose_name='certificate_link')
 
     show_img = models.ImageField(blank=True, null=True)
+
+
+class RecruitTelephone(models.Model):  # TeamRome
+    """ Номера телефонов. ForeignKey = несколько телефонов у одного Клиента. """
+    recruit_phone = models.ForeignKey(to='Recruit', on_delete=models.CASCADE)
+
+    telephone_number = models.CharField(max_length=20, blank=True, null=True)
+
+    def __str__(self):
+        return self.telephone_number
