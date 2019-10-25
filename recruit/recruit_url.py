@@ -16,6 +16,8 @@ urlpatterns = [
     path('base/base_of_clients/<id_a>/del_job_interview/', views.DelJobInterview.as_view(), name='applicant_del_interviews_url'),
 
     path('vacancies/', views.Vacancies.as_view(), name='vacancies_url'),
+    path('vacancies/<id_v>/', views.VacancyDet.as_view(), name='vacancy_recr_url'),
+    path('vacancies/<id_v>/del_vacancy/', views.DelVacancy.as_view(), name='vacancy_del_recr_url'),
     # End TeamPoland ###############################################
 
     path('chat/', login_required(views.recruit_chat), name='contact_with_clients'),

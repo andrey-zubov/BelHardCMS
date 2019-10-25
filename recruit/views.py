@@ -135,7 +135,53 @@ class Vacancies(View):
         return render(request, 'recruit/recruiter_vacancies.html', context={'vacancies': vacancies})
 
     def post(self, request):
-        pass
+        response = request.POST
+        v = Vacancy(
+            state=response['position'],
+            salary=response['salary'],
+            organization=response['organization'],
+            address=response['address'],
+            employment=response['employment'],
+            description=response['description'],
+            skills=response['skills'],
+            requirements=response['requirements'],
+            duties=response['duties'],
+            conditions=response['conditions'],
+        )
+        v.save()
+        return redirect('vacancies_url')
+
+
+class VacancyDet(View):
+    def get(self, request, id_v):
+        vacancy = Vacancy.objects.get(id=id_v)
+        return render(request, 'recruit/recruiter_vacancy_detail.html', context={'vacancy': vacancy})
+
+    def post(self, request, id_v):
+        response = request.POST
+        v = Vacancy.objects.get(id=id_v)
+
+        v.state = response['position']
+        v.salary = response['salary']
+        v.organization = response['organization']
+        v.address = response['address']
+        v.employment = response['employment']
+        v.description = response['description']
+        v.skills = response['skills']
+        v.requirements = response['requirements']
+        v.duties = response['duties']
+        v.conditions = response['conditions']
+
+        v.save()
+
+        return redirect(v.get_absolute_url2())
+
+
+class DelVacancy(View):
+    def post(self, request, id_v):
+        v = Vacancy.objects.get(id=request.POST['id_vac'])
+        v.delete()
+        return redirect('vacancies_url')
 
 
 # End Poland's views #######################################################################################
