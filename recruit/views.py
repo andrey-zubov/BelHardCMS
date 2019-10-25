@@ -13,6 +13,8 @@ from django.http import HttpResponse
 from .models import *
 
 # There is Poland's views #################################################################################
+
+
 def recruiter_main_page(request):
     return render(request, template_name='recruit/main_template_recruiter.html', )
 
@@ -118,6 +120,17 @@ class DelJobInterview(View):
         j = JobInterviews.objects.get(id=request.POST['id_job'])
         j.delete()
         return redirect(applicant_user.get_tasks_url())
+
+
+class Vacancies(View):
+    def get(self, request):
+        vacancies = Vacancy.objects.all()
+        return render(request, 'recruit/recruiter_vacancies.html', context={'vacancies': vacancies})
+
+    def post(self, request):
+        pass
+
+
 # End Poland's views #######################################################################################
 
 
