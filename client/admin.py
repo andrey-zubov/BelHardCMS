@@ -117,10 +117,6 @@ admin.site.register(TypeSalary, TypeSalaryAdmin)
 admin.site.register(State, StateAdmin)
 
 
-class InlineFilesForJobInterviews(admin.TabularInline):
-    model = FilesForJobInterviews
-
-
 class InlineExp(admin.TabularInline):  # TeamRome
     model = Experience
 
@@ -140,6 +136,11 @@ class ClientAdmin(admin.ModelAdmin):  # TeamRome
 
 # TeamRome
 admin.site.register(Client, ClientAdmin)
+
+
+# TeamPoland
+class InlineFilesForJobInterviews(admin.TabularInline):
+    model = FilesForJobInterviews
 
 
 # TeamPoland
