@@ -155,7 +155,12 @@ def recruit_base(request):
     recruit = Recruiter.objects.get(recruiter=request.user)
     search_request = request.GET.get('reqcuit_search', '')
     if search_request:
-        free_clients = Client.objects.filter(own_recruiter=None, user_client=search_request) #выдает поиск по id но не user-у
+        try:
+            search_user = UserModel.objects.get(username=search_request)
+            search_id = search_user.id
+            free_clients = Client.objects.filter(own_recruiter=None, user_client=search_id)
+        except:
+            free_clients = None
     else:
         free_clients = Client.objects.filter(own_recruiter=None)
     context = {'free_clients':free_clients}
