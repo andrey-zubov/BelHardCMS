@@ -8,7 +8,7 @@
                    {% for client in clients %}
                         <div id="status_{{ client }}">
                         {{ client.user_client.username }}-{{ client.is_reserved }}
-                            <input type="checkbox" class="yellow_star" id="{{ client.id }}">
+                            <input type="button" class="yellow_star" id="{{ client.id }}">
                         </div>
                   {% endfor %}
 
@@ -20,16 +20,19 @@
 <script>
 
     $('document').ready(function () {
-
+        let recruit = {{ request.user.id }}
         $('.yellow_star').click(function () {
             let client = $(this).attr('id')
+            console.log(recruit)
             console.log(client)
+            console.log('qq')
 
              $.ajax({
                     'url': '/recruit/checkfavor/',
-                    'data': {'client': client},
+                    'data': {'client': client,
+                            'recruit': recruit},
                     success: function (data) {
-                        console.log(data)
+                        console.log('data')
                     }
 
                  });
