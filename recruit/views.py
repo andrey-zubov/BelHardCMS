@@ -1,3 +1,4 @@
+
 from time import perf_counter
 from collections import defaultdict
 from client.models import Client, CV
@@ -11,10 +12,16 @@ from django.template.context_processors import csrf
 from django.urls import reverse
 from django.http import HttpResponse
 from .models import *
+from recruit.models import Recruiter
+from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings, Client, State
+from datetime import datetime
 
 # There is Poland's views #################################################################################
 def recruiter_main_page(request):
-    return render(request, template_name='recruit/main_template_recruiter.html', )
+    return render(request, template_name='recruit/recruit_main_template.html', )
+
+
+
 
 
 def base_of_applicants(request):
@@ -170,3 +177,59 @@ def add_new_task(requset):
 
 
 
+def favorites(request):
+    recruit = Recruiter.objects.get(recruiter=request.user)
+    clients = Client.objects.filter(own_recruiter=recruit)
+    context = {'clients': clients}
+
+    return render(request, template_name='recruit/favorites.html', context=context)
+
+#обработка избранного рекрутера
+def check_favor(request):
+    client_id = (request.GET['client'])
+    client = Client.objects.get(id=client_id)
+    recruit_id = (request.GET['recruit'])
+    recruit = Recruiter.objects.get(recruiter=UserModel.objects.get(id=recruit_id))
+    if client.is_reserved == True:
+        client.is_reserved = False
+        client.own_recruiter = None
+    else:
+        client.is_reserved = True
+        client.own_recruiter = recruit
+    client.save()
+    return HttpResponse(client_id)
+
+
+def recruit_base(request):
+    recruit = Recruiter.objects.get(recruiter=request.user)
+    search_request = request.GET.get('recruit_search', '')
+    clients_after_search = set()
+    if search_request:
+        search_params = search_request.split(' ')
+        print(search_params)
+        clients = Client.objects.all()
+
+        for s in search_params:
+            users_for_first_name_list = UserModel.objects.filter(first_name__contains=s)
+            users_for_last_name_list = UserModel.objects.filter(last_name__contains=s)
+            users_for_patronymic = clients.filter(patronymic__contains=s)
+            try:
+                users_for_state = clients.filter(state__contains=State.objects.get(state_word=s))
+                clients_after_search.update(users_for_state)
+            except:
+                print('ясно')
+            users_for_first_name = set()
+            users_for_last_name = set()
+            for u in users_for_first_name_list:
+                users_for_first_name.add(clients.get(user_client=u))
+            for u in users_for_last_name_list:
+                users_for_last_name.add(clients.get(user_client=u))
+
+            clients_after_search.update(users_for_first_name)
+            clients_after_search.update(users_for_last_name)
+            clients_after_search.update(users_for_patronymic)
+
+    else:
+        clients_after_search = Client.objects.filter(own_recruiter=None)
+    context = {'free_clients': clients_after_search}
+    return render(request, template_name='recruit/recruit_base.html', context=context)

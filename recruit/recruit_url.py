@@ -6,7 +6,7 @@ from . import views
 
 urlpatterns = [
     # Poland ##################################################
-    path('', views.recruiter_main_page, name='recruiter_url'),     # There is of recruiter's main page
+    # There is of recruiter's main page
     path('base_of_clients/', views.base_of_applicants, name='base_of_clients'),
     path('base_of_clients/<id_a>/', views.applicant, name='applicant_url'),
     path('base_of_clients/<id_a>/tasks/', views.CreateJobInterview.as_view(), name='applicant_tasks_url'),
@@ -19,5 +19,11 @@ urlpatterns = [
     path('chat_update/', views.chat_update, name='chat_update'),
     path('check_mes/', views.check_mes, name='check_mes'),
 
+    path('', views.recruit_main_page, name='main_page'),
+    path('add_task', views.add_task, name='add_task'),
+    path(r'add_new_task',views.add_new_task),
+    path(r'favorites/', views.favorites, name='favorites'),
+    path(r'checkfavor/', views.check_favor, name='check_favor'),
+    path('base/', views.recruit_base, name='recruit_base'),
 
 ]

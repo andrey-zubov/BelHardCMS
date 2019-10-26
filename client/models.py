@@ -5,6 +5,8 @@ import re
 import datetime as dt
 from django.utils import timezone
 
+from recruit.models import Recruiter
+
 UserModel = get_user_model()
 
 
@@ -376,6 +378,11 @@ class Client(models.Model):
     img = models.ImageField(blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
     # resumes
+
+    # spain recruit
+    is_reserved = models.BooleanField(default=False)
+    own_recruiter = models.ForeignKey(Recruiter, on_delete=models.SET_NULL, null=True, blank=True)
+
     resumes = models.ForeignKey(CV, on_delete=models.SET_NULL, null=True, blank=True)  # СвязьCV
 
     def __str__(self):
@@ -387,11 +394,13 @@ class Client(models.Model):
         # add certificate.pdf
         super().delete(*args, **kwargs)
 
+
     def get_absolute_url(self):
         return reverse('applicant_url', kwargs={'id_a': self.id})
 
     def get_tasks_url(self):
         return reverse('applicant_tasks_url', kwargs={'id_a': self.id})
+
 
 
 class Telephone(models.Model):

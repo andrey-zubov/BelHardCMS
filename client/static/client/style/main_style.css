@@ -216,6 +216,7 @@ ul{
     display: inline-block;
     width: 60px;
     height: 34px;
+    margin-left: auto;
   }
 
   .switch input {display:none;}
@@ -284,15 +285,7 @@ ul{
   .paragraph{
       padding-right:50px;
   }
-  .Second{
-      margin-left:47px;
-  }
-  .Fourth{
-      margin-left: 38px;
-  }
-  .First{
-      margin-left:15px;
-  }
+
   .HeadLine{
       text-decoration: underline;
   }
@@ -325,6 +318,23 @@ ul{
       margin-right: 15px;
       background-color: darkblue;
   }
+
+
+div.wrapper{
+  width: 800px;
+}
+div.left_block{
+  float:left;
+  width: 400px;
+}
+div.right_block{
+  float: right;
+  width: 400px;
+}
+
+li{
+    list-style-type: none;
+}
 
  .notification:hover{
      background: #00a5fe;
