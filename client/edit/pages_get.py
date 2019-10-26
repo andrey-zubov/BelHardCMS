@@ -3,7 +3,7 @@ from collections import defaultdict
 from BelHardCRM.settings import MEDIA_URL
 from client.edit.utility import (time_it, try_except)
 from client.models import (Sex, Citizenship, FamilyState, Children, City, State, Telephone, Skills, Education,
-                           Certificate, CV, Experience, Employment, TimeJob, TypeSalary, UserModel, Sphere)
+                           Certificate, CV, Experience, Employment, TimeJob, TypeSalary, UserModel, Sphere, Client)
 
 
 @try_except
@@ -111,3 +111,36 @@ def experience_page_get(client):  # TeamRome
             exp_dict[i]['sphere'] = sphere
 
     return response
+
+
+def show_profile(client):
+    response = defaultdict()
+
+    if client:
+        edus = [i for i in Education.objects.filter(client_edu=client).values('institution', 'qualification')]
+        response['cl_edu_profile'] = edus
+        exp = [i for i in Experience.objects.filter(client_exp=client).values('start_date', 'end_date', 'position', 'name')]
+        response['cl_exp_profile'] = exp
+        cvs = [i for i in CV.objects.filter(client_cv=client).values('position')]
+        response['cl_cvs_profile'] = cvs
+        skills_arr = [i for i in Skills.objects.filter(client_skills=client).values('skill')]
+        response['cl_skill_profile'] = skills_arr
+
+
+        user_model = UserModel.objects.get(id=client.user_client_id)
+        response['user_model'] = {
+            "first_name": user_model.first_name,
+            "last_name": user_model.last_name,
+            "email": user_model.email,
+
+        }
+        phone_arr = [i for i in Telephone.objects.filter(client_phone=client).values("telephone_number")]
+        response['cl_phone'] = phone_arr
+        # response["client"] = Client.objects.filter(user_client=client)
+        response["client"] = client
+        response["age"] = 37   #дописать
+
+        print(response["age"])
+
+    return response
+

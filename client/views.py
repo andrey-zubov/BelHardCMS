@@ -9,7 +9,8 @@ from django.views.generic import View
 from client.edit.check_clients import (client_check, load_client_img)
 from client.edit.edit_forms import (CertificateFormSet)
 from client.edit.edit_forms import (EducationFormSet, SabClassFormSet, UploadImgForm)
-from client.edit.pages_get import (edit_page_get, skills_page_get, cv_page_get, education_page_get, experience_page_get)
+from client.edit.pages_get import (edit_page_get, skills_page_get, cv_page_get, education_page_get, experience_page_get,
+                                   show_profile)
 from client.edit.pages_post import (skills_page_post, edit_page_post, photo_page_post, form_edu_post,
                                     education_page_post, cv_page_post, experience_page_post)
 from client.forms import (OpinionForm, AnswerForm, MessageForm)
@@ -44,6 +45,7 @@ class ClientProfile(TemplateView):  # TeamRome
     def get(self, request, *args, **kwargs):
         client_instance = client_check(request.user)
         response = {'client_img': load_client_img(client_instance),
+                    'data': show_profile(client_instance)
                     }
         return render(request=request, template_name=self.template_name, context=response)
 

@@ -14,10 +14,85 @@
 
             <img src="{{ client_img }}" alt="img" class="m-sm-1" height="64">
 
-            text....
 
             <a href="{% url 'client' %}" class="btn btn-outline-danger">X</a>
         </p>
+        <div>
+            <div>
+                <h3>inf</h3>
+
+
+                <h2>CLient</h2>
+                {#            {% for e in data.client %}#}
+                {#                 <p>#}
+                {#                {{ forloop.counter }} {{ e }}#}
+                {##}
+                {#                </p>#}
+                {#            {% endfor %}#}
+
+{#                {% for e in data.user_model %}#}
+{#                    <p>#}
+{#                        {{ forloop.counter }} {{ e.first_name }}#}
+{#                        {{ e.last_name }}#}
+{##}
+{#                    </p>#}
+{#                {% endfor %}#}
+                {{ data.user_model.first_name}}
+                {{ data.user_model.last_name}}
+                {{ data.client.patronymic }}
+
+                {{ data.client.citizenship.country_word }}
+                {{ data.client.patronymic }}
+
+
+
+
+
+
+                {% for e in data.cl_phone %}
+                    <p>
+                        {{ forloop.counter }} {{ e.telephone_number }}
+
+                    </p>
+                {% endfor %}
+            </div>
+            <div>
+                <h3>edu</h3>
+                {% for e in data.cl_edu_profile %}
+                    <p>
+                        {{ forloop.counter }} {{ e.institution }}
+                        {{ e.qualification }}
+                    </p>
+                {% endfor %}
+            </div>
+            <div>
+                <h3>exs</h3>
+                {% for e in data.cl_exp_profile %}
+                    <p>
+                        {{ forloop.counter }} {{ e.start_date }}
+                        {{ e.end_date }} {{ e.position }} {{ e.name }}
+                    </p>
+                {% endfor %}
+            </div>
+            <div>
+                <h3>skill</h3>
+                {% for e in data.cl_skill_profile %}
+                    <p>
+                        {{ forloop.counter }} {{ e.skill }}
+
+                    </p>
+                {% endfor %}
+            </div>
+
+            <div>
+                <h3>CV</h3>
+                {% for e in data.cl_cvs_profile %}
+                    <p>
+                        {{ forloop.counter }} {{ e.position }}
+
+                    </p>
+                {% endfor %}</div>
+        </div>
 
     </div>
 
