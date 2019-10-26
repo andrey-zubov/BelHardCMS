@@ -7,6 +7,10 @@ RecruiterModel = get_user_model()
 class Recruiter(models.Model):
     recruiter = models.OneToOneField(RecruiterModel, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return str(self.recruiter)
+
+
 
 
 

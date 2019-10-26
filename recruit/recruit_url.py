@@ -12,6 +12,8 @@ urlpatterns = [
     path('', views.recruit_main_page, name='main_page'),
     path('add_task', views.add_task, name='add_task'),
     path(r'add_new_task',views.add_new_task),
-    path(r'favorites/', views.favorites, name='favorites')
+    path(r'favorites/', views.favorites, name='favorites'),
+    path(r'checkfavor/', views.check_favor, name='check_favor'),
+    path('base/', views.recruit_base, name='recruit_base'),
 
 ]

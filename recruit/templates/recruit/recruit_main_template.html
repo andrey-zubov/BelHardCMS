@@ -33,7 +33,7 @@
                                 </a>
 
                                 <a class="text-bar" href="{%url 'favorites' %}" > Избранное  <div class="counter" id="task_count" hidden="true"> {{ readtask }}</div></a>
-                                <a class="text-bar" href="#" id="clearnotif"> База <div class="counter" id="sug_count" hidden="true">{{ unread_suggestions }}</div></a>
+                                <a class="text-bar" href="{% url 'recruit_base' %}" id="clearnotif"> База <div class="counter" id="sug_count" hidden="true">{{ unread_suggestions }}</div></a>
                                 <a class="text-bar" href="#">Задачи</a>
                                 <a class="text-bar" href="#">Отчеты</a>
                                 <a class="text-bar" href="{% url 'add_task' %}">Добавить задачу</a>

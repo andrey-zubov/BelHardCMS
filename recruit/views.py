@@ -131,6 +131,39 @@ def favorites(request):
     recruit = Recruiter.objects.get(recruiter=request.user)
     clients = Client.objects.filter(own_recruiter=recruit)
     context = {'clients': clients}
-    print(context)
 
     return render(request, template_name='recruit/favorites.html', context=context)
+
+#обработка избранного рекрутера
+def check_favor(request):
+    client_id = (request.GET['client'])
+    client = Client.objects.get(id=client_id)
+    recruit_id = (request.GET['recruit'])
+    recruit = Recruiter.objects.get(id=recruit_id)
+    if client.is_reserved == True:
+        client.is_reserved = False
+        client.own_recruiter = None
+    else:
+        client.is_reserved = True
+        client.own_recruiter = recruit
+    client.save()
+    recruit.save()
+    return HttpResponse(client_id)
+
+
+def recruit_base(request):
+    recruit = Recruiter.objects.get(recruiter=request.user)
+    search_request = request.GET.get('reqcuit_search', '')
+    if search_request:
+        try:
+            search_user = UserModel.objects.get(username=search_request)
+            search_id = search_user.id
+            free_clients = Client.objects.filter(own_recruiter=None, user_client=search_id)
+        except:
+            free_clients = None
+    else:
+        free_clients = Client.objects.filter(own_recruiter=None)
+    context = {'free_clients':free_clients}
+    return render(request, template_name='recruit/recruit_base.html', context=context)
+
+
