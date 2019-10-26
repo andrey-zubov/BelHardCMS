@@ -131,7 +131,7 @@ def show_profile(client):
         response['user_model'] = {
             "first_name": user_model.first_name,
             "last_name": user_model.last_name,
-            "email" : user_model.email,
+            "email": user_model.email,
 
         }
         phone_arr = [i for i in Telephone.objects.filter(client_phone=client).values("telephone_number")]

@@ -30,13 +30,15 @@
                 {#                </p>#}
                 {#            {% endfor %}#}
 
-                {% for e in data.user_model %}
-                    <p>
-                        {{ forloop.counter }} {{ e.first_name }}
-                        {{ e.last_name }}
-
-                    </p>
-                {% endfor %}
+{#                {% for e in data.user_model %}#}
+{#                    <p>#}
+{#                        {{ forloop.counter }} {{ e.first_name }}#}
+{#                        {{ e.last_name }}#}
+{##}
+{#                    </p>#}
+{#                {% endfor %}#}
+                {{ data.user_model.first_name}}
+                {{ data.user_model.last_name}}
                 {{ data.client.patronymic }}
 
                 {{ data.client.citizenship.country_word }}
