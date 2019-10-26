@@ -1,8 +1,8 @@
-from client.edit.parsers import (pars_exp_request)
+from client.edit.parsers import (pars_exp_request, pars_edu_request)
 from client.edit.utility import (time_it, try_except, check_input_str, check_home_number, check_telegram, check_phone)
 
 from client.models import (Sphere, Sex, Citizenship, FamilyState, Children, City, State)
-from recruit.models import (RecruitExperience, UserModel, Recruit, RecruitTelephone)
+from recruit.models import (RecruitExperience, UserModel, Recruit, RecruitTelephone, RecruitEducation, RecruitCertificate)
 
 
 @try_except
@@ -138,3 +138,48 @@ def recruit_experience_page_post(recruit_instance, request):  # TeamRome
                 print('\tExperience Form is Empty')
     else:
         print('\tExperience Parser is Empty')
+
+
+@try_except
+@time_it
+def recruit_education_page_post(recruit_instance, request):
+    arr_edu = pars_edu_request(request.POST, request.FILES)  # list of dictionaries
+
+    if any(arr_edu):
+        RecruitEducation.objects.filter(recruit_edu=recruit_instance).delete()
+        for edus in arr_edu:
+            if any(edus.values()):
+
+                institution = edus['institution']
+                subject_area = edus['subject_area']
+                specialization = edus['specialization']
+                qualification = edus['qualification']
+                date_start = edus['date_start']
+                date_end = edus['date_end']
+                cert_arr = edus['certificate']
+
+                education = RecruitEducation(
+                    recruit_edu=recruit_instance,
+                    institution=institution,
+                    subject_area=subject_area,
+                    specialization=specialization,
+                    qualification=qualification,
+                    date_start=date_start,
+                    date_end=date_end,
+                )
+                education.save()
+
+                for c in cert_arr:  # array of tuples
+                    certificate = RecruitCertificate(
+                        education=education,
+                        img=c[1],
+                        link=c[0],
+                    )
+                    certificate.save()
+
+                # print("\tEducation Form - OK:\n\t", institution, subject_area, specialization, qualification,
+                #       date_start, date_end, cert_arr)
+            else:
+                print('\tEducation Form is Empty')
+    else:
+        print('\tEducation Parser is Empty')

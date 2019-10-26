@@ -7,7 +7,7 @@ from client.edit.check_clients import (load_client_img)
 from client.models import (Chat, Message, Settings)
 from recruit.edit_pages.check_recruit import (recruit_check)
 from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
-from recruit.edit_pages.r_pages_get import (recruit_edit_page_get, recruit_experience_page_get)
+from recruit.edit_pages.r_pages_get import (recruit_edit_page_get, recruit_experience_page_get, recruit_education_page_get)
 from recruit.edit_pages.r_pages_post import (recruit_edit_page_post, recruit_experience_page_post)
 
 
@@ -142,18 +142,18 @@ class RecruitEditExperience(TemplateView):  # TeamRome
 
 
 class RecruitEditEducation(TemplateView):  # TeamRome
-    template_name = ''
+    template_name = 'recruit/edit_pages/recruit_edit_education.html'
 
     def get(self, request, *args, **kwargs):
         recruit_instance = recruit_check(request.user)
         response = {'recruit_img': load_client_img(recruit_instance),
-                    'data': 'foo()',
+                    'data': recruit_education_page_get(recruit_instance),
                     }
         return render(request, self.template_name, response)
 
     def post(self, request):
         recruit_instance = recruit_check(request.user)
-        'foo()'
+        recruit_education_page_get(recruit_instance, request)
         return redirect(to='/recruit/edit/')
 
 
