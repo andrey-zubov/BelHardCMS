@@ -141,7 +141,9 @@ def recruit_experience_page_post(recruit_instance, request):  # TeamRome
         print('\tExperience Parser is Empty')
 
 
-def skills_page_post(recruit_instance, request):
+@try_except
+@time_it
+def skills_page_post(recruit_instance, request):  # TeamRome
     skills_arr = request.POST.getlist('skill') if request.POST.getlist('skill') else None
 
     if any(skills_arr):
@@ -158,7 +160,9 @@ def skills_page_post(recruit_instance, request):
         print("\tNo skills")
 
 
-def photo_page_post(recruit_instance, request):
+@try_except
+@time_it
+def photo_page_post(recruit_instance, request):  # TeamRome
     form = UploadImgForm(request.POST, request.FILES)
     if form.is_valid():
         img = form.cleaned_data.get('img')

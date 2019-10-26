@@ -51,7 +51,9 @@ def recruit_experience_page_get(recruit):  # TeamRome
     return response
 
 
-def skills_page_get(recruit):
+@try_except
+@time_it
+def skills_page_get(recruit):  # TeamRome
     response = defaultdict()
     if recruit:
         skills_arr = [i['skill'] for i in RecruitSkills.objects.filter(recruit_skills=recruit).values()]
