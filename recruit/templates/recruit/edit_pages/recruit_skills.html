@@ -1,0 +1,97 @@
+{% extends 'recruit/recruit_main_template.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    Edit Skills
+{% endblock %}
+
+{% block content %}
+    {% include 'client/edit_forms/tot_samui_bootstrap.html' %}
+    <!-- JS добавления однотипных форм -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var origin = $("#id_skill1").clone();
+            var count = 1;
+
+            $("#add_more").on("click", add);
+            $("#id_skill1").on("click", data_l);
+
+            function add() {
+                var add = origin.clone().on("click", data_l);
+                count += 1;
+                add.attr('value', '');
+                add.attr("id", "new_skill");
+                add.appendTo("#div_to_add_new");
+            }
+
+            function data_l() {
+                var us_in = $(this).val();
+                console.log(us_in);
+                $.ajax({
+                    'url': "{% url 'skills_data_list' %}",
+                    'data': {'us_in': us_in},
+                    success: function (data) {
+                        var json_data = jQuery.parseJSON(data);
+                        console.log(json_data.words);
+                        $.each(json_data.words, function (i, item) {
+                            $("#data_list").append($("<option>").attr('value', item).text(item));
+                        });
+                    }
+                });
+            }
+
+        });
+    </script>
+    <div class="container">
+        <form method="post" id="origin_form">
+            {% csrf_token %}
+            <div id="div_to_add_new">
+                <h3 class="text-center">Навыки</h3>
+                {% for s in data.rec_skill %}
+
+                    {# <!-- Script Добавление сертификатов -->#}
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $("#id_skill{{ forloop.counter }}").on("click", data_l);
+
+                            function data_l() {
+                                var us_in = $(this).val();
+                                console.log(us_in);
+                                $.ajax({
+                                    'url': "{% url 'skills_data_list' %}",
+                                    'data': {'us_in': us_in},
+                                    success: function (data) {
+                                        var json_data = jQuery.parseJSON(data);
+                                        console.log(json_data.words);
+                                        $.each(json_data.words, function (i, item) {
+                                            $("#data_list{{ forloop.counter }}").append($("<option>").attr('value', item).text(item));
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    </script>
+
+                    <input type="text" class="form-control my-2" id="id_skill{{ forloop.counter }}"
+                           name="skill"
+                           value="{{ s }}" list="data_list{{ forloop.counter }}">
+                    <datalist id="data_list{{ forloop.counter }}">
+                        <option id="dl_option" value=""></option>
+                    </datalist>
+
+                {% empty %}
+                    <input type="text" class="form-control my-2" id="id_skill1"
+                           name="skill" list="data_list">
+                    <datalist id="data_list">
+                        <option id="dl_option" value=""></option>
+                    </datalist>
+                {% endfor %}
+            </div>
+            <div class="text-center">
+                <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>
+                <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>
+                <input type="button" value="Добавить Навыки" id="add_more" class="btn btn-outline-primary m-2">
+            </div>
+        </form>
+    </div>
+{% endblock %}
