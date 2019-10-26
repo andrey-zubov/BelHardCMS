@@ -284,7 +284,7 @@ class JobInterviews(models.Model):
     name = models.CharField(max_length=50, verbose_name='Наименование')
     interview_author = models.CharField(max_length=50, verbose_name='Автор собеседования', blank=True, null=True)
     time_of_creation = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
-    period_of_execution = models.DateTimeField(blank=True, null=True, verbose_name='Срок исполнения')
+    period_of_execution = models.DateTimeField(blank=True, null=True, verbose_name='Срок исполнения') # TODO Dell field
     reminder = models.DateTimeField(blank=True, null=True, verbose_name='Напоминание')
     position = models.CharField(max_length=50, verbose_name='Предполагаемая должность')
     organization = models.CharField(max_length=50, verbose_name='Организация')

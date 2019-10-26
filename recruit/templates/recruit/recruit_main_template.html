@@ -15,10 +15,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
             integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
             crossorigin="anonymous"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Optional JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/static/client/style/style.css">
 
 <link rel="stylesheet" href="/static/recruit/style/style.css">
 
-    <title>Recruit - HR-System</title>
+    <title>Recruit - HR-System {% block title %} {% endblock %}</title>
 </head>
 <body>
 
@@ -33,10 +44,10 @@
                                 </a>
 
                                 <a class="text-bar" href="#" > Избранное  <div class="counter" id="task_count" hidden="true"> {{ readtask }}</div></a>
-                                <a class="text-bar" href="#" id="clearnotif"> База <div class="counter" id="sug_count" hidden="true">{{ unread_suggestions }}</div></a>
+                                <a class="text-bar" href="{% url 'base_url' %}" id="clearnotif"> База <div class="counter" id="sug_count" hidden="true">{{ unread_suggestions }}</div></a>
                                 <a class="text-bar" href="#">Задачи</a>
                                 <a class="text-bar" href="#">Отчеты</a>
-                                <a class="text-bar" href="{% url 'add_task' %}">Добавить задачу</a>
+                                <a class="text-bar" href="#">Добавить задачу</a>
                                 <a class="text-bar" href="{%url 'contact_with_clients' %}"> Сообщения <div class="counter" id="mes_count" hidden="true"> {{ unread_messages }} </div></a>
                                 <div class="client-bar">
                                     <a class="text-client" href="#" >
@@ -50,14 +61,17 @@
         </header>
 
         <section class="content" >
-
+        {% block content %}
         <img src="https://static.wixstatic.com/media/3e33b4_8434f559fcaa44a39ecfd54bf197fba5~mv2.png/v1/fill/w_750,h_350,al_c,q_80,usm_0.66_1.00_0.01/tild6162-3961-4262-b966-316166666133__lo.png" alt="">
 
-        </section>
 
-        <div class="footer-bar">
+
+
+        {% endblock %}
+        </section>
+        <!--div class="footer-bar">
                  <a class="text-footer" href="#">Настройки</a>
-        </div>
+        </div-->
     </div>
 
 
