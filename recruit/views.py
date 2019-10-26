@@ -10,7 +10,6 @@ from django.views.generic.edit import FormView
 from django.template.context_processors import csrf
 
 from django.urls import reverse
-from django.http import HttpResponse
 from .models import *
 from recruit.models import Recruiter
 from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings, Client, State

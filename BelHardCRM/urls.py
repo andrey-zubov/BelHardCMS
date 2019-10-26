@@ -22,10 +22,9 @@ import client
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('client/', include('client.client_urls')),
-    path('recruiter/', include('recruit.recruit_url')),
+    # path('recruiter/', include('recruit.recruit_url')),
     path('recruit/', include('recruit.recruit_url')),
     path('', client.views.client_login),
-    path('recruiter/', include('recruit.recruit_url')),
 
 
 ]
