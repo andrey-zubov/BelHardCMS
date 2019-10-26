@@ -1,4 +1,3 @@
-
 from time import perf_counter
 from collections import defaultdict
 from client.models import Client, CV, JobInterviews, FilesForJobInterviews, Vacancy
