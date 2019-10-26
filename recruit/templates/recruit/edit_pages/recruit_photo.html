@@ -6,22 +6,22 @@
 {% endblock %}
 
 {% block content %}
-{#    {% include 'client/edit_forms/tot_samui_bootstrap.html' %}#}
-<div class="container">
-    <form enctype="multipart/form-data" method="post">
-        {% csrf_token %}
-        <div class="my-2">
-            <h3>Upload Your Photo</h3>
-            <p>Ваше теккущее фото:
-                <img src="{{ client_img }}" alt="img" class="m-2" height="64">
-            </p>
-            <p>Выберите файл для изменения {{ form }}</p>
-        </div>
+    {% include 'client/edit_forms/tot_samui_bootstrap.html' %}
+    <div class="container">
+        <form enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <div class="my-2">
+                <h3>Upload Your Photo</h3>
+                <p>Ваше теккущее фото:
+                    <img src="{{ client_img }}" alt="img" class="m-2" height="64">
+                </p>
+                <p>Выберите файл для изменения {{ form }}</p>
+            </div>
 
-        <div class="text-center">
-            <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>
-            <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>
-        </div>
-    </form>
-</div>
+            <div class="text-center">
+                <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>
+                <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>
+            </div>
+        </form>
+    </div>
 {% endblock %}
