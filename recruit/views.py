@@ -7,7 +7,7 @@ from client.edit.check_clients import (load_client_img)
 from client.models import (Chat, Message, Settings)
 from recruit.edit_pages.check_recruit import (recruit_check)
 from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
-from recruit.edit_pages.r_pages_get import (recruit_edit_page_get, recruit_experience_page_get)
+from recruit.edit_pages.r_pages_get import (recruit_edit_page_get, recruit_experience_page_get, skills_page_get)
 from recruit.edit_pages.r_pages_post import (recruit_edit_page_post, recruit_experience_page_post, skills_page_post,
                                              photo_page_post)
 
