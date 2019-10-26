@@ -1,8 +1,9 @@
+from client.edit.edit_forms import UploadImgForm
 from client.edit.parsers import (pars_exp_request)
 from client.edit.utility import (time_it, try_except, check_input_str, check_home_number, check_telegram, check_phone)
 
 from client.models import (Sphere, Sex, Citizenship, FamilyState, Children, City, State)
-from recruit.models import (RecruitExperience, UserModel, Recruit, RecruitTelephone)
+from recruit.models import (RecruitExperience, UserModel, Recruit, RecruitTelephone, RecruitSkills)
 
 
 @try_except
@@ -138,3 +139,28 @@ def recruit_experience_page_post(recruit_instance, request):  # TeamRome
                 print('\tExperience Form is Empty')
     else:
         print('\tExperience Parser is Empty')
+
+
+def skills_page_post(recruit_instance, request):
+    skills_arr = request.POST.getlist('skill') if request.POST.getlist('skill') else None
+
+    if any(skills_arr):
+        RecruitSkills.objects.filter(recruit_skills=recruit_instance).delete()
+        print("\t skill: %s" % skills_arr)
+        for s in skills_arr:
+            if s:
+                skill = RecruitSkills(
+                    recruit_skills=recruit_instance,
+                    skill=s,
+                )
+                skill.save()
+    else:
+        print("\tNo skills")
+
+
+def photo_page_post(recruit_instance, request):
+    form = UploadImgForm(request.POST, request.FILES)
+    if form.is_valid():
+        img = form.cleaned_data.get('img')
+        recruit_instance.img = img
+        recruit_instance.save()

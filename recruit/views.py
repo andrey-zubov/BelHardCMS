@@ -7,8 +7,9 @@ from client.edit.check_clients import (load_client_img)
 from client.models import (Chat, Message, Settings)
 from recruit.edit_pages.check_recruit import (recruit_check)
 from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
-from recruit.edit_pages.r_pages_get import (recruit_edit_page_get, recruit_experience_page_get)
-from recruit.edit_pages.r_pages_post import (recruit_edit_page_post, recruit_experience_page_post)
+from recruit.edit_pages.r_pages_get import (recruit_edit_page_get, recruit_experience_page_get, skills_page_get)
+from recruit.edit_pages.r_pages_post import (recruit_edit_page_post, recruit_experience_page_post, skills_page_post,
+                                             photo_page_post)
 
 
 def recruit_main_page(request):
@@ -158,32 +159,33 @@ class RecruitEditEducation(TemplateView):  # TeamRome
 
 
 class RecruitEditSkills(TemplateView):  # TeamRome
-    template_name = ''
+    template_name = 'recruit/edit_pages/recruit_skills.html'
 
     def get(self, request, *args, **kwargs):
         recruit_instance = recruit_check(request.user)
         response = {'recruit_img': load_client_img(recruit_instance),
-                    'data': 'foo()',
+                    'data': skills_page_get(recruit_instance),
                     }
         return render(request, self.template_name, response)
 
     def post(self, request):
         recruit_instance = recruit_check(request.user)
-        'foo()'
-        return redirect(to='/recruit/edit/')
+        skills_page_post(recruit_instance, request)
+        return redirect(to='/recruit/edit')
 
 
 class RecruitEditPhoto(TemplateView):  # TeamRome
-    template_name = ''
+    template_name = 'recruit/edit_pages/recruit_photo.html'
 
     def get(self, request, *args, **kwargs):
         recruit_instance = recruit_check(request.user)
-        response = {'recruit_img': load_client_img(recruit_instance),
+        response = {'client_img': load_client_img(recruit_instance),
                     'form': RecruitUploadImgForm(),
                     }
         return render(request=request, template_name=self.template_name, context=response)
 
     def post(self, request):
         recruit_instance = recruit_check(request.user)
-        'foo()'
-        return redirect(to='/recruit/edit/')
+        photo_page_post(recruit_instance, request)
+        return redirect(to='/recruit/edit')
+
