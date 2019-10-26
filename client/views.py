@@ -528,3 +528,17 @@ class ClientShowSkills(TemplateView):  # TeamRome
 
     def post(self, request):
         pass
+
+
+class ClientShowEducation(TemplateView):  # TeamRome
+    template_name = 'client/show/show_education.html'
+
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    'data': education_page_get(client_instance),
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        pass

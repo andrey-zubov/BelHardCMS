@@ -21,6 +21,7 @@ urlpatterns = [
     path('edit/institution_data_list/', InstitutionDataList.as_view(), name='institution_data_list'),
     path('edit/cv_position_data_list/', CvPositionDataList.as_view(), name='cv_position_data_list'),
     path('show_skills', ClientShowSkills.as_view(), name='show_skills'),
+    path('show_education', ClientShowEducation.as_view(), name='show_education'),
     # Team Rome (end)
 
     path('chat/', login_required(views.MessagesView.as_view()), name='contact_with_centre'),
