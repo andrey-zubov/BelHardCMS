@@ -17,7 +17,7 @@ from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings, C
 from datetime import datetime
 
 # There is Poland's views #################################################################################
-def recruiter_main_page(request):
+def recruit_main_page(request):
     return render(request, template_name='recruit/recruit_main_template.html', )
 
 
