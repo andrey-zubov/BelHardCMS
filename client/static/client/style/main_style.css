@@ -319,6 +319,7 @@ ul{
       background-color: darkblue;
   }
 
+
 div.wrapper{
   width: 800px;
 }
@@ -334,3 +335,8 @@ div.right_block{
 li{
     list-style-type: none;
 }
+
+ .notification:hover{
+     background: #00a5fe;
+
+ }

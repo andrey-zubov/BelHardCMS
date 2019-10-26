@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import path
+from . import views
+from .edit.load_data_list import (SkillsDataList, InstitutionDataList, CvPositionDataList)
+from .views import *
 
-from client import views
-from client.edit.load_data_list import (SkillsDataList, InstitutionDataList, CvPositionDataList)
-from client.views import *
 
 urlpatterns = [
     path('', views.client_main_page, name='client'),  # main client page
@@ -32,67 +32,30 @@ urlpatterns = [
     path('logout/', client_logout, name='logout'),
     path('tasks/', tasks, name='tasks_list'),
 
+    # path('edit/form_edu/', views.form_education, name='form_edu'),
     path(r'checktask/', views.checktask),
     path(r'checknotifications/', views.checknotifications),
     path(r'settings/', views.settings_menu, name='settings_menu'),
     path(r'settingsset/', views.set_settings, name='settings_set'),
 
-    ##Poland urls
-    path('resumes/', resumes_list, name='resumes_list_url'),
-    path('resumes/<str:slug>/', resume_detail, name='resume_detail_url'),
-    path('resumes/<str:slug>/accepted_vacancies/', accepted_vacancies, name='accepted_vacancies_url'),
-    path('resumes/<str:slug>/rejected_vacancies/', rejected_vacancies, name='rejected_vacancies_url'),
-    path('resumes/<str:slug>/vacancies/', vacancies_list, name='vacancies_list_url'),
-    path('resumes/vacancy/<str:slug>/', vacancy_detail, name='vacancy_detail_url'),
-    path('accept_reject/', views.accept_reject),
+    # Poland urls (start)
+    path('cvs/', ResumesList.as_view(), name='resumes_list_url'),
+    path('cv_detail/<id_c>/', ResumeDetail.as_view(), name='resume_detail_url'),
+    path('cv/<id_c>/accepted_vacancies/', AcceptedVacancies.as_view(), name='accepted_vacancies_url'),
+    path('cv/<id_c>/rejected_vacancies/', RejectedVacancies.as_view(), name='rejected_vacancies_url'),
+    path('cv/vacancy/<id_v>/', VacancyDetail.as_view(), name='vacancy_detail_url'),
+    path('accept_reject/', accept_reject),
     path('help/', help_list, name='help_list_url'),
-    path('settings/', settings_list, name='settings_list_url'),
-    path('on_off/', views.on_off),  # on_off settings for notifications
-    path('viewed/', views.viewed),
+    path('viewed/', viewed),
+    path('admin_jobinterviews/', admin_jobinterviews),
+    path('interviews/', interviews_list, name='interviews_list_url'),
+    path(r'checkinterviews/', views.checkinterviews),
+    path('upload', views.upload, name='client_cv_upload'),
+    path('upload', views.upload, name='upload'),
 
-    path('login/', client_login),
-    path('logout/', client_logout),
-    path('tasks/', tasks, name='tasks_list'),
+    # # Poland urls (end)
 
-    path(r'checktask/', views.checktask),
-    path(r'checknotifications/', views.checknotifications),
-    path(r'settings/', views.settings_menu, name='settings_menu'),
-    path(r'settingsset/', views.set_settings, name='settings_set'),
-    path(r'chat_update/', views.chat_update, name='chat_update'),
 
-    ##Poland urls
-    path('resumes/', resumes_list, name='resumes_list_url'),
-    path('resumes/<str:slug>/', resume_detail, name='resume_detail_url'),
-    path('resumes/<str:slug>/accepted_vacancies/', accepted_vacancies, name='accepted_vacancies_url'),
-    path('resumes/<str:slug>/rejected_vacancies/', rejected_vacancies, name='rejected_vacancies_url'),
-    path('resumes/<str:slug>/vacancies/', vacancies_list, name='vacancies_list_url'),
-    path('resumes/vacancy/<str:slug>/', vacancy_detail, name='vacancy_detail_url'),
-    path('accept_reject/', views.accept_reject),
-    path('help/', help_list, name='help_list_url'),
-    path('settings/', settings_list, name='settings_list_url'),
-    path('on_off/', views.on_off),  # on_off settings for notifications
-    path('viewed/', views.viewed),
 
-    path('login/', client_login),
-    path('logout/', client_logout),
-    path('tasks/', tasks, name='tasks_list'),
-    path('edit/form_edu/', views.FormEducation.as_view, name='form_edu'),
-    path(r'checktask/', views.checktask),
-    path(r'checknotifications/', views.checknotifications),
-    path(r'settings/', views.settings_menu, name='settings_menu'),
-    path(r'settingsset/', views.set_settings, name='settings_set'),
-
-    ##Poland urls
-    path('resumes/', resumes_list, name='resumes_list_url'),
-    path('resumes/<str:slug>/', resume_detail, name='resume_detail_url'),
-    path('resumes/<str:slug>/accepted_vacancies/', accepted_vacancies, name='accepted_vacancies_url'),
-    path('resumes/<str:slug>/rejected_vacancies/', rejected_vacancies, name='rejected_vacancies_url'),
-    path('resumes/<str:slug>/vacancies/', vacancies_list, name='vacancies_list_url'),
-    path('resumes/vacancy/<str:slug>/', vacancy_detail, name='vacancy_detail_url'),
-    path('accept_reject/', views.accept_reject),
-    path('help/', help_list, name='help_list_url'),
-    path('settings/', settings_list, name='settings_list_url'),
-    path('on_off/', views.on_off),  # on_off settings for notifications
-    path('viewed/', views.viewed),
 
 ]

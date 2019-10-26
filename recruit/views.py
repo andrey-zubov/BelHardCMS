@@ -1,19 +1,66 @@
-import re
 
+from time import perf_counter
+from collections import defaultdict
+from client.models import Client, CV
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render, redirect
-from django.db.models import Q
+from django.shortcuts import redirect, render
+from django.views.generic import View
+from django.views.generic.edit import FormView
+from django.template.context_processors import csrf
 
-
+from django.urls import reverse
+from django.http import HttpResponse
+from .models import *
+from recruit.models import Recruiter
 from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings, Client, State
 from datetime import datetime
 
-from recruit.models import Recruiter
+# There is Poland's views #################################################################################
+def recruiter_main_page(request):
+    return render(request, template_name='recruit/recruit_main_template.html', )
 
 
-def recruit_main_page(request):
-    return render(request, template_name='recruit/recruit_main_template.html')
+
+
+
+def base_of_applicants(request):
+    applicants = Client.objects.all()
+    return render(request=request, template_name='recruit/recruiter_base_of_clients.html',
+                  context={'applicants': applicants})
+
+
+def applicant(request, id_a):
+    applicant_user = Client.objects.get(id=id_a)
+    return render(request, 'recruit/recruiter_applicant.html', context={'applicant_user': applicant_user})
+
+
+class CreateJobInterview(View):
+    def get(self, request, id_a):
+        applicant_user = Client.objects.get(id=id_a)
+        if CV.objects.filter(client_cv=applicant_user):
+            accepted_vacancies = applicant_user.cv_set.all()[0].vacancies_accept.all()
+            for resume in applicant_user.cv_set.all()[1:]:
+                accepted_vacancies |= resume.vacancies_accept.all()
+            print(accepted_vacancies)
+        else:
+            accepted_vacancies = None
+        return render(request, 'recruit/recruiter_tasks_for_applicant.html',
+                      context={'applicant_user': applicant_user, 'accepted_vacancies': accepted_vacancies})
+
+    def post(self, request, id_a):
+        applicant_user = Client.objects.get(id=id_a)
+        vac = request.POST.get('vacancy')
+        files = request.FILES.getlist('files')
+        print('vacancy_id  ', vac)
+        print(len(files))
+        for file in files:
+            print(file)
+
+        return redirect(applicant_user.get_tasks_url())
+
+# End Poland's views #######################################################################################
+
 
 def recruit_chat(request):
     chat_list = Chat.objects.filter(members=request.user)
@@ -126,8 +173,8 @@ def add_new_task(requset):
         except Exception:
             print('Exception: нет адреса электронной почты')
 
-
     return redirect(to='add_task')
+
 
 
 def favorites(request):
@@ -186,4 +233,3 @@ def recruit_base(request):
         clients_after_search = Client.objects.filter(own_recruiter=None)
     context = {'free_clients': clients_after_search}
     return render(request, template_name='recruit/recruit_base.html', context=context)
-

@@ -1,0 +1,61 @@
+{% extends 'recruit/main_template_recruiter.html' %}
+
+{% block title %}
+    База пользователей
+{% endblock %}
+
+{% block content %}
+    <div class="p-sm-5 pt-sm-1">
+        <h2 class="mb-3 offset-md-0"> Выбор соискателя </h2>
+        {% for applicant in applicants %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><a href="{{ applicant.get_absolute_url }}" id="{{ applicant.id }}"> {{ applicant.user_client.first_name }} {{ applicant.user_client.last_name }}  {{ applicant.patronymic }}</a></h5>
+                </div>
+                <div class="card-body">
+                    {% if applicant.cv_set.all %}
+                        <b>Список резюме клиента </b><br>
+                        {% for cv in applicant.cv_set.all %}
+                            {{ cv }}<br>
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>/*
+        $('document').ready(function () {*/
+
+            /*actions for links*/
+           /* $('.detail_job_seeker').on('click', function () {
+                var id = $(this).attr('id');
+                $.ajax({
+                    'url': '/client/accept_reject/',
+                    'data': {'flag': 'accept', "id_v": id},
+                    success: function (data) {
+                        console.log(data);
+                        $('#first').attr('hidden', true)
+                        $('#second').attr('hidden', false)
+                    }
+                })
+
+            });
+            $('.reject').on('click', function () {
+                var id = $(this).attr('id');
+                $.ajax({
+                    'url': '/client/accept_reject/',
+                    'data': {'flag': 'reject', 'id_v': id},
+                    success: function (data) {
+                        console.log(data)
+                        $('#first').attr('hidden', false)
+                        $('#second').attr('hidden', true)
+                    }
+                })
+
+            });
+        }) */
+
+    </script>
+{% endblock %}
