@@ -516,3 +516,58 @@ def viewed(request):
         return HttpResponse('cleared')
 
 # End Poland's views
+
+
+class ClientShowSkills(TemplateView):  # TeamRome
+    template_name = 'client/show/show_skills.html'
+
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    'data': skills_page_get(client_instance),
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
+
+    def post(self, request):
+        pass
+
+
+class ClientShowEducation(TemplateView):  # TeamRome
+    template_name = 'client/show/show_education.html'
+
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    'data': education_page_get(client_instance),
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        pass
+
+
+class ClientShowExperience(TemplateView):  # TeamRome
+    template_name = 'client/show/show_experience.html'
+
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    "data": experience_page_get(client_instance),
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        pass
+
+class ClientShowCv(TemplateView):  # TeamRome
+    template_name = 'client/show/show_cv.html'
+
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    'data': cv_page_get(client_instance),
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        pass
