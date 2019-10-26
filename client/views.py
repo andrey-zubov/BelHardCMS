@@ -556,3 +556,16 @@ class ClientShowExperience(TemplateView):  # TeamRome
 
     def post(self, request):
         pass
+
+class ClientShowCv(TemplateView):  # TeamRome
+    template_name = 'client/show/show_cv.html'
+
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    'data': cv_page_get(client_instance),
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        pass

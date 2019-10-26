@@ -23,6 +23,7 @@ urlpatterns = [
     path('show_skills', ClientShowSkills.as_view(), name='show_skills'),
     path('show_education', ClientShowEducation.as_view(), name='show_education'),
     path('show_experience', ClientShowExperience.as_view(), name='show_experience'),
+    path('show_cv', ClientShowCv.as_view(), name='show_cv'),
     # Team Rome (end)
 
     path('chat/', login_required(views.MessagesView.as_view()), name='contact_with_centre'),
