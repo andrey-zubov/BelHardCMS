@@ -14,7 +14,7 @@ from recruit import recruit_url
 from django.utils.timezone import utc
 from django.http import HttpResponse, JsonResponse
 
-from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm, EducationFormSet, CertificateFormSet
+from .forms import *
 
 from django.views.generic import View, TemplateView
 from .utils_for_mixins import ObjectResumeMixin
