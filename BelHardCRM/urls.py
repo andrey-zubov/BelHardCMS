@@ -25,7 +25,6 @@ urlpatterns = [
     path('recruit/', include('recruit.recruit_url')),
     path('', client.views.client_login),
 
-
 ]
 
 if settings.DEBUG:
