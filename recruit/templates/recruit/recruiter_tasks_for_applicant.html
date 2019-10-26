@@ -334,9 +334,17 @@
     </div>
 <script>
 
+    $(document).ready(function () {
+        $('#reset-files').on('click', function () {
+            $('#form-files').val('');
+        });
+    });
+
+
+    /*
 $('document').ready(function () {
     /*actions for buttons*/
-    $('.del_file').on('click',function () {
+    /*$('.del_file').on('click',function () {
         var id = $(this).attr('id');
         $.ajax({'url':'/recruit/del_file/',
                 'data':{"id_f":id},
@@ -348,7 +356,7 @@ $('document').ready(function () {
 
     });
 
-})
+})*/
 
 </script>
 {% endblock %}
