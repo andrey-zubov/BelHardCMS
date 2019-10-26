@@ -22,12 +22,13 @@
     $('document').ready(function () {
         let recruit = {{ request.user.id }}
         $('.yellow_star').click(function () {
-            let client = $(this).attr('id')
-            console.log(recruit)
-            console.log(client)
-            console.log('qq')
-
-             $.ajax({
+            let add = confirm("Добавить пользователя?");
+            let client = $(this).attr('id');
+            console.log(recruit);
+            console.log(client);
+            console.log('qq');
+            if (add === true){
+               $.ajax({
                     'url': '/recruit/checkfavor/',
                     'data': {'client': client,
                             'recruit': recruit},
@@ -37,6 +38,8 @@
 
                  });
                  console.log('SUC2')
+            }
+
             });
         });
 
