@@ -58,3 +58,5 @@ def skills_page_get(recruit):
         response['rec_skill'] = skills_arr
 
     return response
+
+
