@@ -14,7 +14,7 @@ from recruit import recruit_url
 from django.utils.timezone import utc
 from django.http import HttpResponse, JsonResponse
 
-from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm, EducationFormSet, CertificateFormSet
+from .forms import *
 
 from django.views.generic import View, TemplateView
 from .utils_for_mixins import ObjectResumeMixin
@@ -277,7 +277,7 @@ def client_login(request):  # ввести логин/пароль -> зайти
     else:
         return render(request, 'registration.html', res)
     try:
-        user_chat = Chat.objects.filter(members=request.user)
+        user_chat = Chat.objects.get(members=request.user)
     except Chat.DoesNotExist:
         user_chat = Chat.objects.create()
         user_chat.members.add(request.user)  # TODO сюда добавить менеджера, которому, по дефолту, передают юзера
