@@ -18,12 +18,7 @@ from datetime import datetime
 
 
 def recruiter_main_page(request):
-    return render(request, template_name='recruit/main_template_recruiter.html', )
-def recruit_main_page(request):
     return render(request, template_name='recruit/recruit_main_template.html', )
-
-
-
 
 
 def recruiter_base(request):
@@ -35,10 +30,21 @@ def base_of_applicants(request):
     return render(request=request, template_name='recruit/recruiter_base_of_clients.html',
                   context={'applicants': applicants})
 
+class ApplicantDet(View):
+    def get(self, request, id_a):
+        applicant_user = Client.objects.get(id=id_a)
+        resumes = applicant_user.cv_set.all()
+        return render(request, 'recruit/recruiter_applicant.html',
+                      context={'applicant_user': applicant_user, 'resumes': resumes})
 
-def applicant(request, id_a):
-    applicant_user = Client.objects.get(id=id_a)
-    return render(request, 'recruit/recruiter_applicant.html', context={'applicant_user': applicant_user})
+    def post(self, request, id_a):
+        applicant_user = Client.objects.get(id=id_a)
+        response = request.POST
+        resume = CV.objects.get(id=response['id_cv'])
+        vacancy_id = request.POST.getlist('id_v')
+        # vacancy = Vacancy.objects.get(id=response['id_v'])
+
+        return redirect(applicant_user.get_absolute_url())
 
 
 class CreateJobInterview(View):
