@@ -1,18 +1,15 @@
-from time import perf_counter
-
 from client.edit.edit_forms import (UploadImgForm, EducationFormSet, CertificateFormSet)
 from client.edit.parsers import (pars_edu_request, pars_cv_request, pars_exp_request)
 from client.edit.utility import (check_input_str, check_phone, check_home_number, check_telegram)
+from client.edit.utility import (time_it, try_except)
 from client.models import (Skills, Telephone, Sex, Citizenship, FamilyState, Children, City, State, Client, Education,
                            Certificate, CV, Experience, Sphere, Employment, TimeJob, TypeSalary, UserModel)
 
 
-# TeamRome
-def edit_page_post(client_instance, request):
+@try_except
+@time_it
+def edit_page_post(client_instance, request):  # TeamRome
     """ views.py ClientEditMain(TemplateView) POST method. """
-    print("edit_page_post()")
-    time_0 = perf_counter()
-
     """ Входные данные для сохранения: """
     user = request.user
     user_name = check_input_str(request.POST['client_first_name'])
@@ -102,18 +99,15 @@ def edit_page_post(client_instance, request):
         if t:
             phone = Telephone(
                 client_phone=client,
-                telephone_number=t
+                telephone_number=t,
             )
             phone.save()
 
-    print('\tedit_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
-
-# TeamRome
-def skills_page_post(client_instance, request):
+@try_except
+@time_it
+def skills_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditSkills(TemplateView) POST method.  """
-    print("skills_page_post()")
-    time_0 = perf_counter()
     skills_arr = request.POST.getlist('skill') if request.POST.getlist('skill') else None
 
     if any(skills_arr):
@@ -129,28 +123,24 @@ def skills_page_post(client_instance, request):
                 skill.save()
     else:
         print("\tNo skills")
-    print('\tskills_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
-# TeamRome
-def photo_page_post(client_instance, request):
+@try_except
+@time_it
+def photo_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditPhoto(TemplateView) POST method.
     В БД сохраняется УНИКАЛЬНОЕ имя картинки (пр: user_2_EntrmQR.png) в папке MEDIA_URL = '/media/' """
-    print("photo_page_post()")
-    time_0 = perf_counter()
     form = UploadImgForm(request.POST, request.FILES)
     if form.is_valid():
         img = form.cleaned_data.get('img')
         client_instance.img = img
         client_instance.save()
-    print('\tphoto_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
-# TeamRome
-def education_page_post(client_instance, request):
+@try_except
+@time_it
+def education_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditEducation(TemplateView) POST method.  """
-    print("education_page_post()")
-    time_0 = perf_counter()
     arr_edu = pars_edu_request(request.POST, request.FILES)  # list of dictionaries
 
     if any(arr_edu):
@@ -191,14 +181,12 @@ def education_page_post(client_instance, request):
                 print('\tEducation Form is Empty')
     else:
         print('\tEducation Parser is Empty')
-    print('\teducation_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
-# TeamRome
-def cv_page_post(client_instance, request):
+@try_except
+@time_it
+def cv_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditCv(TemplateView) POST method. """
-    print("cv_page_post()")
-    time_0 = perf_counter()
     arr_cv = pars_cv_request(request.POST)  # list of dictionaries
 
     if any(arr_cv):
@@ -226,14 +214,12 @@ def cv_page_post(client_instance, request):
                 print('\tCv form is Empty')
     else:
         print('\tCV Parser is Empty')
-    print('\tcv_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
-# TeamRome
-def experience_page_post(client_instance, request):
+@try_except
+@time_it
+def experience_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditExperience(TemplateView) POST method. """
-    print("experience_page_post()")
-    time_0 = perf_counter()
     arr = pars_exp_request(request.POST)  # list of dictionaries
 
     if any(arr):
@@ -271,13 +257,12 @@ def experience_page_post(client_instance, request):
                 print('\tExperience Form is Empty')
     else:
         print('\tExperience Parser is Empty')
-    print('\texperience_page_post() - OK; TIME: %s' % (perf_counter() - time_0))
 
 
-# TeamRome
-def form_edu_post(client_instance, request):
+@try_except
+@time_it
+def form_edu_post(client_instance, request):  # TeamRome
     print("FormEducation.POST: %s" % request.POST)
-    time_0 = perf_counter()
     form_set_edu = EducationFormSet(request.POST)
     form_set_cert = CertificateFormSet(request.POST, request.FILES)
 
@@ -310,5 +295,3 @@ def form_edu_post(client_instance, request):
                 cert_inst.save()
     else:
         print("FormSet_Cert not Valid")
-
-    print('form_edu_post() - OK; TIME: %s' % (perf_counter() - time_0))

@@ -7,15 +7,15 @@ from client.views import *
 
 urlpatterns = [
     path('', views.client_main_page, name='client'),  # main client page
-    path('profile', views.client_profile, name='client_profile'),
 
     # Team Rome (start) - Edit Forms URLs
-    path('edit', views.ClientEditMain.as_view(), name='client_edit'),
-    path('edit/skills', views.ClientEditSkills.as_view(), name='client_edit_skills'),
-    path('edit/photo', views.ClientEditPhoto.as_view(), name='client_edit_photo'),
-    path('edit/cv', views.ClientEditCv.as_view(), name='client_edit_cv'),
-    path('edit/education', views.ClientEditEducation.as_view(), name='client_edit_education'),
-    path('edit/experience', views.ClientEditExperience.as_view(), name='client_edit_experience'),
+    path('profile', views.ClientProfile.as_view(), name='client_profile'),
+    path('edit/', views.ClientEditMain.as_view(), name='client_edit'),
+    path('edit/skills/', views.ClientEditSkills.as_view(), name='client_edit_skills'),
+    path('edit/photo/', views.ClientEditPhoto.as_view(), name='client_edit_photo'),
+    path('edit/cv/', views.ClientEditCv.as_view(), name='client_edit_cv'),
+    path('edit/education/', views.ClientEditEducation.as_view(), name='client_edit_education'),
+    path('edit/experience/', views.ClientEditExperience.as_view(), name='client_edit_experience'),
     path('edit/form_edu/', views.FormEducation.as_view(), name='form_edu'),
     path('edit/skills_data_list/', SkillsDataList.as_view(), name='skills_data_list'),
     path('edit/institution_data_list/', InstitutionDataList.as_view(), name='institution_data_list'),

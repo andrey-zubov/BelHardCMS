@@ -1,4 +1,4 @@
-{% extends 'client/main_template_client.html' %}
+{% extends 'recruit/recruit_main_template.html' %}
 {% load staticfiles %}
 
 {% block title %}
@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-    {% include 'client/edit_forms/tot_samui_bootstrap.html' %}
+{#    {% include 'client/edit_forms/tot_samui_bootstrap.html' %}#}
 <div class="container">
     <form enctype="multipart/form-data" method="post">
         {% csrf_token %}

@@ -1,16 +1,15 @@
 import re
 
-from time import perf_counter
+from client.edit.utility import (time_it, try_except)
 
 
 # TeamRome
+@try_except
+@time_it
 def pars_exp_request(req_post) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели Experience. """
-    print("pars_exp_request()")
     # print("\texp_request.POST: %s" % req_post)
-    time_0 = perf_counter()
-
     arr = []  # output list
     dict_up = {'experience_1': '', 'experience_2': '', 'experience_3': '',
                'exp_date_start': '', 'exp_date_end': '', 'experience_4': ''}  # temporary dictionary
@@ -46,20 +45,17 @@ def pars_exp_request(req_post) -> list:
                        'exp_date_start': '', 'exp_date_end': '', 'experience_4': ''}
             count += 1
             # print('\t----')
-    print('\tpars_exp_request() - OK; TIME: %s sec' % (perf_counter() - time_0))
     print("\tout_arr: %s" % arr)
     return arr
 
 
 # TeamRome
+@try_except
+@time_it
 def pars_cv_request(req_post: dict) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели CV. """
-    print("pars_cv_request()")
     # print("exp_request.POST: %s" % req_post)
-    from time import perf_counter
-    time_0 = perf_counter()
-
     arr = []
     dict_up = {'position': '', 'employment': '', 'time_job': '', 'salary': '', 'type_salary': ''}
     for i in req_post.items():
@@ -85,21 +81,18 @@ def pars_cv_request(req_post: dict) -> list:
             dict_up = {'position': '', 'employment': '', 'time_job': '', 'salary': '', 'type_salary': ''}
             # print('----')
 
-    print('time_it = %s sec' % (perf_counter() - time_0))
     print("arr: %s" % arr)
     return arr
 
 
 # TeamRome
+@try_except
+@time_it
 def pars_edu_request(req_post, _file) -> list:
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели Education. """
-    print("pars_edu_request()")
     # print("\texp_request.POST: %s" % req_post)
     # print("\texp_request.FILE: %s" % _file)
-    from time import perf_counter
-    time_0 = perf_counter()
-
     arr = []  # output list
     dict_up = {'institution': '', 'subject_area': '', 'specialization': '', 'qualification': '',
                'date_start': '', 'date_end': '', 'certificate': ''}  # temporary dictionary
@@ -160,7 +153,5 @@ def pars_edu_request(req_post, _file) -> list:
     """ For loop ends - save temporary dictionary to the output arr. """
     # print("\tdict_up: %s" % dict_up)
     arr.append(dict_up)
-
-    print('\tpars_edu_request() - OK; Time = %s sec' % (perf_counter() - time_0))
     print("\tout_arr: %s" % arr)
     return arr

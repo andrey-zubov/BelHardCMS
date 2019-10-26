@@ -38,15 +38,20 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
-def client_profile(request):
-    client_instance = client_check(request.user)
-    response = {'client_img': load_client_img(client_instance),
-                }
-    return render(request=request, template_name='client/client_profile.html', context=response)
+class ClientProfile(TemplateView):  # TeamRome
+    template_name = 'client/client_profile.html'
+
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
+
+    def post(self, request):
+        pass
 
 
-# TeamRome
-class ClientEditMain(TemplateView):
+class ClientEditMain(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_main.html'
 
     def get(self, request, *args, **kwargs):
@@ -62,8 +67,7 @@ class ClientEditMain(TemplateView):
         return redirect(to='/client/profile')
 
 
-# TeamRome
-class ClientEditSkills(TemplateView):
+class ClientEditSkills(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_skills.html'
 
     def get(self, request, *args, **kwargs):
@@ -79,8 +83,7 @@ class ClientEditSkills(TemplateView):
         return redirect(to='/client/edit')
 
 
-# TeamRome
-class ClientEditPhoto(TemplateView):
+class ClientEditPhoto(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_photo.html'
 
     def get(self, request, *args, **kwargs):
@@ -96,8 +99,7 @@ class ClientEditPhoto(TemplateView):
         return redirect(to='/client/edit')
 
 
-# TeamRome
-class ClientEditCv(TemplateView):
+class ClientEditCv(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_cv.html'
 
     def get(self, request, *args, **kwargs):
@@ -113,8 +115,7 @@ class ClientEditCv(TemplateView):
         return redirect(to='/client/edit')
 
 
-# TeamRome
-class ClientEditEducation(TemplateView):
+class ClientEditEducation(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_education.html'
 
     def get(self, request, *args, **kwargs):
@@ -130,8 +131,7 @@ class ClientEditEducation(TemplateView):
         return redirect('/client/edit')
 
 
-# TeamRome
-class ClientEditExperience(TemplateView):
+class ClientEditExperience(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_experience.html'
 
     def get(self, request, *args, **kwargs):
@@ -239,6 +239,8 @@ class OpinionDelete(View):
 def client_login(request):  # ввести логин/пароль -> зайти в систему
     res = csrf(request)
     res['url'] = 'login'
+    if request.user.is_authenticated:  # редирект авторизированых пользователей со страницы логина
+        return redirect(to='client')
     if request.POST:
         password = request.POST['password']
         user = request.POST['user']
@@ -259,6 +261,8 @@ def client_login(request):  # ввести логин/пароль -> зайти
         user_settings = Settings.objects.get(user=request.user)
     except Settings.DoesNotExist:
         user_settings = Settings.objects.create(user=request.user)
+    if not Group.objects.filter(name='Users').exists():
+        Group.objects.create(name='Users')
     if u.groups.filter(name='Users').exists():
         return redirect('client')
     elif u.groups.filter(name='Recruiters').exists():
@@ -285,8 +289,7 @@ def tasks(request):
                                                          'client_img': load_client_img(client_instance)})
 
 
-# TeamRome
-class FormEducation(TemplateView):
+class FormEducation(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/form_edu.html'
 
     def get(self, request, *args, **kwargs):
@@ -366,7 +369,6 @@ def set_settings(request):
         settings.email_suggestions = status
     elif setting == 'email_meetings':
         settings.email_meetings = status
-
     elif setting == 'email_reviews':
         settings.email_reviews = status
 

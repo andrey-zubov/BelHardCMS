@@ -1,10 +1,38 @@
-from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render
+from django.core.mail import EmailMessage
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from django.views.generic import TemplateView
 
-from client.models import Chat, Message
+from client.edit.check_clients import (load_client_img)
+from client.models import (Chat, Message, Settings)
+from recruit.edit_pages.check_recruit import (recruit_check)
+from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
+from recruit.edit_pages.r_pages_get import (recruit_edit_page_get, recruit_experience_page_get, skills_page_get)
+from recruit.edit_pages.r_pages_post import (recruit_edit_page_post, recruit_experience_page_post, skills_page_post,
+                                             photo_page_post)
+
 
 def recruit_main_page(request):
-    return render(request, template_name='recruit/recruit_main_template.html')
+    recruit_instance = recruit_check(request.user)
+    response = {'recruit_img': load_client_img(recruit_instance),
+                'data': 'foo()',
+                }
+    return render(request, template_name='recruit/recruit_main_template.html', context=response)
+
+
+class RecruitProfile(TemplateView):  # TeamRome
+    template_name = 'recruit/recruit_profile.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'data': 'foo()',
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
+
+    def post(self, request):
+        pass
+
 
 def recruit_chat(request):
     chat_list = Chat.objects.filter(members=request.user)
@@ -36,14 +64,25 @@ def get_messages(request):
 def send_message(request):
     chat = Chat.objects.get(id=request.GET['chat_id'])
     mes = Message(chat=chat, author=request.user, message=request.GET['message'])
+    members = chat.members.all()
     mes.save()
-    send = {'author_id': mes.author.id, 'author_name': mes.author.username, 'message': mes.message, 'message_id': mes.id,
-             'pub_date': mes.pub_date.ctime()}
+
+    for m in members:
+        if m != request.user:
+            try:
+                if Settings.objects.get(user=m).email_messages:
+                    send_email = EmailMessage('HR-system', 'У вас новое сообщение', to=[str(m.email)])
+                    send_email.send()
+            except Exception:
+                print('Exception: нет адреса электронной почты')
+
+    send = {'author_id': mes.author.id, 'author_name': mes.author.username, 'message': mes.message,
+            'message_id': mes.id,
+            'pub_date': mes.pub_date.ctime()}
     return JsonResponse(send, safe=False)
 
 
 def chat_update(request):
-
     last_id = (request.GET['last_id'])
     chat = Chat.objects.get(id=request.GET['chat_id'])
     messages = Message.objects.filter(chat=chat)
@@ -69,3 +108,84 @@ def check_mes(request):
         send.append(new_dict)
 
     return JsonResponse(send, safe=False)
+
+
+class RecruitEditMain(TemplateView):  # TeamRome
+    template_name = 'recruit/edit_pages/recruit_edit_main.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'data': recruit_edit_page_get(recruit_instance),
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        recruit_instance = recruit_check(request.user)
+        recruit_edit_page_post(recruit_instance, request)
+        return redirect(to='/recruit/profile/')
+
+
+class RecruitEditExperience(TemplateView):  # TeamRome
+    template_name = 'recruit/edit_pages/recruit_edit_experience.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    "data": recruit_experience_page_get(recruit_instance),
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        recruit_instance = recruit_check(request.user)
+        recruit_experience_page_post(recruit_instance, request)
+        return redirect(to='/recruit/edit/')
+
+
+class RecruitEditEducation(TemplateView):  # TeamRome
+    template_name = ''
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'data': 'foo()',
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        recruit_instance = recruit_check(request.user)
+        'foo()'
+        return redirect(to='/recruit/edit/')
+
+
+class RecruitEditSkills(TemplateView):  # TeamRome
+    template_name = 'recruit/edit_pages/recruit_skills.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'data': skills_page_get(recruit_instance),
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        recruit_instance = recruit_check(request.user)
+        skills_page_post(recruit_instance, request)
+        return redirect(to='/recruit/edit')
+
+
+class RecruitEditPhoto(TemplateView):  # TeamRome
+    template_name = 'recruit/edit_pages/recruit_photo.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'client_img': load_client_img(recruit_instance),
+                    'form': RecruitUploadImgForm(),
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
+
+    def post(self, request):
+        recruit_instance = recruit_check(request.user)
+        photo_page_post(recruit_instance, request)
+        return redirect(to='/recruit/edit')
+

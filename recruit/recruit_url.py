@@ -10,5 +10,14 @@ urlpatterns = [
     path('chat_update/', views.chat_update, name='chat_update'),
     path('check_mes/', views.check_mes, name='check_mes'),
     path('', views.recruit_main_page, name='main_page'),
+    # path('add_task', views.add_task, name='add_task'),
+    # path(r'add_new_task', views.add_new_task),
 
+    # Team Rome (start)
+    path('profile/', views.RecruitProfile.as_view(), name='recruit_profile'),
+    path('edit/', views.RecruitEditMain.as_view(), name='recruit_edit'),
+    path('edit/experience/', views.RecruitEditExperience.as_view(), name='recruit_edit_experience'),
+    path('edit/skills/', views.RecruitEditSkills.as_view(), name='recruit_edit_skills'),
+    path('edit/photo/', views.RecruitEditPhoto.as_view(), name='recruit_edit_photo'),
+    # Team Rome (end)
 ]
