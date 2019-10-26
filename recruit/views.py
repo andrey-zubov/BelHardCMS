@@ -1,9 +1,12 @@
+import re
+
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
+from django.db.models import Q
 
 
-from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings, Client
+from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings, Client, State
 from datetime import datetime
 
 from recruit.models import Recruiter
@@ -153,17 +156,35 @@ def check_favor(request):
 
 def recruit_base(request):
     recruit = Recruiter.objects.get(recruiter=request.user)
-    search_request = request.GET.get('reqcuit_search', '')
+    search_request = request.GET.get('recruit_search', '')
+    clients_after_search = set()
     if search_request:
-        try:
-            search_user = UserModel.objects.get(username=search_request)
-            search_id = search_user.id
-            free_clients = Client.objects.filter(own_recruiter=None, user_client=search_id)
-        except:
-            free_clients = None
-    else:
-        free_clients = Client.objects.filter(own_recruiter=None)
-    context = {'free_clients':free_clients}
-    return render(request, template_name='recruit/recruit_base.html', context=context)
+        search_params = search_request.split(' ')
+        print(search_params)
+        clients = Client.objects.all()
 
+        for s in search_params:
+            users_for_first_name_list = UserModel.objects.filter(first_name__contains=s)
+            users_for_last_name_list = UserModel.objects.filter(last_name__contains=s)
+            users_for_patronymic = clients.filter(patronymic__contains=s)
+            try:
+                users_for_state = clients.filter(state__contains=State.objects.get(state_word=s))
+                clients_after_search.update(users_for_state)
+            except:
+                print('ясно')
+            users_for_first_name = set()
+            users_for_last_name = set()
+            for u in users_for_first_name_list:
+                users_for_first_name.add(clients.get(user_client=u))
+            for u in users_for_last_name_list:
+                users_for_last_name.add(clients.get(user_client=u))
+
+            clients_after_search.update(users_for_first_name)
+            clients_after_search.update(users_for_last_name)
+            clients_after_search.update(users_for_patronymic)
+
+    else:
+        clients_after_search = Client.objects.filter(own_recruiter=None)
+    context = {'free_clients': clients_after_search}
+    return render(request, template_name='recruit/recruit_base.html', context=context)
 
