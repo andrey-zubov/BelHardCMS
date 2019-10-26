@@ -142,7 +142,7 @@ def check_favor(request):
     client_id = (request.GET['client'])
     client = Client.objects.get(id=client_id)
     recruit_id = (request.GET['recruit'])
-    recruit = Recruiter.objects.get(id=recruit_id)
+    recruit = Recruiter.objects.get(recruiter=UserModel.objects.get(id=recruit_id))
     if client.is_reserved == True:
         client.is_reserved = False
         client.own_recruiter = None
@@ -150,7 +150,6 @@ def check_favor(request):
         client.is_reserved = True
         client.own_recruiter = recruit
     client.save()
-    recruit.save()
     return HttpResponse(client_id)
 
 
