@@ -18,6 +18,7 @@ from client.edit.pages_get import (show_profile, edit_page_get, skills_page_get,
                                    experience_page_get)
 from client.edit.pages_post import (edit_page_post, skills_page_post, photo_page_post, cv_page_post,
                                     education_page_post, experience_page_post)
+from client.edit.utility import try_except
 from client.forms import (OpinionForm, AnswerForm, MessageForm)
 from client.models import (Client, CV, Tasks, JobInterviews, Chat, Message, Settings, Opinion, Answer, Vacancy, Help)
 from client.utils_for_mixins import ObjectResumeMixin
@@ -326,6 +327,7 @@ def checktask(request):
     return HttpResponse(task)
 
 
+@try_except
 def checknotifications(request):
     client = get_object_or_404(Client, user_client=request.user)
     chat = Chat.objects.get(members=request.user)

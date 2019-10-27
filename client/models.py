@@ -3,8 +3,6 @@ from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
 
-
-
 UserModel = get_user_model()
 
 
@@ -380,7 +378,6 @@ class Client(models.Model):
     skype = models.CharField(max_length=100, null=True, blank=True)
     img = models.ImageField(blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
-    # resumes
 
     # spain recruit
     from recruit.models import Recruiter
