@@ -1,8 +1,10 @@
 from collections import defaultdict
 
+from BelHardCRM.settings import MEDIA_URL
 from client.edit.utility import (time_it, try_except)
 from client.models import (Sphere, Sex, Citizenship, FamilyState, Children, City, State)
-from recruit.models import (RecruitExperience, UserModel, RecruitTelephone, RecruitSkills)
+from recruit.models import (RecruitExperience, UserModel, RecruitTelephone, RecruitEducation, RecruitCertificate)
+from recruit.models import (RecruitSkills)
 
 
 @try_except
@@ -59,4 +61,26 @@ def skills_page_get(recruit):  # TeamRome
         skills_arr = [i['skill'] for i in RecruitSkills.objects.filter(recruit_skills=recruit).values()]
         response['rec_skill'] = skills_arr
 
+    return response
+
+
+@try_except
+@time_it
+def recruit_education_page_get(recruit):  # TeamRome
+    response = defaultdict()
+    if recruit:
+        edus = [i for i in RecruitEducation.objects.filter(recruit_edu=recruit).values()]
+        response['rec_edu'] = edus
+        edu_id = [e['id'] for e in response['rec_edu']]
+        certs = [[c for c in RecruitCertificate.objects.filter(education_id=i).values()] for i in edu_id]
+        # print("\tcerts: %s" % certs)
+        for e in edus:
+            # print("\te: %s" % e)
+            for c in certs:
+                # print("\tc: %s" % c)
+                if c:
+                    if c[0]['education_id'] == e['id']:
+                        for cert in c:
+                            cert['img'] = "%s%s" % (MEDIA_URL, cert['img'])
+                        e['cert'] = c
     return response
