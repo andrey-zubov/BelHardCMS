@@ -6,57 +6,39 @@
 {% endblock %}
 
 {% block content %}
-
     <div class="col-md-8">
         <h3>Hello Client Profile</h3>
         <p>
             <a href="{% url 'client_edit' %}" class="btn btn-outline-primary">Редактировать</a>
-
             <img src="{{ client_img }}" alt="img" class="m-sm-1" height="64">
-
-
             <a href="{% url 'client' %}" class="btn btn-outline-danger">X</a>
         </p>
         <div>
             <div>
                 <h3>inf</h3>
 
-
                 <h2>CLient</h2>
-
-                {{ data.user_model.first_name}}
-                {{ data.user_model.last_name}}
+                {{ data.user_model.first_name }}
+                {{ data.user_model.last_name }}
                 {{ data.client.patronymic }}
-                <p>
+                {{ data.client.family_state }}
+                {{ data.client.children }}
 
-                {{ data.client.family_state }},
-                {{ data.client.children }} дети
-                <p>
-                <a>Место жительства:</a>
-
+                <h3>Место жительства:</h3>
                 {{ data.client.city }},
                 {{ data.client.street }},
                 {{ data.client.house }},
                 {{ data.client.flat }}
+            </div>
 
-                <p>
-                <a> Телефон:</a>
+            <div>
+                <p> Телефон:</p>
                 {% for e in data.cl_phone %}
-                        {{ forloop.counter }} {{ e.telephone_number }}
-
+                    <p> {{ forloop.counter }} {{ e.telephone_number }}</p>
                 {% endfor %}
-
-                <p>
-                <a> Email: <a>
-                    {{ data.user_model.email}}
-
-
-                <p>
-                <a> Telegram: <a>
-                    {{ data.client.telegram_link }}
-                  <p>
-                <a> Linkedin: <a>
-                    {{ data.client.link_linkedin }}
+                <p> Email: {{ data.user_model.email }}</p>
+                <p> Telegram: {{ data.client.telegram_link }}</p>
+                <p> Linkedin: {{ data.client.link_linkedin }}</p>
             </div>
 
             <div>
@@ -67,8 +49,8 @@
                         {{ e.qualification }}
                     </p>
                 {% endfor %}
-            <a href="{% url 'client_edit_education' %}"
-               class="list-group-item list-group-item-action list-group-item-info">
+                <a href="{% url 'show_education' %}"
+                   class="list-group-item list-group-item-action list-group-item-info">
                     Подробнее </a>
             </div>
             <div>
@@ -79,8 +61,8 @@
                         {{ e.end_date }} - {{ e.position }} - {{ e.name }}
                     </p>
                 {% endfor %}
-            <a href="{% url 'client_edit_experience' %}"
-               class="list-group-item list-group-item-action list-group-item-info">
+                <a href="{% url 'show_experience' %}"
+                   class="list-group-item list-group-item-action list-group-item-info">
                     Подробнее </a>
             </div>
             <div>
@@ -91,8 +73,8 @@
 
                     </p>
                 {% endfor %}
-                 <a href="{% url 'client_edit_skills' %}"
-                    class="list-group-item list-group-item-action list-group-item-info">
+                <a href="{% url 'show_skills' %}"
+                   class="list-group-item list-group-item-action list-group-item-info">
                     Подробнее </a>
             </div>
 
@@ -104,8 +86,8 @@
 
                     </p>
                 {% endfor %}
-            <a href="{% url 'client_edit_cv' %}"
-               class="list-group-item list-group-item-action list-group-item-info">
+                <a href="{% url 'show_cv' %}"
+                   class="list-group-item list-group-item-action list-group-item-info">
                     Подробнее </a>
             </div>
         </div>
