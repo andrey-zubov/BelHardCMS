@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import date
+from datetime import datetime, timedelta
 
 from BelHardCRM.settings import MEDIA_URL
 from client.edit.utility import (time_it, try_except)
@@ -150,8 +150,10 @@ def show_profile(client):
         phone_arr = [i for i in Telephone.objects.filter(client_phone=client).values("telephone_number")]
         response['cl_phone'] = phone_arr
         response["client"] = client
-        response["age"] = 9  # дописать
 
-        print(response["age"])
+        now = datetime.now()
+        print("now", now)
+        age = now - timedelta(Client.date_born.day)
+        print("age", age)
 
     return response
