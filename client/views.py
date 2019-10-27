@@ -1,35 +1,31 @@
-import logging
-from collections import defaultdict
-from time import perf_counter
-
 import json
-#from PIL import Image
+import re
+
 from django.contrib import auth
-from django.shortcuts import redirect, render, get_object_or_404
-from django.template.context_processors import csrf
-
-from django.urls import reverse
-from recruit import recruit_url
-
-from django.utils.timezone import utc
-from django.http import HttpResponse, JsonResponse
-
-from .forms import *
-
-from django.views.generic import View, TemplateView
-from .utils_for_mixins import ObjectResumeMixin
-
-
-from BelHardCRM.settings import MEDIA_URL
-from client.edit.check_clients import (client_check, load_client_img)
-from .forms import OpinionForm, AnswerForm, MessageForm
-
-
-from .models import *
 from django.contrib.auth.models import Group
 from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect, render, get_object_or_404
+from django.template.context_processors import csrf
+from django.urls import reverse
+from django.utils import timezone
+from django.views.generic import View, TemplateView
 from tika import parser
-import re
+
+from client.edit.check_clients import (client_check, load_client_img)
+from client.edit.edit_forms import UploadImgForm
+from client.edit.pages_get import (show_profile, edit_page_get, skills_page_get, cv_page_get, education_page_get,
+                                   experience_page_get)
+from client.edit.pages_post import (edit_page_post, skills_page_post, photo_page_post, cv_page_post,
+                                    education_page_post, experience_page_post)
+from client.forms import (OpinionForm, AnswerForm, MessageForm)
+from client.models import (Client, CV, Tasks, JobInterviews, Chat, Message, Settings, Opinion, Answer, Vacancy, Help)
+from client.utils_for_mixins import ObjectResumeMixin
+
+""" PEP 8: Wildcard imports (from <module> import *) should be avoided, 
+as they make it unclear which names are present in the namespace, 
+confusing both readers and many automated tools. """
+
 
 def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     response = csrf(request)
@@ -51,7 +47,7 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings,
                'readinterview': readinterview}
 
-                     # Poland
+    # Poland
     response['unread_suggestions'] = suggestions
     client_instance = client_check(request.user)
     response['client_img'] = load_client_img(client_instance)
@@ -60,16 +56,21 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     return render(request=request, template_name='client/main_template_client.html', context=context)
 
 
-def client_profile(request):
-    response = csrf(request)
-    client_instance = client_check(request.user)
-    response['client_img'] = load_client_img(client_instance)
+class ClientProfile(TemplateView):  # TeamRome
+    template_name = 'client/client_profile.html'
 
-    return render(request=request, template_name='client/client_profile.html', context=response)
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    'data': show_profile(client_instance)
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
+
+    def post(self, request):
+        pass
 
 
-# TeamRome
-class ClientEditMain(TemplateView):
+class ClientEditMain(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_main.html'
 
     def get(self, request, *args, **kwargs):
@@ -85,8 +86,7 @@ class ClientEditMain(TemplateView):
         return redirect(to='/client/profile')
 
 
-# TeamRome
-class ClientEditSkills(TemplateView):
+class ClientEditSkills(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_skills.html'
 
     def get(self, request, *args, **kwargs):
@@ -102,8 +102,7 @@ class ClientEditSkills(TemplateView):
         return redirect(to='/client/edit')
 
 
-# TeamRome
-class ClientEditPhoto(TemplateView):
+class ClientEditPhoto(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_photo.html'
 
     def get(self, request, *args, **kwargs):
@@ -119,8 +118,7 @@ class ClientEditPhoto(TemplateView):
         return redirect(to='/client/edit')
 
 
-# TeamRome
-class ClientEditCv(TemplateView):
+class ClientEditCv(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_cv.html'
 
     def get(self, request, *args, **kwargs):
@@ -136,8 +134,7 @@ class ClientEditCv(TemplateView):
         return redirect(to='/client/edit')
 
 
-# TeamRome
-class ClientEditEducation(TemplateView):
+class ClientEditEducation(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_education.html'
 
     def get(self, request, *args, **kwargs):
@@ -153,8 +150,7 @@ class ClientEditEducation(TemplateView):
         return redirect('/client/edit')
 
 
-# TeamRome
-class ClientEditExperience(TemplateView):
+class ClientEditExperience(TemplateView):  # TeamRome
     template_name = 'client/edit_forms/client_edit_experience.html'
 
     def get(self, request, *args, **kwargs):
@@ -217,6 +213,7 @@ def answer_create(request, pk):
             return redirect('opinion_detail', pk)
     return render(request, 'opinion/answer_create.html', context={'form': form, 'opinion': opinion, "answer": answer})
 
+
 def opinion_list(request):
     opinion = Opinion.objects.all()
     return render(request, 'opinion/index.html', context={'opinion': opinion})
@@ -228,7 +225,8 @@ class OpinionCreate(View):
         form = OpinionForm()
         client_instance = client_check(request.user)
         return render(request, 'opinion/opinion_create.html', context={'form': form,
-                                                                 'client_img':load_client_img(client_instance), 'opinions':opinions})
+                                                                       'client_img': load_client_img(client_instance),
+                                                                       'opinions': opinions})
 
     def post(self, request):
         opinions = Opinion.objects.all()
@@ -241,7 +239,8 @@ class OpinionCreate(View):
             return redirect('opinion_detail', pk=new_opinion.pk)
         client_instance = client_check(request.user)
         return render(request, 'opinion/opinion_create.html', context={'form': form,
-                                                                       'client_img':load_client_img(client_instance), 'opinions':opinions})
+                                                                       'client_img': load_client_img(client_instance),
+                                                                       'opinions': opinions})
 
 
 def opinion_detail(request, pk):
@@ -311,28 +310,6 @@ def tasks(request):
     return render(request, 'client/tasks.html', context={'task': task,
                                                          'task_false': task_false,
                                                          'client_img': load_client_img(client_instance)})
-
-
-# TeamRome
-class FormEducation(TemplateView):
-    template_name = 'client/edit_forms/form_edu.html'
-
-    def get(self, request, *args, **kwargs):
-        client_instance = client_check(request.user)
-        load_data = education_page_get(client_instance)['cl_edu']
-
-        response = {'client_img': load_client_img(client_instance),
-                    'edu_form': EducationFormSet(initial=load_data),
-                    'certificate': CertificateFormSet(initial=load_data),
-                    # 'certificate': CertificateForm(initial=load_data[0]),
-                    'sab_class_form': SabClassFormSet(initial=load_data),
-                    }
-        return render(request, self.template_name, response)
-
-    def post(self, request):
-        client_instance = client_check(request.user)
-        form_edu_post(client_instance, request)
-        return redirect(to='/client/edit/form_edu')
 
 
 def checktask(request):
@@ -420,10 +397,11 @@ def chat_update(request):
              'pub_date': s.pub_date.ctime()})
     return JsonResponse(send2, safe=False)
 
+
 # Poland's views ###################################################################################
 
 
-class VacancyDetail(View):   # ##################  There's a lot of work to remove all bugs...
+class VacancyDetail(View):  # ##################  There's a lot of work to remove all bugs...
     def get(self, request, id_v):
         client = get_object_or_404(Client, user_client=request.user)
         vacancy = get_object_or_404(Vacancy, id=id_v)
@@ -450,15 +428,16 @@ class ResumesList(View):
         return render(request, 'client/client_resumes.html', context={'resumes': resumes,
                                                                       'client_img': load_client_img(client_instance)})
 
+
 class ResumeDetail(ObjectResumeMixin, View):  # Look utils_for_mixins.py
     template = 'client/client_resume_detail.html'
 
 
-class AcceptedVacancies(ObjectResumeMixin, View):   # Look utils_for_mixins.py
+class AcceptedVacancies(ObjectResumeMixin, View):  # Look utils_for_mixins.py
     template = 'client/client_accepted_vacancies.html'
 
 
-class RejectedVacancies(ObjectResumeMixin, View):    # Look utils_for_mixins.py
+class RejectedVacancies(ObjectResumeMixin, View):  # Look utils_for_mixins.py
     template = 'client/client_rejected_vacancies.html'
 
 
@@ -551,9 +530,10 @@ def checkinterviews(request):
 def admin_jobinterviews(request):  # for admin panel
     client = Client.objects.get(id=request.GET['id_client'])
     resumes = CV.objects.filter(client_cv=client)
-    resumes = {key:val for val,key in [(i.position, i.id) for i in resumes]}
+    resumes = {key: val for val, key in [(i.position, i.id) for i in resumes]}
     resumes = json.dumps(resumes, ensure_ascii=False)
     return HttpResponse(resumes)
+
 
 # PDF upload
 def upload(request):
@@ -564,6 +544,7 @@ def upload(request):
         name = fs.save(uploaded_file.name, uploaded_file)
         context['url'] = fs.url(name)
     return render(request, 'upload.html', context)
+
 
 # PDF Parsing
 
@@ -591,6 +572,62 @@ def parsing():
     client_row.city = city
 
     client_row.save()
+
+
 # End Poland's views ###################################################################################$$$$
 
 
+class ClientShowSkills(TemplateView):  # TeamRome
+    template_name = 'client/show/show_skills.html'
+
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    'data': skills_page_get(client_instance),
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
+
+    def post(self, request):
+        pass
+
+
+class ClientShowEducation(TemplateView):  # TeamRome
+    template_name = 'client/show/show_education.html'
+
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    'data': education_page_get(client_instance),
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        pass
+
+
+class ClientShowExperience(TemplateView):  # TeamRome
+    template_name = 'client/show/show_experience.html'
+
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    "data": experience_page_get(client_instance),
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        pass
+
+
+class ClientShowCv(TemplateView):  # TeamRome
+    template_name = 'client/show/show_cv.html'
+
+    def get(self, request, *args, **kwargs):
+        client_instance = client_check(request.user)
+        response = {'client_img': load_client_img(client_instance),
+                    'data': cv_page_get(client_instance),
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        pass

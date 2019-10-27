@@ -1,11 +1,11 @@
 from django import forms
 
-from recruit.models import (Recruit)
+from recruit.models import (Recruiter)
 
 
 class RecruitUploadImgForm(forms.ModelForm):
     class Meta:
-        model = Recruit
+        model = Recruiter
         fields = ('img',)
 
         widgets = {

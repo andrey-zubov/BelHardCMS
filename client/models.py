@@ -1,11 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
-import re
-import datetime as dt
 from django.utils import timezone
 
-from recruit.models import Recruiter
+
 
 UserModel = get_user_model()
 
@@ -294,16 +292,17 @@ class JobInterviews(models.Model):
                                               verbose_name='Дополнительная информация')
     status = models.BooleanField(default=False)  # статус собеседования, на которое ещё не ходили
     check_status = models.BooleanField(default=True)  # статус активен, если можем после успешного собеседования
-      # в течении 60 сек вернуть в статус активных собеседований
-    readinterview = models.BooleanField(default=False)  #cтатус собеседования для определения отображения в оповещениях
+    # в течении 60 сек вернуть в статус активных собеседований
+    readinterview = models.BooleanField(default=False)  # cтатус собеседования для определения отображения в оповещениях
 
     @property
     def show_all(self):
         to_show_name = []
         to_show_verbose_name = []
         for key in self.__dict__:
-            if self.__dict__[key].__class__.__name__ == 'str' or self.__dict__[key].__class__.__name__ == 'datetime'\
-                    or self.__dict__[key].__class__.__name__ == 'time' or self.__dict__[key].__class__.__name__ == 'date':
+            if self.__dict__[key].__class__.__name__ == 'str' or self.__dict__[key].__class__.__name__ == 'datetime' \
+                    or self.__dict__[key].__class__.__name__ == 'time' or self.__dict__[
+                key].__class__.__name__ == 'date':
                 to_show_verbose_name.append(self._meta.get_field(key).verbose_name)
                 to_show_name.append(self.__dict__[key])
         to_show_name.remove(self.time_of_creation)
@@ -334,7 +333,6 @@ class JobInterviews(models.Model):
 
     def __str__(self):
         return self.name
-
 
     # def get_absolute_url(self):
     #    return reverse('applicant_url', kwargs={'id_a': self.id})
@@ -385,6 +383,7 @@ class Client(models.Model):
     # resumes
 
     # spain recruit
+    from recruit.models import Recruiter
     is_reserved = models.BooleanField(default=False)
     own_recruiter = models.ForeignKey(Recruiter, on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -399,7 +398,6 @@ class Client(models.Model):
         # add certificate.pdf
         super().delete(*args, **kwargs)
 
-
     def get_absolute_url(self):
         return reverse('applicant_url', kwargs={'id_a': self.id})
 
@@ -411,7 +409,6 @@ class Client(models.Model):
 
     def get_del_jobi_url(self):
         return reverse('applicant_del_interviews_url', kwargs={'id_a': self.id})
-
 
 
 class Telephone(models.Model):
@@ -472,7 +469,7 @@ class Answer(models.Model):
 class Tasks(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True)
     title = models.TextField(max_length=200)
-    time = models.DateTimeField(null=True, blank=True) # TODO добавден auno_now, временно
+    time = models.DateTimeField(null=True, blank=True)  # TODO добавден auno_now, временно
     date = models.DateField(null=True, blank=True)
     comment = models.TextField(max_length=300, blank=True)
     status = models.BooleanField(default=False)  # задача, которая не выполнена
@@ -526,4 +523,3 @@ class Settings(models.Model):
     email_suggestions = models.BooleanField(default=True)
     email_meetings = models.BooleanField(default=True)
     email_reviews = models.BooleanField(default=True)
-

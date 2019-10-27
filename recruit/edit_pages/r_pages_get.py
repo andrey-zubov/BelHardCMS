@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from client.edit.utility import (time_it, try_except)
 from client.models import (Sphere, Sex, Citizenship, FamilyState, Children, City, State)
-from recruit.models import (RecruitExperience, UserModel, RecruitTelephone)
+from recruit.models import (RecruitExperience, UserModel, RecruitTelephone, RecruitSkills)
 
 
 @try_except
@@ -51,20 +51,12 @@ def recruit_experience_page_get(recruit):  # TeamRome
     return response
 
 
-
-def experience_page_get(recruit):
-
+@try_except
+@time_it
+def skills_page_get(recruit):  # TeamRome
     response = defaultdict()
-    response['sphere'] = RecruitEducation.objects.filter(recruit_exp=recruit)
     if recruit:
-        exp = RecruitExperience.objects.filter(recruit_exp=recruit)
-        exp_dict = [i for i in exp.values()]
-        response['rec_exp'] = exp_dict
-
-        for i, e in enumerate(exp):
-            sphere = [i['sphere_word'] for i in e.sphere.values()]
-            exp_dict[i]['sphere'] = sphere
+        skills_arr = [i['skill'] for i in RecruitSkills.objects.filter(recruit_skills=recruit).values()]
+        response['rec_skill'] = skills_arr
 
     return response
-
-

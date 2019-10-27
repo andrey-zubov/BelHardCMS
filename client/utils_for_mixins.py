@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
-from .models import CV
-from .models import CV, Client
+from client.models import CV, Client
 
 
 # There is Poland's mixins #####################################################################

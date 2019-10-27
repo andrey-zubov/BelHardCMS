@@ -9,16 +9,16 @@
     {% for edu in data.cl_edu %}
         <p>institution: {{ edu.institution }}</p>
         <p>subject_area: {{ edu.subject_area }}</p>
-        <p>specialization: {{ edu.specialization}}</p>
-        <p>qualification: {{ edu.qualification}}</p>
-        <p>date_start: {{ edu.date_start}}</p>
-        <p>date_end: {{ edu.date_end}}</p>
+        <p>specialization: {{ edu.specialization }}</p>
+        <p>qualification: {{ edu.qualification }}</p>
+        <p>date_start: {{ edu.date_start }}</p>
+        <p>date_end: {{ edu.date_end }}</p>
     {% endfor %}
 
 
     <div class="text-center">
         <a class="btn btn-outline-warning m-2" href="{% url 'client_profile' %}">Назад</a>
-        <a href="{% url 'client_edit_education' %}" type="button"  id="add_more"
+        <a href="{% url 'client_edit_education' %}" type="button" id="add_more"
            class="btn btn-outline-primary m-2">"Редактировать"</a>
     </div>
 {% endblock %}

@@ -11,9 +11,8 @@
         <h3>Hello Client Profile</h3>
         <p>
             <a href="{% url 'client_edit' %}" class="btn btn-outline-primary">Редактировать</a>
-            <a href="{% url 'client_cv_upload' %}" class="btn btn-outline-primary">Загрузить резюме</a>
 
-            <img src="{{ client_img }}" alt="img" class="m-sm-1" height="64">
+            <img src="{{ client_img|default:'/media/user_1.png' }}" alt="img" class="m-sm-1" height="64">
 
 
             <a href="{% url 'client' %}" class="btn btn-outline-danger">X</a>
@@ -31,15 +30,15 @@
                 {#                </p>#}
                 {#            {% endfor %}#}
 
-{#                {% for e in data.user_model %}#}
-{#                    <p>#}
-{#                        {{ forloop.counter }} {{ e.first_name }}#}
-{#                        {{ e.last_name }}#}
-{##}
-{#                    </p>#}
-{#                {% endfor %}#}
-                {{ data.user_model.first_name}}
-                {{ data.user_model.last_name}}
+                {#                {% for e in data.user_model %}#}
+                {#                    <p>#}
+                {#                        {{ forloop.counter }} {{ e.first_name }}#}
+                {#                        {{ e.last_name }}#}
+                {##}
+                {#                    </p>#}
+                {#                {% endfor %}#}
+                {{ data.user_model.first_name }}
+                {{ data.user_model.last_name }}
                 {{ data.client.patronymic }}
 
                 {{ data.client.citizenship.country_word }}

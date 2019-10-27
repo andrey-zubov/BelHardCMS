@@ -1,25 +1,30 @@
-from time import perf_counter
-from collections import defaultdict
-from client.models import Client, CV, JobInterviews, FilesForJobInterviews, Vacancy
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect, render
-from django.views.generic import View
-from django.views.generic.edit import FormView
-from django.template.context_processors import csrf
+from django.views.generic import View, TemplateView
 
-from django.urls import reverse
-from .models import *
-from recruit.models import Recruiter
-from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings, Client, State
-from datetime import datetime
+from client.edit.check_clients import (load_client_img)
+from client.models import (CV, JobInterviews, FilesForJobInterviews, Vacancy, State)
+from client.models import (Chat, Message, Tasks, UserModel, SubTasks, Settings, Client)
+from recruit.edit_pages.check_recruit import (recruit_check)
+from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
+from recruit.edit_pages.r_pages_get import (skills_page_get, recruit_experience_page_get, recruit_edit_page_get)
+from recruit.edit_pages.r_pages_post import (photo_page_post, skills_page_post, recruit_experience_page_post,
+                                             recruit_edit_page_post)
+from recruit.models import (Recruiter)
+
+""" PEP 8: Wildcard imports (from <module> import *) should be avoided, 
+as they make it unclear which names are present in the namespace, 
+confusing both readers and many automated tools. """
+
 
 # There is Poland's views #################################################################################
-def recruit_main_page(request):
-    return render(request, template_name='recruit/recruit_main_template.html', )
-
-
-
+def recruit_main_page(request):  # TeamRome
+    recruit_instance = recruit_check(request.user)
+    response = {'recruit_img': load_client_img(recruit_instance),
+                'data': 'foo()',
+                }
+    return render(request, template_name='recruit/recruit_main_template.html', context=response)
 
 
 def recruiter_base(request):
@@ -123,6 +128,8 @@ class DelJobInterview(View):
         j = JobInterviews.objects.get(id=request.POST['id_job'])
         j.delete()
         return redirect(applicant_user.get_tasks_url())
+
+
 # End Poland's views #######################################################################################
 
 
@@ -168,13 +175,13 @@ def send_message(request):
             except Exception:
                 print('Exception: нет адреса электронной почты')
 
-    send = {'author_id': mes.author.id, 'author_name': mes.author.username, 'message': mes.message, 'message_id': mes.id,
-             'pub_date': mes.pub_date.ctime()}
+    send = {'author_id': mes.author.id, 'author_name': mes.author.username, 'message': mes.message,
+            'message_id': mes.id,
+            'pub_date': mes.pub_date.ctime()}
     return JsonResponse(send, safe=False)
 
 
 def chat_update(request):
-
     last_id = (request.GET['last_id'])
     chat = Chat.objects.get(id=request.GET['chat_id'])
     messages = Message.objects.filter(chat=chat)
@@ -205,20 +212,20 @@ def check_mes(request):
 def add_task(request):
     context = {}
     context['users_list'] = UserModel.objects.all()
-    #context['newtask'] = newtask
+    # context['newtask'] = newtask
     return render(request=request, template_name='recruit/add_task.html', context=context)
 
 
 def add_new_task(requset):
     try:
         user = UserModel.objects.get(username=requset.POST['name'])
-    except UserModel.DoesNotExist: #TODO сделать проверку в отправек формы?
+    except UserModel.DoesNotExist:  # TODO сделать проверку в отправек формы?
         return HttpResponse('Необходимо задать юзера')
     newtask = Tasks.objects.create()
     newtask.user = user
     newtask.title = requset.POST['task_title']
     newtask.comment = str(requset.POST['task_comment'])
-    #newtask.time = datetime.now() TODO
+    # newtask.time = datetime.now() TODO
     newtask.save()
     i = 1
     reqpost = requset.POST
@@ -240,7 +247,6 @@ def add_new_task(requset):
     return redirect(to='add_task')
 
 
-
 def favorites(request):
     recruit = Recruiter.objects.get(recruiter=request.user)
     clients = Client.objects.filter(own_recruiter=recruit)
@@ -248,7 +254,8 @@ def favorites(request):
 
     return render(request, template_name='recruit/favorites.html', context=context)
 
-#обработка избранного рекрутера
+
+# обработка избранного рекрутера
 def check_favor(request):
     client_id = (request.GET['client'])
     client = Client.objects.get(id=client_id)
@@ -297,3 +304,97 @@ def recruit_base(request):
         clients_after_search = Client.objects.filter(own_recruiter=None)
     context = {'free_clients': clients_after_search}
     return render(request, template_name='recruit/recruit_base.html', context=context)
+
+
+class RecruitProfile(TemplateView):  # TeamRome
+    template_name = 'recruit/recruit_profile.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'data': 'foo()',
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
+
+    def post(self, request):
+        pass
+
+
+class RecruitEditMain(TemplateView):  # TeamRome
+    template_name = 'recruit/edit_pages/recruit_edit_main.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'data': recruit_edit_page_get(recruit_instance),
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        recruit_instance = recruit_check(request.user)
+        recruit_edit_page_post(recruit_instance, request)
+        return redirect(to='/recruit/profile/')
+
+
+class RecruitEditExperience(TemplateView):  # TeamRome
+    template_name = 'recruit/edit_pages/recruit_edit_experience.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    "data": recruit_experience_page_get(recruit_instance),
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        recruit_instance = recruit_check(request.user)
+        recruit_experience_page_post(recruit_instance, request)
+        return redirect(to='/recruit/edit/')
+
+
+class RecruitEditEducation(TemplateView):  # TeamRome
+    template_name = ''
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'data': 'foo()',
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        recruit_instance = recruit_check(request.user)
+        'foo()'
+        return redirect(to='/recruit/edit/')
+
+
+class RecruitEditSkills(TemplateView):  # TeamRome
+    template_name = 'recruit/edit_pages/recruit_skills.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'data': skills_page_get(recruit_instance),
+                    }
+        return render(request, self.template_name, response)
+
+    def post(self, request):
+        recruit_instance = recruit_check(request.user)
+        skills_page_post(recruit_instance, request)
+        return redirect(to='/recruit/edit')
+
+
+class RecruitEditPhoto(TemplateView):  # TeamRome
+    template_name = 'recruit/edit_pages/recruit_photo.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'client_img': load_client_img(recruit_instance),
+                    'form': RecruitUploadImgForm(),
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
+
+    def post(self, request):
+        recruit_instance = recruit_check(request.user)
+        photo_page_post(recruit_instance, request)
+        return redirect(to='/recruit/edit')

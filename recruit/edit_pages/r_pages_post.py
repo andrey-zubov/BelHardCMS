@@ -3,7 +3,7 @@ from client.edit.parsers import (pars_exp_request)
 from client.edit.utility import (time_it, try_except, check_input_str, check_home_number, check_telegram, check_phone)
 
 from client.models import (Sphere, Sex, Citizenship, FamilyState, Children, City, State)
-from recruit.models import (RecruitExperience, UserModel, Recruit, RecruitTelephone, RecruitSkills)
+from recruit.models import (RecruitExperience, UserModel, Recruiter, RecruitTelephone, RecruitSkills)
 
 
 @try_except
@@ -36,7 +36,7 @@ def recruit_edit_page_post(recruit_instance, request):  # TeamRome
     if not recruit_instance:
         """ Если карточки нету - создаём. """
         print('\tUser Profile DO NOT exists - creating!')
-        recruit = Recruit(
+        recruit = Recruiter(
             user_recruit=user,
             patronymic=patronymic,
             sex=sex,
