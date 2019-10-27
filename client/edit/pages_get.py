@@ -118,6 +118,17 @@ def experience_page_get(client):  # TeamRome
 def show_profile(client):  # TeamRome
     response = defaultdict()
 
+    # today = date.today()
+
+    # try:
+    #   birthday = Client.date_born.replace(year=today.year)
+    # except ValueError:  # raised when birth date is February 29 and the current year is not a leap year
+    #    birthday = Client.date_born.replace(year=today.year, month=born.month + 1, day=1)
+    # if birthday > today:
+    #   age = today.year - Client.date_born.year - 1
+    # else:
+    #   pass
+
     if client:
         edus = [i for i in Education.objects.filter(client_edu=client).values('institution', 'qualification')]
         response['cl_edu_profile'] = edus
@@ -130,6 +141,7 @@ def show_profile(client):  # TeamRome
         response['cl_skill_profile'] = skills_arr
 
         user_model = UserModel.objects.get(id=client.user_client_id)
+
         response['user_model'] = {
             "first_name": user_model.first_name,
             "last_name": user_model.last_name,
@@ -140,8 +152,7 @@ def show_profile(client):  # TeamRome
         response['cl_phone'] = phone_arr
         # response["client"] = Client.objects.filter(user_client=client)
         response["client"] = client
-        response["age"] = 37  # дописать
-
+        response["age"] = 9  # дописать
         print(response["age"])
 
     return response
