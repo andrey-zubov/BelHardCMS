@@ -1,10 +1,13 @@
 from django.contrib import admin
 
-from .models import *
+from client.models import (SubTasks, CV, Vacancy, Help, Opinion, Answer, Chat, Tasks, Message, Sex, Citizenship,
+                           FamilyState, Children, City, EducationWord, SkillsWord, Sphere, CvWord, Employment, TimeJob,
+                           TypeSalary, State, Settings, FilesForJobInterviews, JobInterviews, Experience, Education,
+                           Client)
 
-
-class User(admin.StackedInline):
-    admin.site.register(CV)
+""" PEP 8: Wildcard imports (from <module> import *) should be avoided, 
+as they make it unclear which names are present in the namespace, 
+confusing both readers and many automated tools. """
 
 
 class Subtasks_Inline(admin.StackedInline):
@@ -15,6 +18,9 @@ class Subtasks_Inline(admin.StackedInline):
 class Tasks_Admin(admin.ModelAdmin):
     inlines = [Subtasks_Inline]
     readonly_fields = ['endtime']
+
+
+admin.site.register(CV)
 
 
 class VacancyAdmin(admin.ModelAdmin):
@@ -30,28 +36,7 @@ class VacancyAdmin(admin.ModelAdmin):
     )
 
 
-class ResumeAdmin(admin.ModelAdmin):
-    list_display = (
-        'state', 'slug',
-    )
-    list_display_links = (
-        'state', 'slug',
-    )
-    search_fields = (
-        'state', 'slug',
-    )
-
-
-## Test settings for Poland
-class SettingsAdmin(admin.ModelAdmin):
-    list_display = ('name_setting',)
-    list_display_links = ('name_setting',)
-    search_fields = ('name_setting',)
-
-
-# admin.site.register(Settings, SettingsAdmin)
 admin.site.register(Vacancy, VacancyAdmin)
-admin.site.register(Resume, ResumeAdmin)
 admin.site.register(Help)
 
 admin.site.register(Opinion)
@@ -59,7 +44,6 @@ admin.site.register(Answer)
 admin.site.register(Chat)
 admin.site.register(Tasks, Tasks_Admin)
 admin.site.register(Message)
-admin.site.register(Settings)
 
 
 class SexAdmin(admin.ModelAdmin):
@@ -114,6 +98,7 @@ class StateAdmin(admin.ModelAdmin):
     model = State
 
 
+admin.site.register(Settings)
 admin.site.register(Sex, SexAdmin)
 admin.site.register(Citizenship, CitizenshipAdmin)
 admin.site.register(FamilyState, FamilyStateAdmin)
@@ -129,26 +114,47 @@ admin.site.register(TypeSalary, TypeSalaryAdmin)
 admin.site.register(State, StateAdmin)
 
 
-# TeamRome
-class InlineExp(admin.TabularInline):
+class InlineFilesForJobInterviews(admin.TabularInline):
+    model = FilesForJobInterviews
+
+
+# TeamPoland
+class JobInterviewsAdmin(admin.ModelAdmin):
+    list_display = (
+        'client', 'name', 'location'
+    )
+    list_display_links = (
+        'client', 'name', 'location'
+    )
+    search_fields = (
+        'client', 'name', 'location'
+    )
+
+    model = JobInterviews
+    inlines = [InlineFilesForJobInterviews]
+
+    # class Media:
+    #    js = ['js/scriptJob.js']
+
+
+admin.site.register(JobInterviews, JobInterviewsAdmin)
+
+
+class InlineExp(admin.TabularInline):  # TeamRome
     model = Experience
 
 
-# TeamRome
-class InlineEdu(admin.TabularInline):
+class InlineEdu(admin.TabularInline):  # TeamRome
     model = Education
 
 
-# TeamRome
-class InlineCV(admin.TabularInline):
+class InlineCV(admin.TabularInline):  # TeamRome
     model = CV
 
 
-# TeamRome
-class ClientAdmin(admin.ModelAdmin):
+class ClientAdmin(admin.ModelAdmin):  # TeamRome
     model = Client
     inlines = [InlineExp, InlineEdu, InlineCV]
 
 
-# TeamRome
-admin.site.register(Client, ClientAdmin)
+admin.site.register(Client, ClientAdmin)  # TeamRome

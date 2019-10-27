@@ -3,7 +3,7 @@ from client.edit.parsers import (pars_exp_request)
 from client.edit.utility import (time_it, try_except, check_input_str, check_home_number, check_telegram, check_phone)
 
 from client.models import (Sphere, Sex, Citizenship, FamilyState, Children, City, State)
-from recruit.models import (RecruitExperience, UserModel, Recruit, RecruitTelephone, RecruitSkills)
+from recruit.models import (RecruitExperience, UserModel, Recruiter, RecruitTelephone, RecruitSkills)
 
 
 @try_except
@@ -36,8 +36,8 @@ def recruit_edit_page_post(recruit_instance, request):  # TeamRome
     if not recruit_instance:
         """ Если карточки нету - создаём. """
         print('\tUser Profile DO NOT exists - creating!')
-        recruit = Recruit(
-            user_recruit=user,
+        recruit = Recruiter(
+            recruiter=user,
             patronymic=patronymic,
             sex=sex,
             date_born=date_born,
@@ -59,7 +59,7 @@ def recruit_edit_page_post(recruit_instance, request):  # TeamRome
         """ Если карточка есть - достаём из БД Объект = Клиент_id.
         Перезаписываем (изменяем) существующие данныев. """
         print('\tUser Profile exists - Overwriting user data')
-        user_model = UserModel.objects.get(id=recruit_instance.user_recruit_id)
+        user_model = UserModel.objects.get(id=recruit_instance.recruiter_id)
         user_model.first_name = user_name
         user_model.last_name = last_name
         user_model.email = email
@@ -141,7 +141,9 @@ def recruit_experience_page_post(recruit_instance, request):  # TeamRome
         print('\tExperience Parser is Empty')
 
 
-def skills_page_post(recruit_instance, request):
+@try_except
+@time_it
+def skills_page_post(recruit_instance, request):  # TeamRome
     skills_arr = request.POST.getlist('skill') if request.POST.getlist('skill') else None
 
     if any(skills_arr):
@@ -158,7 +160,9 @@ def skills_page_post(recruit_instance, request):
         print("\tNo skills")
 
 
-def photo_page_post(recruit_instance, request):
+@try_except
+@time_it
+def photo_page_post(recruit_instance, request):  # TeamRome
     form = UploadImgForm(request.POST, request.FILES)
     if form.is_valid():
         img = form.cleaned_data.get('img')

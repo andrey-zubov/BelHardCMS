@@ -1,4 +1,4 @@
-from client.edit.edit_forms import (UploadImgForm, EducationFormSet, CertificateFormSet)
+from client.edit.edit_forms import UploadImgForm
 from client.edit.parsers import (pars_edu_request, pars_cv_request, pars_exp_request)
 from client.edit.utility import (check_input_str, check_phone, check_home_number, check_telegram)
 from client.edit.utility import (time_it, try_except)

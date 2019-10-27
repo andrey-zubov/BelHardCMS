@@ -6,8 +6,7 @@ from django.views.generic import TemplateView
 from client.models import (SkillsWord, EducationWord, CvWord)
 
 
-# TeamRome
-class SkillsDataList(TemplateView):
+class SkillsDataList(TemplateView):  # TeamRome
     def get(self, request, *args, **kwargs):
         # print('SkillsDataList.GET: %s' % request.GET)
         words = [i.skills_word for i in SkillsWord.objects.all()]
@@ -15,8 +14,7 @@ class SkillsDataList(TemplateView):
         return HttpResponse(json_data)
 
 
-# TeamRome
-class InstitutionDataList(TemplateView):
+class InstitutionDataList(TemplateView):  # TeamRome
     def get(self, request, *args, **kwargs):
         # print('InstitutionDataList.GET: %s' % request.GET)
         words = [i.education_word for i in EducationWord.objects.all()]
@@ -24,8 +22,7 @@ class InstitutionDataList(TemplateView):
         return HttpResponse(json_data)
 
 
-# TeamRome
-class CvPositionDataList(TemplateView):
+class CvPositionDataList(TemplateView):  # TeamRome
     def get(self, request, *args, **kwargs):
         # print('CvPositionDataList.GET: %s' % request.GET)
         words = [i.position_word for i in CvWord.objects.all()]

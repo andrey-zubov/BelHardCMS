@@ -4,8 +4,7 @@ from time import perf_counter
 from client.edit.log_color import (log_info, log_verbose, log_error)
 
 
-# TeamRome
-def check_input_str(string: str, title=True) -> str or None:
+def check_input_str(string: str, title=True) -> str or None:  # TeamRome
     """ pattern: одно-два слова, слова с русскими и английскими буквами,
     апострафами, двойние слова, слова с цыфрами"""
     if re.match("^[a-zA-Zа-яА-Я0-9'-_]{1,100}[ ]?[-]?[a-zA-Zа-яА-Я0-9'-_]{0,100}$", string):
@@ -19,8 +18,7 @@ def check_input_str(string: str, title=True) -> str or None:
         return None
 
 
-# TeamRome
-def check_telegram(string: str) -> str or None:
+def check_telegram(string: str) -> str or None:  # TeamRome
     """ pattern: @tele, @123qwe, @qwe12, @asd11_sd1 """
     if re.match("^[@][a-zA-Zа-яА-Я_0-9]{1,100}$", string):
         log_info("\tcheck_telegram(): %s" % string)
@@ -30,8 +28,7 @@ def check_telegram(string: str) -> str or None:
         return None
 
 
-# TeamRome
-def check_home_number(string: str) -> str or None:
+def check_home_number(string: str) -> str or None:  # TeamRome
     """ pattern: 12/4, 13-4, 1a, f/2, 5/e, 6-y """
     if re.match("^[0-9a-zA-Zа-яА-Я/-]{1,10}$", string):
         log_info("\tcheck_home_number(): %s" % string)
@@ -41,8 +38,7 @@ def check_home_number(string: str) -> str or None:
         return None
 
 
-# TeamRome
-def check_phone(phone: str) -> str or None:
+def check_phone(phone: str) -> str or None:  # TeamRome
     """ pattern: +375291234567 """
     if re.match("^[+][0-9]{1,20}$", phone):
         log_info("\tcheck_phone(): %s" % phone)
@@ -52,8 +48,7 @@ def check_phone(phone: str) -> str or None:
         return None
 
 
-# TeamRome
-def try_except(foo):
+def try_except(foo):  # TeamRome
     """ Handle exceptions in a selected function = foo_name. """
 
     def wrapper(*args, **kwargs):
@@ -66,8 +61,7 @@ def try_except(foo):
     return wrapper
 
 
-# TeamRome
-def time_it(foo):
+def time_it(foo):  # TeamRome
     """ Return the value (in fractional seconds) of a performance counter for a function = foo_name. """
 
     def wrapper(*args, **kwargs):

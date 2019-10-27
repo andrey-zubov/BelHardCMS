@@ -6,8 +6,10 @@
 
 
 {% block content %}
+
+
     <article class="main">
-    <div class="wrapper">
+    <div class="wrapper" >
         <div class="right_block">
             <h3 class="HeadLine">Уведомления на почту</h3>
 
@@ -15,7 +17,7 @@
                 <li>
                     <section class="container">
                     <p class="paragraph ">О новых сообщениях</p>
-                    <label class="switch First">
+                    <label class="switch">
                             {% if settings.email_messages == False %}
                                 <input class="activation" id="email_messages" type="checkbox">
                                 <span class="slider round"></span>
@@ -30,7 +32,7 @@
                 <li>
                     <section class="container">
                     <p class="paragraph ">О новых задачах</p>
-                    <label class="switch Second">
+                    <label class="switch">
                         {% if settings.email_tasks == False %}
                             <input class="activation" type="checkbox" id="email_tasks">
                             <span class="slider round"></span>
@@ -61,7 +63,7 @@
                 <li>
                     <section class="container">
                     <p class="paragraph ">О новых встречах</p>
-                    <label class="switch Fourth">
+                    <label class="switch">
                         {% if settings.email_meetings == False %}
                             <input class="activation" type="checkbox" id="email_meetings">
                             <span class="slider round"></span>
@@ -76,7 +78,7 @@
                 <li>
                     <section class="container">
                         <p class="paragraph ">О новых ответах на отзывы</p>
-                        <label class="switch Fourth" style="">
+                        <label class="switch" style="">
                             {% if settings.email_reviews == False %}
                                 <input class="activation" type="checkbox" id="email_reviews">
                                 <span class="slider round"></span>
@@ -98,7 +100,7 @@
                 <li>
                     <section class="container">
                     <p class="paragraph ">О новых сообщениях</p>
-                    <label class="switch First">
+                    <label class="switch">
                             {% if settings.messages == False %}
                                 <input class="activation" id="messages" type="checkbox">
                                 <span class="slider round"></span>
@@ -113,7 +115,7 @@
                 <li>
                     <section class="container">
                     <p class="paragraph ">О новых задачах</p>
-                    <label class="switch Second">
+                    <label class="switch">
                         {% if settings.tasks == False %}
                             <input class="activation" type="checkbox" id="tasks">
                             <span class="slider round"></span>
@@ -144,7 +146,7 @@
                 <li>
                     <section class="container">
                     <p class="paragraph ">О новых встречах</p>
-                    <label class="switch Fourth" style="">
+                    <label class="switch" style="">
                         {% if settings.meetings == False %}
                             <input class="activation" type="checkbox" id="meetings">
                             <span class="slider round"></span>
@@ -159,7 +161,7 @@
                 <li>
                         <section class="container">
                         <p class="paragraph ">О новых ответах на отзывы</p>
-                        <label class="switch Fourth" style="">
+                        <label class="switch" style="">
                             {% if settings.reviews == False %}
                                 <input class="activation" type="checkbox" id="reviews">
                                 <span class="slider round"></span>
@@ -192,7 +194,7 @@
                     'url': '/client/settingsset/',
                     'data': {'setting': set, 'state': stat},
                     success: function (data) {
-                        console.log(data)
+                        console.log('ata')
                     }
                 });
             })

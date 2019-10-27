@@ -101,10 +101,30 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# добавить логи по необходимости
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': r'debug.log',  # при релизе сделать путь для хранения логов на сервере
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'ru-ru'
+LANGUAGE_CODE = 'Ru-ru'
 
 TIME_ZONE = 'Europe/Minsk'
 

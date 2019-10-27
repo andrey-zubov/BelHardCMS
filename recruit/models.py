@@ -1,13 +1,17 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from client.models import (Citizenship, Sex, FamilyState, Children, City, State, Sphere)
+from client.models import (Sex, Citizenship, FamilyState, Children, City, State, Sphere)
+
+""" PEP 8: Wildcard imports (from <module> import *) should be avoided, 
+as they make it unclear which names are present in the namespace, 
+confusing both readers and many automated tools. """
 
 UserModel = get_user_model()
 
 
-class Recruit(models.Model):  # TeamRome
-    user_recruit = models.OneToOneField(UserModel, on_delete=models.CASCADE)
+class Recruiter(models.Model):  # TeamRome
+    recruiter = models.OneToOneField(UserModel, on_delete=models.CASCADE)
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
     date_born = models.DateField(null=True, blank=True)
@@ -28,10 +32,13 @@ class Recruit(models.Model):  # TeamRome
     img = models.ImageField(blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
 
+    def __str__(self):
+        return "%s %s %s" % (self.recruiter.first_name, self.recruiter.last_name, self.patronymic)
+
 
 class RecruitExperience(models.Model):  # TeamRome
     """ Опыт работы. ForeignKey = несколько видов опыта работы у одного recruit. """
-    recruit_exp = models.ForeignKey(to='Recruit', on_delete=models.CASCADE)
+    recruit_exp = models.ForeignKey(to='Recruiter', on_delete=models.CASCADE)
 
     name = models.CharField(max_length=100, null=True, blank=True, verbose_name='organisation')
     sphere = models.ManyToManyField(Sphere, verbose_name='sphere')  # ??? not more 3
@@ -44,7 +51,7 @@ class RecruitExperience(models.Model):  # TeamRome
 class RecruitEducation(models.Model):  # TeamRome
     """ Образование / Курсы / Университеты / Коледжы.
         ForeignKey = несколько образований у одного recruit."""
-    recruit_edu = models.ForeignKey(to='Recruit', on_delete=models.CASCADE)
+    recruit_edu = models.ForeignKey(to='Recruiter', on_delete=models.CASCADE)
 
     institution = models.CharField(max_length=100, null=True, blank=True, verbose_name='institution')
     subject_area = models.CharField(max_length=100, null=True, blank=True, verbose_name='Предметная область')
@@ -56,7 +63,7 @@ class RecruitEducation(models.Model):  # TeamRome
 
 class RecruitSkills(models.Model):  # TeamRome
     """ Навыки. ForeignKey = несколько навыков у одного recruit. """
-    recruit_skills = models.ForeignKey(to='Recruit', on_delete=models.CASCADE)
+    recruit_skills = models.ForeignKey(to='Recruiter', on_delete=models.CASCADE)
 
     skill = models.CharField(max_length=100, blank=True, null=True)
 
@@ -74,7 +81,7 @@ class RecruitCertificate(models.Model):  # TeamRome
 
 class RecruitTelephone(models.Model):  # TeamRome
     """ Номера телефонов. ForeignKey = несколько телефонов у одного Клиента. """
-    recruit_phone = models.ForeignKey(to='Recruit', on_delete=models.CASCADE)
+    recruit_phone = models.ForeignKey(to='Recruiter', on_delete=models.CASCADE)
 
     telephone_number = models.CharField(max_length=20, blank=True, null=True)
 
