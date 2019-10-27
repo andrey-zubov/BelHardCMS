@@ -37,7 +37,7 @@ def recruit_edit_page_post(recruit_instance, request):  # TeamRome
         """ Если карточки нету - создаём. """
         print('\tUser Profile DO NOT exists - creating!')
         recruit = Recruiter(
-            user_recruit=user,
+            recruiter=user,
             patronymic=patronymic,
             sex=sex,
             date_born=date_born,
@@ -59,7 +59,7 @@ def recruit_edit_page_post(recruit_instance, request):  # TeamRome
         """ Если карточка есть - достаём из БД Объект = Клиент_id.
         Перезаписываем (изменяем) существующие данныев. """
         print('\tUser Profile exists - Overwriting user data')
-        user_model = UserModel.objects.get(id=recruit_instance.user_recruit_id)
+        user_model = UserModel.objects.get(id=recruit_instance.recruiter_id)
         user_model.first_name = user_name
         user_model.last_name = last_name
         user_model.email = email

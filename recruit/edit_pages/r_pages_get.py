@@ -21,7 +21,7 @@ def recruit_edit_page_get(recruit):  # TeamRome
     response['state'] = reversed(State.objects.all())
 
     if recruit:
-        user_model = UserModel.objects.get(id=recruit.user_recruit_id)
+        user_model = UserModel.objects.get(id=recruit.recruiter_id)
         response['user_model'] = {
             "first_name": user_model.first_name,
             "last_name": user_model.last_name,
