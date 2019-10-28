@@ -41,7 +41,7 @@ def skills_page_get(client):  # TeamRome
     """" views.py ClientEditSkills(TemplateView) GET method.  """
     response = defaultdict()
     if client:
-        skills_arr = [i['skill'] for i in Skills.objects.filter(client_skills=client).values()]
+        skills_arr = [i.skill for i in Skills.objects.filter(client_skills=client)]
         response['cl_skill'] = skills_arr
 
     return response
