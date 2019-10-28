@@ -23,7 +23,7 @@ def create_skills(name, skill):
 class ClientEditSkillsTests(TestCase):
     TEST_USER_USERNAME = 'test_user'
     TEST_USER_PASSWORD = 'test_user'
-    test_skills = ('123', '456')
+    TEST_SKILLS = ('123', '456')
 
     def setUp(self) -> None:
         user = get_user_model()
@@ -41,11 +41,9 @@ class ClientEditSkillsTests(TestCase):
 
     def test_get_response_user(self):
         self.client.login(username=self.TEST_USER_USERNAME, password=self.TEST_USER_PASSWORD)
-        sk = create_skills(self.TEST_USER_USERNAME, self.test_skills)
+        sk = create_skills(self.TEST_USER_USERNAME, self.TEST_SKILLS)
         response = self.client.get(reverse('client_edit_skills'))
-        self.assertQuerysetEqual(
-            response.context['data']['cl_skill'],
-            sk)
+        self.assertQuerysetEqual(response.context['data']['cl_skill'], sk)
 
 
 if __name__ == "__main__":
