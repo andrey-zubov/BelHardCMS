@@ -8,23 +8,99 @@
 {% block content %}
 
     <div class="col-md-8">
-        <h3>Hello recruit Profile</h3>
+    <h3>Моя карточка</h3>
         <p>
             <a href="{% url 'recruit_edit' %}" class="btn btn-outline-primary">Редактировать</a>
-
             <img src="{{ recruit_img|default:'/media/user_1.png' }}" alt="img" class="m-sm-1" height="64">
-
-            text....
-
             <a href="{% url 'main_page' %}" class="btn btn-outline-danger">X</a>
         </p>
 
-
-    <div>
         <div>
+            <div)
+                <p>
+                <h3><p>
+                {{ data.user_model.first_name }}
+                {{ data.user_model.last_name }}
+                {{ data.recruit.patronymic }}
+                </p></h3>
+                <p>
+                {{ data.recruit.family_state }},
+                {{ data.recruit.children }},
+                </p>
+                <h3>Место жительства:</h3>
+                <p>
+                {{ data.recruit.city }},
+                {{ data.recruit.street }},
+                {{ data.recruit.house }},
+                {{ data.recruit.flat }}
+                </p>
+            </div>
 
+            <div>
+                <p> Телефон:</p>
+                {% for e in data.rec_phone %}
+                    <p> {{ forloop.counter }} {{ e.telephone_number }}</p>
+                {% endfor %}
+                <p> Email: {{ data.user_model.email }}</p>
+                <p> Telegram: {{ data.recruit.telegram_link }}</p>
+                <p> Linkedin: {{ data.recruit.link_linkedin }}</p>
+            </div>
+
+            <div>
+                <h3>Образование</h3>
+                {% for edu in data.rec_edu %}
+                    <p>
+                    institution: {{ edu.institution }},
+                    qualification: {{ edu.qualification }},
+                    specialization: {{ edu.specialization }}
+                    </p>
+                {% endfor %}
+                <a href=""
+                   class="list-group-item list-group-item-action list-group-item-info">
+                    Подробнее </a>
+            </div>
+            <div>
+                <h3>Опыт работы</h3>
+                {% for exp in data.rec_exp_profile %}
+                    <p>
+                    name: {{ exp.name }},
+                    sphere: {{ exp.sphere }},
+                    position: {{ exp.position }},
+                    start_date: {{ exp.start_date }},
+                    end_date: {{ exp.end_date }},
+                    duties: {{ exp.duties }}
+                    </p>
+                {% endfor %}
+                <a href=""
+                   class="list-group-item list-group-item-action list-group-item-info">
+                    Подробнее </a>
+            </div>
+            <div>
+                <h3>Навыки</h3>
+                {% for s in data.rec_skill %}
+                <p>{{ s }}</p>
+                {% endfor %}
+                <a href=""
+                   class="list-group-item list-group-item-action list-group-item-info">
+                    Подробнее </a>
+            </div>
+
+            <div>
+                <h3>Мои резюме</h3>
+                {% for c in data.rec_cvs %}
+                    <p>
+                    position: {{ c.position }},
+                    employment: {{ c.rec_employment }},
+                    time_job: {{ c.rec_time_job }},
+                    salary: {{ c.salary }},
+                    type_salary: {{ c.rec_type_salary }}
+                    </p>
+                {% endfor %}
+                <a href=""
+                   class="list-group-item list-group-item-action list-group-item-info">
+                    Подробнее </a>
+            </div>
         </div>
-    </div>
 
     </div>
 
