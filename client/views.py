@@ -98,7 +98,8 @@ class ClientEditSkills(TemplateView):  # TeamRome
 
     def post(self, request):
         client_instance = client_check(request.user)
-        skills_page_post(client_instance, request)
+        if client_instance:
+            skills_page_post(client_instance, request)
         return redirect(to='/client/edit')
 
 
