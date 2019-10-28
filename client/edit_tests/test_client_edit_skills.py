@@ -31,7 +31,7 @@ def create_skills(name, skill):
 class ClientEditSkillsTests(TestCase):
     TEST_USER_USERNAME = 'admin'  # 'test_user'
     TEST_USER_PASSWORD = 'admin'  # 'test_user'
-    TEST_SKILLS = ['123', '456']
+    TEST_SKILLS = ['Python', 'Django']
 
     def setUp(self) -> None:
         # user = get_user_model()   # ONLY for 'test_user' NOT 'admin'
@@ -74,7 +74,7 @@ class ClientEditSkillsTests(TestCase):
             'skill': self.TEST_SKILLS,
         })  # saves to DB ????
         for i in self.TEST_SKILLS:
-            i_skill = Skills.objects.get(skill=i)
+            i_skill = Skills.objects.get(client_skills=get_client_instance(self.TEST_USER_USERNAME), skill=i)
             self.assertEquals(i_skill.skill, i)
         self.assertEquals(response.status_code, 302)  # redirect
 
