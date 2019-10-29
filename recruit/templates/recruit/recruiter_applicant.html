@@ -57,7 +57,7 @@
 
                         <form action="{{ applicant_user.get_absolute_url }}" method="post">
                             {% csrf_token %}
-                            <!--div> class="form-inline"-->
+                            <div class="form-inline">
                                 <div class="form-group">
                                     <label for="sel_resume">Доступные резюме:</label>
                                     <select size="5" name="id_cv" id="sel_resume">
