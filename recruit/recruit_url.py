@@ -8,7 +8,7 @@ from . import views
 urlpatterns = [
     # TeamPoland ##################################################
     # path('', views.recruiter_main_page, name='recruiter_url'),     # There is of recruiter's main page
-    #path('base/', views.recruiter_base, name='base_url'),
+    path('base1/', views.recruiter_base, name='base_url'), #base from poland
     path('base_of_clients/', views.base_of_applicants, name='base_of_clients'),
     path('base_of_clients/<id_a>/', views.applicant, name='applicant_url'),
     path('base_of_clients/<id_a>/tasks/', views.CreateJobInterview.as_view(), name='applicant_tasks_url'),
@@ -28,5 +28,6 @@ urlpatterns = [
     path(r'favorites/', views.favorites, name='favorites'),
     path(r'checkfavor/', views.check_favor, name='check_favor'),
     path('base/', views.recruit_base, name='recruit_base'),
+    path(r'client_filtration/', views.client_filtration, name='client_filtration'),
 
 ]

@@ -240,15 +240,17 @@ def add_new_task(requset):
     return redirect(to='add_task')
 
 
-
+#список избранных клиентов, для рекрутера
 def favorites(request):
     recruit = Recruiter.objects.get(recruiter=request.user)
-    clients = Client.objects.filter(own_recruiter=recruit)
+    own_status = recruit
+    clients = client_filtration(request, own_status)
     context = {'clients': clients}
 
     return render(request, template_name='recruit/favorites.html', context=context)
 
-#обработка избранного рекрутера
+
+# обработка избранного рекрутера
 def check_favor(request):
     client_id = (request.GET['client'])
     client = Client.objects.get(id=client_id)
@@ -264,7 +266,16 @@ def check_favor(request):
     return HttpResponse(client_id)
 
 
+# список незарезервированных клиентов, для рекрутера
 def recruit_base(request):
+    own_status = None
+    clients_after_search = client_filtration(request, own_status)
+    context = {'free_clients': clients_after_search}
+    return render(request, template_name='recruit/recruit_base.html', context=context)
+
+
+# функция поиска по списку клиентов, для рекрутера
+def client_filtration(request, own_status):
     recruit = Recruiter.objects.get(recruiter=request.user)
     search_request = request.GET.get('recruit_search', '')
     clients_after_search = set()
@@ -294,6 +305,6 @@ def recruit_base(request):
             clients_after_search.update(users_for_patronymic)
 
     else:
-        clients_after_search = Client.objects.filter(own_recruiter=None)
-    context = {'free_clients': clients_after_search}
-    return render(request, template_name='recruit/recruit_base.html', context=context)
+        clients_after_search = Client.objects.filter(own_recruiter=own_status)
+
+    return clients_after_search
