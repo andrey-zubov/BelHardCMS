@@ -3,7 +3,7 @@ from client.edit.parsers import (pars_edu_request, pars_cv_request, pars_exp_req
 from client.edit.utility import (check_input_str, check_phone, check_home_number, check_telegram)
 from client.edit.utility import (time_it, try_except)
 from client.models import (Skills, Telephone, Sex, Citizenship, FamilyState, Children, City, State, Client, Education,
-                           Certificate, CV, Experience, Sphere, Employment, TimeJob, TypeSalary, UserModel)
+                           Certificate, CV, Experience, Sphere, Employment, TimeJob, TypeSalary, UserModel, Direction)
 
 
 @try_except
@@ -187,34 +187,38 @@ def education_page_post(client_instance, request):  # TeamRome
 @time_it
 def cv_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditCv(TemplateView) POST method. """
-    arr_cv = pars_cv_request(request.POST)  # list of dictionaries
+    if client_instance:
+        arr_cv = pars_cv_request(request.POST)  # list of dictionaries
 
-    if any(arr_cv):
-        CV.objects.filter(client_cv=client_instance).delete()
+        if any(arr_cv):
+            CV.objects.filter(client_cv=client_instance).delete()
 
-        for cvs in arr_cv:
-            position = cvs['position']
-            employment = Employment.objects.get(employment=cvs['employment'])
-            time_job = TimeJob.objects.get(time_job_word=cvs['time_job'])
-            salary = cvs['salary']
-            type_salary = TypeSalary.objects.get(type_word=cvs['type_salary'])
+            for cvs in arr_cv:
+                position = cvs['position']
+                employment = Employment.objects.get(employment=cvs['employment'])
+                time_job = TimeJob.objects.get(time_job_word=cvs['time_job'])
+                salary = cvs['salary']
+                type_salary = TypeSalary.objects.get(type_word=cvs['type_salary'])
+                direction = Direction.objects.get(id=cvs['direction'])
 
-            if any(cvs.values()):
-                cv = CV(
-                    client_cv=client_instance,
-                    position=position,
-                    employment=employment,
-                    time_job=time_job,
-                    salary=salary,
-                    type_salary=type_salary,
-                )
-                cv.save()
-                # print("\tCV Form - OK:\n\t", position, employment, time_job, salary, type_salary)
-            else:
-                print('\tCv form is Empty')
+                if any(cvs.values()):
+                    cv = CV(
+                        client_cv=client_instance,
+                        direction=direction,
+                        position=position,
+                        employment=employment,
+                        time_job=time_job,
+                        salary=salary,
+                        type_salary=type_salary,
+                    )
+                    cv.save()
+                    # print("\tCV Form - OK:\n\t", position, employment, time_job, salary, type_salary)
+                else:
+                    print('\tCv form is Empty')
+        else:
+            print('\tCV Parser is Empty')
     else:
-        print('\tCV Parser is Empty')
-
+        print('\tclient_instance = None!')
 
 @try_except
 @time_it

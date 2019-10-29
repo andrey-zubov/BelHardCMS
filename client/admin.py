@@ -3,7 +3,7 @@ from django.contrib import admin
 from client.models import (SubTasks, CV, Vacancy, Help, Opinion, Answer, Chat, Tasks, Message, Sex, Citizenship,
                            FamilyState, Children, City, EducationWord, SkillsWord, Sphere, CvWord, Employment, TimeJob,
                            TypeSalary, State, Settings, FilesForJobInterviews, JobInterviews, Experience, Education,
-                           Client)
+                           Client, Direction)
 
 """ PEP 8: Wildcard imports (from <module> import *) should be avoided, 
 as they make it unclear which names are present in the namespace, 
@@ -158,3 +158,10 @@ class ClientAdmin(admin.ModelAdmin):  # TeamRome
 
 
 admin.site.register(Client, ClientAdmin)  # TeamRome
+
+
+class DirectionAdmin(admin.ModelAdmin):  # TeamRome
+    model = Direction
+
+
+admin.site.register(Direction, DirectionAdmin)  # TeamRome

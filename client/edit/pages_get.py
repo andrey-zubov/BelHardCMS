@@ -3,7 +3,7 @@ from collections import defaultdict
 from BelHardCRM.settings import MEDIA_URL
 from client.edit.utility import (time_it, try_except)
 from client.models import (Sex, Citizenship, FamilyState, Children, City, State, Telephone, Skills, Education,
-                           Certificate, CV, Experience, Employment, TimeJob, TypeSalary, UserModel, Sphere)
+                           Certificate, CV, Experience, Employment, TimeJob, TypeSalary, UserModel, Sphere, Direction)
 
 
 @try_except
@@ -80,6 +80,7 @@ def cv_page_get(client):  # TeamRome
     response['employment'] = Employment.objects.all()
     response['time_job'] = TimeJob.objects.all()
     response['type_salary'] = TypeSalary.objects.all()
+    response['direction'] = Direction.objects.all()
 
     if client:
         cvs = CV.objects.filter(client_cv=client)
@@ -91,6 +92,7 @@ def cv_page_get(client):  # TeamRome
             c['cl_employment'] = Employment.objects.get(id=c['employment_id']).employment
             c['cl_time_job'] = TimeJob.objects.get(id=c['time_job_id']).time_job_word
             c['cl_type_salary'] = TypeSalary.objects.get(id=c['type_salary_id']).type_word
+            c['cl_direction'] = Direction.objects.get(id=c['direction_id']).direction_word
 
     return response
 

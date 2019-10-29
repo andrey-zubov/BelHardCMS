@@ -69,7 +69,7 @@ class City(models.Model):
 class Certificate(models.Model):
     """ Сертификат: ссылка или картинка.
     ForeignKey = Несколько сертификатов может относиться к одному образованию. """
-    education = models.ForeignKey(to='Education', on_delete=models.CASCADE)
+    education = models.ForeignKey(to='Education', on_delete=models.CASCADE, null=True, blank=True)
 
     img = models.ImageField(blank=True, null=True, verbose_name='certificate_img')
     link = models.URLField(blank=True, null=True, max_length=100, verbose_name='certificate_link')
@@ -199,6 +199,7 @@ class CV(models.Model):
     client_cv = models.ForeignKey(to='Client', on_delete=models.CASCADE)
 
     position = models.CharField(max_length=100, null=True, blank=True)
+    direction = models.ForeignKey(to='Direction', on_delete=models.SET_NULL, null=True, blank=True)
     employment = models.ForeignKey(Employment, on_delete=models.SET_NULL, null=True, blank=True)
     time_job = models.ForeignKey(TimeJob, on_delete=models.SET_NULL, null=True, blank=True)
     salary = models.CharField(max_length=20, null=True, blank=True)
@@ -357,7 +358,7 @@ class FilesForJobInterviews(models.Model):
 
 
 class Client(models.Model):
-    user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE)
+    user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE, null=True, blank=True)
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
 
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
@@ -454,9 +455,9 @@ class Opinion(models.Model):
 
 
 class Answer(models.Model):
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, null=True, blank=True)
     text = models.TextField(max_length=3000)
-    opinion = models.OneToOneField(Opinion, on_delete=models.CASCADE)
+    opinion = models.OneToOneField(Opinion, on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -520,3 +521,14 @@ class Settings(models.Model):
     email_suggestions = models.BooleanField(default=True)
     email_meetings = models.BooleanField(default=True)
     email_reviews = models.BooleanField(default=True)
+
+
+class Direction(models.Model):  # TeamRome
+    direction_word = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Направление"
+        verbose_name_plural = "Направления"
+
+    def __str__(self):
+        return self.direction_word

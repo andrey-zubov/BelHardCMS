@@ -5,6 +5,15 @@
         <input type="text" class="form-control" id="id_position" name="position">
     </div>
     <div class="form-group">
+        <label for="id_direction">Направление</label>
+        <select class="form-control" id="id_direction" name="direction">
+            {% for d in data.direction %}
+                <option value="{{ d.id }}" {% if cv.cl_direction.id  ==  d.id %}selected
+                {% endif %}>{{ d }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
         <label for="id_employment">Занятость</label>
         <select class="form-control" id="id_employment" name="employment">
             {% for emp in data.employment %}
