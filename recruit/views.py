@@ -1,7 +1,6 @@
-
 from time import perf_counter
 from collections import defaultdict
-from client.models import Client, CV
+from client.models import Client, CV, JobInterviews, FilesForJobInterviews, Vacancy
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect, render
@@ -10,7 +9,6 @@ from django.views.generic.edit import FormView
 from django.template.context_processors import csrf
 
 from django.urls import reverse
-from django.http import HttpResponse
 from .models import *
 from recruit.models import Recruiter
 from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings, Client, State
@@ -22,6 +20,10 @@ def recruit_main_page(request):
 
 
 
+
+
+def recruiter_base(request):
+    return render(request, template_name='recruit/recruiter_base.html', )
 
 
 def base_of_applicants(request):
@@ -42,7 +44,7 @@ class CreateJobInterview(View):
             accepted_vacancies = applicant_user.cv_set.all()[0].vacancies_accept.all()
             for resume in applicant_user.cv_set.all()[1:]:
                 accepted_vacancies |= resume.vacancies_accept.all()
-            print(accepted_vacancies)
+            # print(accepted_vacancies)
         else:
             accepted_vacancies = None
         return render(request, 'recruit/recruiter_tasks_for_applicant.html',
@@ -50,15 +52,77 @@ class CreateJobInterview(View):
 
     def post(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
-        vac = request.POST.get('vacancy')
+        response = request.POST
         files = request.FILES.getlist('files')
-        print('vacancy_id  ', vac)
-        print(len(files))
-        for file in files:
-            print(file)
-
+        j = JobInterviews(
+            client=applicant_user,
+            name=response.get('name'),
+            jobinterviewtime=response.get('time'),
+            jobinterviewdate=response.get('date'),
+            # interview_author=Recruiter.objects.get(id=), ################ Filling in this field will be automatic
+            # period_of_execution= ###############################          I don't know why is this field needed
+            position=response.get('position'),
+            organization=response.get('organization'),
+            responsible_person=response.get('responsible_person'),
+            contact_responsible_person_1str=response.get('phone'),
+            contact_responsible_person_2str=response.get('telegram'),
+            location=response.get('address'),
+            additional_information=response.get('addition'),
+        )
+        if response.get('vacancy'):
+            j.vacancies = Vacancy.objects.get(id=int(response.get('vacancy')))
+        j.save()
+        if files:
+            for file in files:
+                # print(file)
+                f = FilesForJobInterviews(
+                    add_file=file,
+                    jobinterviews_files=j,
+                )
+                f.save()
         return redirect(applicant_user.get_tasks_url())
 
+
+class EditJobInterview(View):
+    def post(self, request, id_a):
+        applicant_user = Client.objects.get(id=id_a)
+        response = request.POST
+        files = request.FILES.getlist('files')
+        # print(request.POST['id_job_edit'])
+        j = JobInterviews.objects.get(id=request.POST['id_job_edit'])
+        j.name = response.get('name')
+        j.jobinterviewtime = response.get('time')
+        j.jobinterviewdate = response.get('date')
+        # interview_author=Recruiter.objects.get(id=) ################ Filling in this field will be automatic
+        # period_of_execution= ###############################          I don't know why is this field needed
+        j.position = response.get('position')
+        j.organization = response.get('organization')
+        j.responsible_person = response.get('responsible_person')
+        j.contact_responsible_person_1str = response.get('phone')
+        j.contact_responsible_person_2str = response.get('telegram')
+        j.location = response.get('address')
+        j.additional_information = response.get('addition')
+
+        if response.get('vacancy'):
+            j.vacancies = Vacancy.objects.get(id=int(response.get('vacancy')))
+        j.save()
+        if files:
+            for file in files:
+                # print(file)
+                f = FilesForJobInterviews(
+                    add_file=file,
+                    jobinterviews_files=j,
+                )
+                f.save()
+        return redirect(applicant_user.get_tasks_url())
+
+
+class DelJobInterview(View):
+    def post(self, request, id_a):
+        applicant_user = Client.objects.get(id=id_a)
+        j = JobInterviews.objects.get(id=request.POST['id_job'])
+        j.delete()
+        return redirect(applicant_user.get_tasks_url())
 # End Poland's views #######################################################################################
 
 
