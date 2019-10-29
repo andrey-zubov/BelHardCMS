@@ -34,15 +34,23 @@ class ApplicantDet(View):
     def get(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
         resumes = applicant_user.cv_set.all()
+        vacancies = Vacancy.objects.all()
         return render(request, 'recruit/recruiter_applicant.html',
-                      context={'applicant_user': applicant_user, 'resumes': resumes})
+                      context={'applicant_user': applicant_user, 'resumes': resumes, 'vacancies': vacancies})
 
     def post(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
         response = request.POST
         resume = CV.objects.get(id=response['id_cv'])
-        vacancy_id = request.POST.getlist('id_v')
-        # vacancy = Vacancy.objects.get(id=response['id_v'])
+        vacancies_id = request.POST.getlist('id_v')
+
+        print('resume  ', resume)
+        print('vacansies_id ', vacancies_id)
+        for id_v in vacancies_id:
+            vacancy = Vacancy.objects.get(id=id_v)
+            resume.vacancies_in_waiting.add(vacancy)
+            resume.notification.add(vacancy)
+            print(vacancy)
 
         return redirect(applicant_user.get_absolute_url())
 

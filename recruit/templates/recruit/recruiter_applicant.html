@@ -38,70 +38,27 @@
 
                         <form action="{{ applicant_user.get_absolute_url }}" method="post">
                             {% csrf_token %}
-                            <div class="form-inline">
+                            <!--div> class="form-inline"-->
                                 <div class="form-group">
-                                    <label for="id_position">Должность:</label>
-                                    <input type="text" class="form-control" id="id_position" name="position"
-                                           required value="{{ vacancy.state }}"/>
+                                    <label for="sel_resume">Доступные резюме:</label>
+                                    <select size="5" name="id_cv" id="sel_resume">
+                                        <option disabled>Выберите резюме пользователя</option>
+                                        {% for resume in resumes %}
+                                            <option value="{{ resume.id }}">{{ resume }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="id_salary"> &nbsp; Уровень заработной платы:</label>
-                                    <input type="text" class="form-control" id="id_salary" name="salary"
-                                           required value="{{ vacancy.salary }}"/>
+                                    <label for="sel_resume">Доступные вакансии:<br>(можно выбрать несколько)</label>
+                                    <select size="5" name="id_v" id="sel_vacancy" multiple>
+                                        <option disabled>Выберите подходящие ваканции</option>
+                                        {% for vacancy in vacancies %}
+                                            <option value="{{ vacancy.id }}">{{ vacancy }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
-                            </div>
-                            <br>
+                            <!--/div-->
 
-
-                            <div class=" form-inline">
-                                <div class="form-group">
-                                    <label for="id_organization">Организация:</label>
-                                    <input type="text" class="form-control" id="id_organization"
-                                           name="organization" required
-                                           value="{{ vacancy.organization }}"/>
-                                </div>
-                                <div class=" form-group">
-                                    <label for="id_address"> &nbsp; Адрес:</label>
-                                    <input type="text" class="form-control" id="id_address"
-                                           name="address" value="{{ vacancy.address }}">
-                                </div>
-                            </div>
-
-                            <div class=" form-group">
-                                <label for="id_employment">Опыт работы и занятость:</label>
-                                <input type="text" class="form-control" id="id_employment"
-                                       name="employment" value="{{ vacancy.employment }}">
-                            </div>
-
-                            <div class=" form-group">
-                                <label for="id_description">Описание:</label>
-                                <textarea class="form-control" id="id_description"
-                                          name="description">{{ vacancy.description }}</textarea>
-                            </div>
-
-                            <div class=" form-group">
-                                <label for="id_skills">Ключевые навыки:</label>
-                                <input type="text" class="form-control" id="id_skills" name="skills"
-                                       value="{{ vacancy.skills }}">
-                            </div>
-
-                            <div class=" form-group">
-                                <label for="id_requirements">Требования к соискателю:</label>
-                                <textarea class="form-control" id="id_requirements"
-                                          name="requirements">{{ vacancy.requirements }}</textarea>
-                            </div>
-
-                            <div class=" form-group">
-                                <label for="id_duties">Обязанности:</label>
-                                <textarea class="form-control" id="id_duties"
-                                          name="duties">{{ vacancy.duties }}</textarea>
-                            </div>
-
-                            <div class=" form-group">
-                                <label for="id_conditions">Условия работы:</label>
-                                <textarea class="form-control" id="id_conditions"
-                                          name="conditions">{{ vacancy.conditions }}</textarea>
-                            </div>
 
                             <div class=" modal-footer">
                                 <button type="reset" class="btn btn-secondary"
@@ -113,7 +70,7 @@
                                     Закрыть
                                 </button>
                                 <button type="submit" class="btn btn-primary" value="{{ vacancy.id }}"
-                                        name="id_vac">Редактировать
+                                        name="id_vac">Отправить
                                 </button>
                             </div>
                         </form>
