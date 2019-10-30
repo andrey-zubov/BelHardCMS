@@ -1,6 +1,9 @@
+import calendar
 from collections import defaultdict
 from datetime import datetime, timedelta
 from datetime import date
+from xmlrpc.client import DateTime
+
 from BelHardCRM.settings import MEDIA_URL
 from client.edit.utility import (time_it, try_except)
 from client.models import (Sex, Citizenship, FamilyState, Children, City, State, Telephone, Skills, Education,
@@ -117,17 +120,6 @@ def experience_page_get(client):  # TeamRome
 def show_profile(client):
     response = defaultdict()
 
-    # today = date.today()
-
-    # try:
-    #   birthday = Client.date_born.replace(year=today.year)
-    # except ValueError:  # raised when birth date is February 29 and the current year is not a leap year
-    #    birthday = Client.date_born.replace(year=today.year, month=born.month + 1, day=1)
-    # if birthday > today:
-    #   age = today.year - Client.date_born.year - 1
-    # else:
-    #   pass
-
     if client:
         edus = [i for i in Education.objects.filter(client_edu=client).values('institution', 'qualification')]
         response['cl_edu_profile'] = edus
@@ -150,18 +142,17 @@ def show_profile(client):
         phone_arr = [i for i in Telephone.objects.filter(client_phone=client).values("telephone_number")]
         response['cl_phone'] = phone_arr
         response["client"] = client
-
-        response["age"] = client.date_born
-
         now = datetime.now().strftime("%d.%m.%Y")
-
         date_format = "%d.%m.%Y"
         d1 = datetime.strptime(now, date_format)
-        d2 = datetime.strptime(response["age"], date_format)
-        count = d2 - d1
-        print(count.days)
+        data_b = client.date_born
+        print(data_b, type(data_b))
 
-       # a = now - response['age']
-        print("now", now, response["age"], response['cl_phone'])
+        age = None
+        if data_b:
+            dt_now = datetime.date(d1)
+            ly = calendar.leapdays(data_b.year, dt_now.year)
+            age = int(((dt_now - data_b).days - ly) / 365)
+        response["age"] = age
 
     return response
