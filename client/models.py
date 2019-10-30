@@ -492,7 +492,6 @@ class Client(models.Model):
         return reverse('applicant_del_interviews_url',
                        kwargs={'id_a': self.id})
 
-
 class Telephone(models.Model):
     """ Номера телефонов. ForeignKey = несколько телефонов у одного Клиента."""
     client_phone = models.ForeignKey(to='Client', on_delete=models.CASCADE)
