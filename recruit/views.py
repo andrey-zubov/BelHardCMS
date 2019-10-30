@@ -15,8 +15,6 @@ from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings, C
 from datetime import datetime
 
 # There is Poland's views #################################################################################
-
-
 def recruiter_main_page(request):
     return render(request, template_name='recruit/recruit_main_template.html', )
 
@@ -27,7 +25,7 @@ def recruiter_base(request):
 
 def base_of_applicants(request):
     applicants = Client.objects.all()
-    return render(request=request, template_name='recruit/recruiter_base_of_clients.html',
+    return render(request, template_name='recruit/recruiter_base_of_clients.html',
                   context={'applicants': applicants})
 
 class ApplicantDet(View):
@@ -196,7 +194,6 @@ class DelVacancy(View):
         v = Vacancy.objects.get(id=request.POST['id_vac'])
         v.delete()
         return redirect('vacancies_url')
-
 
 # End Poland's views #######################################################################################
 

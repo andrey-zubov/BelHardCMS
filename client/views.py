@@ -9,12 +9,12 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
 
 from django.urls import reverse
-from recruit import recruit_url
 
+from django.urls import reverse
 from django.utils.timezone import utc
 from django.http import HttpResponse, JsonResponse
 
-from .forms import *
+# from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
 
 from django.views.generic import View, TemplateView
 from .utils_for_mixins import ObjectResumeMixin
@@ -23,13 +23,14 @@ from .utils_for_mixins import ObjectResumeMixin
 from BelHardCRM.settings import MEDIA_URL
 from client.edit.check_clients import (client_check, load_client_img)
 from .forms import OpinionForm, AnswerForm, MessageForm
-
+# from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
 
 from .models import *
 from django.contrib.auth.models import Group
 from django.core.files.storage import FileSystemStorage
 from tika import parser
 import re
+
 
 def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     response = csrf(request)

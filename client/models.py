@@ -405,7 +405,6 @@ class Client(models.Model):
         # add certificate.pdf
         super().delete(*args, **kwargs)
 
-
     def get_absolute_url(self):
         return reverse('applicant_url', kwargs={'id_a': self.id})
 
@@ -417,7 +416,6 @@ class Client(models.Model):
 
     def get_del_jobi_url(self):
         return reverse('applicant_del_interviews_url', kwargs={'id_a': self.id})
-
 
 
 class Telephone(models.Model):
