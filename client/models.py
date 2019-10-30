@@ -496,7 +496,6 @@ class Client(models.Model):
     def get_add_client_task(self):
         return reverse('client_task_adding_url', kwargs={'id_a': self.id})
 
-
 class Telephone(models.Model):
     """ Номера телефонов. ForeignKey = несколько телефонов у одного Клиента."""
     client_phone = models.ForeignKey(to='Client', on_delete=models.CASCADE)
