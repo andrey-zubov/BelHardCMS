@@ -1,10 +1,12 @@
+import calendar
+import datetime
 from collections import defaultdict
 
 from BelHardCRM.settings import MEDIA_URL
 from client.edit.utility import (time_it, try_except)
 from client.models import (Sphere, Sex, Citizenship, FamilyState, Children, City, State)
-from recruit.models import (RecruitExperience, UserModel, RecruitTelephone, RecruitEducation, RecruitCertificate, )
-from recruit.models import (RecruitSkills)
+from recruit.models import (RecruitExperience, UserModel, RecruitTelephone, RecruitEducation, RecruitCertificate,
+                            RecruitSkills)
 
 
 @try_except
@@ -86,21 +88,10 @@ def recruit_education_page_get(recruit):  # TeamRome
     return response
 
 
-# @try_except
+@try_except
 @time_it
 def recruit_show_page_get(recruit):  # TeamRome
     response = defaultdict()
-
-    # today = date.today()
-
-    # try:
-    #   birthday = Client.date_born.replace(year=today.year)
-    # except ValueError:  # raised when birth date is February 29 and the current year is not a leap year
-    #    birthday = Client.date_born.replace(year=today.year, month=born.month + 1, day=1)
-    # if birthday > today:
-    #   age = today.year - Client.date_born.year - 1
-    # else:
-    #   pass
 
     if recruit:
         response['r_edu_profile'] = [i for i in
@@ -111,8 +102,7 @@ def recruit_show_page_get(recruit):  # TeamRome
                                                                                                   'end_date',
                                                                                                   'position',
                                                                                                   'name')]
-        # cvs = [i for i in RecruitCV.objects.filter(recruit_cv=recruit).values('position')]
-        # response['r_cvs_profile'] = cvs
+
         response['r_skill_profile'] = [i for i in RecruitSkills.objects.filter(recruit_skills=recruit).values('skill')]
 
         user_model = UserModel.objects.get(id=recruit.recruiter_id)
@@ -123,9 +113,14 @@ def recruit_show_page_get(recruit):  # TeamRome
         }
         response['r_phone'] = [i for i in
                                RecruitTelephone.objects.filter(recruit_phone=recruit).values("telephone_number")]
-        # response["recruit"] = Recruit.objects.filter(user_recruit=recruit)
+
         response["recruit"] = recruit
-        response["age"] = 9  # дописать
-        # print(response["age"])
+        data_b = recruit.date_born
+        age = None
+        if data_b:
+            dt_now = datetime.date.today()
+            ly = calendar.leapdays(data_b.year, dt_now.year)
+            age = int(((dt_now - data_b).days - ly) / 365)
+        response["age"] = age
 
     return response
