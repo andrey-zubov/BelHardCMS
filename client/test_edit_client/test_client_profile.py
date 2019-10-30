@@ -11,6 +11,7 @@ from django.urls import reverse
 
 
 class ClientProfileTests(TestCase):
+    """ python manage.py test client/test_edit_client/ --keepdb """
     TEST_USER_USERNAME = 'admin'
     TEST_USER_PASSWORD = 'admin'
 
@@ -22,5 +23,4 @@ class ClientProfileTests(TestCase):
 
 
 if __name__ == "__main__":
-    cl_pr = ClientProfileTests()
-    cl_pr.test_page_open()
+    ClientProfileTests()

@@ -44,7 +44,7 @@ def pars_exp_request(req_post) -> list:  # TeamRome
                        'exp_date_start': '', 'exp_date_end': '', 'experience_4': ''}
             count += 1
             # print('\t----')
-    print("\tout_arr: %s" % arr)
+    # print("\tout_arr: %s" % arr)
     return arr
 
 
@@ -83,7 +83,7 @@ def pars_cv_request(req_post: dict) -> list:  # TeamRome
                        'type_salary': ''}
             # print('----')
 
-    print("arr: %s" % arr)
+    # print("arr: %s" % arr)
     return arr
 
 
@@ -154,5 +154,5 @@ def pars_edu_request(req_post, _file) -> list:  # TeamRome
     """ For loop ends - save temporary dictionary to the output arr. """
     # print("\tdict_up: %s" % dict_up)
     arr.append(dict_up)
-    print("\tout_arr: %s" % arr)
+    # print("\tout_arr: %s" % arr)
     return arr

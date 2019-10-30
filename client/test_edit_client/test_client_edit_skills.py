@@ -7,21 +7,14 @@ from client.edit.utility import time_it
 from client.models import Skills, Client
 
 
-def create_client_instance(name):  # ONLY for 'test_user' NOT 'admin'
-    user = get_user_model()
-    us = user.objects.get(username=name)
-    return Client.objects.create(user_client=us)
-
-
-def get_client_instance(name):  # ONLY for 'admin' NOT 'test_user'
+def get_client_instance(name):
     user = get_user_model()
     us = user.objects.get(username=name)
     return Client.objects.get(user_client=us)
 
 
 def create_skills(name, skill):
-    # test_client = create_client_instance(name)    # ONLY for 'test_user' NOT 'admin'
-    test_client = get_client_instance(name)  # ONLY for 'admin' NOT 'test_user'
+    test_client = get_client_instance(name)
     for i in skill:
         Skills.objects.create(client_skills=test_client, skill=i)
     sk = skills_page_get(test_client)['cl_skill']
@@ -29,13 +22,17 @@ def create_skills(name, skill):
 
 
 class ClientEditSkillsTests(TestCase):
-    TEST_USER_USERNAME = 'admin'  # 'test_user'
-    TEST_USER_PASSWORD = 'admin'  # 'test_user'
+    """ python manage.py test client/test_edit_client/ --keepdb """
+    TEST_USER_USERNAME = 'test_user'
+    TEST_USER_PASSWORD = 'test_user'
+    TEST_USER_EMAIL = 'test_user'
     TEST_SKILLS = ['Python', 'Django']
 
     def setUp(self) -> None:
-        # user = get_user_model()   # ONLY for 'test_user' NOT 'admin'
-        # user.objects.create_user(self.TEST_USER_USERNAME, 'test_user@qwe.com', self.TEST_USER_PASSWORD)
+        user = get_user_model()
+        self.test_user = user.objects.create_user(self.TEST_USER_USERNAME, self.TEST_USER_EMAIL,
+                                                  self.TEST_USER_PASSWORD)
+        self.client_inst = Client.objects.create(user_client=self.test_user)
         self.url = reverse('client_edit_skills')
 
     @time_it
@@ -70,12 +67,15 @@ class ClientEditSkillsTests(TestCase):
     def test_POST_user(self):
         """ request.POST this LoggedIn User. """
         self.client.login(username=self.TEST_USER_USERNAME, password=self.TEST_USER_PASSWORD)
+
         response = self.client.post(path=self.url, data={
             'skill': self.TEST_SKILLS,
         })  # saves to DB ????
+
         for i in self.TEST_SKILLS:
-            i_skill = Skills.objects.get(client_skills=get_client_instance(self.TEST_USER_USERNAME), skill=i)
+            i_skill = Skills.objects.get(client_skills=self.client_inst, skill=i)
             self.assertEquals(i_skill.skill, i)
+
         self.assertEquals(response.status_code, 302)  # redirect
 
 
