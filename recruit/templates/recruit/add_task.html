@@ -1,5 +1,6 @@
 
-<!---->
+{% extends 'recruit/recruit_main_template.html' %}
+{% block content %}
 <div class="add_task">
     <form action="/recruit/add_new_task" method="post">
         {% csrf_token %}
@@ -44,5 +45,4 @@
         });
 
 </script>
-</body>
-</html>
+{% endblock %}

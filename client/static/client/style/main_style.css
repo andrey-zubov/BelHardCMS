@@ -278,8 +278,8 @@ ul{
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      width:500px;
-      border-bottom:1px solid black;
+      width:90%;
+
   }
 
   .paragraph{
@@ -319,18 +319,24 @@ ul{
       background-color: darkblue;
   }
 
+
 div.wrapper{
-  width: 800px;
+  width: 100%;
 }
 div.left_block{
   float:left;
-  width: 400px;
+  width: 45%;
 }
 div.right_block{
   float: right;
-  width: 400px;
+  width: 45%;
 }
 
 li{
     list-style-type: none;
 }
+
+ .notification:hover{
+     background: #00a5fe;
+
+ }

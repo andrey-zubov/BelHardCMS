@@ -1,0 +1,20 @@
+{% extends 'recruit/recruit_main_template.html' %}
+
+{% block title %}
+    База пользователей
+{% endblock %}
+
+{% block content %}
+    <div class="p-sm-5 pt-sm-1" align="middle">
+        <div class="container">
+            <div class="btn-group btn-group-lg" align="middle">
+                <a htef="{% url "base_of_clients" %}" type="button" class="btn btn-primary" ><h1>Каоточки<br>соискателей</h1></a>
+                <a type="button" class="btn btn-primary" disabled><h1>Каоточки<br>работодателей</h1></a>
+
+            </div>
+
+        </div>
+    </div>
+
+
+{% endblock %}
