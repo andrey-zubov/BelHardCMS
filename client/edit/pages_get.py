@@ -150,6 +150,7 @@ def show_profile(client):
 
         age = None
         if data_b:
+            #dt_now = datetime.date.today()
             dt_now = datetime.date(d1)
             ly = calendar.leapdays(data_b.year, dt_now.year)
             age = int(((dt_now - data_b).days - ly) / 365)
