@@ -3,7 +3,7 @@ from collections import defaultdict
 from client.models import Client, CV, JobInterviews, FilesForJobInterviews, Vacancy
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import View
 from django.views.generic.edit import FormView
 from django.template.context_processors import csrf
@@ -15,11 +15,12 @@ from client.models import Chat, Message, Tasks, UserModel, SubTasks, Settings, C
 from datetime import datetime
 
 # There is Poland's views #################################################################################
-def recruit_main_page(request):
+def recruiter_main_page(request):
     return render(request, template_name='recruit/recruit_main_template.html', )
 
-
-
+#для теста
+def recruit_main_page(request):
+    return render(request, template_name='recruit/recruit_main_template.html', )
 
 
 def recruiter_base(request):
@@ -27,14 +28,49 @@ def recruiter_base(request):
 
 
 def base_of_applicants(request):
-    applicants = Client.objects.all()
-    return render(request=request, template_name='recruit/recruiter_base_of_clients.html',
+    #applicants = Client.objects.all()
+    own_status = None
+    clients_after_search = client_filtration(request, own_status)
+    applicants = clients_after_search
+    return render(request, template_name='recruit/recruiter_base_of_clients.html',
                   context={'applicants': applicants})
 
+############################TODO dell
+# def recruit_base(request):
 
-def applicant(request, id_a):
-    applicant_user = Client.objects.get(id=id_a)
-    return render(request, 'recruit/recruiter_applicant.html', context={'applicant_user': applicant_user})
+#     own_status = None
+#     clients_after_search = client_filtration(request, own_status)
+#     context = {'free_clients': clients_after_search}
+#     return render(request, template_name='recruit/recruit_base.html', context=context)
+#
+
+##############################
+
+
+
+class ApplicantDet(View):
+    def get(self, request, id_a):
+        applicant_user = Client.objects.get(id=id_a)
+        resumes = applicant_user.cv_set.all()
+        vacancies = Vacancy.objects.all()
+        return render(request, 'recruit/recruiter_applicant.html',
+                      context={'applicant_user': applicant_user, 'resumes': resumes, 'vacancies': vacancies})
+
+    def post(self, request, id_a):
+        applicant_user = Client.objects.get(id=id_a)
+        response = request.POST
+        resume = CV.objects.get(id=response['id_cv'])
+        vacancies_id = request.POST.getlist('id_v')
+
+        print('resume  ', resume)
+        print('vacansies_id ', vacancies_id)
+        for id_v in vacancies_id:
+            vacancy = Vacancy.objects.get(id=id_v)
+            resume.vacancies_in_waiting.add(vacancy)
+            resume.notification.add(vacancy)
+            print(vacancy)
+
+        return redirect(applicant_user.get_absolute_url())
 
 
 class CreateJobInterview(View):
@@ -123,6 +159,62 @@ class DelJobInterview(View):
         j = JobInterviews.objects.get(id=request.POST['id_job'])
         j.delete()
         return redirect(applicant_user.get_tasks_url())
+
+
+class Vacancies(View):
+    def get(self, request):
+        vacancies = Vacancy.objects.all()
+        return render(request, 'recruit/recruiter_vacancies.html', context={'vacancies': vacancies})
+
+    def post(self, request):
+        response = request.POST
+        v = Vacancy(
+            state=response['position'],
+            salary=response['salary'],
+            organization=response['organization'],
+            address=response['address'],
+            employment=response['employment'],
+            description=response['description'],
+            skills=response['skills'],
+            requirements=response['requirements'],
+            duties=response['duties'],
+            conditions=response['conditions'],
+        )
+        v.save()
+        return redirect('vacancies_url')
+
+
+class VacancyDet(View):
+    def get(self, request, id_v):
+        vacancy = Vacancy.objects.get(id=id_v)
+        return render(request, 'recruit/recruiter_vacancy_detail.html', context={'vacancy': vacancy})
+
+    def post(self, request, id_v):
+        response = request.POST
+        v = Vacancy.objects.get(id=id_v)
+
+        v.state = response['position']
+        v.salary = response['salary']
+        v.organization = response['organization']
+        v.address = response['address']
+        v.employment = response['employment']
+        v.description = response['description']
+        v.skills = response['skills']
+        v.requirements = response['requirements']
+        v.duties = response['duties']
+        v.conditions = response['conditions']
+
+        v.save()
+
+        return redirect(v.get_absolute_url2())
+
+
+class DelVacancy(View):
+    def post(self, request, id_v):
+        v = Vacancy.objects.get(id=request.POST['id_vac'])
+        v.delete()
+        return redirect('vacancies_url')
+
 # End Poland's views #######################################################################################
 
 
@@ -242,11 +334,12 @@ def add_new_task(requset):
 
 #список избранных клиентов, для рекрутера
 def favorites(request):
-    recruit = Recruiter.objects.get(recruiter=request.user)
-    own_status = recruit
+    own_status = Recruiter.objects.get(recruiter=request.user)
+   # own_status = recruit
     clients = client_filtration(request, own_status)
     context = {'clients': clients}
 
+   # return HttpResponse(own_status)
     return render(request, template_name='recruit/favorites.html', context=context)
 
 
@@ -268,9 +361,10 @@ def check_favor(request):
 
 # список незарезервированных клиентов, для рекрутера
 def recruit_base(request):
+    applicants = Client.objects.all()
     own_status = None
     clients_after_search = client_filtration(request, own_status)
-    context = {'free_clients': clients_after_search}
+    context = {'free_clients': clients_after_search, 'applicants': applicants}
     return render(request, template_name='recruit/recruit_base.html', context=context)
 
 
@@ -303,7 +397,6 @@ def client_filtration(request, own_status):
             clients_after_search.update(users_for_first_name)
             clients_after_search.update(users_for_last_name)
             clients_after_search.update(users_for_patronymic)
-
     else:
         clients_after_search = Client.objects.filter(own_recruiter=own_status)
 

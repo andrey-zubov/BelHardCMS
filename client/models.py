@@ -245,22 +245,28 @@ class State(models.Model):
 
 class Vacancy(models.Model):
     state = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True)
     salary = models.CharField(max_length=20)
     organization = models.CharField(max_length=100)
-    address = models.CharField(max_length=200, null=True)
-    employment = models.CharField(max_length=100, null=True)
-    description = models.TextField(max_length=1000)
-    skills = models.CharField(max_length=100, null=True)
-    requirements = models.TextField(max_length=1000, null=True)
-    duties = models.TextField(max_length=1000, null=True)
-    conditions = models.TextField(max_length=1000, null=True)
+    address = models.CharField(max_length=200, blank=True, null=True)
+    employment = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(max_length=1000, blank=True, null=True)
+    skills = models.CharField(max_length=100, blank=True, null=True)
+    requirements = models.TextField(max_length=1000, blank=True, null=True)
+    duties = models.TextField(max_length=1000, blank=True, null=True)
+    conditions = models.TextField(max_length=1000, blank=True, null=True)
+    creating_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
         return self.state
 
-    def get_absolute_url(self):
+    def get_absolute_url(self):  # for client
         return reverse('vacancy_detail_url', kwargs={'id_v': self.id})
+
+    def get_absolute_url2(self): # for recruiter looking and editing vacancy
+        return reverse('vacancy_recr_url', kwargs={'id_v': self.id})
+
+    def get_del_url(self):
+        return reverse('vacancy_del_recr_url', kwargs={'id_v': self.id})
 
 
 class Help(models.Model):
@@ -280,7 +286,7 @@ class JobInterviews(models.Model):
     jobinterviewdate = models.DateField(max_length=20, verbose_name='Дата проведения собеседования')
     interview_author = models.CharField(max_length=50, verbose_name='Автор собеседования', blank=True, null=True)
     time_of_creation = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
-    period_of_execution = models.DateTimeField(blank=True, null=True, verbose_name='Срок исполнения')
+    period_of_execution = models.DateTimeField(blank=True, null=True, verbose_name='Срок исполнения') # TODO Dell field
     reminder = models.DateTimeField(blank=True, null=True, verbose_name='Напоминание')
     position = models.CharField(max_length=50, verbose_name='Предполагаемая должность')
     organization = models.CharField(max_length=50, verbose_name='Организация')
@@ -399,7 +405,6 @@ class Client(models.Model):
         # add certificate.pdf
         super().delete(*args, **kwargs)
 
-
     def get_absolute_url(self):
         return reverse('applicant_url', kwargs={'id_a': self.id})
 
@@ -411,7 +416,6 @@ class Client(models.Model):
 
     def get_del_jobi_url(self):
         return reverse('applicant_del_interviews_url', kwargs={'id_a': self.id})
-
 
 
 class Telephone(models.Model):

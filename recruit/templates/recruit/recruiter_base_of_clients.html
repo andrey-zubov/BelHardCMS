@@ -5,12 +5,24 @@
 {% endblock %}
 
 {% block content %}
+
+<div class="search">
+    <form action="{% url 'base_of_clients' %}">
+        <input type="search" name="recruit_search">
+        <button type="submit">поиск</button>
+    </form>
+</div>
+
+
     <div class="p-sm-5 pt-sm-1">
         <h2 class="mb-3 offset-md-0"> Выбор соискателя </h2>
         {% for applicant in applicants %}
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5><a href="{{ applicant.get_absolute_url }}" id="{{ applicant.id }}"> {{ applicant.user_client.first_name }} {{ applicant.user_client.last_name }}  {{ applicant.patronymic }}</a></h5>
+                    <h5><a href="{{ applicant.get_absolute_url }}" id="{{ applicant.id }}"> {{ applicant.user_client.first_name }} {{ applicant.user_client.last_name }}  {{ applicant.patronymic }}</a>
+                    <input type="button" class="white_star" id="{{ applicant.id }}">
+                    </h5>
+
                 </div>
                 <div class="card-body">
                     {% if applicant.cv_set.all %}
@@ -27,6 +39,21 @@
 
     <script>/*
         $('document').ready(function () {*/
+            console.log('ready')
+
+                /*spain for favorites */
+             $('.white_star').click(function () {
+                let client = $(this).attr('id')
+                let recruit = {{ request.user.id }}
+                $.ajax({
+                    'url': '/recruit/checkfavor/',
+                    'data': {'client': client,
+                            'recruit': recruit},
+                    success: function (data) {
+                        console.log('data')
+                       }
+                 });
+            });
 
             /*actions for links*/
            /* $('.detail_job_seeker').on('click', function () {
@@ -55,6 +82,10 @@
                 })
 
             });
+
+
+
+
         }) */
 
     </script>

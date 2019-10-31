@@ -2,23 +2,23 @@
 
 {% block content %}
 <div class="search">
-    <form action="{% url 'client_filtration' %}">
+    <form action="{% url 'favorites' %}">
         <input type="search" name="recruit_search">
         <button type="submit">поиск</button>
     </form>
 </div>
-    <div id="messages" class="panel" style="width: 100%; height: 70%; border: 1px solid black; overflow-y: scroll;" onscroll="scroll(this);" >
-          <div id="innerFavorites">
-               <div id="clients">
-                   {% for client in clients %}
-                        <div id="status_{{ client }}">
-                        {{ client.user_client.username }}-{{ client.is_reserved }}
-                            <input type="button" class="yellow_star" id="{{ client.id }}">
-                        </div>
-                  {% endfor %}
+    <div id="client-list" class="panel" style="width: 100%; height: 70%; border: 1px solid black; overflow-y: scroll;" onscroll="scroll(this);" >
 
-               </div>
-          </div>
+           <div id="clients">
+               {% for client in clients %}
+                    <div id="status_{{ client }}">
+                    {{ client.user_client.username }}-{{ client.is_reserved }}
+                        <input type="button" class="yellow_star" id="{{ client.id }}">
+                    </div>
+              {% endfor %}
+
+           </div>
+
     </div>
 
 
@@ -29,9 +29,7 @@
         $('.yellow_star').click(function () {
             let add = confirm("Добавить пользователя?");
             let client = $(this).attr('id');
-            console.log(recruit);
-            console.log(client);
-            console.log('qq');
+
             if (add === true){
                $.ajax({
                     'url': '/recruit/checkfavor/',
@@ -42,7 +40,7 @@
                     }
 
                  });
-                 console.log('SUC2')
+
             }
 
             });
