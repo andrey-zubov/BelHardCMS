@@ -59,58 +59,59 @@
                     {{ data.client.link_linkedin }}
             </div>
 
-            <div class="row">
-                <div class="col-sm-4">
-                    <h3>Образование</h3>
-                    {% for e in data.cl_edu_profile %}
-                        <p>
+            <table>
+                <tr>
+                    <div>
+                        <td><h3>Образование</h3>
+                        {% for e in data.cl_edu_profile %}
+                            <p>
                             {{ forloop.counter }} {{ e.institution }} -
                             {{ e.qualification }}
-                        </p>
-                    {% endfor %}
-                    <a href="{% url 'client_edit_education' %}"
+                            </p>
+                        {% endfor %}
+                         <a href="{% url 'client_edit_education' %}"
                     class="list-group-item list-group-item-action list-group-item-info">
-                    Подробнее </a>
-                </div>
+                             Подробнее </a></td>
+                     </div>
 
-                <div class="col-sm-4">
-                    <h3>Опыт работы</h3>
-                    {% for e in data.cl_exp_profile %}
-                    <p>
+                    <div>
+                        <td><h3>Опыт работы</h3>
+                        {% for e in data.cl_exp_profile %}
+                        <p>
                         {{ forloop.counter }} {{ e.start_date }} -
                         {{ e.end_date }} - {{ e.position }} - {{ e.name }}
-                    </p>
-                    {% endfor %}
-                    <a href="{% url 'client_edit_education' %}"
-               class="list-group-item list-group-item-action list-group-item-info">
-                    Подробнее </a>
+                        </p>
+                        {% endfor %}
+                        <a href="{% url 'client_edit_education' %}"
+                class="list-group-item list-group-item-action list-group-item-info">
+                    Подробнее </a></td>
 
-                </div>
-                <div class="col-sm-4">
-                    <h3>Навыки</h3>
-                    {% for e in data.cl_skill_profile %}
+                    </div>
+                    <div>
+                        <td><h3>Навыки</h3>
+                        {% for e in data.cl_skill_profile %}
                         <p>
                         {{ forloop.counter }} {{ e.skill }}
 
                         </p>
                     {% endfor %}
-                    <a href="{% url 'client_edit_education' %}"
+                        <a href="{% url 'client_edit_education' %}"
                     class="list-group-item list-group-item-action list-group-item-info">
-                    Подробнее </a>
-                </div>
+                            Подробнее </a></td>
+                    </div>
 
-                <div class="col-sm-4">
-                    <h3>Мои резюме</h3>
+                    <div>
+                        <td><h3>Мои резюме</h3>
                     {% for e in data.cl_cvs_profile %}
-                        <p>
+                            <p>
                             {{ forloop.counter }} {{ e.position }}
 
-                        </p>
-                    {% endfor %}
-                <a href="{% url 'client_edit_education' %}"
-                class="list-group-item list-group-item-action list-group-item-info">Подробнее </a>
-                </div>
-            </div>
+                            </p>
+                        {% endfor %}
+                    <a href="{% url 'client_edit_education' %}"
+                       class="list-group-item list-group-item-action list-group-item-info">Подробнее </a></td>
+                    </div>
+            </table>
         </div>
 
     </div>
