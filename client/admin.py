@@ -16,16 +16,17 @@ class Tasks_Admin(admin.ModelAdmin):
 
 admin.site.register(CV)
 
+
 class VacancyAdmin(admin.ModelAdmin):
     list_display = (
-        'state', 'organization', 'slug', 'address', 'employment', 'description',
-        'skills', 'requirements', 'duties', 'conditions',
+        'state', 'organization', 'address', 'employment', 'description',
+        'skills', 'requirements', 'duties', 'conditions', 'creating_date',
     )
     list_display_links = (
-        'state', 'organization', 'description',
+        'state', 'organization', 'description', 'creating_date',
     )
     search_fields = (
-        'state', 'organization', 'description',
+        'state', 'organization', 'description', 'creating_date',
     )
 
 
@@ -131,8 +132,10 @@ class ClientAdmin(admin.ModelAdmin):
 admin.site.register(Client, ClientAdmin)
 
 
+# TeamPoland
 class InlineFilesForJobInterviews(admin.TabularInline):
     model = FilesForJobInterviews
+
 
 # TeamPoland
 class JobInterviewsAdmin(admin.ModelAdmin):
