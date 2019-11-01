@@ -1,0 +1,370 @@
+{% extends 'recruit/recruit_main_template.html' %}
+
+{% block title %}
+    {{applicant_user.name}} {{ applicant_user.last_name }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="p-sm-5 pt-sm-1">
+        <h2 class="mb-5"> Собеседования </h2>
+
+    <div class="accordion" id="accordionExample">
+
+        {% for jobinterview in applicant_user.jobinterviews_set.all %}
+            {% if not jobinterview.status %}
+                <div class="card">
+                    <div class="card-header" id="heading{{ jobinterview.id }}">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse"
+                                    data-target="#collapse{{ jobinterview.id }}"
+                                    aria-expanded="true" aria-controls="collapse{{ jobinterview.id }}">
+                                {{ jobinterview.name }}
+                                ({{ jobinterview.jobinterviewtime }}) {{ jobinterview.jobinterviewdate }}
+                            </button>
+
+                            <button data-toggle="collapse" class="btn btn-danger" data-target="#del_jobi{{ jobinterview.id }}">Удалить
+                            </button>
+                            <form align="right" action="{{ applicant_user.get_del_jobi_url }}" method="post">
+                                {% csrf_token %}
+                                <div id="del_jobi{{ jobinterview.id }}" class="collapse" align="left">
+                                    <h4>Вы уверены, что хотите удалить?</h4>
+
+                                    <button class="btn btn-danger" type="submit" name="id_job"
+                                            value="{{ jobinterview.id }}">
+                                        Да
+                                    </button>
+                                    <button class="btn btn-success" type="button" data-toggle="collapse"
+                                            data-target="#del_jobi{{ jobinterview.id }}">
+                                        Нет
+                                    </button>
+                                </div>
+                            </form>
+                        </h2>
+
+                    </div>
+
+                    <div id="collapse{{ jobinterview.id }}" class="collapse"
+                         aria-labelledby="heading{{ jobinterview.id }}"
+                         data-parent="#accordionExample">
+                        <div class="card-body">
+                            {{ jobinterview.name }}<br>
+                            {{ jobinterview.location }}<br>
+                            Прикрепленные файлы:<br>
+                            {% for file in jobinterview.files_for_jobinterview.all %}
+
+                                <a type="button" class="btn btn-primary" href="{{ file.add_file.url }}">Скачать</a>
+                                {{ file }}<br>
+                            {% endfor %}
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-outline-secondary" data-toggle="modal"
+                                    data-target="#Modal{{ jobinterview.id }}">
+                                Редактировать
+                            </button>
+
+                            <!-- Modal edit -->
+                            <div class="modal fade bd-example-modal-xl" id="Modal{{ jobinterview.id }}" tabindex="-1"
+                                 role="dialog"
+                                 aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-xl" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel"> Редактировать  {{ jobinterview.name }} </h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            <form enctype='multipart/form-data'
+                                                  action="{{ applicant_user.get_edit_jobi_url }}" method="post">
+                                                {% csrf_token %}
+                                                <h5>
+                                                    (<input type="time" class="time" id="id_time" name="time" value="{{ jobinterview.jobinterviewtime }}" required />)*
+                                                    <input type="text" class="name" id="id_name" name="name" value="{{ jobinterview.name }}" required />*
+                                                </h5><br>
+                                                <h5>
+                                                    <input type="date" class="form-date" id="id_date" name="date"
+                                                           required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" value="{{ jobinterview.jobinterviewdate }}" />
+                                                </h5>
+                                                {% if accepted_vacancies %}
+                                                    <h5>Выберите подтвержденную соискателем вакансию: *
+                                                        <select name="vacancy" size="3" class="custom-select" required>
+                                                            {% for vacancy in accepted_vacancies %}
+                                                                <option value="{{ vacancy.id }}">{{ vacancy }}</option>
+                                                            {% endfor %}
+
+                                                        </select>
+                                                    </h5>
+                                                {% endif %}
+                                                <h5>
+                                                    Предлагаемая должность: <input type="text" class="form-position"
+                                                                                   id="id_position"
+                                                                                   name="position" required value="{{ jobinterview.position }}"/>*
+                                                </h5><br>
+                                                <h5>
+                                                    Организация: <input type="text" class="form-organization"
+                                                                        id="id_organization"
+                                                                        name="organization" required value="{{ jobinterview.organization }}"/>*
+                                                </h5><br>
+                                                <h5>
+                                                    Ответственное лицо: <input type="text"
+                                                                               class="form-responsible-person"
+                                                                               id="id_person"
+                                                                               name="responsible_person" value="{{ jobinterview.responsible_person }}"/>
+                                                </h5><br>
+                                                <h5>
+                                                    Контакты: <br>
+                                                    Тел: <input type="text" class="form-phone" id="id_phone"
+                                                                name="phone" placeholder="+375YYXXXXXXX" value="{{ jobinterview.contact_responsible_person_1str }}"/><br>
+                                                    Telegram: <input type="text" class="form-telegram" id="id_telegram"
+                                                                     name="telegram" value="{{ jobinterview.contact_responsible_person_2str }}"/>
+                                                </h5><br>
+                                                <h5>
+                                                    Место провведения собеседования: <input type="text"
+                                                                                            class="form-address"
+                                                                                            id="id_address"
+                                                                                            name="address" value="{{ jobinterview.location }}"/>
+                                                </h5><br>
+                                                <h5>
+                                                    Дополнительная информация:
+                                                    <input type="text" class="form-addition" id="id_addition"
+                                                           name="addition" value="{{ jobinterview.additional_information }}"/>
+                                                </h5><br>
+                                                <div id="files-div">
+                                                    <h5>
+                                                        Добавить файл(ы): <input type='file'
+                                                                                 class="btn btn-secondary form-files"
+                                                                                 name='files' multiple="multiple"
+                                                                                 id="form-files-edit" value=""/>
+
+                                                        <br>
+                                                    </h5>
+                                                </div>
+
+
+                                                <div class="modal-footer">
+                                                    <button type="reset" class="btn btn-secondary"
+                                                            data-dismiss="all-form">
+                                                        Очистить
+                                                    </button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Закрыть
+                                                    </button>
+                                                    <button type="submit" class="btn btn-primary" name="id_job_edit"
+                                            value="{{ jobinterview.id }}">Редактировать</button>
+                                                </div>
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end modal edit -->
+
+                        </div>
+                    </div>
+                </div>
+
+            {% endif %}
+        {% endfor %}
+
+    </div>
+
+<br>
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+            + Добавить собеседование...
+        </button><br>
+
+        <!-- Modal -->
+    <div class="modal fade bd-example-modal-xl" id="exampleModal" tabindex="-1" role="dialog"
+         aria-labelledby="myExtraLargeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"> Данные по собеседованию </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form enctype='multipart/form-data' action="{{ applicant_user.get_tasks_url }}" method="post">
+                        {% csrf_token %}
+                        <h5>
+                            (<input type="time" class="time" id="id_time" name="time" required/>)*
+                            <input type="text" class="name" id="id_name" name="name" required/>*
+                        </h5><br>
+                        <h5>
+                            <input type="date" class="form-date" id="id_date" name="date" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"/>*
+                        </h5>
+                        {% if accepted_vacancies %}
+
+
+                            <h5>Выберите подтвержденную соискателем вакансию: *
+                                <select name="vacancy" size="3" class="custom-select" required>
+                                    {% for vacancy in accepted_vacancies %}
+                                        <option value="{{ vacancy.id }}">{{ vacancy }}</option>
+                                    {% endfor %}
+
+                                </select>
+                            </h5>
+                        {% endif %}
+                        <h5>
+                            Предлагаемая должность: <input type="text" class="form-position" id="id_position"
+                                                           name="position" required/>*
+                        </h5><br>
+                        <h5>
+                            Организация: <input type="text" class="form-organization" id="id_organization"
+                                                name="organization" required/>*
+                        </h5><br>
+                        <h5>
+                            Ответственное лицо: <input type="text" class="form-responsible-person" id="id_person"
+                                                       name="responsible_person"/>
+                        </h5><br>
+                        <h5>
+                            Контакты: <br>
+                            Тел: <input type="text" class="form-phone" id="id_phone" name="phone" value="" placeholder="+375YYXXXXXXX"/><br>
+                            Telegram: <input type="text" class="form-telegram" id="id_telegram" name="telegram"/>
+                        </h5><br>
+                        <h5>
+                            Место провведения собеседования: <input type="text" class="form-address" id="id_address"
+                                                                    name="address"/>
+                        </h5><br>
+                        <h5>
+                            Дополнительная информация:
+                            <input type="text" class="form-addition" id="id_addition"  name="addition"/>
+                        </h5><br>
+                        <div id="files-div">
+                            <h5>
+                                Добавить файл(ы): <input type='file' class="btn btn-secondary form-files" name='files' multiple="multiple"
+                                                         id="form-files" value=""/>
+                                <button type="button" class="btn btn-secondary" id="reset-files">Удалить файл(ы)
+                                </button>
+                                <br>
+                            </h5>
+                        </div>
+
+
+
+                        <div class="modal-footer">
+                            <button type="reset" class="btn btn-secondary" data-dismiss="all-form">
+                                Очистить
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-primary">Добавить</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+<br>
+
+    <div class="accordion" id="accordionExample">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
+                            aria-expanded="true" aria-controls="collapseOne">
+                        Архив собеседований
+                    </button>
+                </h2>
+            </div>
+
+            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
+
+
+                    <div class="accordion" id="accordionExample">
+
+                        {% for jobinterview in applicant_user.jobinterviews_set.all %}
+                            {% if jobinterview.status %}
+                                <div class="card">
+                                    <div class="card-header" id="heading{{ jobinterview.id }}">
+                                        <h2 class="mb-0">
+                                            <button class="btn btn-link" type="button" data-toggle="collapse"
+                                                    data-target="#collapse{{ jobinterview.id }}"
+                                                    aria-expanded="true" aria-controls="collapse{{ jobinterview.id }}">
+                                                {{ jobinterview.name }}
+                                            </button>
+                                        </h2>
+                                    </div>
+
+                                    <div id="collapse{{ jobinterview.id }}" class="collapse"
+                                         aria-labelledby="heading{{ jobinterview.id }}"
+                                         data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            {{ jobinterview.name }}<br>
+                                            {{ jobinterview.location }}<br>
+                                            Прикрепленные файлы:<br>
+                                            {% for file in jobinterview.files_for_jobinterview.all %}
+
+                                                <a type="button" class="btn btn-primary" href="{{ file.add_file.url }}">Скачать</a>
+                                                {{ file }}<br>
+                                            {% endfor %}
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% endif %}
+                        {% endfor %}
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+
+    $(document).ready(function () {
+        $('#reset-files').on('click', function () {
+            $('#form-files').val('');
+        });
+    });
+
+
+    /*
+$('document').ready(function () {
+    var first = { first_flag }}
+    var second = { second_flag }}
+    if (first){$('#first').attr('hidden',false)}
+    if (second){$('#second').attr('hidden',false)} */
+
+
+    /*actions for buttons*/
+   /* $('.accept').on('click',function () {
+        var id = $(this).attr('id');
+        $.ajax({'url':'/client/accept_reject/',
+                'data':{'flag':'accept',"id_v":id},
+                success:function (data) {
+                    console.log(data);
+                    $('#first').attr('hidden', true)
+                    $('#second').attr('hidden', false)
+                }})
+
+    });
+    $('.reject').on('click',function () {
+        var id = $(this).attr('id');
+        $.ajax({'url':'/client/accept_reject/',
+                'data':{'flag':'reject','id_v':id},
+                success:function (data) {
+                    console.log(data)
+                    $('#first').attr('hidden', false)
+                    $('#second').attr('hidden', true)
+                }})
+
+    });
+}) */
+
+    </script>
+{% endblock %}

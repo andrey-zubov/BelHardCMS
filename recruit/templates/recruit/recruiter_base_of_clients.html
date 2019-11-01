@@ -1,0 +1,112 @@
+{% extends 'recruit/recruit_main_template.html' %}
+
+{% block title %}
+    База пользователей
+{% endblock %}
+
+{% block content %}
+
+<div class="search">
+    <form action="{% url 'base_of_clients' %}">
+        <input type="search" name="recruit_search">
+        <button type="submit">поиск</button>
+    </form>
+</div>
+
+<div id="client-list" class="panel" style="width: 100%; height: 70%; border: 1px solid black; overflow-y: scroll;" onscroll="scroll(this);" >
+
+    <div class="p-sm-5 pt-sm-1">
+        <h2 class="mb-3 offset-md-0"> Выбор соискателя </h2>
+        {% for applicant in applicants %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><a href="{{ applicant.get_absolute_url }}" id="{{ applicant.id }}"> {{ applicant.user_client.first_name }} {{ applicant.user_client.last_name }}  {{ applicant.patronymic }}</a>
+
+
+                        <input type="image" infavor="{{ owner_list }}" src='https://image.freepik.com/free-vector/_53876-25533.jpg' class="white_star" id="{{ applicant.id }}" style="width: 32px; height: 32px; opacity: 0.35">
+
+                    </h5>
+
+                </div>
+                <div class="card-body">
+                    {% if applicant.cv_set.all %}
+                        <b>Список резюме клиента </b><br>
+                        {% for cv in applicant.cv_set.all %}
+                            {{ cv }}<br>
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+    <script>/*
+
+
+        $('document').ready(function () {*/
+            console.log('ready')
+            <!--TODO Реализовать проход по звездам без вложенного цикла-->
+            for (let q = 0; q < {{ owner_range }}; q++){
+            console.log('QWERTY');
+
+
+            }
+
+                /*spain for favorites */
+             $('.white_star').click(function () {
+                let add = confirm("Вы точно хотите добавить пользователя в избранное?");
+                let client = $(this).attr('id')
+                let recruit = {{ request.user.id }}
+                x = $(this)
+                $.ajax({
+                    'url': '/recruit/checkfavor/',
+                    'data': {'client': client,
+                            'recruit': recruit},
+                    success: function (data) {
+                        console.log('data')
+                         $(x).animate({
+                        'opacity':'1',
+                        });
+
+                       }
+                 });
+            });
+
+            /*actions for links*/
+           /* $('.detail_job_seeker').on('click', function () {
+                var id = $(this).attr('id');
+                $.ajax({
+                    'url': '/client/accept_reject/',
+                    'data': {'flag': 'accept', "id_v": id},
+                    success: function (data) {
+                        console.log(data);
+                        $('#first').attr('hidden', true)
+                        $('#second').attr('hidden', false)
+                    }
+                })
+
+            });
+            $('.reject').on('click', function () {
+                var id = $(this).attr('id');
+                $.ajax({
+                    'url': '/client/accept_reject/',
+                    'data': {'flag': 'reject', 'id_v': id},
+                    success: function (data) {
+                        console.log(data)
+                        $('#first').attr('hidden', false)
+                        $('#second').attr('hidden', true)
+                    }
+                })
+
+            });
+
+
+
+
+        }) */
+
+    </script>
+{% endblock %}

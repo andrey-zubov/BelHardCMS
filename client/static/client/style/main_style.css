@@ -216,6 +216,7 @@ ul{
     display: inline-block;
     width: 60px;
     height: 34px;
+    margin-left: auto;
   }
 
   .switch input {display:none;}
@@ -277,22 +278,14 @@ ul{
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      width:500px;
-      border-bottom:1px solid black;
+      width:90%;
+
   }
 
   .paragraph{
       padding-right:50px;
   }
-  .Second{
-      margin-left:47px;
-  }
-  .Fourth{
-      margin-left: 38px;
-  }
-  .First{
-      margin-left:15px;
-  }
+
   .HeadLine{
       text-decoration: underline;
   }
@@ -326,6 +319,7 @@ ul{
       background-color: darkblue;
   }
 
+
   .message_block_left {
       width: fit-content;
       margin: 0.25% 0.25% auto 2%;
@@ -357,4 +351,27 @@ ul{
       text-align: right;
       margin-right: 1%;
   }
+
+
+
+div.wrapper{
+  width: 100%;
+}
+div.left_block{
+  float:left;
+  width: 45%;
+}
+div.right_block{
+  float: right;
+  width: 45%;
+}
+
+li{
+    list-style-type: none;
+}
+
+ .notification:hover{
+     background: #00a5fe;
+
+ }
 
