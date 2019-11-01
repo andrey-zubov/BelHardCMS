@@ -26,10 +26,19 @@ def recruiter_base(request):
 def base_of_applicants(request):
     #applicants = Client.objects.all()
     own_status = 'all'
+
+    # Для проверки на наличие в списке избранного
+    recruiter = Recruiter.objects.get(recruiter=request.user)
+    owner_list = Client.objects.filter(own_recruiter=recruiter)
+    owner_range = len(owner_list)
+
+
     clients_after_search = client_filtration(request, own_status)
     applicants = clients_after_search
     return render(request, template_name='recruit/recruiter_base_of_clients.html',
-                  context={'applicants': applicants})
+                  context={'applicants': applicants,
+                            'owner_list': owner_list,
+                            'owner_range':owner_range})
 
 ############################TODO dell
 # def recruit_base(request):
