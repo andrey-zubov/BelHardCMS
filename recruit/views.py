@@ -40,16 +40,7 @@ def base_of_applicants(request):
                             'owner_list': owner_list,
                             'owner_range':owner_range})
 
-############################TODO dell
-# def recruit_base(request):
 
-#     own_status = None
-#     clients_after_search = client_filtration(request, own_status)
-#     context = {'free_clients': clients_after_search}
-#     return render(request, template_name='recruit/recruit_base.html', context=context)
-#
-
-##############################
 
 
 
