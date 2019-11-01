@@ -17,8 +17,7 @@ def create_skills(name, skill):
     test_client = get_client_instance(name)
     for i in skill:
         Skills.objects.create(client_skills=test_client, skill=i)
-    sk = skills_page_get(test_client)['cl_skill']
-    return ["'%s'" % i for i in sk]  # ["'123'", "'456'"]
+    return skills_page_get(test_client)['cl_skill']
 
 
 class ClientEditSkillsTests(TestCase):
@@ -47,7 +46,7 @@ class ClientEditSkillsTests(TestCase):
     def test_GET_no_user(self):
         """ Open page without User Login - AnonymousUser. """
         response = self.client.get(self.url)
-        self.assertQuerysetEqual(response.context['data'], [])
+        self.assertEqual(any(response.context['data'].values()), False)
 
     @time_it
     def test_GET_user(self):
@@ -55,7 +54,8 @@ class ClientEditSkillsTests(TestCase):
         self.client.login(username=self.TEST_USER_USERNAME, password=self.TEST_USER_PASSWORD)
         sk = create_skills(self.TEST_USER_USERNAME, self.TEST_SKILLS)
         response = self.client.get(self.url)
-        self.assertQuerysetEqual(response.context['data']['cl_skill'], sk)
+        for a, b in zip(response.context['data']['cl_skill'], sk):
+            self.assertEqual(a, b)
 
     @time_it
     def test_POST_no_user(self):
@@ -74,9 +74,9 @@ class ClientEditSkillsTests(TestCase):
 
         for i in self.TEST_SKILLS:
             i_skill = Skills.objects.get(client_skills=self.client_inst, skill=i)
-            self.assertEquals(i_skill.skill, i)
+            self.assertEqual(i_skill.skill, i)
 
-        self.assertEquals(response.status_code, 302)  # redirect
+        self.assertEqual(response.status_code, 302)  # redirect
 
 
 if __name__ == "__main__":

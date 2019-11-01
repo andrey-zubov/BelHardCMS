@@ -391,7 +391,7 @@ class RecruitEditPhoto(TemplateView):  # TeamRome
 
     def get(self, request, *args, **kwargs):
         recruit_instance = recruit_check(request.user)
-        response = {'client_img': load_client_img(recruit_instance),
+        response = {'recruit_img': load_client_img(recruit_instance),
                     'form': RecruitUploadImgForm(),
                     }
         return render(request=request, template_name=self.template_name, context=response)
@@ -400,3 +400,36 @@ class RecruitEditPhoto(TemplateView):  # TeamRome
         recruit_instance = recruit_check(request.user)
         photo_page_post(recruit_instance, request)
         return redirect(to='/recruit/edit')
+
+
+class RecruitShowSkills(TemplateView):  # TeamRome
+    template_name = 'recruit/show/show_skills.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'data': skills_page_get(recruit_instance),
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
+
+
+class RecruitShowEducation(TemplateView):  # TeamRome
+    template_name = 'recruit/show/show_education.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'data': recruit_education_page_get(recruit_instance),
+                    }
+        return render(request, self.template_name, response)
+
+
+class RecruitShowExperience(TemplateView):  # TeamRome
+    template_name = 'recruit/show/show_experience.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    "data": recruit_experience_page_get(recruit_instance),
+                    }
+        return render(request, self.template_name, response)

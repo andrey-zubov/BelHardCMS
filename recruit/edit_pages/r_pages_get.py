@@ -49,8 +49,7 @@ def recruit_experience_page_get(recruit):  # TeamRome
         response['rec_exp'] = exp_dict
 
         for i, e in enumerate(exp):
-            sphere = [i['sphere_word'] for i in e.sphere.values()]
-            exp_dict[i]['sphere'] = sphere
+            exp_dict[i]['sphere'] = [i['sphere_word'] for i in e.sphere.values()]
 
     return response
 

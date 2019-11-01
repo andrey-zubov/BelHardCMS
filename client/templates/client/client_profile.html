@@ -80,7 +80,7 @@
                             {{ e.end_date }} - {{ e.position }} - {{ e.name }}
                         </p>
                     {% endfor %}
-                    <a href="{% url 'show_experience' %}"
+                    <a href="{% url 'client_show_experience' %}"
                        class="list-group-item list-group-item-action list-group-item-info">
                         Подробнее </a></td>
 
@@ -93,7 +93,7 @@
 
                         </p>
                     {% endfor %}
-                    <a href="{% url 'show_skills' %}"
+                    <a href="{% url 'client_show_skills' %}"
                        class="list-group-item list-group-item-action list-group-item-info">
                         Подробнее </a></td>
             </div>
@@ -106,7 +106,7 @@
 
                         </p>
                     {% endfor %}
-                    <a href="{% url 'show_cv' %}"
+                    <a href="{% url 'client_show_cv' %}"
                        class="list-group-item list-group-item-action list-group-item-info">Подробнее </a></td>
             </div>
     </table>

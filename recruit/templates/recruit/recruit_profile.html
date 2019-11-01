@@ -58,7 +58,7 @@
                     specialization: {{ edu.specialization }}
                 </p>
             {% endfor %}
-            <a href="{% url 'recruit_profile' %}"
+            <a href="{% url 'recruit_show_education' %}"
                class="list-group-item list-group-item-action list-group-item-info">Подробнее </a>
         </div>
         <div>
@@ -73,7 +73,7 @@
                     duties: {{ exp.duties }}
                 </p>
             {% endfor %}
-            <a href="{% url 'recruit_profile' %}"
+            <a href="{% url 'recruit_show_experience' %}"
                class="list-group-item list-group-item-action list-group-item-info">Подробнее </a>
         </div>
         <div>
@@ -83,7 +83,7 @@
                     {{ s.skill }},
                 {% endfor %}
             </p>
-            <a href="{% url 'recruit_profile' %}"
+            <a href="{% url 'recruit_show_skills' %}"
                class="list-group-item list-group-item-action list-group-item-info">Подробнее </a>
         </div>
     </div>
