@@ -18,10 +18,6 @@ from datetime import datetime
 def recruiter_main_page(request):
     return render(request, template_name='recruit/recruit_main_template.html', )
 
-#для теста
-def recruit_main_page(request):
-    return render(request, template_name='recruit/recruit_main_template.html', )
-
 
 def recruiter_base(request):
     return render(request, template_name='recruit/recruiter_base.html', )
@@ -29,7 +25,7 @@ def recruiter_base(request):
 
 def base_of_applicants(request):
     #applicants = Client.objects.all()
-    own_status = None
+    own_status = 'all'
     clients_after_search = client_filtration(request, own_status)
     applicants = clients_after_search
     return render(request, template_name='recruit/recruiter_base_of_clients.html',
@@ -304,7 +300,7 @@ def add_task(request):
 def add_new_task(requset):
     try:
         user = UserModel.objects.get(username=requset.POST['name'])
-    except UserModel.DoesNotExist: #TODO сделать проверку в отправек формы?
+    except UserModel.DoesNotExist:
         return HttpResponse('Необходимо задать юзера')
     newtask = Tasks.objects.create()
     newtask.user = user
@@ -337,7 +333,7 @@ def favorites(request):
     own_status = Recruiter.objects.get(recruiter=request.user)
    # own_status = recruit
     clients = client_filtration(request, own_status)
-    context = {'clients': clients}
+    context = {'applicants': clients}
 
    # return HttpResponse(own_status)
     return render(request, template_name='recruit/favorites.html', context=context)
@@ -370,6 +366,9 @@ def recruit_base(request):
 
 # функция поиска по списку клиентов, для рекрутера
 def client_filtration(request, own_status):
+    if own_status == 'all':
+        clients_after_search = Client.objects.all()
+        return clients_after_search
     recruit = Recruiter.objects.get(recruiter=request.user)
     search_request = request.GET.get('recruit_search', '')
     clients_after_search = set()
