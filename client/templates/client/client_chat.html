@@ -7,10 +7,30 @@
 
 {% block content %}
 
-    <div id="messages" class="panel" style="width: 80%; height: 400px; border: 1px solid black; overflow-y: scroll;" onscroll="scroll(this);" >
+    <div id="messages" class="panel" style="width: 90%; height: 80%; margin: 0 auto; margin-bottom: 1%; border: 1px solid black; overflow-y: scroll;" onscroll="scroll(this);" >
             <div id="innerMessages">
                 {% for message in chat.message_set.all %}
-                    {% include 'client/client_message.html' with message_item=message %}
+                    {% if message.author != request.user %}
+                        <div class="message_block_left">
+                            <div class="reply-body">
+                                <div class="list-inline" id="{{ message.id }}">
+                                        <div class="name_field">{{ message.author.first_name }} {{ message.author.last_name }} </div>
+                                    <div class="message_field">{{ message.message|safe }}</div>
+                                </div>
+                                <div class="date_field"><small>{{ message.pub_date.ctime }}</small></div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="message_block_right">
+                            <div class="reply-body">
+                                <div class="list-inline" id="{{ message.id }}">
+                                        <div class="name_field">{{ message.author.first_name }} {{ message.author.last_name }} </div>
+                                    <div class="message_field">{{ message.message|safe }}</div>
+                                </div>
+                                <div class="date_field"><small>{{ message.pub_date.ctime }}</small></div>
+                            </div>
+                        </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
@@ -32,17 +52,25 @@
         objDiv.scrollTop = objDiv.scrollHeight;
 
         setInterval(function(){
-            var last_id = $('ul.list-inline').last().attr('id');
+            var last_id = $('div.list-inline').last().attr('id');
             $.ajax({
                 'url': '/client/chat_update/',
                 'data': {'last_id' :last_id},
                 success: function (data) {
                     for (let dat in data){
+                        let new_mes ='<div class="message_block_left"><div class="reply-body">' +
+                                '<div class="list-inline" id="' + data[dat].message_id + '"><div class="name_field">'
+                                + data[dat].author_first_name + ' ' +  data[dat].author_last_name +'</div><div class="message_field">'
+                                + data[dat].message + '</div></div><div class="date_field"><small>'
+                                + data[dat].pub_date + '</small></div></div></div>'
+                        if (data[dat].author_id === {{ request.user.id }}){
+                           new_mes ='<div class="message_block_right"><div class="reply-body">' +
+                                '<div class="list-inline" id="' + data[dat].message_id + '"><div class="name_field">'
+                                + data[dat].author_first_name + ' ' +  data[dat].author_last_name +'</div><div class="message_field">'
+                                + data[dat].message + '</div></div><div class="date_field"><small>'
+                                + data[dat].pub_date + '</small></div></div></div>'
+                        }
 
-                        let new_mes = '<div class="list-group-item "><div class="reply-body"><ul class="list-inline" id=' + data[dat].message_id+
-                               '><li class="drop-left-padding"><strong class="list-group-item-heading">' + data[dat].author_name +
-                                '</strong></li><li class="pull-right text-muted"><small>' + data[dat].pub_date +
-                                '</small></li></ul><div>' + data[dat].message + '</div></div></div>';
 
                         $("#innerMessages").append(new_mes) ;
                         objDiv.scrollTop = objDiv.scrollHeight;

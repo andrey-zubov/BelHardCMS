@@ -325,3 +325,36 @@ ul{
       margin-right: 15px;
       background-color: darkblue;
   }
+
+  .message_block_left {
+      width: fit-content;
+      margin: 0.25% 0.25% auto 2%;
+      background: rgba(0, 176, 255, 0.1);
+      color: #000000;
+      padding: 10px;
+      border-radius: 15px;
+  }
+  .message_block_right {
+      width: fit-content;
+      margin: 0.25% 0.25% 2% auto;
+      background: rgba(0, 176, 255, 0.1);
+      color: #000000;
+      padding: 10px;
+      border-radius: 15px;
+  }
+  .name_field {
+      font-size: larger;
+      justify-content: left;
+      margin-left: 1%;
+      text-align: left;
+  }
+  .message_field {
+      margin-left: 1%;
+      text-align: left;
+  }
+  .date_field {
+      font-size: small;
+      text-align: right;
+      margin-right: 1%;
+  }
+
