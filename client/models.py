@@ -388,6 +388,12 @@ class JobInterviews(models.Model):
             self.readinterview = True
             self.save()
 
+    def delete(self, *args, **kwargs):      
+        if self.files_for_jobinterview.all():
+            for file in self.files_for_jobinterview.all():
+                file.delete()
+        super().delete(*args, **kwargs)
+
     def __str__(self):
         return self.name
 
@@ -403,6 +409,10 @@ class FilesForJobInterviews(models.Model):
     )
     add_file = models.FileField(upload_to='files_for_jobinterviewes/',
                                 verbose_name='Вложения', blank=True, null=True)
+
+    def delete(self, *args, **kwargs):
+        self.add_file.delete()
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.add_file.name
