@@ -233,7 +233,7 @@ def get_messages(request):
     send2 = []
     for s in messages:
         send2.append(
-            {'author_id': s.author.id, 'author_name': s.author.username, 'message': s.message, 'message_id': s.id,
+            {'author_id': s.author.id, 'user_id': request.user.id, 'author_first_name': s.author.first_name, 'author_last_name': s.author.last_name, 'message': s.message, 'message_id': s.id,
              'pub_date': s.pub_date.ctime()})
 
     return JsonResponse(send2, safe=False)
@@ -254,7 +254,7 @@ def send_message(request):
             except Exception:
                 print('Exception: нет адреса электронной почты')
 
-    send = {'author_id': mes.author.id, 'author_name': mes.author.username, 'message': mes.message, 'message_id': mes.id,
+    send = {'author_id': mes.author.id, 'user_id': request.user.id, 'author_first_name': mes.author.first_name, 'author_last_name': mes.author.last_name, 'message': mes.message, 'message_id': mes.id,
              'pub_date': mes.pub_date.ctime()}
     return JsonResponse(send, safe=False)
 

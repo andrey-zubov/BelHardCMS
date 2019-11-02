@@ -279,7 +279,7 @@ def client_login(request):  # ввести логин/пароль -> зайти
     else:
         return render(request, 'registration.html', res)
     try:
-        user_chat = Chat.objects.get(members=request.user)
+        user_chat = Chat.objects.filter(members=request.user)
     except Chat.DoesNotExist:
         user_chat = Chat.objects.create()
         user_chat.members.add(request.user)  # TODO сюда добавить менеджера, которому, по дефолту, передают юзера
@@ -418,7 +418,7 @@ def chat_update(request):
     send2 = []
     for s in mes:
         send2.append(
-            {'author_id': s.author.id, 'author_name': s.author.username, 'message': s.message, 'message_id': s.id,
+            {'author_id': s.author.id, 'author_first_name': s.author.first_name, 'author_last_name': s.author.last_name, 'message': s.message, 'message_id': s.id,
              'pub_date': s.pub_date.ctime()})
     return JsonResponse(send2, safe=False)
 
