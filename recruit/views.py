@@ -243,6 +243,10 @@ class DelVacancy(View):
         v.delete()
         return redirect('vacancies_url')
 
+def del_file(request):
+    file = FilesForJobInterviews.objacts.get(id=request.GET['id_f'])
+    file.delete()
+    return HttpResponse('id  ', request.GET['id_f'])
 
 # End Poland's views #
 

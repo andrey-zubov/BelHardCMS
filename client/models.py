@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
-
+import transliterate
 UserModel = get_user_model()
 
 
@@ -393,7 +393,7 @@ class JobInterviews(models.Model):
             self.readinterview = True
             self.save()
 
-    def delete(self, *args, **kwargs):      
+    def delete(self, *args, **kwargs):
         if self.files_for_jobinterview.all():
             for file in self.files_for_jobinterview.all():
                 file.delete()
@@ -406,13 +406,17 @@ class JobInterviews(models.Model):
     #    return reverse('applicant_url', kwargs={'id_a': self.id})
 
 
+def file_path(instanse, filename):
+    return f'users/{transliterate.translit(str(instanse.jobinterviews_files.client), reversed=True)}/files_for_jobinterviews/{filename}'
+
+
 class FilesForJobInterviews(models.Model):
     jobinterviews_files = models.ForeignKey(
         to='JobInterviews',
         on_delete=models.CASCADE,
         related_name='files_for_jobinterview'
     )
-    add_file = models.FileField(upload_to='files_for_jobinterviewes/',
+    add_file = models.FileField(upload_to=file_path,
                                 verbose_name='Вложения', blank=True, null=True)
 
     def delete(self, *args, **kwargs):
@@ -420,7 +424,7 @@ class FilesForJobInterviews(models.Model):
         super().delete(*args, **kwargs)
 
     def __str__(self):
-        return self.add_file.name
+        return self.add_file.name.split('/')[-1]
 
     class Meta:
         verbose_name = 'Файл'
