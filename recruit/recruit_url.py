@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import path
 
-from recruit.views import (base_of_applicants, CreateJobInterview, applicant, EditJobInterview, DelJobInterview,
+from recruit import views
+from recruit.views import (base_of_applicants, CreateJobInterview, EditJobInterview, DelJobInterview,
                            recruit_chat, get_messages, send_message, chat_update, check_mes, recruit_main_page,
                            add_task, add_new_task, favorites, check_favor, recruit_base, RecruitProfile,
                            RecruitEditMain, RecruitEditExperience, RecruitEditSkills, RecruitEditPhoto,
@@ -15,7 +16,7 @@ confusing both readers and many automated tools. """
 urlpatterns = [
     # TeamPoland ##################################################
 
-    path('', views.recruiter_main_page, name='recruiter_url'),     # There is of recruiter's main page
+    path('', views.recruit_main_page, name='recruiter_url'),     # There is of recruiter's main page
     path('base/', views.recruiter_base, name='base_url'),
     path('base/base_of_clients/', views.base_of_applicants, name='base_of_clients'),
     path('base/base_of_clients/<id_a>/', views.ApplicantDet.as_view(), name='applicant_url'),
