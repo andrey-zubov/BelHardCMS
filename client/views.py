@@ -30,6 +30,7 @@ from django.contrib.auth.models import Group
 from django.core.files.storage import FileSystemStorage
 from tika import parser
 import re
+from recruit import recruit_url
 
 
 def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
@@ -291,7 +292,7 @@ def client_login(request):  # ввести логин/пароль -> зайти
     if u.groups.filter(name='Users').exists():
         return redirect('client')
     elif u.groups.filter(name='Recruiters').exists():
-        return redirect('main_page')
+        return redirect('recruiter_url')
     else:  # добавляет юзера к группе 'Users' поумолчанию, если у него нет никаких групп
         user_group = Group.objects.get(name='Users')
         u.groups.add(user_group)
