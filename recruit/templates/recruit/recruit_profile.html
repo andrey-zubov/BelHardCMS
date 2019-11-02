@@ -6,26 +6,85 @@
 {% endblock %}
 
 {% block content %}
-
-    <div class="col-md-8">
-        <h3>Hello recruit Profile</h3>
-        <p>
-            <a href="{% url 'recruit_edit' %}" class="btn btn-outline-primary">Редактировать</a>
-
-            <img src="{{ recruit_img|default:'/media/user_1.png' }}" alt="img" class="m-sm-1" height="64">
-
-            text....
-
-            <a href="{% url 'main_page' %}" class="btn btn-outline-danger">X</a>
-        </p>
-
-
-    <div>
+    {% include 'client/edit_forms/tot_samui_bootstrap.html' %}
+    <div class="container">
+        <h3>Моя карточка</h3>
         <div>
+            <p>
+                <img src="{{ recruit_img|default:'/media/user_1.png' }}" alt="img" class="m-sm-1" height="64">
+                <a href="{% url 'recruit_edit' %}" class="btn btn-outline-primary">Редактировать</a>
+                <a href="{% url 'main_page' %}" class="btn btn-outline-danger">X</a>
+            </p>
 
+            <div>
+                <div>
+                    <h3>
+                        {{ data.user_model.first_name }}
+                        {{ data.user_model.last_name }}
+                        {{ data.recruit.patronymic }}
+                    </h3>
+                    <p>
+                        age: {{ data.age }},
+                        family_state: {{ data.recruit.family_state }},
+                        children: {{ data.recruit.children }},
+                    </p>
+                    <h3>Место жительства:</h3>
+                    <p>
+                        city: {{ data.recruit.city }},
+                        street: {{ data.recruit.street }},
+                        house: {{ data.recruit.house }},
+                        flat: {{ data.recruit.flat }}
+                    </p>
+                </div>
+
+                <div>
+                    <p> Телефон:
+                        {% for e in data.r_phone %}
+                            {{ e.telephone_number }},
+                        {% endfor %}
+                    </p>
+                    <p>Email: {{ data.user_model.email }}</p>
+                    <p>Telegram: {{ data.recruit.telegram_link }}</p>
+                    <p>Linkedin: {{ data.recruit.link_linkedin }}</p>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>Образование</h3>
+            {% for edu in data.r_edu_profile %}
+                <p>
+                    institution: {{ edu.institution }},
+                    qualification: {{ edu.qualification }},
+                    specialization: {{ edu.specialization }}
+                </p>
+            {% endfor %}
+            <a href="{% url 'recruit_show_education' %}"
+               class="list-group-item list-group-item-action list-group-item-info">Подробнее </a>
+        </div>
+        <div>
+            <h3>Опыт работы</h3>
+            {% for exp in data.r_exp_profile %}
+                <p>
+                    name: {{ exp.name }},
+                    sphere: {{ exp.sphere }},
+                    position: {{ exp.position }},
+                    start_date: {{ exp.start_date }},
+                    end_date: {{ exp.end_date }},
+                    duties: {{ exp.duties }}
+                </p>
+            {% endfor %}
+            <a href="{% url 'recruit_show_experience' %}"
+               class="list-group-item list-group-item-action list-group-item-info">Подробнее </a>
+        </div>
+        <div>
+            <h3>Навыки</h3>
+            <p>
+                {% for s in data.r_skill_profile %}
+                    {{ s.skill }},
+                {% endfor %}
+            </p>
+            <a href="{% url 'recruit_show_skills' %}"
+               class="list-group-item list-group-item-action list-group-item-info">Подробнее </a>
         </div>
     </div>
-
-    </div>
-
 {% endblock %}

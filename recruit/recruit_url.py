@@ -4,7 +4,8 @@ from django.urls import path
 from recruit.views import (base_of_applicants, CreateJobInterview, applicant, EditJobInterview, DelJobInterview,
                            recruit_chat, get_messages, send_message, chat_update, check_mes, recruit_main_page,
                            add_task, add_new_task, favorites, check_favor, recruit_base, RecruitProfile,
-                           RecruitEditMain, RecruitEditExperience, RecruitEditSkills, RecruitEditPhoto)
+                           RecruitEditMain, RecruitEditExperience, RecruitEditSkills, RecruitEditPhoto,
+                           RecruitEditEducation, RecruitShowSkills, RecruitShowEducation, RecruitShowExperience)
 
 """ PEP 8: Wildcard imports (from <module> import *) should be avoided, 
 as they make it unclear which names are present in the namespace, 
@@ -42,5 +43,9 @@ urlpatterns = [
     path('edit/experience/', RecruitEditExperience.as_view(), name='recruit_edit_experience'),
     path('edit/skills/', RecruitEditSkills.as_view(), name='recruit_edit_skills'),
     path('edit/photo/', RecruitEditPhoto.as_view(), name='recruit_edit_photo'),
+    path('edit/education/', RecruitEditEducation.as_view(), name='recruit_edit_education'),
+    path('show_skills', RecruitShowSkills.as_view(), name='recruit_show_skills'),
+    path('show_education', RecruitShowEducation.as_view(), name='recruit_show_education'),
+    path('show_experience', RecruitShowExperience.as_view(), name='recruit_show_experience'),
     # Team Rome (end)
 ]

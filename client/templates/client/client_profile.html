@@ -6,93 +6,111 @@
 {% endblock %}
 
 {% block content %}
+    <table align="center">
+        <tr>
 
-    <div class="col-md-8">
-        <h3>Hello Client Profile</h3>
-        <p>
-            <a href="{% url 'client_edit' %}" class="btn btn-outline-primary">Редактировать</a>
-
-            <img src="{{ client_img|default:'/media/user_1.png' }}" alt="img" class="m-sm-1" height="64">
-
-
-            <a href="{% url 'client' %}" class="btn btn-outline-danger">X</a>
-        </p>
-        <div>
-            <div>
-                <h3>inf</h3>
+            <td>
+                <div class="col-md-8">
+                    <h3>Моя карточка</h3>
+                    <p>
+                        <a href="{% url 'client_edit' %}" class="btn btn-outline-primary">Редактировать</a>
+            </td>
+            <td><img src="{{ client_img }}" alt="img" class="m-sm-1" height="120"></td>
 
 
-                <h2>CLient</h2>
-                {#            {% for e in data.client %}#}
-                {#                 <p>#}
-                {#                {{ forloop.counter }} {{ e }}#}
-                {##}
-                {#                </p>#}
-                {#            {% endfor %}#}
+            <td><h2>
 
-                {#                {% for e in data.user_model %}#}
-                {#                    <p>#}
-                {#                        {{ forloop.counter }} {{ e.first_name }}#}
-                {#                        {{ e.last_name }}#}
-                {##}
-                {#                    </p>#}
-                {#                {% endfor %}#}
                 {{ data.user_model.first_name }}
                 {{ data.user_model.last_name }}
-                {{ data.client.patronymic }}
+                {{ data.client.patronymic }}</h2>
+                <p>
+                    {{ data.age }}(лет/года),
+                    {{ data.client.family_state }},
+                    {{ data.client.children }} дети
+                <p>
+                    <a>Место жительства:</a>
 
-                {{ data.client.citizenship.country_word }}
-                {{ data.client.patronymic }}
+                    {{ data.client.city }},
+                    {{ data.client.street }},
+                    {{ data.client.house }},
+                    {{ data.client.flat }}
 
-
-
-
-
-
-                {% for e in data.cl_phone %}
-                    <p>
+                <p>
+                    <a> Телефон:</a>
+                    {% for e in data.cl_phone %}
                         {{ forloop.counter }} {{ e.telephone_number }}
 
-                    </p>
-                {% endfor %}
-            </div>
-            <div>
-                <h3>edu</h3>
-                {% for e in data.cl_edu_profile %}
-                    <p>
-                        {{ forloop.counter }} {{ e.institution }}
-                        {{ e.qualification }}
-                    </p>
-                {% endfor %}
-            </div>
-            <div>
-                <h3>exs</h3>
-                {% for e in data.cl_exp_profile %}
-                    <p>
-                        {{ forloop.counter }} {{ e.start_date }}
-                        {{ e.end_date }} {{ e.position }} {{ e.name }}
-                    </p>
-                {% endfor %}
-            </div>
-            <div>
-                <h3>skill</h3>
-                {% for e in data.cl_skill_profile %}
-                    <p>
-                        {{ forloop.counter }} {{ e.skill }}
+                    {% endfor %}
 
-                    </p>
-                {% endfor %}
+                <p>
+                    <a> Email: </a>
+                    {{ data.user_model.email }}
+
+
+                <p>
+                    <a> Telegram: </a>
+                    {{ data.client.telegram_link }}
+                <p>
+                    Linkedin:
+                    {{ data.client.link_linkedin }}</p></td>
+
+            <td><a href="{% url 'client' %}" class="btn btn-outline-danger">X</a></td>
+            </div>  </tr>
+
+
+        <tr>
+            <div>
+                <td><h3>Образование</h3>
+                    {% for e in data.cl_edu_profile %}
+                        <p>
+                            {{ forloop.counter }} {{ e.institution }} -
+                            {{ e.qualification }}
+                        </p>
+                    {% endfor %}
+                    <a href="{% url 'client_show_education' %}"
+                       class="list-group-item list-group-item-action list-group-item-info">
+                        Подробнее </a></td>
             </div>
 
             <div>
-                <h3>CV</h3>
-                {% for e in data.cl_cvs_profile %}
-                    <p>
-                        {{ forloop.counter }} {{ e.position }}
+                <td><h3>Опыт работы</h3>
+                    {% for e in data.cl_exp_profile %}
+                        <p>
+                            {{ forloop.counter }} {{ e.start_date }} -
+                            {{ e.end_date }} - {{ e.position }} - {{ e.name }}
+                        </p>
+                    {% endfor %}
+                    <a href="{% url 'client_show_experience' %}"
+                       class="list-group-item list-group-item-action list-group-item-info">
+                        Подробнее </a></td>
 
-                    </p>
-                {% endfor %}</div>
-        </div>
+            </div>
+            <div>
+                <td><h3>Навыки</h3>
+                    {% for e in data.cl_skill_profile %}
+                        <p>
+                            {{ forloop.counter }} {{ e.skill }}
+
+                        </p>
+                    {% endfor %}
+                    <a href="{% url 'client_show_skills' %}"
+                       class="list-group-item list-group-item-action list-group-item-info">
+                        Подробнее </a></td>
+            </div>
+
+            <div>
+                <td><h3>Мои резюме</h3>
+                    {% for e in data.cl_cvs_profile %}
+                        <p>
+                            {{ forloop.counter }} {{ e.position }}
+
+                        </p>
+                    {% endfor %}
+                    <a href="{% url 'client_show_cv' %}"
+                       class="list-group-item list-group-item-action list-group-item-info">Подробнее </a></td>
+            </div>
+    </table>
+    </div>
 
     </div>
 

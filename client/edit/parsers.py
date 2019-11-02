@@ -44,7 +44,7 @@ def pars_exp_request(req_post) -> list:  # TeamRome
                        'exp_date_start': '', 'exp_date_end': '', 'experience_4': ''}
             count += 1
             # print('\t----')
-    print("\tout_arr: %s" % arr)
+    # print("\tout_arr: %s" % arr)
     return arr
 
 
@@ -55,12 +55,15 @@ def pars_cv_request(req_post: dict) -> list:  # TeamRome
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели CV. """
     # print("exp_request.POST: %s" % req_post)
     arr = []
-    dict_up = {'position': '', 'employment': '', 'time_job': '', 'salary': '', 'type_salary': ''}
+    dict_up = {'position': '', 'direction': '', 'employment': '', 'time_job': '', 'salary': '', 'type_salary': ''}
     for i in req_post.items():
         # print("i: %s, %s" % (i[0], i[1]))
 
         if re.match('position', i[0]):
             dict_up['position'] = i[1]
+
+        if re.match('direction', i[0]):
+            dict_up['direction'] = i[1]
 
         if re.match('employment', i[0]):
             dict_up['employment'] = i[1]
@@ -76,10 +79,11 @@ def pars_cv_request(req_post: dict) -> list:  # TeamRome
 
             # print(dict_up)
             arr.append(dict_up)
-            dict_up = {'position': '', 'employment': '', 'time_job': '', 'salary': '', 'type_salary': ''}
+            dict_up = {'position': '', 'direction': '', 'employment': '', 'time_job': '', 'salary': '',
+                       'type_salary': ''}
             # print('----')
 
-    print("arr: %s" % arr)
+    # print("arr: %s" % arr)
     return arr
 
 
@@ -150,5 +154,5 @@ def pars_edu_request(req_post, _file) -> list:  # TeamRome
     """ For loop ends - save temporary dictionary to the output arr. """
     # print("\tdict_up: %s" % dict_up)
     arr.append(dict_up)
-    print("\tout_arr: %s" % arr)
+    # print("\tout_arr: %s" % arr)
     return arr

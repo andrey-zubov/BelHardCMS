@@ -1,9 +1,15 @@
+import calendar
 from collections import defaultdict
+
+from datetime import datetime, timedelta
+from datetime import date
+
+
 
 from BelHardCRM.settings import MEDIA_URL
 from client.edit.utility import (time_it, try_except)
 from client.models import (Sex, Citizenship, FamilyState, Children, City, State, Telephone, Skills, Education,
-                           Certificate, CV, Experience, Employment, TimeJob, TypeSalary, UserModel, Sphere)
+                           Certificate, CV, Experience, Employment, TimeJob, TypeSalary, UserModel, Sphere, Direction)
 
 
 @try_except
@@ -41,7 +47,7 @@ def skills_page_get(client):  # TeamRome
     """" views.py ClientEditSkills(TemplateView) GET method.  """
     response = defaultdict()
     if client:
-        skills_arr = [i['skill'] for i in Skills.objects.filter(client_skills=client).values()]
+        skills_arr = [i.skill for i in Skills.objects.filter(client_skills=client)]
         response['cl_skill'] = skills_arr
 
     return response
@@ -80,6 +86,7 @@ def cv_page_get(client):  # TeamRome
     response['employment'] = Employment.objects.all()
     response['time_job'] = TimeJob.objects.all()
     response['type_salary'] = TypeSalary.objects.all()
+    response['direction'] = Direction.objects.all()
 
     if client:
         cvs = CV.objects.filter(client_cv=client)
@@ -91,6 +98,7 @@ def cv_page_get(client):  # TeamRome
             c['cl_employment'] = Employment.objects.get(id=c['employment_id']).employment
             c['cl_time_job'] = TimeJob.objects.get(id=c['time_job_id']).time_job_word
             c['cl_type_salary'] = TypeSalary.objects.get(id=c['type_salary_id']).type_word
+            c['cl_direction'] = Direction.objects.get(id=c['direction_id']).direction_word
 
     return response
 
@@ -130,6 +138,7 @@ def show_profile(client):  # TeamRome
         response['cl_skill_profile'] = skills_arr
 
         user_model = UserModel.objects.get(id=client.user_client_id)
+
         response['user_model'] = {
             "first_name": user_model.first_name,
             "last_name": user_model.last_name,
@@ -140,8 +149,20 @@ def show_profile(client):  # TeamRome
         response['cl_phone'] = phone_arr
         # response["client"] = Client.objects.filter(user_client=client)
         response["client"] = client
-        response["age"] = 37  # дописать
 
-        print(response["age"])
+        now = datetime.now().strftime("%d.%m.%Y")
+        date_format = "%d.%m.%Y"
+        d1 = datetime.strptime(now, date_format)
+        data_b = client.date_born
+        # print(data_b, type(data_b))
+
+        age = None
+        if data_b:
+            #dt_now = datetime.date.today()
+            dt_now = datetime.date(d1)
+            ly = calendar.leapdays(data_b.year, dt_now.year)
+            age = int(((dt_now - data_b).days - ly) / 365)
+        response["age"] = age
+
 
     return response

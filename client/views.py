@@ -98,7 +98,8 @@ class ClientEditSkills(TemplateView):  # TeamRome
 
     def post(self, request):
         client_instance = client_check(request.user)
-        skills_page_post(client_instance, request)
+        if client_instance:
+            skills_page_post(client_instance, request)
         return redirect(to='/client/edit')
 
 
@@ -125,8 +126,9 @@ class ClientEditCv(TemplateView):  # TeamRome
         client_instance = client_check(request.user)
         response = {'client_img': load_client_img(client_instance),
                     'data': cv_page_get(client_instance),
-                    }
-        return render(request, self.template_name, response)
+                    }  # сюда влетел словарь который сформировался в pages_get
+        return render(request, self.template_name,
+                      response)  # а здесь он залетел в соответствующий темплейт для заполнения полей
 
     def post(self, request):
         client_instance = client_check(request.user)

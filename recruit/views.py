@@ -8,9 +8,11 @@ from client.models import (CV, JobInterviews, FilesForJobInterviews, Vacancy, St
 from client.models import (Chat, Message, Tasks, UserModel, SubTasks, Settings, Client)
 from recruit.edit_pages.check_recruit import (recruit_check)
 from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
-from recruit.edit_pages.r_pages_get import (skills_page_get, recruit_experience_page_get, recruit_edit_page_get)
-from recruit.edit_pages.r_pages_post import (photo_page_post, skills_page_post, recruit_experience_page_post,
-                                             recruit_edit_page_post)
+from recruit.edit_pages.r_pages_get import (recruit_edit_page_get, recruit_experience_page_get,
+                                            recruit_education_page_get, recruit_show_page_get)
+from recruit.edit_pages.r_pages_get import (skills_page_get)
+from recruit.edit_pages.r_pages_post import (photo_page_post, skills_page_post, recruit_education_page_post)
+from recruit.edit_pages.r_pages_post import (recruit_edit_page_post, recruit_experience_page_post)
 from recruit.models import (Recruiter)
 
 """ PEP 8: Wildcard imports (from <module> import *) should be avoided, 
@@ -312,7 +314,7 @@ class RecruitProfile(TemplateView):  # TeamRome
     def get(self, request, *args, **kwargs):
         recruit_instance = recruit_check(request.user)
         response = {'recruit_img': load_client_img(recruit_instance),
-                    'data': 'foo()',
+                    'data': recruit_show_page_get(recruit_instance),
                     }
         return render(request=request, template_name=self.template_name, context=response)
 
@@ -353,18 +355,18 @@ class RecruitEditExperience(TemplateView):  # TeamRome
 
 
 class RecruitEditEducation(TemplateView):  # TeamRome
-    template_name = ''
+    template_name = 'recruit/edit_pages/recruit_edit_education.html'
 
     def get(self, request, *args, **kwargs):
         recruit_instance = recruit_check(request.user)
         response = {'recruit_img': load_client_img(recruit_instance),
-                    'data': 'foo()',
+                    'data': recruit_education_page_get(recruit_instance),
                     }
         return render(request, self.template_name, response)
 
     def post(self, request):
         recruit_instance = recruit_check(request.user)
-        'foo()'
+        recruit_education_page_post(recruit_instance, request)
         return redirect(to='/recruit/edit/')
 
 
@@ -389,7 +391,7 @@ class RecruitEditPhoto(TemplateView):  # TeamRome
 
     def get(self, request, *args, **kwargs):
         recruit_instance = recruit_check(request.user)
-        response = {'client_img': load_client_img(recruit_instance),
+        response = {'recruit_img': load_client_img(recruit_instance),
                     'form': RecruitUploadImgForm(),
                     }
         return render(request=request, template_name=self.template_name, context=response)
@@ -398,3 +400,36 @@ class RecruitEditPhoto(TemplateView):  # TeamRome
         recruit_instance = recruit_check(request.user)
         photo_page_post(recruit_instance, request)
         return redirect(to='/recruit/edit')
+
+
+class RecruitShowSkills(TemplateView):  # TeamRome
+    template_name = 'recruit/show/show_skills.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'data': skills_page_get(recruit_instance),
+                    }
+        return render(request=request, template_name=self.template_name, context=response)
+
+
+class RecruitShowEducation(TemplateView):  # TeamRome
+    template_name = 'recruit/show/show_education.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    'data': recruit_education_page_get(recruit_instance),
+                    }
+        return render(request, self.template_name, response)
+
+
+class RecruitShowExperience(TemplateView):  # TeamRome
+    template_name = 'recruit/show/show_experience.html'
+
+    def get(self, request, *args, **kwargs):
+        recruit_instance = recruit_check(request.user)
+        response = {'recruit_img': load_client_img(recruit_instance),
+                    "data": recruit_experience_page_get(recruit_instance),
+                    }
+        return render(request, self.template_name, response)

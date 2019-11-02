@@ -20,7 +20,7 @@
                 var add = origin.clone();
                 var current_div = add.children('div');
 
-                for (var i = 0; i < 5; i++) {
+                for (var i = 0; i < 6; i++) {
                     var element;
                     var attr_name;
                     // Because custom form! Can be optimised!
@@ -42,12 +42,17 @@
                             attr_name = $(element).attr('name');
                             $(element).attr('name', attr_name + count);
                             break;
-                        case 3: // input #2
+                        case 3: // select #3
+                            element = $(current_div[i]).children('select');
+                            attr_name = $(element).attr('name');
+                            $(element).attr('name', attr_name + count);
+                            break;
+                        case 4: // input #4
                             element = $(current_div[i]).children('input');
                             attr_name = $(element).attr('name');
                             $(element).attr('name', attr_name + count);
                             break;
-                        case 4: // select #3
+                        case 5: // select #5
                             element = $(current_div[i]).children('select');
                             attr_name = $(element).attr('name');
                             $(element).attr('name', attr_name + count);
@@ -98,6 +103,17 @@
                             <datalist id="data_list">
                                 <option id="dl_option" value=""></option>
                             </datalist>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_direction">Направление</label>
+                            <select class="form-control" id="id_direction"
+                                    name="direction{{ forloop.counter }}">
+                                <option selected value="{{ cv.cl_direction.id }}">{{ cv.cl_direction }}</option>
+                                {% for d in data.direction %}
+                                    <option value="{{ d.id }}" {% if cv.cl_direction.id  ==  d.id %}selected
+                                            {% endif %}>{{ d }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="id_employment">Занятость</label>
