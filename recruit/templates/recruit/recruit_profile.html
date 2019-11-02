@@ -24,9 +24,9 @@
                         {{ data.recruit.patronymic }}
                     </h3>
                     <p>
-                        age: {{ data.age }},
+                        age: {{ data.age }} {{ data.nameage }},
                         family_state: {{ data.recruit.family_state }},
-                        children: {{ data.recruit.children }},
+                        children: {{ data.recruit.children }} {{ data.namechild }},
                     </p>
                     <h3>Место жительства:</h3>
                     <p>
@@ -45,7 +45,7 @@
                     </p>
                     <p>Email: {{ data.user_model.email }}</p>
                     <p>Telegram: {{ data.recruit.telegram_link }}</p>
-                    <p>Linkedin: {{ data.recruit.link_linkedin }}</p>
+                    <p>Linkedin: <a href="{{ data.recruit.link_linkedin }}">{{ data.recruit.link_linkedin }}</a></p>
                 </div>
             </div>
         </div>

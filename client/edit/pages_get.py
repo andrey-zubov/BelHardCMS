@@ -4,8 +4,6 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from datetime import date
 
-
-
 from BelHardCRM.settings import MEDIA_URL
 from client.edit.utility import (time_it, try_except)
 from client.models import (Sex, Citizenship, FamilyState, Children, City, State, Telephone, Skills, Education,
@@ -158,11 +156,12 @@ def show_profile(client):  # TeamRome
 
         age = None
         if data_b:
-            #dt_now = datetime.date.today()
+            # dt_now = datetime.date.today()
             dt_now = datetime.date(d1)
             ly = calendar.leapdays(data_b.year, dt_now.year)
             age = int(((dt_now - data_b).days - ly) / 365)
         response["age"] = age
+        # word for age
         goda = [2, 3, 4]
         a = str(age)[1]
 
@@ -173,20 +172,13 @@ def show_profile(client):  # TeamRome
         else:
             k = "лет"
         response["nameage"] = k
-
-        print(a, k, response["nameage"])
-
+        #word for children
         c = str(client.children)
         if len(c) == 4:
             g = 'дети'
         else:
             g = 'детей'
         response["namechild"] = g
-
-        print(c, g)
-
-
-
 
 
     return response
