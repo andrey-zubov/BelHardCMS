@@ -320,6 +320,7 @@ ul{
   }
 
 
+
   .message_block_left {
       width: fit-content;
       margin: 0.25% 0.25% auto 2%;
@@ -351,6 +352,7 @@ ul{
       text-align: right;
       margin-right: 1%;
   }
+
 div.wrapper{
   width: 100%;
 }
@@ -367,6 +369,4 @@ li{
 }
  .notification:hover{
      background: #00a5fe;
-
  }
-
