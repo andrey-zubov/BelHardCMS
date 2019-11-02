@@ -20,11 +20,24 @@
         {% for applicant in applicants %}
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5><a href="{{ applicant.get_absolute_url }}" id="{{ applicant.id }}"> {{ applicant.user_client.first_name }} {{ applicant.user_client.last_name }}  {{ applicant.patronymic }}</a>
+                    <h5>
+                        <div>
+                        <a href="{{ applicant.get_absolute_url }}" id="{{ applicant.id }}"> {{ applicant.user_client.first_name }} {{ applicant.user_client.last_name }}  {{ applicant.patronymic }}</a>
+                        <!--<input type="image" infavor="{{ owner_list }}" src='https://image.freepik.com/free-vector/_53876-25533.jpg' class="white_star" id="{{ applicant.id }}" style="width: 32px; height: 32px; opacity: 0.35">-->
+                        {% if applicant.is_reserved %}
+                            {% if applicnat.own_recruit != request.user%}
 
+                                    <label for="check_{{ applicant.id }}"><img src="https://image.freepik.com/free-vector/_53876-25533.jpg" class="white_star" id="{{ applicant.id }}" style="width: 32px; height: 32px; "></label>
 
-                        <input type="image" infavor="{{ owner_list }}" src='https://image.freepik.com/free-vector/_53876-25533.jpg' class="white_star" id="{{ applicant.id }}" style="width: 32px; height: 32px; opacity: 0.35">
-
+                            {% else %}
+                            <input type="checkbox" id="check_{{ applicant.id }}" checked="{{applicant.is_reserved}}" hidden>
+                                <label for="check_{{ applicant.id }}"><img src="https://image.freepik.com/free-vector/_53876-25533.jpg" class="white_star" id="{{ applicant.id }}" style="width: 32px; height: 32px;"></label>
+                            {% endif %}
+                            {% else %}
+                                <input type="checkbox" id="check_{{ applicant.id }}" checked="{{applicant.is_reserved}}" hidden>
+                                <label for="check_{{ applicant.id }}"><img src="https://image.freepik.com/free-vector/_53876-25533.jpg" class="white_star" id="{{ applicant.id }}" style="width: 32px; height: 32px; opacity: 0.35"></label>
+                            {% endif %}
+                        </div>
                     </h5>
 
                 </div>
@@ -53,6 +66,8 @@
             console.log('QWERTY');
 
 
+
+
             }
 
                 /*spain for favorites */
@@ -60,16 +75,22 @@
                 let add = confirm("Вы точно хотите добавить пользователя в избранное?");
                 let client = $(this).attr('id')
                 let recruit = {{ request.user.id }}
+                let check = $('#check_'+client).prop('checked')
+                console.log(check)
                 x = $(this)
                 $.ajax({
                     'url': '/recruit/checkfavor/',
                     'data': {'client': client,
-                            'recruit': recruit},
+                            'recruit': recruit,
+                            'check': check,},
+
                     success: function (data) {
                         console.log('data')
                          $(x).animate({
                         'opacity':'1',
                         });
+
+
 
                        }
                  });
