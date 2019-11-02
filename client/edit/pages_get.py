@@ -163,6 +163,30 @@ def show_profile(client):  # TeamRome
             ly = calendar.leapdays(data_b.year, dt_now.year)
             age = int(((dt_now - data_b).days - ly) / 365)
         response["age"] = age
+        goda = [2, 3, 4]
+        a = str(age)[1]
+
+        if int(a) == 1:
+            k = 'год'
+        elif int(a) in goda:
+            k = 'года'
+        else:
+            k = "лет"
+        response["nameage"] = k
+
+        print(a, k, response["nameage"])
+
+        c = str(client.children)
+        if len(c) == 4:
+            g = 'дети'
+        else:
+            g = 'детей'
+        response["namechild"] = g
+
+        print(c, g)
+
+
+
 
 
     return response
