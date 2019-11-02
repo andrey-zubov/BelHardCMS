@@ -1,7 +1,13 @@
 from django.contrib import admin
 
-from .models import *
+from client.models import (SubTasks, CV, Vacancy, Help, Opinion, Answer, Chat, Tasks, Message, Sex, Citizenship,
+                           FamilyState, Children, City, EducationWord, SkillsWord, Sphere, CvWord, Employment, TimeJob,
+                           TypeSalary, State, Settings, FilesForJobInterviews, JobInterviews, Experience, Education,
+                           Client, Direction)
 
+""" PEP 8: Wildcard imports (from <module> import *) should be avoided, 
+as they make it unclear which names are present in the namespace, 
+confusing both readers and many automated tools. """
 
 
 class Subtasks_Inline(admin.StackedInline):
@@ -91,6 +97,7 @@ class TypeSalaryAdmin(admin.ModelAdmin):
 class StateAdmin(admin.ModelAdmin):
     model = State
 
+
 admin.site.register(Settings)
 admin.site.register(Sex, SexAdmin)
 admin.site.register(Citizenship, CitizenshipAdmin)
@@ -107,25 +114,48 @@ admin.site.register(TypeSalary, TypeSalaryAdmin)
 admin.site.register(State, StateAdmin)
 
 
-# TeamRome
-class InlineExp(admin.TabularInline):
+class InlineFilesForJobInterviews(admin.TabularInline):
+    model = FilesForJobInterviews
+
+
+# TeamPoland
+class JobInterviewsAdmin(admin.ModelAdmin):
+    list_display = (
+        'client', 'name', 'location'
+    )
+    list_display_links = (
+        'client', 'name', 'location'
+    )
+    search_fields = (
+        'client', 'name', 'location'
+    )
+
+    model = JobInterviews
+    inlines = [InlineFilesForJobInterviews]
+
+    # class Media:
+    #    js = ['js/scriptJob.js']
+
+
+admin.site.register(JobInterviews, JobInterviewsAdmin)
+
+
+class InlineExp(admin.TabularInline):  # TeamRome
     model = Experience
 
 
-# TeamRome
-class InlineEdu(admin.TabularInline):
+class InlineEdu(admin.TabularInline):  # TeamRome
     model = Education
 
 
-# TeamRome
-class InlineCV(admin.TabularInline):
+class InlineCV(admin.TabularInline):  # TeamRome
     model = CV
 
 
-# TeamRome
-class ClientAdmin(admin.ModelAdmin):
+class ClientAdmin(admin.ModelAdmin):  # TeamRome
     model = Client
     inlines = [InlineExp, InlineEdu, InlineCV]
+
 
 
 # TeamRome
@@ -157,3 +187,10 @@ class JobInterviewsAdmin(admin.ModelAdmin):
 
 
 admin.site.register(JobInterviews, JobInterviewsAdmin)
+
+class DirectionAdmin(admin.ModelAdmin):  # TeamRome
+    model = Direction
+
+
+admin.site.register(Direction, DirectionAdmin)  # TeamRome
+

@@ -1,0 +1,23 @@
+{% extends 'recruit/recruit_main_template.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    Recruit Show Experience
+{% endblock %}
+{% block content %}
+    <h3>Опыт работы</h3>
+    {% for exp in data.rec_exp %}
+        <p>name: {{ exp.name }}</p>
+        <p>sphere: {{ exp.sphere }}</p>
+        <p>position: {{ exp.position }}</p>
+        <p>start_date: {{ exp.start_date }}</p>
+        <p>end_date: {{ exp.end_date }}</p>
+        <p>duties: {{ exp.duties }}</p>
+    {% endfor %}
+
+    <div class="text-center">
+        <a class="btn btn-outline-warning m-2" href="{% url 'recruit_profile' %}">Назад</a>
+        <a href="{% url 'recruit_edit_experience' %}" type="button" id="add_more"
+           class="btn btn-outline-primary m-2">"Редактировать"</a>
+    </div>
+{% endblock %}

@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+    {% include 'client/edit_forms/tot_samui_bootstrap.html' %}
     <!-- JS добавления однотипных форм -->
     <script type="text/javascript">
         $(document).ready(function () {
@@ -22,239 +23,246 @@
         });
     </script>
     <div class="container">
-    <div class="row">
-        <div class="col-md-8">
-            <form method="post">
-                {% csrf_token %}
+        <div class="row">
+            <div class="col-md-8">
+                <form method="post">
+                    {% csrf_token %}
 
-                <h3>Общая информация</h3>
+                    <h3>Общая информация</h3>
 
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Имя:</span>
-                    </div>
-                    <input type="text" aria-label="First name" class="form-control" name="client_first_name"
-                           value="{{ data.user_model.first_name|default:'' }}" required>
-                </div>
-
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Фамилия:</span>
-                    </div>
-                    <input type="text" aria-label="Last name" class="form-control" name="client_last_name"
-                           value="{{ data.user_model.last_name|default:'' }}" required>
-                </div>
-
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Отчество:</span>
-                    </div>
-                    <input type="text" aria-label="Middle name" class="form-control" name="client_middle_name"
-                           value="{{ data.client.patronymic|default:'' }}" required>
-                </div>
-
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <label class="input-group-text" for="id_sex">Пол:</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Имя:</span>
+                        </div>
+                        <input type="text" aria-label="First name" class="form-control" name="client_first_name"
+                               value="{{ data.user_model.first_name|default:'' }}" required>
                     </div>
 
-                    <select class="custom-select" id="id_sex" name="sex">
-                        <option selected value="{{ data.client.sex }}">{{ data.client.sex|default:'' }}</option>
-                        {% for s in data.sex %}
-                            <option value="{{ s }}">{{ s }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="id_date_born">Дата рождения</label>
-                    <input type="date" class="form-control" id="id_date_born" name="date_born"
-                           value="{{ data.client.date_born|date:"Y-d-m" }}">
-                </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <label class="input-group-text" for="id_citizenship">Гражданство:</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Фамилия:</span>
+                        </div>
+                        <input type="text" aria-label="Last name" class="form-control" name="client_last_name"
+                               value="{{ data.user_model.last_name|default:'' }}" required>
                     </div>
-                    <select class="custom-select" id="id_citizenship" name="citizenship">
-                        <option selected value="{{ data.client.citizenship }}">{{ data.client.citizenship|default:'' }}</option>
-                        {% for c in data.citizenship %}
-                            <option value="{{ c }}">{{ c }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
 
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <label class="input-group-text" for="id_family_state">Семейное положение:</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Отчество:</span>
+                        </div>
+                        <input type="text" aria-label="Middle name" class="form-control" name="client_middle_name"
+                               value="{{ data.client.patronymic|default:'' }}" required>
                     </div>
-                    <select class="custom-select" id="id_family_state" name="family_state">
-                        <option selected value="{{ data.client.family_state }}">{{ data.client.family_state|default:'' }}</option>
-                        {% for fs in data.family_state %}
-                            <option value="{{ fs }}">{{ fs }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <label class="input-group-text" for="id_children">Дети:</label>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="id_sex">Пол:</label>
+                        </div>
+
+                        <select class="custom-select" id="id_sex" name="sex">
+                            <option selected value="{{ data.client.sex }}">{{ data.client.sex|default:'' }}</option>
+                            {% for s in data.sex %}
+                                <option value="{{ s }}">{{ s }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <select class="custom-select" id="id_children" name="children">
-                        <option selected value="{{ data.client.children }}">{{ data.client.children|default:'' }}</option>
-                        {% for ch in data.children %}
-                            <option value="{{ ch }}">{{ ch }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
 
-                <h3>Адрес проживания</h3>
-
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <label class="input-group-text" for="id_country">Страна:</label>
+                    <div class="form-group">
+                        <label for="id_date_born">Дата рождения</label>
+                        <input type="date" class="form-control" id="id_date_born" name="date_born"
+                               value="{{ data.client.date_born|date:"Y-d-m" }}">
                     </div>
-                    <select class="custom-select" id="id_country" name="country">
-                        <option selected value="{{ data.client.country }}">{{ data.client.country|default:'' }}</option>
-                        {% for ct in data.country %}
-                            <option value="{{ ct }}">{{ ct }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <label class="input-group-text" for="id_city">Город:</label>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="id_citizenship">Гражданство:</label>
+                        </div>
+                        <select class="custom-select" id="id_citizenship" name="citizenship">
+                            <option selected
+                                    value="{{ data.client.citizenship }}">{{ data.client.citizenship|default:'' }}</option>
+                            {% for c in data.citizenship %}
+                                <option value="{{ c }}">{{ c }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <select class="custom-select" id="id_city" name="city">
-                        <option selected value="{{ data.client.city }}">{{ data.client.city|default:'' }}</option>
-                        {% for ci in data.city %}
-                            <option value="{{ ci }}">{{ ci }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
 
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Улица:</span>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="id_family_state">Семейное положение:</label>
+                        </div>
+                        <select class="custom-select" id="id_family_state" name="family_state">
+                            <option selected
+                                    value="{{ data.client.family_state }}">{{ data.client.family_state|default:'' }}</option>
+                            {% for fs in data.family_state %}
+                                <option value="{{ fs }}">{{ fs }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <input type="text" aria-label="First name" class="form-control" name="street"
-                           value="{{ data.client.street|default:'' }}">
-                </div>
 
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Дом:</span>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="id_children">Дети:</label>
+                        </div>
+                        <select class="custom-select" id="id_children" name="children">
+                            <option selected
+                                    value="{{ data.client.children }}">{{ data.client.children|default:'' }}</option>
+                            {% for ch in data.children %}
+                                <option value="{{ ch }}">{{ ch }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <input type="text" aria-label="House" class="form-control" name="house"
-                           value="{{ data.client.house|default:'' }}">
-                </div>
 
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Квартира:</span>
+                    <h3>Адрес проживания</h3>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="id_country">Страна:</label>
+                        </div>
+                        <select class="custom-select" id="id_country" name="country">
+                            <option selected
+                                    value="{{ data.client.country }}">{{ data.client.country|default:'' }}</option>
+                            {% for ct in data.country %}
+                                <option value="{{ ct }}">{{ ct }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <input type="text" aria-label="Flat" class="form-control" name="flat"
-                           value="{{ data.client.flat|default:'' }}">
-                </div>
 
-                <h3>Контакты</h3>
-
-                <div class="mb-3">
-                    <div id="div_to_add_new">
-                        <h5 id="tel_h">Телефоны</h5>
-                        {% for t in data.cl_phone %}
-                            <div class="form-group" id="origin_div">
-                                <input type="tel" class="form-control" id="id_phone" aria-describedby="small_phone"
-                                       value="{{ t|default:'+' }}" name="phone">
-                                <small class="form-text text-muted" id="small_phone">
-                                    +375291234567 (код страны + код оператора + номер)
-                                </small>
-                            </div>
-                        {% empty %}
-                            <div class="form-group" id="origin_div">
-                                <input type="tel" class="form-control" id="id_phone" aria-describedby="small_phone"
-                                       value="+" name="phone">
-                                <small class="form-text text-muted" id="small_phone">
-                                    +375291234567 (код страны + код оператора + номер)
-                                </small>
-                            </div>
-                        {% endfor %}
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="id_city">Город:</label>
+                        </div>
+                        <select class="custom-select" id="id_city" name="city">
+                            <option selected value="{{ data.client.city }}">{{ data.client.city|default:'' }}</option>
+                            {% for ci in data.city %}
+                                <option value="{{ ci }}">{{ ci }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <input type="button" value="Добавить" id="add_more"
-                           class="btn btn-outline-primary">
-                </div>
 
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Telegram:</span>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Улица:</span>
+                        </div>
+                        <input type="text" aria-label="First name" class="form-control" name="street"
+                               value="{{ data.client.street|default:'' }}">
                     </div>
-                    <input type="text" aria-label="Telegram" class="form-control" name="telegram_link"
-                           value="{{ data.client.telegram_link|default:'@' }}">
-                </div>
 
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Skype:</span>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Дом:</span>
+                        </div>
+                        <input type="text" aria-label="House" class="form-control" name="house"
+                               value="{{ data.client.house|default:'' }}">
                     </div>
-                    <input type="text" aria-label="Skype" class="form-control" name="skype_id"
-                           value="{{ data.client.skype|default:'' }}">
-                </div>
 
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">E-mail:</span>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Квартира:</span>
+                        </div>
+                        <input type="text" aria-label="Flat" class="form-control" name="flat"
+                               value="{{ data.client.flat|default:'' }}">
                     </div>
-                    <input type="email" aria-label="E-mail" class="form-control" name="email"
-                           value="{{ data.user_model.email|default:'' }}">
-                </div>
 
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Linkedin:</span>
+                    <h3>Контакты</h3>
+
+                    <div class="mb-3">
+                        <div id="div_to_add_new">
+                            <h5 id="tel_h">Телефоны</h5>
+                            {% for t in data.cl_phone %}
+                                <div class="form-group" id="origin_div">
+                                    <input type="tel" class="form-control" id="id_phone" aria-describedby="small_phone"
+                                           value="{{ t|default:'+' }}" name="phone">
+                                    <small class="form-text text-muted" id="small_phone">
+                                        +375291234567 (код страны + код оператора + номер)
+                                    </small>
+                                </div>
+                            {% empty %}
+                                <div class="form-group" id="origin_div">
+                                    <input type="tel" class="form-control" id="id_phone" aria-describedby="small_phone"
+                                           value="+" name="phone">
+                                    <small class="form-text text-muted" id="small_phone">
+                                        +375291234567 (код страны + код оператора + номер)
+                                    </small>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <input type="button" value="Добавить" id="add_more"
+                               class="btn btn-outline-primary">
                     </div>
-                    <input type="url" aria-label="Linkedin" class="form-control" name="link_linkedin"
-                           value="{{ data.client.link_linkedin|default:'' }}">
-                </div>
 
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <label class="input-group-text" for="id_state">Статус:</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Telegram:</span>
+                        </div>
+                        <input type="text" aria-label="Telegram" class="form-control" name="telegram_link"
+                               value="{{ data.client.telegram_link|default:'@' }}">
                     </div>
-                    <select class="custom-select" id="id_state" name="state">
-                        <option selected value="{{ data.client.state }}">{{ data.client.state|default:'' }}</option>
-                        {% for st in data.state %}
-                            <option value="{{ st }}">{{ st }}</option>
-                        {% endfor %}
-                    </select>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Skype:</span>
+                        </div>
+                        <input type="text" aria-label="Skype" class="form-control" name="skype_id"
+                               value="{{ data.client.skype|default:'' }}">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">E-mail:</span>
+                        </div>
+                        <input type="email" aria-label="E-mail" class="form-control" name="email"
+                               value="{{ data.user_model.email|default:'' }}">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Linkedin:</span>
+                        </div>
+                        <input type="url" aria-label="Linkedin" class="form-control" name="link_linkedin"
+                               value="{{ data.client.link_linkedin|default:'' }}">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="id_state">Статус:</label>
+                        </div>
+                        <select class="custom-select" id="id_state" name="state">
+                            <option selected value="{{ data.client.state }}">{{ data.client.state|default:'' }}</option>
+                            {% for st in data.state %}
+                                <option value="{{ st }}">{{ st }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="text-center">
+                        <a class="btn btn-outline-warning m-2" href="{% url 'client_profile' %}">Назад</a>
+                        <button type="submit" class="btn btn-outline-success m-2">Сохранить</button>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="col-md-4">
+                <h3>Дополнительно:</h3>
+
+                <div class="list-group">
+                    <a href="{% url 'client_edit_education' %}" id="edit_education"
+                       class="list-group-item list-group-item-action list-group-item-primary">
+                        Образование +</a>
+                    <a href="{% url 'client_edit_skills' %}" id="edit_skills"
+                       class="list-group-item list-group-item-action list-group-item-secondary">
+                        Навыки +</a>
+                    <a href="{% url 'client_edit_experience' %}" id="edit_experience"
+                       class="list-group-item list-group-item-action list-group-item-warning">
+                        Опыт работы +</a>
+                    <a href="{% url 'client_edit_cv' %}" id="edit_cv"
+                       class="list-group-item list-group-item-action list-group-item-info">
+                        Резюме +</a>
+                    <a href="{% url 'client_edit_photo' %}" id="edit_photo"
+                       class="list-group-item list-group-item-action list-group-item-danger">
+                        Фото +</a>
                 </div>
-
-                <div class="text-center">
-                    <a class="btn btn-outline-warning m-2" href="{% url 'client_profile' %}">Назад</a>
-                    <button type="submit" class="btn btn-outline-success m-2">Сохранить</button>
-                </div>
-
-            </form>
-        </div>
-
-        <div class="col-md-4">
-            <h3>Дополнительно:</h3>
-
-            <div class="list-group">
-                <a href="{% url 'client_edit_education' %}" id="edit_education"
-                   class="list-group-item list-group-item-action list-group-item-primary">
-                    Образование +</a>
-                <a href="{% url 'client_edit_skills' %}" id="edit_skills"
-                   class="list-group-item list-group-item-action list-group-item-secondary">
-                    Навыки +</a>
-                <a href="{% url 'client_edit_experience' %}" id="edit_experience"
-                   class="list-group-item list-group-item-action list-group-item-warning">
-                    Опыт работы +</a>
-                <a href="{% url 'client_edit_cv' %}" id="edit_cv"
-                   class="list-group-item list-group-item-action list-group-item-info">
-                    Резюме +</a>
-                <a href="{% url 'client_edit_photo' %}" id="edit_photo"
-                   class="list-group-item list-group-item-action list-group-item-danger">
-                    Фото +</a>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}
