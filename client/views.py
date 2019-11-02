@@ -28,7 +28,6 @@ from django.contrib.auth.models import Group
 from django.core.files.storage import FileSystemStorage
 from tika import parser
 import re
-from recruit import recruit_url
 
 from client.edit.edit_forms import UploadImgForm
 from client.edit.pages_get import (show_profile, edit_page_get, skills_page_get, cv_page_get, education_page_get,
@@ -296,7 +295,7 @@ def client_login(request):  # ввести логин/пароль -> зайти
     else:
         return render(request, 'registration.html', res)
     try:
-        user_chat = Chat.objects.filter(members=request.user)
+        user_chat = Chat.objects.get(members=request.user)
     except Chat.DoesNotExist:
         user_chat = Chat.objects.create()
         user_chat.members.add(request.user)  # TODO сюда добавить менеджера, которому, по дефолту, передают юзера

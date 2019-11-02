@@ -137,9 +137,6 @@ class JobInterviewsAdmin(admin.ModelAdmin):
     #    js = ['js/scriptJob.js']
 
 
-admin.site.register(JobInterviews, JobInterviewsAdmin)
-
-
 class InlineExp(admin.TabularInline):  # TeamRome
     model = Experience
 
