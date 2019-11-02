@@ -44,7 +44,7 @@ class FamilyState(models.Model):
 
 class Children(models.Model):
     """ Дети клиента. Заполняется Админом. """
-    children_word = models.CharField(max_length=3)
+    children_word = models.CharField(max_length=4)
 
     class Meta:
         verbose_name = 'Дети'

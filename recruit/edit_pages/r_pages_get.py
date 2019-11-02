@@ -121,5 +121,23 @@ def recruit_show_page_get(recruit):  # TeamRome
             ly = calendar.leapdays(data_b.year, dt_now.year)
             age = int(((dt_now - data_b).days - ly) / 365)
         response["age"] = age
+        # word for age
+        goda = [2, 3, 4]
+        a = str(age)[1]
+
+        if int(a) == 1:
+            k = 'год'
+        elif int(a) in goda:
+            k = 'года'
+        else:
+            k = "лет"
+        response["nameage"] = k
+        # word for children
+        c = str(recruit.children)
+        if len(c) == 4:
+            g = 'дети'
+        else:
+            g = 'детей'
+        response["namechild"] = g
 
     return response
