@@ -351,9 +351,6 @@ ul{
       text-align: right;
       margin-right: 1%;
   }
-
-
-
 div.wrapper{
   width: 100%;
 }
@@ -365,11 +362,9 @@ div.right_block{
   float: right;
   width: 45%;
 }
-
 li{
     list-style-type: none;
 }
-
  .notification:hover{
      background: #00a5fe;
 

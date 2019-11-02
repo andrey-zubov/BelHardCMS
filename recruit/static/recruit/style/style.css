@@ -162,15 +162,17 @@ body{
 }
 
 div.wrapper{
-  width: 800px;
+    width: 90%;
+    margin: 0 auto;
 }
 div.left_block{
   float:left;
-  width:200px;
+  width:30%;
 }
 div.right_block{
   float: right;
-  width: 590px;
+  width: 68%;
+
 }
 .chat_block {
   background: #007e7e;
@@ -180,7 +182,9 @@ div.right_block{
   border: 1px solid black;
   position: relative;
 }
-
+.chat_block:hover{
+    background: #1bffdf;
+}
 
 .counter{
   top: 4px;
@@ -196,3 +200,34 @@ div.right_block{
   background: #00a5fe;
   border: 0.5px solid black;
 }
+ .message_block_left {
+      width: fit-content;
+      margin: 0.25% 0.25% auto 2%;
+      background: rgba(0, 176, 255, 0.1);
+      color: #000000;
+      padding: 10px;
+      border-radius: 15px;
+  }
+  .message_block_right {
+      width: fit-content;
+      margin: 0.25% 0.25% 2% auto;
+      background: rgba(0, 176, 255, 0.1);
+      color: #000000;
+      padding: 10px;
+      border-radius: 15px;
+  }
+  .name_field {
+      font-size: larger;
+      justify-content: left;
+      margin-left: 1%;
+      text-align: left;
+  }
+  .message_field {
+      margin-left: 1%;
+      text-align: left;
+  }
+  .date_field {
+      font-size: small;
+      text-align: right;
+      margin-right: 1%;
+  }

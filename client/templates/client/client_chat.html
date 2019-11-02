@@ -62,7 +62,7 @@
                                 '<div class="list-inline" id="' + data[dat].message_id + '"><div class="name_field">'
                                 + data[dat].author_first_name + ' ' +  data[dat].author_last_name +'</div><div class="message_field">'
                                 + data[dat].message + '</div></div><div class="date_field"><small>'
-                                + data[dat].pub_date + '</small></div></div></div>'
+                                + data[dat].pub_date + '</small></div></div></div>';
                         if (data[dat].author_id === {{ request.user.id }}){
                            new_mes ='<div class="message_block_right"><div class="reply-body">' +
                                 '<div class="list-inline" id="' + data[dat].message_id + '"><div class="name_field">'
