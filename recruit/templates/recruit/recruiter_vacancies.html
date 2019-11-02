@@ -1,0 +1,109 @@
+{% extends 'recruit/recruit_main_template.html' %}
+
+{% block title %}
+    Вакансии
+{% endblock %}
+
+{% block content %}
+    <div align="middle">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalNewVacancy">
+            + Добавить вакансию...
+        </button>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade bd-example-modal-xl" id="ModalNewVacancy" tabindex="-1" role="dialog"
+         aria-labelledby="myExtraLargeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"> Данные вакансии </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form action="{% url 'vacancies_url' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label for="id_position">Должность:</label>
+                                <input type="text" class="form-control" id="id_position" name="position" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_salary"> &nbsp; Уровень заработной платы:</label>
+                                <input type="text" class="form-control" id="id_salary" name="salary" required>
+                            </div>
+                        </div><br>
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label for="id_organization">Организация:</label>
+                                <input type="text" class="form-control" id="id_organization" name="organization" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_address"> &nbsp; Адрес:</label>
+                                <input type="text" class="form-control" id="id_address" name="address">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_employment">Опыт работы и занятость:</label>
+                            <input type="text" class="form-control" id="id_employment" name="employment">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_description">Описание:</label>
+                            <textarea class="form-control" id="id_description" name="description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_skills">Ключевые навыки:</label>
+                            <input type="text" class="form-control" id="id_skills" name="skills">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_requirements">Требования к соискателю:</label>
+                            <textarea class="form-control" id="id_requirements" name="requirements"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_duties">Обязанности:</label>
+                            <textarea class="form-control" id="id_duties" name="duties"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_conditions">Условия работы:</label>
+                            <textarea class="form-control" id="id_conditions" name="conditions"></textarea>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="reset" class="btn btn-secondary" data-dismiss="all-form">
+                                Очистить
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-primary">Добавить</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end Modal -->
+
+    <div class="container">
+        <div class="p-sm-5 pt-sm-1" style="overflow: auto">
+            {% for vacancy in vacancies %}
+                <div class="card mb-5">
+                    <div class="card-header">
+                        <b>{{ vacancy.organization }}</b>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ vacancy.state }}</h5>
+                        <p class="card-text"><b>{{ vacancy.salary }}</b></p>
+                        <p class="card-text">{{ vacancy.description | truncatewords:20 }}</p>
+                        <a href="{{ vacancy.get_absolute_url2 }}" class="btn btn-secondary">Подробнее</a>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+
+{% endblock %}

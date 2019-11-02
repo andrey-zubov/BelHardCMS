@@ -8,11 +8,28 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
 from django.urls import reverse
+
+
+from django.utils.timezone import utc
+# from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
+
+
 from django.utils import timezone
+
 from django.views.generic import View, TemplateView
 from tika import parser
 
 from client.edit.check_clients import (client_check, load_client_img)
+
+# from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
+
+from .models import *  #TODO change *
+from django.contrib.auth.models import Group
+from django.core.files.storage import FileSystemStorage
+from tika import parser
+import re
+from recruit import recruit_url
+
 from client.edit.edit_forms import UploadImgForm
 from client.edit.pages_get import (show_profile, edit_page_get, skills_page_get, cv_page_get, education_page_get,
                                    experience_page_get)
@@ -25,6 +42,7 @@ from client.utils_for_mixins import ObjectResumeMixin
 """ PEP 8: Wildcard imports (from <module> import *) should be avoided, 
 as they make it unclear which names are present in the namespace, 
 confusing both readers and many automated tools. """
+
 
 
 def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
@@ -278,7 +296,7 @@ def client_login(request):  # ввести логин/пароль -> зайти
     else:
         return render(request, 'registration.html', res)
     try:
-        user_chat = Chat.objects.get(members=request.user)
+        user_chat = Chat.objects.filter(members=request.user)
     except Chat.DoesNotExist:
         user_chat = Chat.objects.create()
         user_chat.members.add(request.user)  # TODO сюда добавить менеджера, которому, по дефолту, передают юзера
@@ -291,7 +309,7 @@ def client_login(request):  # ввести логин/пароль -> зайти
     if u.groups.filter(name='Users').exists():
         return redirect('client')
     elif u.groups.filter(name='Recruiters').exists():
-        return redirect('main_page')
+        return redirect('recruiter_url')
     else:  # добавляет юзера к группе 'Users' поумолчанию, если у него нет никаких групп
         user_group = Group.objects.get(name='Users')
         u.groups.add(user_group)
@@ -395,7 +413,7 @@ def chat_update(request):
     send2 = []
     for s in mes:
         send2.append(
-            {'author_id': s.author.id, 'author_name': s.author.username, 'message': s.message, 'message_id': s.id,
+            {'author_id': s.author.id, 'author_first_name': s.author.first_name, 'author_last_name': s.author.last_name, 'message': s.message, 'message_id': s.id,
              'pub_date': s.pub_date.ctime()})
     return JsonResponse(send2, safe=False)
 

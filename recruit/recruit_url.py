@@ -11,17 +11,22 @@ from recruit.views import (base_of_applicants, CreateJobInterview, applicant, Ed
 as they make it unclear which names are present in the namespace, 
 confusing both readers and many automated tools. """
 
+
 urlpatterns = [
     # TeamPoland ##################################################
-    # path('', views.recruiter_main_page, name='recruiter_url'),     # There is of recruiter's main page
-    # path('base/', views.recruiter_base, name='base_url'),
-    path('base_of_clients/', base_of_applicants, name='base_of_clients'),
-    path('base_of_clients/<id_a>/', applicant, name='applicant_url'),
-    path('base_of_clients/<id_a>/tasks/', CreateJobInterview.as_view(), name='applicant_tasks_url'),
-    path('base_of_clients/<id_a>/edit_job_interview/', EditJobInterview.as_view(),
-         name='applicant_edit_interviews_url'),
-    path('base_of_clients/<id_a>/del_job_interview/', DelJobInterview.as_view(),
-         name='applicant_del_interviews_url'),
+
+    path('', views.recruiter_main_page, name='recruiter_url'),     # There is of recruiter's main page
+    path('base/', views.recruiter_base, name='base_url'),
+    path('base/base_of_clients/', views.base_of_applicants, name='base_of_clients'),
+    path('base/base_of_clients/<id_a>/', views.ApplicantDet.as_view(), name='applicant_url'),
+    path('base/base_of_clients/<id_a>/tasks/', views.CreateJobInterview.as_view(), name='applicant_tasks_url'),
+    path('base/base_of_clients/<id_a>/edit_job_interview/', views.EditJobInterview.as_view(), name='applicant_edit_interviews_url'),
+    path('base/base_of_clients/<id_a>/del_job_interview/', views.DelJobInterview.as_view(), name='applicant_del_interviews_url'),
+
+    path('base/vacancies/', views.Vacancies.as_view(), name='vacancies_url'),
+    path('base/vacancies/<id_v>/', views.VacancyDet.as_view(), name='vacancy_recr_url'),
+    path('base/vacancies/<id_v>/del_vacancy/', views.DelVacancy.as_view(), name='vacancy_del_recr_url'),
+
     # End TeamPoland ###############################################
 
     path('chat/', login_required(recruit_chat), name='contact_with_clients'),
@@ -30,12 +35,15 @@ urlpatterns = [
     path('chat_update/', chat_update, name='chat_update'),
     path('check_mes/', check_mes, name='check_mes'),
 
-    path('', recruit_main_page, name='main_page'),
-    path('add_task', add_task, name='add_task'),
-    path(r'add_new_task', add_new_task),
-    path(r'favorites/', favorites, name='favorites'),
-    path(r'checkfavor/', check_favor, name='check_favor'),
-    path('base/', recruit_base, name='recruit_base'),
+
+    #path('', views.recruit_main_page, name='main_page'),
+    path('add_task', views.add_task, name='add_task'),
+    path(r'add_new_task',views.add_new_task),
+    path(r'favorites/', views.favorites, name='favorites'),
+    path(r'checkfavor/', views.check_favor, name='check_favor'),
+    #path('base1/', views.recruit_base, name='recruit_base'),
+    path(r'client_filtration/', views.client_filtration, name='client_filtration'),
+
 
     # Team Rome (start)
     path('profile/', RecruitProfile.as_view(), name='recruit_profile'),

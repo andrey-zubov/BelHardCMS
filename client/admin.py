@@ -25,14 +25,14 @@ admin.site.register(CV)
 
 class VacancyAdmin(admin.ModelAdmin):
     list_display = (
-        'state', 'organization', 'slug', 'address', 'employment', 'description',
-        'skills', 'requirements', 'duties', 'conditions',
+        'state', 'organization', 'address', 'employment', 'description',
+        'skills', 'requirements', 'duties', 'conditions', 'creating_date',
     )
     list_display_links = (
-        'state', 'organization', 'description',
+        'state', 'organization', 'description', 'creating_date',
     )
     search_fields = (
-        'state', 'organization', 'description',
+        'state', 'organization', 'description', 'creating_date',
     )
 
 
@@ -157,11 +157,40 @@ class ClientAdmin(admin.ModelAdmin):  # TeamRome
     inlines = [InlineExp, InlineEdu, InlineCV]
 
 
-admin.site.register(Client, ClientAdmin)  # TeamRome
 
+# TeamRome
+admin.site.register(Client, ClientAdmin)
+
+
+# TeamPoland
+class InlineFilesForJobInterviews(admin.TabularInline):
+    model = FilesForJobInterviews
+
+
+# TeamPoland
+class JobInterviewsAdmin(admin.ModelAdmin):
+    list_display = (
+        'client', 'name', 'location'
+    )
+    list_display_links = (
+        'client', 'name', 'location'
+    )
+    search_fields = (
+        'client', 'name', 'location'
+    )
+
+    model = JobInterviews
+    inlines = [InlineFilesForJobInterviews]
+
+    #class Media:
+    #    js = ['js/scriptJob.js']
+
+
+admin.site.register(JobInterviews, JobInterviewsAdmin)
 
 class DirectionAdmin(admin.ModelAdmin):  # TeamRome
     model = Direction
 
 
 admin.site.register(Direction, DirectionAdmin)  # TeamRome
+
