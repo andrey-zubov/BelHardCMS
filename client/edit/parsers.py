@@ -1,16 +1,14 @@
 import re
 
-from time import perf_counter
+from client.edit.utility import (time_it, try_except)
 
 
-# TeamRome
-def pars_exp_request(req_post) -> list:
+@try_except
+@time_it
+def pars_exp_request(req_post) -> list:  # TeamRome
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели Experience. """
-    print("pars_exp_request()")
     # print("\texp_request.POST: %s" % req_post)
-    time_0 = perf_counter()
-
     arr = []  # output list
     dict_up = {'experience_1': '', 'experience_2': '', 'experience_3': '',
                'exp_date_start': '', 'exp_date_end': '', 'experience_4': ''}  # temporary dictionary
@@ -46,27 +44,26 @@ def pars_exp_request(req_post) -> list:
                        'exp_date_start': '', 'exp_date_end': '', 'experience_4': ''}
             count += 1
             # print('\t----')
-    print('\tpars_exp_request() - OK; TIME: %s sec' % (perf_counter() - time_0))
-    print("\tout_arr: %s" % arr)
+    # print("\tout_arr: %s" % arr)
     return arr
 
 
-# TeamRome
-def pars_cv_request(req_post: dict) -> list:
+@try_except
+@time_it
+def pars_cv_request(req_post: dict) -> list:  # TeamRome
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели CV. """
-    print("pars_cv_request()")
     # print("exp_request.POST: %s" % req_post)
-    from time import perf_counter
-    time_0 = perf_counter()
-
     arr = []
-    dict_up = {'position': '', 'employment': '', 'time_job': '', 'salary': '', 'type_salary': ''}
+    dict_up = {'position': '', 'direction': '', 'employment': '', 'time_job': '', 'salary': '', 'type_salary': ''}
     for i in req_post.items():
         # print("i: %s, %s" % (i[0], i[1]))
 
         if re.match('position', i[0]):
             dict_up['position'] = i[1]
+
+        if re.match('direction', i[0]):
+            dict_up['direction'] = i[1]
 
         if re.match('employment', i[0]):
             dict_up['employment'] = i[1]
@@ -82,24 +79,21 @@ def pars_cv_request(req_post: dict) -> list:
 
             # print(dict_up)
             arr.append(dict_up)
-            dict_up = {'position': '', 'employment': '', 'time_job': '', 'salary': '', 'type_salary': ''}
+            dict_up = {'position': '', 'direction': '', 'employment': '', 'time_job': '', 'salary': '',
+                       'type_salary': ''}
             # print('----')
 
-    print('time_it = %s sec' % (perf_counter() - time_0))
-    print("arr: %s" % arr)
+    # print("arr: %s" % arr)
     return arr
 
 
-# TeamRome
-def pars_edu_request(req_post, _file) -> list:
+@try_except
+@time_it
+def pars_edu_request(req_post, _file) -> list:  # TeamRome
     """ Опасно для глаз!!! Быдло-код !!!
     Парсит QueryDict == request.POST в список из нескольких словарей, отсортированных по полям модели Education. """
-    print("pars_edu_request()")
     # print("\texp_request.POST: %s" % req_post)
     # print("\texp_request.FILE: %s" % _file)
-    from time import perf_counter
-    time_0 = perf_counter()
-
     arr = []  # output list
     dict_up = {'institution': '', 'subject_area': '', 'specialization': '', 'qualification': '',
                'date_start': '', 'date_end': '', 'certificate': ''}  # temporary dictionary
@@ -160,7 +154,5 @@ def pars_edu_request(req_post, _file) -> list:
     """ For loop ends - save temporary dictionary to the output arr. """
     # print("\tdict_up: %s" % dict_up)
     arr.append(dict_up)
-
-    print('\tpars_edu_request() - OK; Time = %s sec' % (perf_counter() - time_0))
-    print("\tout_arr: %s" % arr)
+    # print("\tout_arr: %s" % arr)
     return arr

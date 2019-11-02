@@ -5,10 +5,19 @@
         <input type="text" class="form-control" id="id_position" name="position">
     </div>
     <div class="form-group">
+        <label for="id_direction">Направление</label>
+        <select class="form-control" id="id_direction" name="direction">
+            {% for d in data.direction %}
+                <option value="{{ d.id }}" {% if cv.cl_direction.id  ==  d.id %}selected
+                {% endif %}>{{ d }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
         <label for="id_employment">Занятость</label>
         <select class="form-control" id="id_employment" name="employment">
             {% for emp in data.employment %}
-            <option value="{{ emp }}">{{ emp }}</option>
+                <option value="{{ emp }}">{{ emp }}</option>
             {% endfor %}
         </select>
     </div>
@@ -16,7 +25,7 @@
         <label for="id_time_job">График работы</label>
         <select class="form-control" id="id_time_job" name="time_job">
             {% for tj in data.time_job %}
-            <option selected value="{{ tj }}">{{ tj }}</option>
+                <option selected value="{{ tj }}">{{ tj }}</option>
             {% endfor %}
         </select>
     </div>
@@ -29,7 +38,7 @@
         <label for="id_type_salary">Валюта</label>
         <select class="form-control" id="id_type_salary" name="type_salary">
             {% for ts in data.type_salary %}
-            <option value="{{ ts }}">{{ ts }}</option>
+                <option value="{{ ts }}">{{ ts }}</option>
             {% endfor %}
         </select>
     </div>

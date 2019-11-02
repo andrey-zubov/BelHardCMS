@@ -55,7 +55,10 @@ ROOT_URLCONF = 'BelHardCRM.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'client/templates/client/')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'client/templates/client/'),
+            os.path.join(BASE_DIR, 'recruit/templates/recruit/'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -77,6 +80,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'TEST': {
+            'NAME': os.path.join(BASE_DIR, 'test_db.sqlite3'),
+        },
     }
 }
 
@@ -100,13 +106,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # добавить логи по необходимости
 LOGGING = {
-    'version':1,
+    'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': r'debug.log',   # при релизе сделать путь для хранения логов на сервере
+            'filename': r'debug.log',  # при релизе сделать путь для хранения логов на сервере
         },
     },
     'loggers': {
@@ -142,10 +148,9 @@ EMAIL_PORT = 587
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'client/static'),
+    os.path.join(BASE_DIR, 'client/static/client/'),
+    os.path.join(BASE_DIR, 'recruit/static/recruit/'),
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'client/media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'client/media/')
 MEDIA_URL = '/media/'
-
-

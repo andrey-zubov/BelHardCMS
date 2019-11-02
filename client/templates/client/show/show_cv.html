@@ -1,0 +1,23 @@
+{% extends 'client/main_template_client.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    Show Cv
+{% endblock %}
+{% block content %}
+    <h3>мои резюме</h3>
+    {% for c in data.cl_cvs %}+
+        <p>position: {{ c.position }}</p>
+        <p>employment: {{ c.cl_employment }}</p>
+        <p>time_job: {{ c.cl_time_job }}</p>
+        <p>salary: {{ c.salary }}</p>
+        <p>type_salary: {{ c.cl_type_salary }}</p>
+    {% endfor %}
+
+
+    <div class="text-center">
+        <a class="btn btn-outline-warning m-2" href="{% url 'client_profile' %}">Назад</a>
+        <a href="{% url 'client_edit_cv' %}" type="button" id="add_more"
+           class="btn btn-outline-primary m-2">"Редактировать"</a>
+    </div>
+{% endblock %}

@@ -1,12 +1,20 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import path
-from . import views
 
+from recruit.views import (base_of_applicants, CreateJobInterview, applicant, EditJobInterview, DelJobInterview,
+                           recruit_chat, get_messages, send_message, chat_update, check_mes, recruit_main_page,
+                           add_task, add_new_task, favorites, check_favor, recruit_base, RecruitProfile,
+                           RecruitEditMain, RecruitEditExperience, RecruitEditSkills, RecruitEditPhoto,
+                           RecruitEditEducation, RecruitShowSkills, RecruitShowEducation, RecruitShowExperience)
 
+""" PEP 8: Wildcard imports (from <module> import *) should be avoided, 
+as they make it unclear which names are present in the namespace, 
+confusing both readers and many automated tools. """
 
 
 urlpatterns = [
     # TeamPoland ##################################################
+
     path('', views.recruiter_main_page, name='recruiter_url'),     # There is of recruiter's main page
     path('base/', views.recruiter_base, name='base_url'),
     path('base/base_of_clients/', views.base_of_applicants, name='base_of_clients'),
@@ -18,20 +26,34 @@ urlpatterns = [
     path('base/vacancies/', views.Vacancies.as_view(), name='vacancies_url'),
     path('base/vacancies/<id_v>/', views.VacancyDet.as_view(), name='vacancy_recr_url'),
     path('base/vacancies/<id_v>/del_vacancy/', views.DelVacancy.as_view(), name='vacancy_del_recr_url'),
+
     # End TeamPoland ###############################################
 
-    path('chat/', login_required(views.recruit_chat), name='contact_with_clients'),
-    path('get_messages/', views.get_messages, name='get_messages'),
-    path('send_message/', views.send_message, name='send_message'),
-    path('chat_update/', views.chat_update, name='chat_update'),
-    path('check_mes/', views.check_mes, name='check_mes'),
+    path('chat/', login_required(recruit_chat), name='contact_with_clients'),
+    path('get_messages/', get_messages, name='get_messages'),
+    path('send_message/', send_message, name='send_message'),
+    path('chat_update/', chat_update, name='chat_update'),
+    path('check_mes/', check_mes, name='check_mes'),
+
 
     #path('', views.recruit_main_page, name='main_page'),
     path('add_task', views.add_task, name='add_task'),
     path(r'add_new_task',views.add_new_task),
     path(r'favorites/', views.favorites, name='favorites'),
     path(r'checkfavor/', views.check_favor, name='check_favor'),
-    path('base1/', views.recruit_base, name='recruit_base'),
+    #path('base1/', views.recruit_base, name='recruit_base'),
     path(r'client_filtration/', views.client_filtration, name='client_filtration'),
 
+
+    # Team Rome (start)
+    path('profile/', RecruitProfile.as_view(), name='recruit_profile'),
+    path('edit/', RecruitEditMain.as_view(), name='recruit_edit'),
+    path('edit/experience/', RecruitEditExperience.as_view(), name='recruit_edit_experience'),
+    path('edit/skills/', RecruitEditSkills.as_view(), name='recruit_edit_skills'),
+    path('edit/photo/', RecruitEditPhoto.as_view(), name='recruit_edit_photo'),
+    path('edit/education/', RecruitEditEducation.as_view(), name='recruit_edit_education'),
+    path('show_skills', RecruitShowSkills.as_view(), name='recruit_show_skills'),
+    path('show_education', RecruitShowEducation.as_view(), name='recruit_show_education'),
+    path('show_experience', RecruitShowExperience.as_view(), name='recruit_show_experience'),
+    # Team Rome (end)
 ]

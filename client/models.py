@@ -1,11 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
-import re
-import datetime as dt
 from django.utils import timezone
-
-from recruit.models import Recruiter
 
 UserModel = get_user_model()
 
@@ -73,7 +69,7 @@ class City(models.Model):
 class Certificate(models.Model):
     """ Сертификат: ссылка или картинка.
     ForeignKey = Несколько сертификатов может относиться к одному образованию. """
-    education = models.ForeignKey(to='Education', on_delete=models.CASCADE)
+    education = models.ForeignKey(to='Education', on_delete=models.CASCADE, null=True, blank=True)
 
     img = models.ImageField(blank=True, null=True, verbose_name='certificate_img')
     link = models.URLField(blank=True, null=True, max_length=100, verbose_name='certificate_link')
@@ -203,6 +199,7 @@ class CV(models.Model):
     client_cv = models.ForeignKey(to='Client', on_delete=models.CASCADE)
 
     position = models.CharField(max_length=100, null=True, blank=True)
+    direction = models.ForeignKey(to='Direction', on_delete=models.SET_NULL, null=True, blank=True)
     employment = models.ForeignKey(Employment, on_delete=models.SET_NULL, null=True, blank=True)
     time_job = models.ForeignKey(TimeJob, on_delete=models.SET_NULL, null=True, blank=True)
     salary = models.CharField(max_length=20, null=True, blank=True)
@@ -300,16 +297,17 @@ class JobInterviews(models.Model):
                                               verbose_name='Дополнительная информация')
     status = models.BooleanField(default=False)  # статус собеседования, на которое ещё не ходили
     check_status = models.BooleanField(default=True)  # статус активен, если можем после успешного собеседования
-      # в течении 60 сек вернуть в статус активных собеседований
-    readinterview = models.BooleanField(default=False)  #cтатус собеседования для определения отображения в оповещениях
+    # в течении 60 сек вернуть в статус активных собеседований
+    readinterview = models.BooleanField(default=False)  # cтатус собеседования для определения отображения в оповещениях
 
     @property
     def show_all(self):
         to_show_name = []
         to_show_verbose_name = []
         for key in self.__dict__:
-            if self.__dict__[key].__class__.__name__ == 'str' or self.__dict__[key].__class__.__name__ == 'datetime'\
-                    or self.__dict__[key].__class__.__name__ == 'time' or self.__dict__[key].__class__.__name__ == 'date':
+            if self.__dict__[key].__class__.__name__ == 'str' or self.__dict__[key].__class__.__name__ == 'datetime' \
+                    or self.__dict__[key].__class__.__name__ == 'time' or self.__dict__[
+                key].__class__.__name__ == 'date':
                 to_show_verbose_name.append(self._meta.get_field(key).verbose_name)
                 to_show_name.append(self.__dict__[key])
         to_show_name.remove(self.time_of_creation)
@@ -341,7 +339,6 @@ class JobInterviews(models.Model):
     def __str__(self):
         return self.name
 
-
     # def get_absolute_url(self):
     #    return reverse('applicant_url', kwargs={'id_a': self.id})
 
@@ -367,7 +364,7 @@ class FilesForJobInterviews(models.Model):
 
 
 class Client(models.Model):
-    user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE)
+    user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE, null=True, blank=True)
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
 
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
@@ -388,9 +385,9 @@ class Client(models.Model):
     skype = models.CharField(max_length=100, null=True, blank=True)
     img = models.ImageField(blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
-    # resumes
 
     # spain recruit
+    from recruit.models import Recruiter
     is_reserved = models.BooleanField(default=False)
     own_recruiter = models.ForeignKey(Recruiter, on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -464,9 +461,9 @@ class Opinion(models.Model):
 
 
 class Answer(models.Model):
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, null=True, blank=True)
     text = models.TextField(max_length=3000)
-    opinion = models.OneToOneField(Opinion, on_delete=models.CASCADE)
+    opinion = models.OneToOneField(Opinion, on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -476,7 +473,7 @@ class Answer(models.Model):
 class Tasks(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True)
     title = models.TextField(max_length=200)
-    time = models.DateTimeField(null=True, blank=True) # TODO добавден auno_now, временно
+    time = models.DateTimeField(null=True, blank=True)  # TODO добавден auno_now, временно
     date = models.DateField(null=True, blank=True)
     comment = models.TextField(max_length=300, blank=True)
     status = models.BooleanField(default=False)  # задача, которая не выполнена
@@ -531,3 +528,13 @@ class Settings(models.Model):
     email_meetings = models.BooleanField(default=True)
     email_reviews = models.BooleanField(default=True)
 
+
+class Direction(models.Model):  # TeamRome
+    direction_word = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Направление"
+        verbose_name_plural = "Направления"
+
+    def __str__(self):
+        return self.direction_word
