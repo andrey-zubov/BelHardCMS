@@ -42,8 +42,6 @@ def base_of_applicants(request):
 
 
 
-
-
 class ApplicantDet(View):
     def get(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
@@ -335,7 +333,6 @@ def favorites(request):
     clients = client_filtration(request, own_status)
     context = {'applicants': clients}
 
-   # return HttpResponse(own_status)
     return render(request, template_name='recruit/favorites.html', context=context)
 
 
@@ -346,6 +343,7 @@ def check_favor(request):
     recruit_id = (request.GET['recruit'])
     recruit = Recruiter.objects.get(recruiter=UserModel.objects.get(id=recruit_id))
     if client.is_reserved == True:
+
         client.is_reserved = False
         client.own_recruiter = None
     else:
