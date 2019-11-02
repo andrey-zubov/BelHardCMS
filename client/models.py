@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
+import transliterate
 import re
 import datetime as dt
 from django.utils import timezone
@@ -262,7 +263,7 @@ class Vacancy(models.Model):
     def get_absolute_url(self):  # for client
         return reverse('vacancy_detail_url', kwargs={'id_v': self.id})
 
-    def get_absolute_url2(self): # for recruiter looking and editing vacancy
+    def get_absolute_url2(self):  # for recruiter looking and editing vacancy
         return reverse('vacancy_recr_url', kwargs={'id_v': self.id})
 
     def get_del_url(self):
@@ -286,7 +287,7 @@ class JobInterviews(models.Model):
     jobinterviewdate = models.DateField(max_length=20, verbose_name='Дата проведения собеседования')
     interview_author = models.CharField(max_length=50, verbose_name='Автор собеседования', blank=True, null=True)
     time_of_creation = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
-    period_of_execution = models.DateTimeField(blank=True, null=True, verbose_name='Срок исполнения') # TODO Dell field
+    period_of_execution = models.DateTimeField(blank=True, null=True, verbose_name='Срок исполнения')  # TODO Dell field
     reminder = models.DateTimeField(blank=True, null=True, verbose_name='Напоминание')
     position = models.CharField(max_length=50, verbose_name='Предполагаемая должность')
     organization = models.CharField(max_length=50, verbose_name='Организация')
@@ -300,16 +301,17 @@ class JobInterviews(models.Model):
                                               verbose_name='Дополнительная информация')
     status = models.BooleanField(default=False)  # статус собеседования, на которое ещё не ходили
     check_status = models.BooleanField(default=True)  # статус активен, если можем после успешного собеседования
-      # в течении 60 сек вернуть в статус активных собеседований
-    readinterview = models.BooleanField(default=False)  #cтатус собеседования для определения отображения в оповещениях
+    # в течении 60 сек вернуть в статус активных собеседований
+    readinterview = models.BooleanField(default=False)  # cтатус собеседования для определения отображения в оповещениях
 
     @property
     def show_all(self):
         to_show_name = []
         to_show_verbose_name = []
         for key in self.__dict__:
-            if self.__dict__[key].__class__.__name__ == 'str' or self.__dict__[key].__class__.__name__ == 'datetime'\
-                    or self.__dict__[key].__class__.__name__ == 'time' or self.__dict__[key].__class__.__name__ == 'date':
+            if self.__dict__[key].__class__.__name__ == 'str' or self.__dict__[key].__class__.__name__ == 'datetime' \
+                    or self.__dict__[key].__class__.__name__ == 'time' or self.__dict__[
+                key].__class__.__name__ == 'date':
                 to_show_verbose_name.append(self._meta.get_field(key).verbose_name)
                 to_show_name.append(self.__dict__[key])
         to_show_name.remove(self.time_of_creation)
@@ -338,7 +340,7 @@ class JobInterviews(models.Model):
             self.readinterview = True
             self.save()
 
-    def delete(self, *args, **kwargs):      
+    def delete(self, *args, **kwargs):
         if self.files_for_jobinterview.all():
             for file in self.files_for_jobinterview.all():
                 file.delete()
@@ -347,9 +349,12 @@ class JobInterviews(models.Model):
     def __str__(self):
         return self.name
 
-
     # def get_absolute_url(self):
     #    return reverse('applicant_url', kwargs={'id_a': self.id})
+
+
+def file_path(instanse, filename):
+    return f'users/{transliterate.translit(str(instanse.jobinterviews_files.client), reversed=True)}/files_for_jobinterviews/{filename}'
 
 
 class FilesForJobInterviews(models.Model):
@@ -358,15 +363,16 @@ class FilesForJobInterviews(models.Model):
         on_delete=models.CASCADE,
         related_name='files_for_jobinterview'
     )
-    add_file = models.FileField(upload_to='files_for_jobinterviewes/',
+    add_file = models.FileField(upload_to=file_path,
                                 verbose_name='Вложения', blank=True, null=True)
 
     def delete(self, *args, **kwargs):
         self.add_file.delete()
+        print(345)
         super().delete(*args, **kwargs)
 
     def __str__(self):
-        return self.add_file.name
+        return self.add_file.name.split('/')[-1]
 
     class Meta:
         verbose_name = 'Файл'
@@ -486,7 +492,7 @@ class Answer(models.Model):
 class Tasks(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE, blank=True, null=True)
     title = models.TextField(max_length=200)
-    time = models.DateTimeField(null=True, blank=True) # TODO добавден auno_now, временно
+    time = models.DateTimeField(null=True, blank=True)  # TODO добавден auno_now, временно
     date = models.DateField(null=True, blank=True)
     comment = models.TextField(max_length=300, blank=True)
     status = models.BooleanField(default=False)  # задача, которая не выполнена
@@ -540,4 +546,3 @@ class Settings(models.Model):
     email_suggestions = models.BooleanField(default=True)
     email_meetings = models.BooleanField(default=True)
     email_reviews = models.BooleanField(default=True)
-

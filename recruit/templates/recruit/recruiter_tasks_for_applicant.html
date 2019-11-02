@@ -54,7 +54,7 @@
                             {% for file in jobinterview.files_for_jobinterview.all %}
 
                                 <a type="button" class="btn btn-primary" href="{{ file.add_file.url }}">Скачать</a>
-                                {{ file }}<br>
+                                {{ file }} <br>
                             {% endfor %}
                         </div>
                         <div>
@@ -92,7 +92,7 @@
                                                     <h5>Выберите подтвержденную соискателем вакансию: *
                                                         <select name="vacancy" size="3" class="custom-select" required>
                                                             {% for vacancy in accepted_vacancies %}
-                                                                <option value="{{ vacancy.id }}">{{ vacancy }}</option>
+                                                                <option value="{{ vacancy.id }}">{{ vacancy }} в {{ vacancy.organization }}</option>
                                                             {% endfor %}
 
                                                         </select>
@@ -131,6 +131,14 @@
                                                     Дополнительная информация:
                                                     <input type="text" class="form-addition" id="id_addition"
                                                            name="addition" value="{{ jobinterview.additional_information }}"/>
+                                                </h5><br>
+                                                <h5>
+                                                    {% for file in jobinterview.files_for_jobinterview.all %}               <!--:::::::::::::::::::::::----------------------------------------->
+
+                                                        <a type="button" class="btn btn-primary"
+                                                        href="{{ file.add_file.url }}">Скачать</a>
+                                                    {{ file }} <button type="button" class="btn btn-primary del_file" id="{{ file.id }}">Удалить</button><br>
+                                                    {% endfor %}
                                                 </h5><br>
                                                 <div id="files-div">
                                                     <h5>
@@ -208,7 +216,7 @@
                             <h5>Выберите подтвержденную соискателем вакансию: *
                                 <select name="vacancy" size="3" class="custom-select" required>
                                     {% for vacancy in accepted_vacancies %}
-                                        <option value="{{ vacancy.id }}">{{ vacancy }}</option>
+                                        <option value="{{ vacancy.id }}">{{ vacancy }} в {{ vacancy.organization }}</option>
                                     {% endfor %}
 
                                 </select>
@@ -307,7 +315,8 @@
                                             {% for file in jobinterview.files_for_jobinterview.all %}
 
                                                 <a type="button" class="btn btn-primary" href="{{ file.add_file.url }}">Скачать</a>
-                                                {{ file }}<br>
+                                                {{ file }}
+                                                 <br>
                                             {% endfor %}
 
                                         </div>
@@ -326,45 +335,24 @@
     </div>
 <script>
 
-    $(document).ready(function () {
-        $('#reset-files').on('click', function () {
-            $('#form-files').val('');
-        });
-    });
-
-
-    /*
 $('document').ready(function () {
-    var first = { first_flag }}
-    var second = { second_flag }}
-    if (first){$('#first').attr('hidden',false)}
-    if (second){$('#second').attr('hidden',false)} */
+
 
 
     /*actions for buttons*/
-   /* $('.accept').on('click',function () {
+    $('.del_file').on('click',function () {
         var id = $(this).attr('id');
-        $.ajax({'url':'/client/accept_reject/',
-                'data':{'flag':'accept',"id_v":id},
+        $.ajax({'url':'/recruit/del_file/',
+                'data':{"id_f":id},
                 success:function (data) {
                     console.log(data);
-                    $('#first').attr('hidden', true)
-                    $('#second').attr('hidden', false)
+                    $('#' + id).attr('disabled', true)
+
                 }})
 
     });
-    $('.reject').on('click',function () {
-        var id = $(this).attr('id');
-        $.ajax({'url':'/client/accept_reject/',
-                'data':{'flag':'reject','id_v':id},
-                success:function (data) {
-                    console.log(data)
-                    $('#first').attr('hidden', false)
-                    $('#second').attr('hidden', true)
-                }})
 
-    });
-}) */
+})
 
-    </script>
+</script>
 {% endblock %}
