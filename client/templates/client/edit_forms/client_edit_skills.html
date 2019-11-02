@@ -6,24 +6,25 @@
 {% endblock %}
 
 {% block content %}
-    <!-- JS добавления однотипных форм -->
+    {% include 'client/edit_forms/tot_samui_bootstrap.html' %}
     <script type="text/javascript">
         $(document).ready(function () {
-            var origin = $("#id_skill1").clone();
+            var origin = $("#id_skill").clone();
             var count = 1;
 
             $("#add_more").on("click", add);
-            $("#id_skill1").on("click", data_l);
+            $("#id_skill_input").on("click", data_list);
 
             function add() {
-                var add = origin.clone().on("click", data_l);
+                {# JS добавления однотипных форм #}
+                var add = origin.clone();
                 count += 1;
-                add.attr('value', '');
-                add.attr("id", "new_skill");
+                add.attr('value', $('#id_skill_input').val());
                 add.appendTo("#div_to_add_new");
             }
 
-            function data_l() {
+            function data_list() {
+                {# load datalist with ajax from back-end #}
                 var us_in = $(this).val();
                 console.log(us_in);
                 $.ajax({
@@ -31,7 +32,7 @@
                     'data': {'us_in': us_in},
                     success: function (data) {
                         var json_data = jQuery.parseJSON(data);
-                        console.log(json_data.words);
+                        {#console.log(json_data.words);#}
                         $.each(json_data.words, function (i, item) {
                             $("#data_list").append($("<option>").attr('value', item).text(item));
                         });
@@ -44,47 +45,23 @@
     <div class="container">
         <form method="post" id="origin_form">
             {% csrf_token %}
-            <div id="div_to_add_new">
+            <div>
                 <h3 class="text-center">Навыки</h3>
-                {% for s in data.cl_skill %}
+                <div id="div_to_add_new" class="input-group">
+                    {% for s in data.cl_skill %}
+                        <input type="text" class="form-control m-2 rounded" id="id_skill"
+                               name="skill" value="{{ s }}" readonly>
+                    {% empty %}
+                        <input type="text" class="form-control m-2 rounded" id="id_skill"
+                               name="skill" value="" readonly>
+                    {% endfor %}
+                </div>
 
-                    {# <!-- Script Добавление сертификатов -->#}
-                    <script type="text/javascript">
-                        $(document).ready(function () {
-                            $("#id_skill{{ forloop.counter }}").on("click", data_l);
+                <input type="text" class="form-control my-2" id="id_skill_input" list="data_list">
+                <datalist id="data_list">
+                    <option id="dl_option"></option>
+                </datalist>
 
-                            function data_l() {
-                                var us_in = $(this).val();
-                                console.log(us_in);
-                                $.ajax({
-                                    'url': "{% url 'skills_data_list' %}",
-                                    'data': {'us_in': us_in},
-                                    success: function (data) {
-                                        var json_data = jQuery.parseJSON(data);
-                                        console.log(json_data.words);
-                                        $.each(json_data.words, function (i, item) {
-                                            $("#data_list{{ forloop.counter }}").append($("<option>").attr('value', item).text(item));
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    </script>
-
-                    <input type="text" class="form-control my-2" id="id_skill{{ forloop.counter }}"
-                           name="skill"
-                           value="{{ s }}" list="data_list{{ forloop.counter }}">
-                    <datalist id="data_list{{ forloop.counter }}">
-                        <option id="dl_option" value=""></option>
-                    </datalist>
-
-                {% empty %}
-                    <input type="text" class="form-control my-2" id="id_skill1"
-                           name="skill" list="data_list">
-                    <datalist id="data_list">
-                        <option id="dl_option" value=""></option>
-                    </datalist>
-                {% endfor %}
             </div>
             <div class="text-center">
                 <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>

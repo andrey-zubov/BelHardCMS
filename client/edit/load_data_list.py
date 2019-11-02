@@ -6,25 +6,25 @@ from django.views.generic import TemplateView
 from client.models import (SkillsWord, EducationWord, CvWord)
 
 
-class SkillsDataList(TemplateView):
+class SkillsDataList(TemplateView):  # TeamRome
     def get(self, request, *args, **kwargs):
-        print('SkillsDataList.GET: %s' % request.GET)
+        # print('SkillsDataList.GET: %s' % request.GET)
         words = [i.skills_word for i in SkillsWord.objects.all()]
         json_data = json.dumps({'words': words}, ensure_ascii=False)
         return HttpResponse(json_data)
 
 
-class InstitutionDataList(TemplateView):
+class InstitutionDataList(TemplateView):  # TeamRome
     def get(self, request, *args, **kwargs):
-        print('InstitutionDataList.GET: %s' % request.GET)
+        # print('InstitutionDataList.GET: %s' % request.GET)
         words = [i.education_word for i in EducationWord.objects.all()]
         json_data = json.dumps({'words': words}, ensure_ascii=False)
         return HttpResponse(json_data)
 
 
-class CvPositionDataList(TemplateView):
+class CvPositionDataList(TemplateView):  # TeamRome
     def get(self, request, *args, **kwargs):
-        print('CvPositionDataList.GET: %s' % request.GET)
+        # print('CvPositionDataList.GET: %s' % request.GET)
         words = [i.position_word for i in CvWord.objects.all()]
         json_data = json.dumps({'words': words}, ensure_ascii=False)
         return HttpResponse(json_data)
