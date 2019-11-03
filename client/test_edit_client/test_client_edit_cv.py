@@ -18,13 +18,36 @@ class ClientEditCVTests(TestCase):
     TEST_USER_USERNAME = 'test_user'
     TEST_USER_PASSWORD = 'test_user'
     TEST_USER_EMAIL = 'test_user'
-    TEST_DATA = {'position': 'jun',
-                 'direction': Direction.objects.all()[0].id,  # pre defined array
-                 'employment': Employment.objects.all()[0],  # pre defined array
-                 'time_job': TimeJob.objects.all()[0],  # pre defined array
-                 'salary': '100',
-                 'type_salary': TypeSalary.objects.all()[0],  # pre defined array
-                 }
+    TEST_DATA_1 = {'position': 'jun',
+                   'direction': Direction.objects.all()[0].id,  # pre defined array
+                   'employment': Employment.objects.all()[0],  # pre defined array
+                   'time_job': TimeJob.objects.all()[0],  # pre defined array
+                   'salary': '100',
+                   'type_salary': TypeSalary.objects.all()[0],  # pre defined array
+                   }
+
+    TEST_DATA_2 = {'position': '',
+                   'direction': '',
+                   'employment': '',
+                   'time_job': TimeJob.objects.all()[0],
+                   'salary': '',
+                   'type_salary': '',
+                   }
+
+    TEST_DATA_3 = {'position1': '',  # 1
+                   'direction1': '',
+                   'employment1': '',
+                   'time_job1': TimeJob.objects.all()[0],
+                   'salary1': '',
+                   'type_salary1': '',
+                   'position2': '',  # 2
+                   'direction2': '',
+                   'employment2': '',
+                   'time_job2': TimeJob.objects.all()[0],
+                   'salary2': '',
+                   'type_salary2': '',
+                   }
+
     default_select_fields = ["'employment'", "'time_job'", "'type_salary'", "'direction'"]
 
     def setUp(self) -> None:
@@ -54,12 +77,12 @@ class ClientEditCVTests(TestCase):
         self.client.login(username=self.TEST_USER_USERNAME, password=self.TEST_USER_PASSWORD)
 
         CV.objects.create(client_cv=self.client_inst,
-                          position=self.TEST_DATA['position'],
-                          direction=Direction.objects.all()[0],
-                          employment=self.TEST_DATA['employment'],
-                          time_job=self.TEST_DATA['time_job'],
-                          salary=self.TEST_DATA['salary'],
-                          type_salary=self.TEST_DATA['type_salary'],
+                          position=self.TEST_DATA_1['position'],
+                          direction=Direction.objects.get(id=self.TEST_DATA_1['direction']),
+                          employment=self.TEST_DATA_1['employment'],
+                          time_job=self.TEST_DATA_1['time_job'],
+                          salary=self.TEST_DATA_1['salary'],
+                          type_salary=self.TEST_DATA_1['type_salary'],
                           )
         cv_arr = cv_page_get(self.client_inst)['cl_cvs']
         # print(cv_arr)
@@ -76,21 +99,66 @@ class ClientEditCVTests(TestCase):
 
     @time_it
     def test_POST_user(self):
-        """ request.POST this LoggedIn User. """
+        """ request.POST with LoggedIn User and TEST_DATA_1. """
         self.client.login(username=self.TEST_USER_USERNAME, password=self.TEST_USER_PASSWORD)
 
-        response = self.client.post(path=self.url, data=self.TEST_DATA)  # saves to DB ????
+        response = self.client.post(path=self.url, data=self.TEST_DATA_1)  # saves to DB ????
 
         user_cv = CV.objects.get(client_cv=self.client_inst)
 
-        self.assertEqual(user_cv.position, self.TEST_DATA['position'])
-        self.assertEqual(user_cv.direction.id, self.TEST_DATA['direction'])
-        self.assertEqual(user_cv.employment, self.TEST_DATA['employment'])
-        self.assertEqual(user_cv.time_job, self.TEST_DATA['time_job'])
-        self.assertEqual(user_cv.salary, self.TEST_DATA['salary'])
-        self.assertEqual(user_cv.type_salary, self.TEST_DATA['type_salary'])
+        self.assertEqual(user_cv.position, self.TEST_DATA_1['position'])
+        self.assertEqual(user_cv.direction, Direction.objects.get(id=self.TEST_DATA_1['direction']))
+        self.assertEqual(user_cv.employment, self.TEST_DATA_1['employment'])
+        self.assertEqual(user_cv.time_job, self.TEST_DATA_1['time_job'])
+        self.assertEqual(user_cv.salary, self.TEST_DATA_1['salary'])
+        self.assertEqual(user_cv.type_salary, self.TEST_DATA_1['type_salary'])
 
         self.assertEquals(response.status_code, 302)  # redirect
+
+    @time_it
+    def test_POST_user_2(self):
+        """ request.POST with LoggedIn User and TEST_DATA_2. """
+        self.client.login(username=self.TEST_USER_USERNAME, password=self.TEST_USER_PASSWORD)
+
+        response = self.client.post(path=self.url, data=self.TEST_DATA_2)  # saves to DB ????
+
+        user_cv = CV.objects.get(client_cv=self.client_inst)
+
+        self.assertEqual(user_cv.position, None)
+        self.assertEqual(user_cv.direction, None)
+        self.assertEqual(user_cv.employment, None)
+        self.assertEqual(user_cv.time_job, self.TEST_DATA_2['time_job'])
+        self.assertEqual(user_cv.salary, None)
+        self.assertEqual(user_cv.type_salary, None)
+
+        self.assertEquals(response.status_code, 302)  # redirect
+
+    @time_it
+    def test_POST_user_3(self):
+        """ request.POST with LoggedIn User and TEST_DATA_3. """
+        self.client.login(username=self.TEST_USER_USERNAME, password=self.TEST_USER_PASSWORD)
+
+        response = self.client.post(path=self.url, data=self.TEST_DATA_3)  # saves to DB ????
+
+        user_cvs = CV.objects.filter(client_cv=self.client_inst)
+        print(user_cvs.values())
+        count = len(user_cvs)
+        for cv in user_cvs:
+            self.assertEqual(cv.position, None)
+            self.assertEqual(cv.direction, None)
+            self.assertEqual(cv.employment, None)
+            self.assertEqual(cv.time_job, self.TEST_DATA_3['time_job%s' % count])
+            self.assertEqual(cv.salary, None)
+            self.assertEqual(cv.type_salary, None)
+
+        self.assertEquals(response.status_code, 302)  # redirect
+
+        cv_arr = cv_page_get(self.client_inst)['cl_cvs']
+        print(cv_arr)
+        response = self.client.get(self.url)
+        print(response.context['data']['cl_cvs'])
+        self.assertEqual(response.context['data']['cl_cvs'], cv_arr)
+        self.assertEqual(response.status_code, 200)
 
 
 if __name__ == "__main__":
