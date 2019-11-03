@@ -1,6 +1,6 @@
 from client.edit.edit_forms import UploadImgForm
 from client.edit.parsers import (pars_edu_request, pars_cv_request, pars_exp_request)
-from client.edit.utility import (check_input_str, check_phone, check_home_number, check_telegram)
+from client.edit.utility import (check_input_str, check_phone)
 from client.edit.utility import (time_it, try_except)
 from client.models import (Skills, Telephone, Sex, Citizenship, FamilyState, Children, City, State, Client, Education,
                            Certificate, CV, Experience, Sphere, Employment, TimeJob, TypeSalary, UserModel, Direction)
@@ -12,9 +12,9 @@ def edit_page_post(client_instance, request):  # TeamRome
     """ views.py ClientEditMain(TemplateView) POST method. """
     """ Входные данные для сохранения: """
     user = request.user
-    user_name = check_input_str(request.POST['client_first_name'])
-    last_name = check_input_str(request.POST['client_last_name'])
-    patronymic = check_input_str(request.POST['client_middle_name'])
+    user_name = request.POST['client_first_name']
+    last_name = request.POST['client_last_name']
+    patronymic = request.POST['client_middle_name']
     sex = Sex.objects.get(sex_word=request.POST['sex']) if request.POST['sex'] else None
     date = request.POST['date_born'] if request.POST['date_born'] else None
     citizenship = Citizenship.objects.get(country_word=request.POST['citizenship']) if request.POST[
@@ -24,11 +24,11 @@ def edit_page_post(client_instance, request):  # TeamRome
     children = Children.objects.get(children_word=request.POST['children']) if request.POST['children'] else None
     country = Citizenship.objects.get(country_word=request.POST['country']) if request.POST['country'] else None
     city = City.objects.get(city_word=request.POST['city']) if request.POST['city'] else None
-    street = check_input_str(request.POST['street'])
-    house = check_home_number(request.POST['house'])
-    flat = check_home_number(request.POST['flat'])
-    telegram_link = check_telegram(request.POST['telegram_link'])
-    skype = check_input_str(request.POST['skype_id'])
+    street = request.POST['street']
+    house = request.POST['house']
+    flat = request.POST['flat']
+    telegram_link = request.POST['telegram_link']
+    skype = request.POST['skype_id']
     email = request.POST['email']
     link_linkedin = request.POST['link_linkedin']
     state = State.objects.get(state_word=request.POST['state']) if request.POST['state'] else None
@@ -148,32 +148,25 @@ def education_page_post(client_instance, request):  # TeamRome
         for edus in arr_edu:
             if any(edus.values()):
 
-                institution = edus['institution']
-                subject_area = edus['subject_area']
-                specialization = edus['specialization']
-                qualification = edus['qualification']
-                date_start = edus['date_start']
-                date_end = edus['date_end']
-                cert_arr = edus['certificate']
-
                 education = Education(
                     client_edu=client_instance,
-                    institution=institution,
-                    subject_area=subject_area,
-                    specialization=specialization,
-                    qualification=qualification,
-                    date_start=date_start,
-                    date_end=date_end,
+                    institution=edus['institution'],
+                    subject_area=edus['subject_area'],
+                    specialization=edus['specialization'],
+                    qualification=edus['qualification'],
+                    date_start=edus['date_start'],
+                    date_end=edus['date_end'],
                 )
                 education.save()
 
-                for c in cert_arr:  # array of tuples
-                    certificate = Certificate(
-                        education=education,
-                        img=c[1],
-                        link=c[0],
-                    )
-                    certificate.save()
+                if edus['certificate']:
+                    for c in edus['certificate']:  # array of tuples
+                        certificate = Certificate(
+                            education=education,
+                            img=c[1],
+                            link=c[0],
+                        )
+                        certificate.save()
 
                 # print("\tEducation Form - OK:\n\t", institution, subject_area, specialization, qualification,
                 #       date_start, date_end, cert_arr)
@@ -194,22 +187,16 @@ def cv_page_post(client_instance, request):  # TeamRome
             CV.objects.filter(client_cv=client_instance).delete()
 
             for cvs in arr_cv:
-                position = cvs['position']
-                employment = Employment.objects.get(employment=cvs['employment']) if cvs['employment'] else None
-                time_job = TimeJob.objects.get(time_job_word=cvs['time_job']) if cvs['time_job'] else None
-                salary = cvs['salary']
-                type_salary = TypeSalary.objects.get(type_word=cvs['type_salary']) if cvs['type_salary'] else None
-                direction = Direction.objects.get(id=cvs['direction']) if cvs['direction'] else None
-
                 if any(cvs.values()):
+
                     cv = CV(
                         client_cv=client_instance,
-                        direction=direction,
-                        position=position,
-                        employment=employment,
-                        time_job=time_job,
-                        salary=salary,
-                        type_salary=type_salary,
+                        direction=Direction.objects.get(id=cvs['direction']) if cvs['direction'] else None,
+                        position=cvs['position'],
+                        employment=Employment.objects.get(id=cvs['employment']) if cvs['employment'] else None,
+                        time_job=TimeJob.objects.get(id=cvs['time_job']) if cvs['time_job'] else None,
+                        salary=cvs['salary'],
+                        type_salary=TypeSalary.objects.get(id=cvs['type_salary']) if cvs['type_salary'] else None,
                     )
                     cv.save()
                     # print("\tCV Form - OK:\n\t", position, employment, time_job, salary, type_salary)
@@ -219,6 +206,7 @@ def cv_page_post(client_instance, request):  # TeamRome
             print('\tCV Parser is Empty')
     else:
         print('\tclient_instance = None!')
+
 
 @try_except
 @time_it
@@ -232,70 +220,26 @@ def experience_page_post(client_instance, request):  # TeamRome
         for dic in arr:
             if any(dic.values()):
                 """ If this dictionary hes any values? than take them and save to Exp. instance. """
-                organisation = dic['experience_1']
-                position = dic['experience_3']
-                start_date = dic['exp_date_start']
-                end_date = dic['exp_date_end']
-                duties = dic['experience_4']
-
                 experiences = Experience(
                     client_exp=client_instance,
-                    name=organisation,
-                    position=position,
-                    start_date=start_date,
-                    end_date=end_date,
-                    duties=duties,
+                    name=dic['experience_1'],
+                    position=dic['experience_3'],
+                    start_date=dic['exp_date_start'],
+                    end_date=dic['exp_date_end'],
+                    duties=dic['experience_4'],
                 )
                 experiences.save()
 
-                spheres = dic['experience_2']
-                for s in spheres:
-                    if s:
-                        """ Save ManyToManyField 'sphere' """
-                        sp = Sphere.objects.get(id=s)
-                        sp.save()
-                        experiences.sphere.add(sp)
+                if dic['experience_2']:
+                    for s in dic['experience_2']:
+                        if s:
+                            """ Save ManyToManyField 'sphere' """
+                            sp = Sphere.objects.get(id=s)
+                            sp.save()
+                            experiences.sphere.add(sp)
 
                 # print("\tExperience Form - OK:\n\t", organisation, spheres, position, start_date, end_date, duties)
             else:
                 print('\tExperience Form is Empty')
     else:
         print('\tExperience Parser is Empty')
-
-
-@try_except
-@time_it
-def form_edu_post(client_instance, request):  # TeamRome
-    print("FormEducation.POST: %s" % request.POST)
-    form_set_edu = EducationFormSet(request.POST)
-    form_set_cert = CertificateFormSet(request.POST, request.FILES)
-
-    edu_inst = None
-    if form_set_edu.is_valid():
-        print('FormSet_Edu - OK')
-        for f in form_set_edu:
-            f_items = f.cleaned_data.items()
-            print("edu_items: %s" % f_items)
-            if f_items:
-                """ edu_inst - unsaved model instance!
-                It gives you ability to attach data to the instance before saving to the DB! """
-                edu_inst = f.save(commit=False)
-                """ attach ForeignKey == Client instance """
-                edu_inst.client_edu = client_instance
-                """ Save Education instance """
-                edu_inst.save()
-    else:
-        print("FormSet_Edu not Valid")
-
-    if form_set_cert.is_valid():
-        print("FormSet_Cert - OK")
-        for c in form_set_cert:
-            c_items = c.cleaned_data.items()
-            print('cert_items: %s' % c_items)
-            if c_items:
-                cert_inst = c.save(commit=False)
-                """ attach ForeignKey == Education instance """
-                cert_inst.education = edu_inst
-                cert_inst.save()
-    else:
-        print("FormSet_Cert not Valid")

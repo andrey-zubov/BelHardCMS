@@ -7,12 +7,6 @@ from client.edit.utility import time_it
 from client.models import Client, CV, Employment, TimeJob, TypeSalary, Direction
 
 
-# def get_client_instance(name):
-#     user = get_user_model()
-#     us = user.objects.get(username=name)
-#     return Client.objects.get(user_client=us)
-
-
 class ClientEditCVTests(TestCase):
     """ python manage.py test client/test_edit_client/ --keepdb """
     TEST_USER_USERNAME = 'test_user'
@@ -20,16 +14,16 @@ class ClientEditCVTests(TestCase):
     TEST_USER_EMAIL = 'test_user'
     TEST_DATA_1 = {'position': 'jun',
                    'direction': Direction.objects.all()[0].id,  # pre defined array
-                   'employment': Employment.objects.all()[0],  # pre defined array
-                   'time_job': TimeJob.objects.all()[0],  # pre defined array
+                   'employment': Employment.objects.all()[0].id,  # pre defined array
+                   'time_job': TimeJob.objects.all()[0].id,  # pre defined array
                    'salary': '100',
-                   'type_salary': TypeSalary.objects.all()[0],  # pre defined array
+                   'type_salary': TypeSalary.objects.all()[0].id,  # pre defined array
                    }
 
     TEST_DATA_2 = {'position': '',
                    'direction': '',
                    'employment': '',
-                   'time_job': TimeJob.objects.all()[0],
+                   'time_job': TimeJob.objects.all()[0].id,
                    'salary': '',
                    'type_salary': '',
                    }
@@ -37,13 +31,13 @@ class ClientEditCVTests(TestCase):
     TEST_DATA_3 = {'position1': '',  # 1
                    'direction1': '',
                    'employment1': '',
-                   'time_job1': TimeJob.objects.all()[0],
+                   'time_job1': TimeJob.objects.all()[0].id,
                    'salary1': '',
                    'type_salary1': '',
                    'position2': '',  # 2
                    'direction2': '',
                    'employment2': '',
-                   'time_job2': TimeJob.objects.all()[0],
+                   'time_job2': TimeJob.objects.all()[0].id,
                    'salary2': '',
                    'type_salary2': '',
                    }
@@ -76,16 +70,23 @@ class ClientEditCVTests(TestCase):
         """ request.GET with data from skills_page_get(client). """
         self.client.login(username=self.TEST_USER_USERNAME, password=self.TEST_USER_PASSWORD)
 
-        CV.objects.create(client_cv=self.client_inst,
-                          position=self.TEST_DATA_1['position'],
-                          direction=Direction.objects.get(id=self.TEST_DATA_1['direction']),
-                          employment=self.TEST_DATA_1['employment'],
-                          time_job=self.TEST_DATA_1['time_job'],
-                          salary=self.TEST_DATA_1['salary'],
-                          type_salary=self.TEST_DATA_1['type_salary'],
-                          )
-        cv_arr = cv_page_get(self.client_inst)['cl_cvs']
-        # print(cv_arr)
+        cv = CV.objects.create(client_cv=self.client_inst,
+                               position=self.TEST_DATA_1['position'],
+                               direction=Direction.objects.get(id=self.TEST_DATA_1['direction']),
+                               employment=Employment.objects.get(id=self.TEST_DATA_1['employment']),
+                               time_job=TimeJob.objects.get(id=self.TEST_DATA_1['time_job']),
+                               salary=self.TEST_DATA_1['salary'],
+                               type_salary=TypeSalary.objects.get(id=self.TEST_DATA_1['type_salary']),
+                               )
+        cv_arr = [{'id': cv.id,
+                   'client_cv_id': self.client_inst.id,
+                   'position': self.TEST_DATA_1['position'],
+                   'direction_id': self.TEST_DATA_1['direction'],
+                   'employment_id': self.TEST_DATA_1['employment'],
+                   'time_job_id': self.TEST_DATA_1['time_job'],
+                   'salary': self.TEST_DATA_1['salary'],
+                   'type_salary_id': self.TEST_DATA_1['type_salary'],
+                   }]
         response = self.client.get(self.url)
         # print(response.context['data']['cl_cvs'])
         self.assertEqual(response.context['data']['cl_cvs'], cv_arr)
@@ -108,10 +109,10 @@ class ClientEditCVTests(TestCase):
 
         self.assertEqual(user_cv.position, self.TEST_DATA_1['position'])
         self.assertEqual(user_cv.direction, Direction.objects.get(id=self.TEST_DATA_1['direction']))
-        self.assertEqual(user_cv.employment, self.TEST_DATA_1['employment'])
-        self.assertEqual(user_cv.time_job, self.TEST_DATA_1['time_job'])
+        self.assertEqual(user_cv.employment, Employment.objects.get(id=self.TEST_DATA_1['employment']))
+        self.assertEqual(user_cv.time_job, TimeJob.objects.get(id=self.TEST_DATA_1['time_job']))
         self.assertEqual(user_cv.salary, self.TEST_DATA_1['salary'])
-        self.assertEqual(user_cv.type_salary, self.TEST_DATA_1['type_salary'])
+        self.assertEqual(user_cv.type_salary, TypeSalary.objects.get(id=self.TEST_DATA_1['type_salary']))
 
         self.assertEquals(response.status_code, 302)  # redirect
 
@@ -127,7 +128,7 @@ class ClientEditCVTests(TestCase):
         self.assertEqual(user_cv.position, None)
         self.assertEqual(user_cv.direction, None)
         self.assertEqual(user_cv.employment, None)
-        self.assertEqual(user_cv.time_job, self.TEST_DATA_2['time_job'])
+        self.assertEqual(user_cv.time_job, TimeJob.objects.get(id=self.TEST_DATA_2['time_job']))
         self.assertEqual(user_cv.salary, None)
         self.assertEqual(user_cv.type_salary, None)
 
@@ -147,16 +148,16 @@ class ClientEditCVTests(TestCase):
             self.assertEqual(cv.position, None)
             self.assertEqual(cv.direction, None)
             self.assertEqual(cv.employment, None)
-            self.assertEqual(cv.time_job, self.TEST_DATA_3['time_job%s' % count])
+            self.assertEqual(cv.time_job, TimeJob.objects.get(id=self.TEST_DATA_3['time_job%s' % count]))
             self.assertEqual(cv.salary, None)
             self.assertEqual(cv.type_salary, None)
 
         self.assertEquals(response.status_code, 302)  # redirect
 
         cv_arr = cv_page_get(self.client_inst)['cl_cvs']
-        print(cv_arr)
+        # print(cv_arr)
         response = self.client.get(self.url)
-        print(response.context['data']['cl_cvs'])
+        # print(response.context['data']['cl_cvs'])
         self.assertEqual(response.context['data']['cl_cvs'], cv_arr)
         self.assertEqual(response.status_code, 200)
 
