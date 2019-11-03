@@ -4,6 +4,10 @@ client/migrations/__pycache__/
 client/__pycache__/
 BelHardCRM/__pycache__/
 client/edit/__pycache__/
+recruit/__pycache__/
+recruit/migrations/__pycache__/
+recruit/edit_pages/__pycache__/
+
 *.py[cod]
 *$py.class
 
@@ -114,3 +118,4 @@ venv.bak/
 /.idea/
 .idea/*
 /client/migrations/
+/recruit/migrations/

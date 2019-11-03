@@ -1,4 +1,5 @@
 let objDiv = document.getElementById("messages");
+let chats = $('.chat_block');
     let chat_id;
     $('document').ready(function () {
         $.ajax({
@@ -25,10 +26,18 @@ let objDiv = document.getElementById("messages");
                     success: function (data) {
                         for (let dat in data){
 
-                            let new_mes = '<div class="list-group-item "><div class="reply-body"><ul class="list-inline" id=' + data[dat].message_id+
-                                   '><li class="drop-left-padding"><strong class="list-group-item-heading">' + data[dat].author_name +
-                                    '</strong></li><li class="pull-right text-muted"><small>' + data[dat].pub_date +
-                                    '</small></li></ul><div>' + data[dat].message + '</div></div></div>';
+                            let new_mes ='<div class="message_block_left"><div class="reply-body">' +
+                                '<div class="list-inline" id="' + data[dat].message_id + '"><div class="name_field">'
+                                + data[dat].author_first_name + ' ' +  data[dat].author_last_name +'</div><div class="message_field">'
+                                + data[dat].message + '</div></div><div class="date_field"><small>'
+                                + data[dat].pub_date + '</small></div></div></div>';
+                            if (data[dat].author_id === data[dat].user_id ){
+                               new_mes ='<div class="message_block_right"><div class="reply-body">' +
+                                    '<div class="list-inline" id="' + data[dat].message_id + '"><div class="name_field">'
+                                    + data[dat].author_first_name + ' ' +  data[dat].author_last_name +'</div><div class="message_field">'
+                                    + data[dat].message + '</div></div><div class="date_field"><small>'
+                                    + data[dat].pub_date + '</small></div></div></div>'
+                            }
 
                             $("#innerMessages").append(new_mes) ;
                             objDiv.scrollTop = objDiv.scrollHeight;
@@ -68,14 +77,25 @@ let objDiv = document.getElementById("messages");
                 success: function (data) {
                     $("#innerMessages").html("");
                     for (let dat in data){
-                        let new_mes = '<div class="list-group-item "><div class="reply-body"><ul class="list-inline" id=' + data[dat].message_id+
-                               '><li class="drop-left-padding"><strong class="list-group-item-heading">' + data[dat].author_name +
-                                '</strong></li><li class="pull-right text-muted"><small>' + data[dat].pub_date +
-                                '</small></li></ul><div>' + data[dat].message + '</div></div></div>';
+                        new_mes ='<div class="message_block_left"><div class="reply-body">' +
+                                '<div class="list-inline" id="' + data[dat].message_id + '"><div class="name_field">'
+                                + data[dat].author_first_name + ' ' +  data[dat].author_last_name +'</div><div class="message_field">'
+                                + data[dat].message + '</div></div><div class="date_field"><small>'
+                                + data[dat].pub_date + '</small></div></div></div>';
+                            if (data[dat].author_id === data[dat].user_id){
+                               new_mes ='<div class="message_block_right"><div class="reply-body">' +
+                                    '<div class="list-inline" id="' + data[dat].message_id + '"><div class="name_field">'
+                                    + data[dat].author_first_name + ' ' +  data[dat].author_last_name +'</div><div class="message_field">'
+                                    + data[dat].message + '</div></div><div class="date_field"><small>'
+                                    + data[dat].pub_date + '</small></div></div></div>'
+                            }
 
                         $("#innerMessages").append(new_mes) ;
                         objDiv.scrollTop = objDiv.scrollHeight;
+
                     }
+                    chats.css("background",'#007e7e');
+                    $(Element).css("background",'#1bffdf');
                 }
         })
     }
@@ -87,10 +107,18 @@ let objDiv = document.getElementById("messages");
                 'data': {'chat_id': chat_id, 'message': document.getElementById('textField').value},
                 success: function (data) {
                     document.getElementById("textField").value = "";
-                    let new_mes = '<div class="list-group-item "><div class="reply-body"><ul class="list-inline" id=' + data.message_id +
-                        '><li class="drop-left-padding"><strong class="list-group-item-heading">' + data.author_name +
-                        '</strong></li><li class="pull-right text-muted"><small>' + data.pub_date +
-                        '</small></li></ul><div>' + data.message + '</div></div></div>';
+                    new_mes ='<div class="message_block_left"><div class="reply-body">' +
+                                '<div class="list-inline" id="' + data.message_id + '"><div class="name_field">'
+                                + data.author_first_name + ' ' +  data.author_last_name +'</div><div class="message_field">'
+                                + data.message + '</div></div><div class="date_field"><small>'
+                                + data.pub_date + '</small></div></div></div>';
+                            if (data.author_id === data.user_id){
+                               new_mes ='<div class="message_block_right"><div class="reply-body">' +
+                                    '<div class="list-inline" id="' + data.message_id + '"><div class="name_field">'
+                                    + data.author_first_name + ' ' +  data.author_last_name +'</div><div class="message_field">'
+                                    + data.message + '</div></div><div class="date_field"><small>'
+                                    + data.pub_date + '</small></div></div></div>'
+                            }
 
                     $("#innerMessages").append(new_mes);
                     objDiv.scrollTop = objDiv.scrollHeight;

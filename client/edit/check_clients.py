@@ -1,36 +1,36 @@
-import logging
-
 from BelHardCRM.settings import MEDIA_URL
+from client.edit.log_color import (log_info, log_error)
+from client.edit.utility import try_except, time_it
 from client.models import Client
 
 
-def client_check(user):
-    try:
-        """ список карточек c id клиента. """
-        users_id_list = [i['user_client_id'] for i in Client.objects.all().values()]
-        print("client_id_list: %s" % users_id_list)
-        """ Current User """
-        print("user_name: %s, user_client_id: %s" % (user, user.id))
-        if user.id in users_id_list:
-            client = Client.objects.get(user_client=user)
-            print("user_id: %s" % client.id)
-            return client
-        else:
-            logging.warning('User Profile DO NOT exists')
-            return None
-    except Exception as ex:
-        logging.error('Exception in client_check()\n%s' % ex)
+@try_except
+@time_it
+def client_check(some_one):  # TeamRome
+    """ список карточек c id клиента.
+    Список Юзеров с зарегистрированной карточкой клиента. """
+    client_id_list = [i.user_client_id for i in Client.objects.all()]
+    log_info("\tclient_id_list: %s" % client_id_list)
+
+    """ Имя юзера и его ID. """
+    log_info("\tuser_name: %s, user_id: %s" % (some_one, some_one.id))
+
+    """ Проверка: есть ли текущий Юзер в списке Клиентов. """
+    if some_one.id in client_id_list:
+        """ Если он есть - возвращаем Объект Клиента. """
+        client = Client.objects.get(user_client=some_one)
+        log_info("\tclient_id: %s" % client.id)
+        return client
+    else:
+        log_error('\tClient profile DOES NOT exists!')
         return None
 
 
-def load_client_img(client):
+@try_except
+def load_client_img(client):  # TeamRome
     """ Show Client Img in the Navigation Bar.
     Img loaded from DB, if user do not have img - load default. """
-    try:
-        if client:
-            if client.img:
-                return "%s%s" % (MEDIA_URL, client.img)
-        return '/media/user_1.png'
-    except Exception as ex:
-        logging.error("Exception in - load_client_img()\n%s" % ex)
-        return '/media/user_1.png'
+    if client:
+        if client.img:
+            return "%s%s" % (MEDIA_URL, client.img)
+    return '/media/user_1.png'

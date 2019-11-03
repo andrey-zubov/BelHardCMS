@@ -2,24 +2,37 @@
 
 {% block content %}
 <div class="search">
-    <form action="{% url 'client_filtration' %}">
+    <form action="{% url 'favorites' %}">
         <input type="search" name="recruit_search">
         <button type="submit">поиск</button>
     </form>
 </div>
-    <div id="messages" class="panel" style="width: 100%; height: 70%; border: 1px solid black; overflow-y: scroll;" onscroll="scroll(this);" >
-          <div id="innerFavorites">
-               <div id="clients">
-                   {% for client in clients %}
-                        <div id="status_{{ client }}">
-                        {{ client.user_client.username }}-{{ client.is_reserved }}
-                            <input type="button" class="yellow_star" id="{{ client.id }}">
-                        </div>
-                  {% endfor %}
 
-               </div>
-          </div>
+<div id="client-list" class="panel" style="width: 100%; height: 70%; border: 1px solid black; overflow-y: scroll;" onscroll="scroll(this);" >
+  <div class="p-sm-5 pt-sm-1">
+        <h2 class="mb-3 offset-md-0"> Избранные соискатели </h2>
+        {% for applicant in applicants %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><a href="{{ applicant.get_absolute_url }}" id="{{ applicant.id }}"> {{ applicant.user_client.first_name }} {{ applicant.user_client.last_name }}  {{ applicant.patronymic }}</a>
+
+                        <input type="image" src='https://image.freepik.com/free-vector/_53876-25533.jpg' class="yellow_star" id="{{ applicant.id }}" style="width: 32px; height: 32px">
+                    </h5>
+
+                </div>
+                <div class="card-body">
+                    {% if applicant.cv_set.all %}
+                        <b>Список резюме клиента </b><br>
+                        {% for cv in applicant.cv_set.all %}
+                            {{ cv }}<br>
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+            </div>
+        {% endfor %}
     </div>
+</div>
 
 
 <script>
@@ -27,26 +40,27 @@
     $('document').ready(function () {
         let recruit = {{ request.user.id }}
         $('.yellow_star').click(function () {
-            let add = confirm("Добавить пользователя?");
+            let add = confirm("Вы точно хотите удалить пользователя из избранного?");
             let client = $(this).attr('id');
-            console.log(recruit);
-            console.log(client);
-            console.log('qq');
+            x = $(this)
+
             if (add === true){
+
                $.ajax({
                     'url': '/recruit/checkfavor/',
                     'data': {'client': client,
                             'recruit': recruit},
                     success: function (data) {
                         console.log('data')
+                        $(x).animate({
+                        'opacity':'0.35',
+                        });
                     }
 
                  });
-                 console.log('SUC2')
             }
-
-            });
         });
+    });
 
 </script>
 {% endblock %}
