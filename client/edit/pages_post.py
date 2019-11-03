@@ -195,11 +195,11 @@ def cv_page_post(client_instance, request):  # TeamRome
 
             for cvs in arr_cv:
                 position = cvs['position']
-                employment = Employment.objects.get(employment=cvs['employment'])
-                time_job = TimeJob.objects.get(time_job_word=cvs['time_job'])
+                employment = Employment.objects.get(employment=cvs['employment']) if cvs['employment'] else None
+                time_job = TimeJob.objects.get(time_job_word=cvs['time_job']) if cvs['time_job'] else None
                 salary = cvs['salary']
-                type_salary = TypeSalary.objects.get(type_word=cvs['type_salary'])
-                direction = Direction.objects.get(id=cvs['direction'])
+                type_salary = TypeSalary.objects.get(type_word=cvs['type_salary']) if cvs['type_salary'] else None
+                direction = Direction.objects.get(id=cvs['direction']) if cvs['direction'] else None
 
                 if any(cvs.values()):
                     cv = CV(
