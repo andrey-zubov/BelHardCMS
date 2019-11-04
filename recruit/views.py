@@ -13,13 +13,13 @@ from django.urls import reverse
 from client.edit.check_clients import (load_client_img)
 from client.models import (CV, JobInterviews, FilesForJobInterviews, Vacancy, State)
 from client.models import (Chat, Message, Tasks, UserModel, SubTasks, Settings, Client)
-from recruit.edit_pages.check_recruit import (recruit_check)
-from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
-from recruit.edit_pages.r_pages_get import (recruit_edit_page_get, recruit_experience_page_get,
-                                            recruit_education_page_get, recruit_show_page_get)
-from recruit.edit_pages.r_pages_get import (skills_page_get)
-from recruit.edit_pages.r_pages_post import (photo_page_post, skills_page_post, recruit_education_page_post)
-from recruit.edit_pages.r_pages_post import (recruit_edit_page_post, recruit_experience_page_post)
+# from recruit.edit_pages.check_recruit import (recruit_check)
+# from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
+# from recruit.edit_pages.r_pages_get import (recruit_edit_page_get, recruit_experience_page_get,
+#                                             recruit_education_page_get, recruit_show_page_get)
+# from recruit.edit_pages.r_pages_get import (skills_page_get)
+# from recruit.edit_pages.r_pages_post import (photo_page_post, skills_page_post, recruit_education_page_post)
+# from recruit.edit_pages.r_pages_post import (recruit_edit_page_post, recruit_experience_page_post)
 from recruit.models import (Recruiter)
 
 from datetime import datetime
@@ -33,11 +33,11 @@ confusing both readers and many automated tools. """
 
 # There is Poland's views #################################################################################
 def recruit_main_page(request):  # TeamRome
-    recruit_instance = recruit_check(request.user)
-    response = {'recruit_img': load_client_img(recruit_instance),
-                'data': 'foo()',
-                }
-    return render(request, template_name='recruit/recruit_main_template.html', context=response)
+    # recruit_instance = recruit_check(request.user)
+    # response = {'recruit_img': load_client_img(recruit_instance),
+    #             'data': 'foo()',
+    #             }
+    return render(request, template_name='recruit/recruit_main_template.html')
 
 def recruiter_base(request):
     return render(request, template_name='recruit/recruiter_base.html', )
