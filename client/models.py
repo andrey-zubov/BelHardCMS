@@ -44,7 +44,7 @@ class FamilyState(models.Model):
 
 class Children(models.Model):
     """ Дети клиента. Заполняется Админом. """
-    children_word = models.CharField(max_length=3)
+    children_word = models.CharField(max_length=4)
 
     class Meta:
         verbose_name = 'Дети'
@@ -242,22 +242,28 @@ class State(models.Model):
 
 class Vacancy(models.Model):
     state = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True)
     salary = models.CharField(max_length=20)
     organization = models.CharField(max_length=100)
-    address = models.CharField(max_length=200, null=True)
-    employment = models.CharField(max_length=100, null=True)
-    description = models.TextField(max_length=1000)
-    skills = models.CharField(max_length=100, null=True)
-    requirements = models.TextField(max_length=1000, null=True)
-    duties = models.TextField(max_length=1000, null=True)
-    conditions = models.TextField(max_length=1000, null=True)
+    address = models.CharField(max_length=200, blank=True, null=True)
+    employment = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(max_length=1000, blank=True, null=True)
+    skills = models.CharField(max_length=100, blank=True, null=True)
+    requirements = models.TextField(max_length=1000, blank=True, null=True)
+    duties = models.TextField(max_length=1000, blank=True, null=True)
+    conditions = models.TextField(max_length=1000, blank=True, null=True)
+    creating_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
         return self.state
 
-    def get_absolute_url(self):
+    def get_absolute_url(self):  # for client
         return reverse('vacancy_detail_url', kwargs={'id_v': self.id})
+
+    def get_absolute_url2(self): # for recruiter looking and editing vacancy
+        return reverse('vacancy_recr_url', kwargs={'id_v': self.id})
+
+    def get_del_url(self):
+        return reverse('vacancy_del_recr_url', kwargs={'id_v': self.id})
 
 
 class Help(models.Model):
@@ -277,7 +283,7 @@ class JobInterviews(models.Model):
     jobinterviewdate = models.DateField(max_length=20, verbose_name='Дата проведения собеседования')
     interview_author = models.CharField(max_length=50, verbose_name='Автор собеседования', blank=True, null=True)
     time_of_creation = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
-    period_of_execution = models.DateTimeField(blank=True, null=True, verbose_name='Срок исполнения')
+    period_of_execution = models.DateTimeField(blank=True, null=True, verbose_name='Срок исполнения') # TODO Dell field
     reminder = models.DateTimeField(blank=True, null=True, verbose_name='Напоминание')
     position = models.CharField(max_length=50, verbose_name='Предполагаемая должность')
     organization = models.CharField(max_length=50, verbose_name='Организация')
@@ -359,7 +365,7 @@ class FilesForJobInterviews(models.Model):
 
 class Client(models.Model):
     user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE, null=True, blank=True)
-    patronymic = models.CharField(max_length=100, verbose_name='Отчество')
+    patronymic = models.CharField(max_length=100, verbose_name='Отчество', null=True, blank=True)
 
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
     date_born = models.DateField(null=True, blank=True)
@@ -424,14 +430,14 @@ class Chat(models.Model):
         verbose_name = "Чат"
         verbose_name_plural = "Чаты"
 
-    members = models.ManyToManyField(UserModel, verbose_name="Участник")
+    members = models.ManyToManyField(UserModel, verbose_name="Участник", blank=True)
 
 
 class Message(models.Model):
     class Meta:
         ordering = ['pub_date']
 
-    chat = models.ForeignKey(Chat, verbose_name="Чат", on_delete=models.CASCADE, )
+    chat = models.ForeignKey(Chat, verbose_name="Чат", on_delete=models.CASCADE, null=True, blank=True)
     author = models.ForeignKey(UserModel, verbose_name="Пользователь", on_delete=models.CASCADE)
     message = models.TextField(verbose_name="Сообщение")
     pub_date = models.DateTimeField(verbose_name='Дата сообщения', default=timezone.now)

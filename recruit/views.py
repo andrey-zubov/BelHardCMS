@@ -1,7 +1,14 @@
+
+from time import perf_counter
+from collections import defaultdict
+
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import View, TemplateView
+from django.views.generic.edit import FormView
+from django.template.context_processors import csrf
+from django.urls import reverse
 
 from client.edit.check_clients import (load_client_img)
 from client.models import (CV, JobInterviews, FilesForJobInterviews, Vacancy, State)
@@ -14,6 +21,10 @@ from recruit.edit_pages.r_pages_get import (skills_page_get)
 from recruit.edit_pages.r_pages_post import (photo_page_post, skills_page_post, recruit_education_page_post)
 from recruit.edit_pages.r_pages_post import (recruit_edit_page_post, recruit_experience_page_post)
 from recruit.models import (Recruiter)
+
+from datetime import datetime
+
+from .models import * #TODO fix *
 
 """ PEP 8: Wildcard imports (from <module> import *) should be avoided, 
 as they make it unclear which names are present in the namespace, 
@@ -28,20 +39,51 @@ def recruit_main_page(request):  # TeamRome
                 }
     return render(request, template_name='recruit/recruit_main_template.html', context=response)
 
-
 def recruiter_base(request):
     return render(request, template_name='recruit/recruiter_base.html', )
 
-
 def base_of_applicants(request):
-    applicants = Client.objects.all()
-    return render(request=request, template_name='recruit/recruiter_base_of_clients.html',
-                  context={'applicants': applicants})
+    #applicants = Client.objects.all()
+    own_status = 'all'
+
+    # Для проверки на наличие в списке избранного
+    recruiter = Recruiter.objects.get(recruiter=request.user)
+    owner_list = Client.objects.filter(own_recruiter=recruiter)
+    owner_range = len(owner_list)
 
 
-def applicant(request, id_a):
-    applicant_user = Client.objects.get(id=id_a)
-    return render(request, 'recruit/recruiter_applicant.html', context={'applicant_user': applicant_user})
+    clients_after_search = client_filtration(request, own_status)
+    applicants = clients_after_search
+    return render(request, template_name='recruit/recruiter_base_of_clients.html',
+                  context={'applicants': applicants,
+                            'owner_list': owner_list,
+                            'owner_range':owner_range})
+
+
+
+class ApplicantDet(View):
+    def get(self, request, id_a):
+        applicant_user = Client.objects.get(id=id_a)
+        resumes = applicant_user.cv_set.all()
+        vacancies = Vacancy.objects.all()
+        return render(request, 'recruit/recruiter_applicant.html',
+                      context={'applicant_user': applicant_user, 'resumes': resumes, 'vacancies': vacancies})
+
+    def post(self, request, id_a):
+        applicant_user = Client.objects.get(id=id_a)
+        response = request.POST
+        resume = CV.objects.get(id=response['id_cv'])
+        vacancies_id = request.POST.getlist('id_v')
+
+        print('resume  ', resume)
+        print('vacansies_id ', vacancies_id)
+        for id_v in vacancies_id:
+            vacancy = Vacancy.objects.get(id=id_v)
+            resume.vacancies_in_waiting.add(vacancy)
+            resume.notification.add(vacancy)
+            print(vacancy)
+
+        return redirect(applicant_user.get_absolute_url())
 
 
 class CreateJobInterview(View):
@@ -60,6 +102,7 @@ class CreateJobInterview(View):
     def post(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
         response = request.POST
+
         files = request.FILES.getlist('files')
         j = JobInterviews(
             client=applicant_user,
@@ -110,6 +153,7 @@ class EditJobInterview(View):
         j.location = response.get('address')
         j.additional_information = response.get('addition')
 
+
         if response.get('vacancy'):
             j.vacancies = Vacancy.objects.get(id=int(response.get('vacancy')))
         j.save()
@@ -124,12 +168,69 @@ class EditJobInterview(View):
         return redirect(applicant_user.get_tasks_url())
 
 
+
 class DelJobInterview(View):
     def post(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
         j = JobInterviews.objects.get(id=request.POST['id_job'])
         j.delete()
         return redirect(applicant_user.get_tasks_url())
+
+
+
+class Vacancies(View):
+    def get(self, request):
+        vacancies = Vacancy.objects.all()
+        return render(request, 'recruit/recruiter_vacancies.html', context={'vacancies': vacancies})
+
+    def post(self, request):
+        response = request.POST
+        v = Vacancy(
+            state=response['position'],
+            salary=response['salary'],
+            organization=response['organization'],
+            address=response['address'],
+            employment=response['employment'],
+            description=response['description'],
+            skills=response['skills'],
+            requirements=response['requirements'],
+            duties=response['duties'],
+            conditions=response['conditions'],
+        )
+        v.save()
+        return redirect('vacancies_url')
+
+
+class VacancyDet(View):
+    def get(self, request, id_v):
+        vacancy = Vacancy.objects.get(id=id_v)
+        return render(request, 'recruit/recruiter_vacancy_detail.html', context={'vacancy': vacancy})
+
+    def post(self, request, id_v):
+        response = request.POST
+        v = Vacancy.objects.get(id=id_v)
+
+        v.state = response['position']
+        v.salary = response['salary']
+        v.organization = response['organization']
+        v.address = response['address']
+        v.employment = response['employment']
+        v.description = response['description']
+        v.skills = response['skills']
+        v.requirements = response['requirements']
+        v.duties = response['duties']
+        v.conditions = response['conditions']
+
+        v.save()
+
+        return redirect(v.get_absolute_url2())
+
+
+class DelVacancy(View):
+    def post(self, request, id_v):
+        v = Vacancy.objects.get(id=request.POST['id_vac'])
+        v.delete()
+        return redirect('vacancies_url')
 
 
 # End Poland's views #######################################################################################
@@ -156,7 +257,7 @@ def get_messages(request):
     send2 = []
     for s in messages:
         send2.append(
-            {'author_id': s.author.id, 'author_name': s.author.username, 'message': s.message, 'message_id': s.id,
+            {'author_id': s.author.id, 'user_id': request.user.id, 'author_first_name': s.author.first_name, 'author_last_name': s.author.last_name, 'message': s.message, 'message_id': s.id,
              'pub_date': s.pub_date.ctime()})
 
     return JsonResponse(send2, safe=False)
@@ -177,9 +278,10 @@ def send_message(request):
             except Exception:
                 print('Exception: нет адреса электронной почты')
 
-    send = {'author_id': mes.author.id, 'author_name': mes.author.username, 'message': mes.message,
-            'message_id': mes.id,
-            'pub_date': mes.pub_date.ctime()}
+
+    send = {'author_id': mes.author.id, 'user_id': request.user.id, 'author_first_name': mes.author.first_name, 'author_last_name': mes.author.last_name, 'message': mes.message, 'message_id': mes.id,
+             'pub_date': mes.pub_date.ctime()}
+
     return JsonResponse(send, safe=False)
 
 
@@ -221,7 +323,9 @@ def add_task(request):
 def add_new_task(requset):
     try:
         user = UserModel.objects.get(username=requset.POST['name'])
-    except UserModel.DoesNotExist:  # TODO сделать проверку в отправек формы?
+
+    except UserModel.DoesNotExist:
+
         return HttpResponse('Необходимо задать юзера')
     newtask = Tasks.objects.create()
     newtask.user = user
@@ -249,10 +353,13 @@ def add_new_task(requset):
     return redirect(to='add_task')
 
 
+
+#список избранных клиентов, для рекрутера
 def favorites(request):
-    recruit = Recruiter.objects.get(recruiter=request.user)
-    clients = Client.objects.filter(own_recruiter=recruit)
-    context = {'clients': clients}
+    own_status = Recruiter.objects.get(recruiter=request.user)
+   # own_status = recruit
+    clients = client_filtration(request, own_status)
+    context = {'applicants': clients}
 
     return render(request, template_name='recruit/favorites.html', context=context)
 
@@ -264,6 +371,7 @@ def check_favor(request):
     recruit_id = (request.GET['recruit'])
     recruit = Recruiter.objects.get(recruiter=UserModel.objects.get(id=recruit_id))
     if client.is_reserved == True:
+
         client.is_reserved = False
         client.own_recruiter = None
     else:
@@ -273,7 +381,20 @@ def check_favor(request):
     return HttpResponse(client_id)
 
 
+# список незарезервированных клиентов, для рекрутера
 def recruit_base(request):
+    applicants = Client.objects.all()
+    own_status = None
+    clients_after_search = client_filtration(request, own_status)
+    context = {'free_clients': clients_after_search, 'applicants': applicants}
+    return render(request, template_name='recruit/recruit_base.html', context=context)
+
+
+# функция поиска по списку клиентов, для рекрутера
+def client_filtration(request, own_status):
+    if own_status == 'all':
+        clients_after_search = Client.objects.all()
+        return clients_after_search
     recruit = Recruiter.objects.get(recruiter=request.user)
     search_request = request.GET.get('recruit_search', '')
     clients_after_search = set()
@@ -301,11 +422,12 @@ def recruit_base(request):
             clients_after_search.update(users_for_first_name)
             clients_after_search.update(users_for_last_name)
             clients_after_search.update(users_for_patronymic)
-
     else:
-        clients_after_search = Client.objects.filter(own_recruiter=None)
-    context = {'free_clients': clients_after_search}
-    return render(request, template_name='recruit/recruit_base.html', context=context)
+
+        clients_after_search = Client.objects.filter(own_recruiter=own_status)
+
+    return clients_after_search
+
 
 
 class RecruitProfile(TemplateView):  # TeamRome
@@ -433,3 +555,4 @@ class RecruitShowExperience(TemplateView):  # TeamRome
                     "data": recruit_experience_page_get(recruit_instance),
                     }
         return render(request, self.template_name, response)
+

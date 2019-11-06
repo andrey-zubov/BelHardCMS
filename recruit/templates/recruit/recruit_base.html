@@ -9,9 +9,11 @@
     </form>
 </div>
 
- <div id="messages" class="panel" style="width: 100%; height: 70%; border: 1px solid black; overflow-y: scroll;" onscroll="scroll(this);" >
+ <div id="client-list" class="panel" style="width: 100%; height: 70%; border: 1px solid black; overflow-y: scroll;" onscroll="scroll(this);" >
+
      {% for client in free_clients %}
         <div id="client_{{ client }}">
+            <a href="{{ applicant.get_absolute_url }}" id="{{ applicant.id }}"> {{ applicant.user_client.first_name }} {{ applicant.user_client.last_name }}  {{ applicant.patronymic }}</a>
             {{ client.user_client.username }}-{{ client.is_reserved }}
             <input type="button" class="white_star" id="{{ client.id }}">
         </div>

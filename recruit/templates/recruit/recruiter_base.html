@@ -1,15 +1,24 @@
-{% extends 'recruit/main_template_recruiter.html' %}
+
+{% extends 'recruit/recruit_main_template.html' %}
 
 {% block title %}
-    База пользователей
+    База
 {% endblock %}
 
 {% block content %}
+
+
     <div class="p-sm-5 pt-sm-1" align="middle">
         <div class="container">
             <div class="btn-group btn-group-lg" align="middle">
-                <a htef="{% url "base_of_clients" %}" type="button" class="btn btn-primary" ><h1>Каоточки<br>соискателей</h1></a>
-                <a type="button" class="btn btn-primary" disabled><h1>Каоточки<br>работодателей</h1></a>
+                <a href="{% url "base_of_clients" %}" type="button" class="btn btn-primary" role="button"><h1>
+                    Каоточки<br>соискателей</h1></a>
+                <a href="#" type="button" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button"
+                   aria-disabled="true"><h1>Каоточки<br>работодателей</h1></a>
+                <a href="{% url 'vacancies_url' %}" type="button" class="btn btn-primary" role="button"><h1>
+                    База <br>вакансий</h1></a>
+
+
 
             </div>
 
