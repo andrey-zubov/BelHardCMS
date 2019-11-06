@@ -12,7 +12,7 @@ UserModel = get_user_model()
 
 class Recruiter(models.Model):  # TeamRome
     recruiter = models.OneToOneField(UserModel, on_delete=models.CASCADE)
-    patronymic = models.CharField(max_length=100, verbose_name='Отчество')
+    patronymic = models.CharField(max_length=100, verbose_name='Отчество', null=True, blank=True)
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
     date_born = models.DateField(null=True, blank=True)
     r_citizenship = models.ForeignKey(Citizenship, related_name='r_citizenship', on_delete=models.SET_NULL,
