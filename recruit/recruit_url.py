@@ -4,7 +4,7 @@ from django.urls import path
 from recruit import views
 from recruit.views import (base_of_applicants, CreateJobInterview, EditJobInterview, DelJobInterview,
                            recruit_chat, get_messages, send_message, chat_update, check_mes, recruit_main_page,
-                           add_task, add_new_task, favorites, check_favor, recruit_base, RecruitProfile,
+                           favorites, check_favor, recruit_base, RecruitProfile,
                            RecruitEditMain, RecruitEditExperience, RecruitEditSkills, RecruitEditPhoto,
                            RecruitEditEducation, RecruitShowSkills, RecruitShowEducation, RecruitShowExperience)
 
@@ -36,13 +36,13 @@ urlpatterns = [
     path('chat_update/', chat_update, name='chat_update'),
     path('check_mes/', check_mes, name='check_mes'),
 
-
-    #path('', views.recruit_main_page, name='main_page'),
-    path('add_task', views.add_task, name='add_task'),
-    path(r'add_new_task',views.add_new_task),
+    path('base/base_of_clients/<id_a>/client_add_task/', views.client_task_adding.as_view(), name='client_task_adding_url'),
+    #path('', views.recruit_main_page, name='main_page'), TODO
+ #   path('add_task', views.add_task, name='add_task'), TODO
+ #   path(r'add_new_task',views.add_new_task), TODO
     path(r'favorites/', views.favorites, name='favorites'),
     path(r'checkfavor/', views.check_favor, name='check_favor'),
-    #path('base1/', views.recruit_base, name='recruit_base'),
+    #path('base1/', views.recruit_base, name='recruit_base'), TODO
     path(r'client_filtration/', views.client_filtration, name='client_filtration'),
 
 
