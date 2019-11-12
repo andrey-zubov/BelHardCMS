@@ -94,6 +94,8 @@ class ApplicantDet(View):
         return redirect(applicant_user.get_absolute_url())
 
 
+
+
 class CreateJobInterview(View):
     def get(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
@@ -350,40 +352,42 @@ def add_task(request):
                   context=context)
 
 
-def add_new_task(requset):
-    try:
-        user = UserModel.objects.get(username=requset.POST['name'])
+class client_task_adding(View):
 
-    except UserModel.DoesNotExist:
+    def get(self, request, id_a):
+        client = Client.objects.get(id=id_a)
+        client_user = client.user_client #ссылается на UserModel
+        client_activ_tasks = Tasks.objects.filter(user=client_user, status=False) #просмотр активных задач клинета
+        return render(request, template_name='recruit/adding_task_to_client.html', context={'client':client,
+                                                                                            'client_user': client_user,
+                                                                                            'client_activ_tasks':client_activ_tasks,})
 
-        return HttpResponse('Необходимо задать юзера')
-    newtask = Tasks.objects.create()
-    newtask.user = user
-    newtask.title = requset.POST['task_title']
-    newtask.comment = str(requset.POST['task_comment'])
-    # newtask.time = datetime.now() TODO
-    newtask.save()
-    i = 1
-    reqpost = requset.POST
-    while True:
-        try:
-            newsubtask = SubTasks(title=reqpost['task_subtask' + str(i)],
-                                  task=newtask)
-        except:
-            break
-        i += 1
-        newsubtask.save()
 
-        try:
-            if Settings.objects.get(user=user).email_messages:
-                send_email = EmailMessage('HR-system', 'У вас новая задача',
-                                          to=[str(user.email)])
-                send_email.send()
-        except Exception:
-            print('Exception: нет адреса электронной почты')
+    def post(self, request, id_a):
+        client = Client.objects.get(id=id_a)
+        client_user = client.user_client
+        newtask = Tasks.objects.create()
+        newtask.user = client_user
+        newtask.title = request.POST['task_title']
+        newtask.comment = str(request.POST['task_comment'])
+        newtask.save()
+        i = 1
+        reqpost = request.POST
+        while True:
+            try:
+                newsubtask = SubTasks(title=reqpost['task_subtask' + str(i)], task=newtask)
+            except:
+                break
+            i += 1
+            newsubtask.save()
 
-    return redirect(to='add_task')
-
+            try:
+                if Settings.objects.get(user=user).email_messages:
+                    send_email = EmailMessage('HR-system', 'У вас новая задача', to=[str(user.email)])
+                    send_email.send()
+            except Exception:
+                print('Exception: нет адреса электронной почты')
+        return redirect(client.get_add_client_task())
 
 # список избранных клиентов, для рекрутера
 def favorites(request):
@@ -420,8 +424,7 @@ def recruit_base(request):
     own_status = None
     clients_after_search = client_filtration(request, own_status)
     context = {'free_clients': clients_after_search, 'applicants': applicants}
-    return render(request, template_name='recruit/recruit_base.html',
-                  context=context)
+    return render(request, template_name='recruit/recruit_base.html', context=context)
 
 
 # функция поиска по списку клиентов, для рекрутера
