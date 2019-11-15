@@ -7,7 +7,7 @@
 
 {% block content %}
     {% include 'client/edit_forms/tot_samui_bootstrap.html' %}
-    <!-- JS добавления однотипных форм. ONLY FOR THIS CUSTOM FORM -->
+    {# <!-- JS добавления однотипных форм. ONLY FOR THIS CUSTOM FORM -->#}
     <script type="text/javascript">
         $(document).ready(function () {
             var count = 1;
@@ -23,13 +23,13 @@
                 for (var i = 0; i < 6; i++) {
                     var element;
                     var attr_name;
-                    // Because custom form! Can be optimised!
+                    {#// Because custom form! Can be optimised!#}
                     switch (i) {
                         case 0: // input #1
                             element = $(current_div[i]).children('input').on("click", data_l);
-                            console.log("input #1", element);
                             attr_name = $(element).attr('name');
-                            console.log("input #1", attr_name);
+                            $(element).attr('value', '');
+                            $(element).text('');
                             $(element).attr('name', attr_name + count);
                             break;
                         case 1: // select #1
@@ -50,6 +50,8 @@
                         case 4: // input #4
                             element = $(current_div[i]).children('input');
                             attr_name = $(element).attr('name');
+                            $(element).attr('value', '');
+                            $(element).text('');
                             $(element).attr('name', attr_name + count);
                             break;
                         case 5: // select #5
@@ -99,7 +101,7 @@
                             <label for="id_position">Должность</label>
                             <input type="text" class="form-control" id="id_position"
                                    name="position{{ forloop.counter }}"
-                                   value="{{ cv.position }}" list="data_list">
+                                   value="{{ cv.position|default:'' }}" list="data_list">
                             <datalist id="data_list">
                                 <option id="dl_option" value=""></option>
                             </datalist>
@@ -108,10 +110,12 @@
                             <label for="id_direction">Направление</label>
                             <select class="form-control" id="id_direction"
                                     name="direction{{ forloop.counter }}">
-                                <option selected value="{{ cv.cl_direction.id }}">{{ cv.cl_direction }}</option>
+                                {% if not cv.direction_id %}
+                                    <option selected></option>
+                                {% endif %}
                                 {% for d in data.direction %}
-                                    <option value="{{ d.id }}" {% if cv.cl_direction.id  ==  d.id %}selected
-                                            {% endif %}>{{ d }}</option>
+                                    <option {% if cv.direction_id == d.id %}selected{% endif %}
+                                            value="{{ d.id }}">{{ d }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -119,9 +123,12 @@
                             <label for="id_employment">Занятость</label>
                             <select class="form-control" id="id_employment"
                                     name="employment{{ forloop.counter }}">
-                                <option selected value="{{ cv.cl_employment }}">{{ cv.cl_employment }}</option>
+                                {% if not cv.employment_id %}
+                                    <option selected></option>
+                                {% endif %}
                                 {% for emp in data.employment %}
-                                    <option value="{{ emp }}">{{ emp }}</option>
+                                    <option {% if cv.employment_id == emp.id %}selected{% endif %}
+                                            value="{{ emp.id }}">{{ emp }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -129,12 +136,13 @@
                             <label for="id_time_job">График работы</label>
                             <select class="form-control" id="id_time_job"
                                     name="time_job{{ forloop.counter }}">
-
-                                <option selected value="{{ cv.cl_time_job }}">{{ cv.cl_time_job }}</option>
+                                {% if not cv.time_job_id %}
+                                    <option selected></option>
+                                {% endif %}
                                 {% for tj in data.time_job %}
-                                    <option selected value="{{ tj }}">{{ tj }}</option>
+                                    <option {% if cv.time_job_id == tj.id %}selected{% endif %}
+                                            value="{{ tj.id }}">{{ tj }}</option>
                                 {% endfor %}
-
                             </select>
                         </div>
                         <h5>Уровень заработной платы</h5>
@@ -142,18 +150,19 @@
                             <label for="id_salary">Сумма</label>
                             <input type="text" class="form-control" id="id_salary"
                                    name="salary{{ forloop.counter }}"
-                                   value="{{ cv.salary }}">
+                                   value="{{ cv.salary|default:'' }}">
                         </div>
                         <div class="form-group">
                             <label for="id_type_salary">Валюта</label>
                             <select class="form-control" id="id_type_salary"
                                     name="type_salary{{ forloop.counter }}">
-
-                                <option selected value="{{ cv.cl_type_salary }}">{{ cv.cl_type_salary }}</option>
+                                {% if not cv.type_salary_id %}
+                                    <option selected></option>
+                                {% endif %}
                                 {% for ts in data.type_salary %}
-                                    <option value="{{ ts }}">{{ ts }}</option>
+                                    <option {% if cv.type_salary_id == ts.id %}selected{% endif %}
+                                            value="{{ ts.id }}">{{ ts }}</option>
                                 {% endfor %}
-
                             </select>
                         </div>
                     </div>
