@@ -12,8 +12,8 @@ UserModel = get_user_model()
 
 
 class Recruiter(models.Model):  # TeamRome
-    recruiter = models.OneToOneField(UserModel, on_delete=models.CASCADE)
-
+    recruiter = models.OneToOneField(UserModel, on_delete=models.CASCADE,
+                                     null=True, blank=True)
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True,
                             blank=True)
