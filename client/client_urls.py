@@ -8,7 +8,7 @@ from client.views import (ClientProfile, client_main_page, ClientEditMain, Clien
                           OpinionCreate, opinion_detail, answer_create, OpinionDelete, client_login, client_logout,
                           tasks, checktask, checknotifications, settings_menu, set_settings, ResumesList, ResumeDetail,
                           AcceptedVacancies, RejectedVacancies, VacancyDetail, accept_reject, help_list, viewed,
-                          admin_jobinterviews, interviews_list, checkinterviews, upload)
+                          admin_jobinterviews, interviews_list, checkinterviews, upload, check_subtask)
 
 """ PEP 8: Wildcard imports (from <module> import *) should be avoided, 
 as they make it unclear which names are present in the namespace, 
@@ -43,7 +43,7 @@ urlpatterns = [
     path('login/', client_login, name='login'),
     path('logout/', client_logout, name='logout'),
     path('tasks/', tasks, name='tasks_list'),
-
+    path('check_subtask/', check_subtask, name='check_subtask'),
     path(r'checktask/', checktask),
     path(r'checknotifications/', checknotifications),
     path(r'settings/', settings_menu, name='settings_menu'),

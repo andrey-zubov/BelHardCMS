@@ -35,14 +35,10 @@ urlpatterns = [
     path('send_message/', send_message, name='send_message'),
     path('chat_update/', chat_update, name='chat_update'),
     path('check_mes/', check_mes, name='check_mes'),
-
+    path('tasks/', views.recruiters_tasks, name='recruiters_tasks'),
     path('base/base_of_clients/<id_a>/client_add_task/', views.client_task_adding.as_view(), name='client_task_adding_url'),
-    #path('', views.recruit_main_page, name='main_page'), TODO
- #   path('add_task', views.add_task, name='add_task'), TODO
- #   path(r'add_new_task',views.add_new_task), TODO
     path(r'favorites/', views.favorites, name='favorites'),
     path(r'checkfavor/', views.check_favor, name='check_favor'),
-    #path('base1/', views.recruit_base, name='recruit_base'), TODO
     path(r'client_filtration/', views.client_filtration, name='client_filtration'),
 
 

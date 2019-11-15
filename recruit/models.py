@@ -89,6 +89,10 @@ class RecruitTelephone(models.Model):  # TeamRome
         return self.telephone_number
 
 
+class RecruiterTasks(models.Model): #SPAIN
+    pass
+
+
 
 
 

@@ -315,47 +315,6 @@ def check_mes(request):
     return JsonResponse(send, safe=False)
 
 
-# def add_task(request): #TODO устарело
-#     context = {}
-#     context['users_list'] = UserModel.objects.all()
-#     # context['newtask'] = newtask
-#     return render(request=request, template_name='recruit/add_task.html', context=context)
-#
-#
-# def add_new_task(requset): #TODO устарело
-#     try:
-#         user = UserModel.objects.get(username=requset.POST['name'])
-#
-#     except UserModel.DoesNotExist:
-#
-#         return HttpResponse('Необходимо задать юзера')
-#     newtask = Tasks.objects.create()
-#     newtask.user = user
-#     newtask.title = requset.POST['task_title']
-#     newtask.comment = str(requset.POST['task_comment'])
-#     # newtask.time = datetime.now() TODO
-#     newtask.save()
-#     i = 1
-#     reqpost = requset.POST
-#     while True:
-#         try:
-#             newsubtask = SubTasks(title=reqpost['task_subtask' + str(i)], task=newtask)
-#         except:
-#             break
-#         i += 1
-#         newsubtask.save()
-#
-#         try:
-#             if Settings.objects.get(user=user).email_messages:
-#                 send_email = EmailMessage('HR-system', 'У вас новая задача', to=[str(user.email)])
-#                 send_email.send()
-#         except Exception:
-#             print('Exception: нет адреса электронной почты')
-#
-#     return redirect(to='add_task')
-
-
-
 class client_task_adding(View):
 
     def get(self, request, id_a):
@@ -595,4 +554,10 @@ class RecruitShowExperience(TemplateView):  # TeamRome
                     "data": recruit_experience_page_get(recruit_instance),
                     }
         return render(request, self.template_name, response)
+
+
+def recruiters_tasks(request):
+
+    return HttpResponse('telladsfas')
+
 

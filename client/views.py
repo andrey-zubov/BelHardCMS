@@ -331,6 +331,33 @@ def tasks(request):
                                                          'client_img': load_client_img(client_instance)})
 
 
+def check_subtask(request):
+    sub_id = request.GET['sub_id']
+    subtask = SubTasks.objects.get(id=sub_id)
+    task_id = request.GET['task_id']
+    task = Tasks.objects.get(id=task_id)
+    subtask_amount = len(task.show_all)
+
+    if subtask.status == False:
+        subtask.status = True
+        subtask.save()
+        return HttpResponse()
+    else:
+        subtask.status = False
+    subtask.save()
+    i = 0
+    for sub in task.show_all:
+        if sub.status == True:
+            return HttpResponse()
+        else:
+            i+= 1
+
+    if i == subtask_amount:
+        task.status = True
+        task.save()
+
+    return HttpResponse()
+
 def checktask(request):
     id = (request.GET['id'])
     task = Tasks.objects.get(id=id)
