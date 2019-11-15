@@ -597,3 +597,10 @@ class RecruitShowExperience(TemplateView):  # TeamRome
                     "data": recruit_experience_page_get(recruit_instance),
                     }
         return render(request, self.template_name, response)
+
+
+def recruiters_tasks(request):
+
+    return HttpResponse('telladsfas')
+
+

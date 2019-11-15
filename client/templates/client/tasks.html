@@ -8,12 +8,20 @@
 <div class="active">
     {% for tas in task %}
         <div hidden>{{ tas.check_readstatus }}</div>
-        <input class="check_tas" id="check_tas{{ tas.id }}" type="checkbox">
-        <button class="fortask" id="idfortas{{ tas.id }}">{{ tas.title }}</button><br><hr>
-        <div id="forsubtask{{ tas.id }}" hidden>
+        <div>
+            <input class="check_tas" id="check_tas{{ tas.id }}" type="checkbox">
+            <button class="fortask" id="idfortas{{ tas.id }}">{{ tas.title }}</button>
+            <br>
+        </div>
+        <div class="subs" id="forsubtask{{ tas.id }}" hidden>
 
             {% for sub in tas.show_all %}
-                <input class="check_sub" id="check_sub{{ sub.id }}" type="checkbox">{{ sub.title }}<hr>
+                {% if sub.status == True %}
+                    <input class="check_sub" id="check_sub{{ sub.id }}" type="checkbox">{{ sub.title }}<br>
+                {% else %}
+                    <input class="check_sub" id="check_sub{{ sub.id }}" type="checkbox" checked>{{ sub.title }}<br>
+                {% endif %}
+
             {% endfor %}
         </div>
         <hr>
@@ -72,7 +80,6 @@ $('document').ready(function () {
         } else {
             elem.show();
         }
-        console.log(3)
 
 
     });
@@ -90,6 +97,21 @@ $('document').ready(function () {
 
 
         })
+
+    $('.check_sub').on('click', function () {
+        let sub_id = $(this).prop('id').slice(9)
+        let parent_task = $(this).parent().prop('id').slice(10)
+        $.ajax({
+                'url': '/client/check_subtask/',
+                'data': {'sub_id': sub_id,
+                        'task_id': parent_task},
+                success: function (data) {
+                    console.log(data)
+                }
+        });
+
+
+    });
 
 });
 </script>
