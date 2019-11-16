@@ -33,7 +33,9 @@
     <div class="activ_tasks" name="activ_tasks" hidden>
         {% for tas in client_activ_tasks %}
 
-        <button class="fortask" id="idfortas{{ tas.id }}">{{ tas.title }}</button>
+        <button class="fortask" id="idfortas{{ tas.id }}">
+            {{ tas.title }}
+        </button>
             <br>
              <div id="forsubtask{{ tas.id }}" hidden>
                 {% for sub in tas.show_all %}
