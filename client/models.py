@@ -247,7 +247,7 @@ class CV(models.Model):
 
 
 class State(models.Model):
-    """ Стутус клиента. """
+    """ Статус клиента. """
     state_word = models.CharField(max_length=100)
 
     class Meta:
@@ -305,11 +305,9 @@ class JobInterviews(models.Model):
                                   verbose_name='Вакансии')
     name = models.CharField(max_length=50, verbose_name='Наименование')
     jobinterviewtime = models.TimeField(max_length=10,
-                                        verbose_name='Время проведения\
-                                         собеседования')
+                                        verbose_name='Время проведения собеседования')
     jobinterviewdate = models.DateField(max_length=20,
-                                        verbose_name='Дата проведения\
-                                         собеседования')
+                                        verbose_name='Дата проведения собеседования')
     interview_author = models.CharField(max_length=50,
                                         verbose_name='Автор собеседования',
                                         blank=True, null=True)
@@ -325,26 +323,18 @@ class JobInterviews(models.Model):
     responsible_person = models.CharField(max_length=50,
                                           verbose_name='Ответственное лицо')
     contact_responsible_person_1str = models.CharField(max_length=50,
-                                                       verbose_name='Контакты\
-                                                        ответственного лица\
-                                                         (1-я строчка)')
+                                                       verbose_name='Контакты ответственного лица (1-я строчка)')
     contact_responsible_person_2str = models.CharField(max_length=50,
                                                        blank=True, null=True,
-                                                       verbose_name='Контакты\
-                                                        ответственного лица\
-                                                         (2-я строчка)')
+                                                       verbose_name='Контакты ответственного лица (2-я строчка)')
     location = models.CharField(max_length=50, verbose_name='Место проведения')
     additional_information = models.TextField(max_length=3000, blank=True,
                                               null=True,
-                                              verbose_name='Дополнительная\
-                                               информация')
-    status = models.BooleanField(
-        default=False)  # статус собеседования, на которое ещё не ходили
-    check_status = models.BooleanField(
-        default=True)  # статус активен,если можем после успешного
+                                              verbose_name='Дополнительная информация')
+    status = models.BooleanField(default=False)  # статус собеседования, на которое ещё не ходили
+    check_status = models.BooleanField(default=True)  # статус активен,если можем после успешного
     # собеседования в течении 60 сек вернуть в статус активных собеседований
-    readinterview = models.BooleanField(
-        default=False)  # cтатус собеседования для определения отображения в
+    readinterview = models.BooleanField(default=False)  # статус собеседования для определения отображения в
 
     # оповещениях
 
@@ -434,8 +424,6 @@ class Client(models.Model):
     user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE,
                                        null=True, blank=True)
     patronymic = models.CharField(max_length=100, verbose_name='Отчество', null=True, blank=True)
-
-
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True,
                             blank=True)
     date_born = models.DateField(null=True, blank=True)
@@ -526,12 +514,8 @@ class Chat(models.Model):
 class Message(models.Model):
     class Meta:
         ordering = ['pub_date']
-
-
-    chat = models.ForeignKey(Chat, verbose_name="Чат",
-                             on_delete=models.CASCADE, )
-    author = models.ForeignKey(UserModel, verbose_name="Пользователь",
-                               on_delete=models.CASCADE)
+    chat = models.ForeignKey(Chat, verbose_name="Чат", on_delete=models.CASCADE, )
+    author = models.ForeignKey(UserModel, verbose_name="Пользователь", on_delete=models.CASCADE)
 
     message = models.TextField(verbose_name="Сообщение")
     pub_date = models.DateTimeField(verbose_name='Дата сообщения',
