@@ -354,6 +354,7 @@ def check_subtask(request):
 
     if i == subtask_amount:
         task.status = True
+        task.endtime = timezone.now()
         task.save()
 
     return HttpResponse()
@@ -368,6 +369,10 @@ def checktask(request):
     else:
         task.status = False
         task.endtime = None
+        for sub in task.show_all:
+            sub.status = True
+            sub.save()
+
     task.save()
     return HttpResponse(task)
 
