@@ -33,14 +33,14 @@
     {% for tas in task_false %}
     <div id="task_checktime" hidden>{{ tas.checktime }}</div>
         {% if tas.checkstatus != False %}
-            <input class="check_tas" id="check_tas{{ tas.id }}" type="checkbox">
+            <input class="check_tas" id="check_tas{{ tas.id }}" type="checkbox" checked>
             <button class="fortask" id="idfortas{{ tas.id }}">
                 {{ tas.title }}
             </button><br>
             <div id="forsubtask{{ tas.id }}" hidden>
 
                 {% for sub in tas.show_all %}
-                    <input class="chech_sub" id="check_sub{{ sub.id }}" type="checkbox">
+                    <input class="chech_sub" id="check_sub{{ sub.id }}" type="checkbox" checked>
                     {{ sub.title }}
                     <br>
                 {% endfor %}
