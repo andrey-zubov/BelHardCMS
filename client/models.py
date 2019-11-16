@@ -44,7 +44,7 @@ class FamilyState(models.Model):
 
 class Children(models.Model):
     """ Дети клиента. Заполняется Админом. """
-    children_word = models.CharField(max_length=3)
+    children_word = models.CharField(max_length=4)
 
     class Meta:
         verbose_name = 'Дети'
@@ -365,7 +365,7 @@ class FilesForJobInterviews(models.Model):
 
 class Client(models.Model):
     user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE, null=True, blank=True)
-    patronymic = models.CharField(max_length=100, verbose_name='Отчество')
+    patronymic = models.CharField(max_length=100, verbose_name='Отчество', null=True, blank=True)
 
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
     date_born = models.DateField(null=True, blank=True)
@@ -414,6 +414,9 @@ class Client(models.Model):
     def get_del_jobi_url(self):
         return reverse('applicant_del_interviews_url', kwargs={'id_a': self.id})
 
+    def get_add_client_task(self):
+        return reverse('client_task_adding_url', kwargs={'id_a': self.id})
+
 
 class Telephone(models.Model):
     """ Номера телефонов. ForeignKey = несколько телефонов у одного Клиента. """
@@ -430,14 +433,14 @@ class Chat(models.Model):
         verbose_name = "Чат"
         verbose_name_plural = "Чаты"
 
-    members = models.ManyToManyField(UserModel, verbose_name="Участник")
+    members = models.ManyToManyField(UserModel, verbose_name="Участник", blank=True)
 
 
 class Message(models.Model):
     class Meta:
         ordering = ['pub_date']
 
-    chat = models.ForeignKey(Chat, verbose_name="Чат", on_delete=models.CASCADE, )
+    chat = models.ForeignKey(Chat, verbose_name="Чат", on_delete=models.CASCADE, null=True, blank=True)
     author = models.ForeignKey(UserModel, verbose_name="Пользователь", on_delete=models.CASCADE)
     message = models.TextField(verbose_name="Сообщение")
     pub_date = models.DateTimeField(verbose_name='Дата сообщения', default=timezone.now)

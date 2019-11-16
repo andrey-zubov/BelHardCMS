@@ -33,11 +33,11 @@ confusing both readers and many automated tools. """
 
 # There is Poland's views #################################################################################
 def recruit_main_page(request):  # TeamRome
-    recruit_instance = recruit_check(request.user)
-    response = {'recruit_img': load_client_img(recruit_instance),
-                'data': 'foo()',
-                }
-    return render(request, template_name='recruit/recruit_main_template.html', context=response)
+    # recruit_instance = recruit_check(request.user)
+    # response = {'recruit_img': load_client_img(recruit_instance),
+    #             'data': 'foo()',
+    #             }
+    return render(request, template_name='recruit/recruit_main_template.html')
 
 def recruiter_base(request):
     return render(request, template_name='recruit/recruiter_base.html', )
@@ -84,6 +84,8 @@ class ApplicantDet(View):
             print(vacancy)
 
         return redirect(applicant_user.get_absolute_url())
+
+
 
 
 class CreateJobInterview(View):
@@ -313,45 +315,42 @@ def check_mes(request):
     return JsonResponse(send, safe=False)
 
 
-def add_task(request):
-    context = {}
-    context['users_list'] = UserModel.objects.all()
-    # context['newtask'] = newtask
-    return render(request=request, template_name='recruit/add_task.html', context=context)
+class client_task_adding(View):
+
+    def get(self, request, id_a):
+        client = Client.objects.get(id=id_a)
+        client_user = client.user_client #ссылается на UserModel
+        client_activ_tasks = Tasks.objects.filter(user=client_user, status=False) #просмотр активных задач клинета
+        return render(request, template_name='recruit/adding_task_to_client.html', context={'client':client,
+                                                                                            'client_user': client_user,
+                                                                                            'client_activ_tasks':client_activ_tasks,})
 
 
-def add_new_task(requset):
-    try:
-        user = UserModel.objects.get(username=requset.POST['name'])
+    def post(self, request, id_a):
+        client = Client.objects.get(id=id_a)
+        client_user = client.user_client
+        newtask = Tasks.objects.create()
+        newtask.user = client_user
+        newtask.title = request.POST['task_title']
+        newtask.comment = str(request.POST['task_comment'])
+        newtask.save()
+        i = 1
+        reqpost = request.POST
+        while True:
+            try:
+                newsubtask = SubTasks(title=reqpost['task_subtask' + str(i)], task=newtask)
+            except:
+                break
+            i += 1
+            newsubtask.save()
 
-    except UserModel.DoesNotExist:
-
-        return HttpResponse('Необходимо задать юзера')
-    newtask = Tasks.objects.create()
-    newtask.user = user
-    newtask.title = requset.POST['task_title']
-    newtask.comment = str(requset.POST['task_comment'])
-    # newtask.time = datetime.now() TODO
-    newtask.save()
-    i = 1
-    reqpost = requset.POST
-    while True:
-        try:
-            newsubtask = SubTasks(title=reqpost['task_subtask' + str(i)], task=newtask)
-        except:
-            break
-        i += 1
-        newsubtask.save()
-
-        try:
-            if Settings.objects.get(user=user).email_messages:
-                send_email = EmailMessage('HR-system', 'У вас новая задача', to=[str(user.email)])
-                send_email.send()
-        except Exception:
-            print('Exception: нет адреса электронной почты')
-
-    return redirect(to='add_task')
-
+            try:
+                if Settings.objects.get(user=user).email_messages:
+                    send_email = EmailMessage('HR-system', 'У вас новая задача', to=[str(user.email)])
+                    send_email.send()
+            except Exception:
+                print('Exception: нет адреса электронной почты')
+        return redirect(client.get_add_client_task())
 
 
 #список избранных клиентов, для рекрутера
@@ -555,4 +554,10 @@ class RecruitShowExperience(TemplateView):  # TeamRome
                     "data": recruit_experience_page_get(recruit_instance),
                     }
         return render(request, self.template_name, response)
+
+
+def recruiters_tasks(request):
+
+    return HttpResponse('telladsfas')
+
 
