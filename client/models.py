@@ -224,12 +224,14 @@ class CV(models.Model):
     type_salary = models.ForeignKey(TypeSalary, on_delete=models.SET_NULL,
                                     null=True, blank=True)
     # There is Poland's upgrade
-    vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
+    vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True,
+                                                  related_name='in_waiting_for_resume')
     vacancies_accept = models.ManyToManyField('Vacancy', blank=True,
                                               related_name='accept_for_resume')
     vacancies_reject = models.ManyToManyField('Vacancy', blank=True,
                                               related_name='reject_for_resume')
-    notification = models.ManyToManyField('Vacancy', blank=True, related_name='notifications_for_resume')
+    notification = models.ManyToManyField('Vacancy', blank=True,
+                                          related_name='notifications_for_resume')
 
     def __str__(self):
         return self.position
@@ -326,9 +328,7 @@ class JobInterviews(models.Model):
                                                        verbose_name='Контакты ответственного лица (1-я строчка)')
     contact_responsible_person_2str = models.CharField(max_length=50,
                                                        blank=True, null=True,
-                                                       verbose_name='Контакты\
-                                                        ответственного лица\
-                                                         (2-я строчка)')
+                                                       verbose_name='Контакты ответственного лица (2-я строчка)')
     location = models.CharField(max_length=50, verbose_name='Место проведения')
     additional_information = models.TextField(max_length=3000, blank=True,
                                               null=True,
@@ -517,7 +517,6 @@ class Chat(models.Model):
 class Message(models.Model):
     class Meta:
         ordering = ['pub_date']
-
 
     chat = models.ForeignKey(Chat, verbose_name="Чат",
                              on_delete=models.CASCADE, )
