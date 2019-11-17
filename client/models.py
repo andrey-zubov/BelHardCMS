@@ -225,15 +225,13 @@ class CV(models.Model):
                                     null=True, blank=True)
     # There is Poland's upgrade
     vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True,
-                                                  related_name='in_waiting\
-                                                  _for_resume')
+                                         related_name='in_waiting_for_resume')
     vacancies_accept = models.ManyToManyField('Vacancy', blank=True,
                                               related_name='accept_for_resume')
     vacancies_reject = models.ManyToManyField('Vacancy', blank=True,
                                               related_name='reject_for_resume')
     notification = models.ManyToManyField('Vacancy', blank=True,
-                                          related_name='notifications_for\
-                                          _resume')
+                                      related_name='notifications_for_resume')
 
     def __str__(self):
         return self.position
@@ -357,11 +355,10 @@ class JobInterviews(models.Model):
         to_show_name = []
         to_show_verbose_name = []
         for key in self.__dict__:
-            if self.__dict__[key].__class__.__name__ == 'str' or self.__dict__[
-                key].__class__.__name__ == 'datetime' \
-                    or self.__dict__[key].__class__.__name__ == 'time' or \
-                    self.__dict__[
-                        key].__class__.__name__ == 'date':
+            if self.__dict__[key].__class__.__name__ == 'str' or 
+            self.__dict__[key].__class__.__name__ == 'datetime' or
+            self.__dict__[key].__class__.__name__ == 'time' or 
+            self.__dict__[key].__class__.__name__ == 'date':
                 to_show_verbose_name.append(
                     self._meta.get_field(key).verbose_name)
                 to_show_name.append(self.__dict__[key])
