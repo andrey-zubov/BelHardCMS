@@ -355,10 +355,10 @@ class JobInterviews(models.Model):
         to_show_name = []
         to_show_verbose_name = []
         for key in self.__dict__:
-            if self.__dict__[key].__class__.__name__ == 'str' or 
+            if (self.__dict__[key].__class__.__name__ == 'str' or
             self.__dict__[key].__class__.__name__ == 'datetime' or
             self.__dict__[key].__class__.__name__ == 'time' or 
-            self.__dict__[key].__class__.__name__ == 'date':
+            self.__dict__[key].__class__.__name__ == 'date'):
                 to_show_verbose_name.append(
                     self._meta.get_field(key).verbose_name)
                 to_show_name.append(self.__dict__[key])
@@ -421,7 +421,7 @@ class Client(models.Model):
 
     user_client = models.OneToOneField(UserModel, on_delete=models.CASCADE,
                                        null=True, blank=True)
-    patronymic = models.CharField(max_length=100, verbose_name='Отчество')
+    patronymic = models.CharField(max_length=100, verbose_name='Отчество', null=True, blank=True)
 
 
     sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True,
@@ -488,6 +488,9 @@ class Client(models.Model):
     def get_del_jobi_url(self):
         return reverse('applicant_del_interviews_url',
                        kwargs={'id_a': self.id})
+
+    def get_add_client_task(self):
+        return reverse('client_task_adding_url', kwargs={'id_a': self.id})
 
 
 class Telephone(models.Model):
