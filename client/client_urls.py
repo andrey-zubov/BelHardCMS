@@ -8,7 +8,7 @@ from client.views import (ClientProfile, client_main_page, ClientEditMain, Clien
                           OpinionCreate, opinion_detail, answer_create, OpinionDelete, client_login, client_logout,
                           tasks, checktask, checknotifications, settings_menu, set_settings, ResumesList, ResumeDetail,
                           AcceptedVacancies, RejectedVacancies, VacancyDetail, accept_reject, help_list, viewed,
-                          admin_jobinterviews, interviews_list, checkinterviews, upload)
+                          admin_jobinterviews, interviews_list, checkinterviews, upload, chat_update)
 
 """ PEP 8: Wildcard imports (from <module> import *) should be avoided, 
 as they make it unclear which names are present in the namespace, 
@@ -35,6 +35,7 @@ urlpatterns = [
     # Team Rome (end)
 
     path('chat/', login_required(MessagesView.as_view()), name='contact_with_centre'),
+    path('chat_update/', chat_update, name='chat_update'),
     path(r'opinion/', opinion_list, name='opinion_list'),
     path(r'opinion/create/', OpinionCreate.as_view(), name='opinion_create'),
     path(r'opinion/<int:pk>/', opinion_detail, name='opinion_detail'),
