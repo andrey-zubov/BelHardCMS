@@ -1,4 +1,3 @@
-
 from time import perf_counter
 from collections import defaultdict
 
@@ -11,39 +10,48 @@ from django.template.context_processors import csrf
 from django.urls import reverse
 
 from client.edit.check_clients import (load_client_img)
-from client.models import (CV, JobInterviews, FilesForJobInterviews, Vacancy, State)
-from client.models import (Chat, Message, Tasks, UserModel, SubTasks, Settings, Client)
+from client.models import (CV, JobInterviews, FilesForJobInterviews, Vacancy,
+                           State)
+from client.models import (Chat, Message, Tasks, UserModel, SubTasks, Settings,
+                           Client)
 from recruit.edit_pages.check_recruit import (recruit_check)
 from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
-from recruit.edit_pages.r_pages_get import (recruit_edit_page_get, recruit_experience_page_get,
-                                            recruit_education_page_get, recruit_show_page_get)
+from recruit.edit_pages.r_pages_get import (recruit_edit_page_get,
+                                            recruit_experience_page_get,
+                                            recruit_education_page_get,
+                                            recruit_show_page_get)
 from recruit.edit_pages.r_pages_get import (skills_page_get)
-from recruit.edit_pages.r_pages_post import (photo_page_post, skills_page_post, recruit_education_page_post)
-from recruit.edit_pages.r_pages_post import (recruit_edit_page_post, recruit_experience_page_post)
+from recruit.edit_pages.r_pages_post import (photo_page_post, skills_page_post,
+                                             recruit_education_page_post)
+from recruit.edit_pages.r_pages_post import (recruit_edit_page_post,
+                                             recruit_experience_page_post)
 from recruit.models import (Recruiter)
 
 from datetime import datetime
 
-from .models import * #TODO fix *
+from .models import *  # TODO fix *
 
 """ PEP 8: Wildcard imports (from <module> import *) should be avoided, 
 as they make it unclear which names are present in the namespace, 
 confusing both readers and many automated tools. """
 
 
-# There is Poland's views #################################################################################
+# There is Poland's views #
 def recruit_main_page(request):  # TeamRome
     recruit_instance = recruit_check(request.user)
     response = {'recruit_img': load_client_img(recruit_instance),
                 'data': 'foo()',
                 }
-    return render(request, template_name='recruit/recruit_main_template.html', context=response)
+    return render(request, template_name='recruit/recruit_main_template.html',
+                  context=response)
+
 
 def recruiter_base(request):
     return render(request, template_name='recruit/recruiter_base.html', )
 
+
 def base_of_applicants(request):
-    #applicants = Client.objects.all()
+    # applicants = Client.objects.all()
     own_status = 'all'
 
     # Для проверки на наличие в списке избранного
@@ -51,14 +59,13 @@ def base_of_applicants(request):
     owner_list = Client.objects.filter(own_recruiter=recruiter)
     owner_range = len(owner_list)
 
-
     clients_after_search = client_filtration(request, own_status)
     applicants = clients_after_search
-    return render(request, template_name='recruit/recruiter_base_of_clients.html',
+    return render(request,
+                  template_name='recruit/recruiter_base_of_clients.html',
                   context={'applicants': applicants,
-                            'owner_list': owner_list,
-                            'owner_range':owner_range})
-
+                           'owner_list': owner_list,
+                           'owner_range': owner_range})
 
 
 class ApplicantDet(View):
@@ -67,7 +74,8 @@ class ApplicantDet(View):
         resumes = applicant_user.cv_set.all()
         vacancies = Vacancy.objects.all()
         return render(request, 'recruit/recruiter_applicant.html',
-                      context={'applicant_user': applicant_user, 'resumes': resumes, 'vacancies': vacancies})
+                      context={'applicant_user': applicant_user,
+                               'resumes': resumes, 'vacancies': vacancies})
 
     def post(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
@@ -90,14 +98,16 @@ class CreateJobInterview(View):
     def get(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
         if CV.objects.filter(client_cv=applicant_user):
-            accepted_vacancies = applicant_user.cv_set.all()[0].vacancies_accept.all()
+            accepted_vacancies = applicant_user.cv_set.all()[
+                0].vacancies_accept.all()
             for resume in applicant_user.cv_set.all()[1:]:
                 accepted_vacancies |= resume.vacancies_accept.all()
             # print(accepted_vacancies)
         else:
             accepted_vacancies = None
         return render(request, 'recruit/recruiter_tasks_for_applicant.html',
-                      context={'applicant_user': applicant_user, 'accepted_vacancies': accepted_vacancies})
+                      context={'applicant_user': applicant_user,
+                               'accepted_vacancies': accepted_vacancies})
 
     def post(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
@@ -109,8 +119,9 @@ class CreateJobInterview(View):
             name=response.get('name'),
             jobinterviewtime=response.get('time'),
             jobinterviewdate=response.get('date'),
-            # interview_author=Recruiter.objects.get(id=), ################ Filling in this field will be automatic
-            # period_of_execution= ###############################          I don't know why is this field needed
+            # interview_author=Recruiter.objects.get(id=),
+            # Filling in this field will be automatic
+            # period_of_execution= #  I don't know why is this field needed
             position=response.get('position'),
             organization=response.get('organization'),
             responsible_person=response.get('responsible_person'),
@@ -143,8 +154,9 @@ class EditJobInterview(View):
         j.name = response.get('name')
         j.jobinterviewtime = response.get('time')
         j.jobinterviewdate = response.get('date')
-        # interview_author=Recruiter.objects.get(id=) ################ Filling in this field will be automatic
-        # period_of_execution= ###############################          I don't know why is this field needed
+        # interview_author=Recruiter.objects.get(id=) # Filling in this field
+        # will be automatic
+        # period_of_execution= # I don't know why is this field needed
         j.position = response.get('position')
         j.organization = response.get('organization')
         j.responsible_person = response.get('responsible_person')
@@ -152,7 +164,6 @@ class EditJobInterview(View):
         j.contact_responsible_person_2str = response.get('telegram')
         j.location = response.get('address')
         j.additional_information = response.get('addition')
-
 
         if response.get('vacancy'):
             j.vacancies = Vacancy.objects.get(id=int(response.get('vacancy')))
@@ -168,7 +179,6 @@ class EditJobInterview(View):
         return redirect(applicant_user.get_tasks_url())
 
 
-
 class DelJobInterview(View):
     def post(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
@@ -177,11 +187,11 @@ class DelJobInterview(View):
         return redirect(applicant_user.get_tasks_url())
 
 
-
 class Vacancies(View):
     def get(self, request):
         vacancies = Vacancy.objects.all()
-        return render(request, 'recruit/recruiter_vacancies.html', context={'vacancies': vacancies})
+        return render(request, 'recruit/recruiter_vacancies.html',
+                      context={'vacancies': vacancies})
 
     def post(self, request):
         response = request.POST
@@ -204,7 +214,8 @@ class Vacancies(View):
 class VacancyDet(View):
     def get(self, request, id_v):
         vacancy = Vacancy.objects.get(id=id_v)
-        return render(request, 'recruit/recruiter_vacancy_detail.html', context={'vacancy': vacancy})
+        return render(request, 'recruit/recruiter_vacancy_detail.html',
+                      context={'vacancy': vacancy})
 
     def post(self, request, id_v):
         response = request.POST
@@ -233,7 +244,7 @@ class DelVacancy(View):
         return redirect('vacancies_url')
 
 
-# End Poland's views #######################################################################################
+# End Poland's views #
 
 
 def recruit_chat(request):
@@ -243,7 +254,8 @@ def recruit_chat(request):
         for m in mes:
             print(m.username)
     context = {'user': request.user, 'chats': chat_list}
-    return render(request=request, template_name='recruit/recruit_chat.html', context=context)
+    return render(request=request, template_name='recruit/recruit_chat.html',
+                  context=context)
 
 
 def get_messages(request):
@@ -252,12 +264,16 @@ def get_messages(request):
     messages = Message.objects.filter(chat=chat)
 
     if request.user in chat.members.all():
-        chat.message_set.filter(is_read=False).exclude(author=request.user).update(is_read=True)
+        chat.message_set.filter(is_read=False).exclude(
+            author=request.user).update(is_read=True)
 
     send2 = []
     for s in messages:
         send2.append(
-            {'author_id': s.author.id, 'user_id': request.user.id, 'author_first_name': s.author.first_name, 'author_last_name': s.author.last_name, 'message': s.message, 'message_id': s.id,
+            {'author_id': s.author.id, 'user_id': request.user.id,
+             'author_first_name': s.author.first_name,
+             'author_last_name': s.author.last_name, 'message': s.message,
+             'message_id': s.id,
              'pub_date': s.pub_date.ctime()})
 
     return JsonResponse(send2, safe=False)
@@ -265,7 +281,8 @@ def get_messages(request):
 
 def send_message(request):
     chat = Chat.objects.get(id=request.GET['chat_id'])
-    mes = Message(chat=chat, author=request.user, message=request.GET['message'])
+    mes = Message(chat=chat, author=request.user,
+                  message=request.GET['message'])
     members = chat.members.all()
     mes.save()
 
@@ -273,14 +290,18 @@ def send_message(request):
         if m != request.user:
             try:
                 if Settings.objects.get(user=m).email_messages:
-                    send_email = EmailMessage('HR-system', 'У вас новое сообщение', to=[str(m.email)])
+                    send_email = EmailMessage('HR-system',
+                                              'У вас новое сообщение',
+                                              to=[str(m.email)])
                     send_email.send()
             except Exception:
                 print('Exception: нет адреса электронной почты')
 
-
-    send = {'author_id': mes.author.id, 'user_id': request.user.id, 'author_first_name': mes.author.first_name, 'author_last_name': mes.author.last_name, 'message': mes.message, 'message_id': mes.id,
-             'pub_date': mes.pub_date.ctime()}
+    send = {'author_id': mes.author.id, 'user_id': request.user.id,
+            'author_first_name': mes.author.first_name,
+            'author_last_name': mes.author.last_name, 'message': mes.message,
+            'message_id': mes.id,
+            'pub_date': mes.pub_date.ctime()}
 
     return JsonResponse(send, safe=False)
 
@@ -291,12 +312,14 @@ def chat_update(request):
     messages = Message.objects.filter(chat=chat)
     mes = (m for m in messages if m.id > int(last_id))
     if request.user in chat.members.all():
-        chat.message_set.filter(is_read=False).exclude(author=request.user).update(is_read=True)
+        chat.message_set.filter(is_read=False).exclude(
+            author=request.user).update(is_read=True)
 
     send2 = []
     for s in mes:
         send2.append(
-            {'author_id': s.author.id, 'author_name': s.author.username, 'message': s.message, 'message_id': s.id,
+            {'author_id': s.author.id, 'author_name': s.author.username,
+             'message': s.message, 'message_id': s.id,
              'pub_date': s.pub_date.ctime()})
 
     return JsonResponse(send2, safe=False)
@@ -306,62 +329,61 @@ def check_mes(request):
     chat = Chat.objects.filter(members=request.user)
     send = []
     for c in chat:
-        unread_messages = len(Message.objects.filter(chat=c, is_read=False).exclude(author=request.user))
+        unread_messages = len(
+            Message.objects.filter(chat=c, is_read=False).exclude(
+                author=request.user))
         new_dict = {'chat_id': c.id, 'count': unread_messages}
         send.append(new_dict)
 
     return JsonResponse(send, safe=False)
 
 
-def add_task(request):
-    context = {}
-    context['users_list'] = UserModel.objects.all()
-    # context['newtask'] = newtask
-    return render(request=request, template_name='recruit/add_task.html', context=context)
+class client_task_adding(View):
+
+    def get(self, request, id_a):
+        client = Client.objects.get(id=id_a)
+        client_user = client.user_client #ссылается на UserModel
+        client_activ_tasks = Tasks.objects.filter(user=client_user, status=False) #просмотр активных задач клинета
+        return render(request, template_name='recruit/adding_task_to_client.html', context={'client':client,
+                                                                                            'client_user': client_user,
+                                                                                            'client_activ_tasks':client_activ_tasks,})
 
 
-def add_new_task(requset):
-    try:
-        user = UserModel.objects.get(username=requset.POST['name'])
+    def post(self, request, id_a):
+        client = Client.objects.get(id=id_a)
+        client_user = client.user_client
+        newtask = Tasks.objects.create()
+        newtask.user = client_user
+        newtask.title = request.POST['task_title']
+        newtask.comment = str(request.POST['task_comment'])
+        newtask.save()
+        i = 1
+        reqpost = request.POST
+        while True:
+            try:
+                newsubtask = SubTasks(title=reqpost['task_subtask' + str(i)], task=newtask)
+            except:
+                break
+            i += 1
+            newsubtask.save()
 
-    except UserModel.DoesNotExist:
+            try:
+                if Settings.objects.get(user=user).email_messages:
+                    send_email = EmailMessage('HR-system', 'У вас новая задача', to=[str(user.email)])
+                    send_email.send()
+            except Exception:
+                print('Exception: нет адреса электронной почты')
+        return redirect(client.get_add_client_task())
 
-        return HttpResponse('Необходимо задать юзера')
-    newtask = Tasks.objects.create()
-    newtask.user = user
-    newtask.title = requset.POST['task_title']
-    newtask.comment = str(requset.POST['task_comment'])
-    # newtask.time = datetime.now() TODO
-    newtask.save()
-    i = 1
-    reqpost = requset.POST
-    while True:
-        try:
-            newsubtask = SubTasks(title=reqpost['task_subtask' + str(i)], task=newtask)
-        except:
-            break
-        i += 1
-        newsubtask.save()
-
-        try:
-            if Settings.objects.get(user=user).email_messages:
-                send_email = EmailMessage('HR-system', 'У вас новая задача', to=[str(user.email)])
-                send_email.send()
-        except Exception:
-            print('Exception: нет адреса электронной почты')
-
-    return redirect(to='add_task')
-
-
-
-#список избранных клиентов, для рекрутера
+# список избранных клиентов, для рекрутера
 def favorites(request):
     own_status = Recruiter.objects.get(recruiter=request.user)
-   # own_status = recruit
+    # own_status = recruit
     clients = client_filtration(request, own_status)
     context = {'applicants': clients}
 
-    return render(request, template_name='recruit/favorites.html', context=context)
+    return render(request, template_name='recruit/favorites.html',
+                  context=context)
 
 
 # обработка избранного рекрутера
@@ -369,7 +391,8 @@ def check_favor(request):
     client_id = (request.GET['client'])
     client = Client.objects.get(id=client_id)
     recruit_id = (request.GET['recruit'])
-    recruit = Recruiter.objects.get(recruiter=UserModel.objects.get(id=recruit_id))
+    recruit = Recruiter.objects.get(
+        recruiter=UserModel.objects.get(id=recruit_id))
     if client.is_reserved == True:
 
         client.is_reserved = False
@@ -387,7 +410,8 @@ def recruit_base(request):
     own_status = None
     clients_after_search = client_filtration(request, own_status)
     context = {'free_clients': clients_after_search, 'applicants': applicants}
-    return render(request, template_name='recruit/recruit_base.html', context=context)
+    return render(request, template_name='recruit/recruit_base.html',
+                  context=context)
 
 
 # функция поиска по списку клиентов, для рекрутера
@@ -404,11 +428,14 @@ def client_filtration(request, own_status):
         clients = Client.objects.all()
 
         for s in search_params:
-            users_for_first_name_list = UserModel.objects.filter(first_name__contains=s)
-            users_for_last_name_list = UserModel.objects.filter(last_name__contains=s)
+            users_for_first_name_list = UserModel.objects.filter(
+                first_name__contains=s)
+            users_for_last_name_list = UserModel.objects.filter(
+                last_name__contains=s)
             users_for_patronymic = clients.filter(patronymic__contains=s)
             try:
-                users_for_state = clients.filter(state__contains=State.objects.get(state_word=s))
+                users_for_state = clients.filter(
+                    state__contains=State.objects.get(state_word=s))
                 clients_after_search.update(users_for_state)
             except:
                 print('ясно')
@@ -429,7 +456,6 @@ def client_filtration(request, own_status):
     return clients_after_search
 
 
-
 class RecruitProfile(TemplateView):  # TeamRome
     template_name = 'recruit/recruit_profile.html'
 
@@ -438,7 +464,8 @@ class RecruitProfile(TemplateView):  # TeamRome
         response = {'recruit_img': load_client_img(recruit_instance),
                     'data': recruit_show_page_get(recruit_instance),
                     }
-        return render(request=request, template_name=self.template_name, context=response)
+        return render(request=request, template_name=self.template_name,
+                      context=response)
 
     def post(self, request):
         pass
@@ -516,7 +543,8 @@ class RecruitEditPhoto(TemplateView):  # TeamRome
         response = {'recruit_img': load_client_img(recruit_instance),
                     'form': RecruitUploadImgForm(),
                     }
-        return render(request=request, template_name=self.template_name, context=response)
+        return render(request=request, template_name=self.template_name,
+                      context=response)
 
     def post(self, request):
         recruit_instance = recruit_check(request.user)
@@ -532,7 +560,8 @@ class RecruitShowSkills(TemplateView):  # TeamRome
         response = {'recruit_img': load_client_img(recruit_instance),
                     'data': skills_page_get(recruit_instance),
                     }
-        return render(request=request, template_name=self.template_name, context=response)
+        return render(request=request, template_name=self.template_name,
+                      context=response)
 
 
 class RecruitShowEducation(TemplateView):  # TeamRome
