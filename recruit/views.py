@@ -414,8 +414,7 @@ def recruit_base(request):
     own_status = None
     clients_after_search = client_filtration(request, own_status)
     context = {'free_clients': clients_after_search, 'applicants': applicants}
-    return render(request, template_name='recruit/recruit_base.html',
-                  context=context)
+    return render(request, template_name='recruit/recruit_base.html', context=context)
 
 
 # функция поиска по списку клиентов, для рекрутера
@@ -588,4 +587,10 @@ class RecruitShowExperience(TemplateView):  # TeamRome
                     "data": recruit_experience_page_get(recruit_instance),
                     }
         return render(request, self.template_name, response)
+
+
+def recruiters_tasks(request):
+
+    return HttpResponse('telladsfas')
+
 
