@@ -1,8 +1,11 @@
 from django.contrib import admin
 
-from client.models import (SubTasks, CV, Vacancy, Help, Opinion, Answer, Chat, Tasks, Message, Sex, Citizenship,
-                           FamilyState, Children, City, EducationWord, SkillsWord, Sphere, CvWord, Employment, TimeJob,
-                           TypeSalary, State, Settings, FilesForJobInterviews, JobInterviews, Experience, Education,
+from client.models import (SubTasks, CV, Vacancy, Help, Opinion, Answer, Chat,
+                           Tasks, Message, Sex, Citizenship,
+                           FamilyState, Children, City, EducationWord,
+                           SkillsWord, Sphere, CvWord, Employment, TimeJob,
+                           TypeSalary, State, Settings, FilesForJobInterviews,
+                           JobInterviews, Experience, Education,
                            Client, Direction)
 
 """ PEP 8: Wildcard imports (from <module> import *) should be avoided, 
@@ -118,6 +121,27 @@ class InlineFilesForJobInterviews(admin.TabularInline):
     model = FilesForJobInterviews
 
 
+class InlineExp(admin.TabularInline):  # TeamRome
+    model = Experience
+
+
+class InlineEdu(admin.TabularInline):  # TeamRome
+    model = Education
+
+
+class InlineCV(admin.TabularInline):  # TeamRome
+    model = CV
+
+
+class ClientAdmin(admin.ModelAdmin):  # TeamRome
+    model = Client
+    inlines = [InlineExp, InlineEdu, InlineCV]
+
+
+# TeamRome
+admin.site.register(Client, ClientAdmin)
+
+
 # TeamPoland
 class JobInterviewsAdmin(admin.ModelAdmin):
     list_display = (
@@ -137,57 +161,11 @@ class JobInterviewsAdmin(admin.ModelAdmin):
     #    js = ['js/scriptJob.js']
 
 
-class InlineExp(admin.TabularInline):  # TeamRome
-    model = Experience
-
-
-class InlineEdu(admin.TabularInline):  # TeamRome
-    model = Education
-
-
-class InlineCV(admin.TabularInline):  # TeamRome
-    model = CV
-
-
-class ClientAdmin(admin.ModelAdmin):  # TeamRome
-    model = Client
-    inlines = [InlineExp, InlineEdu, InlineCV]
-
-
-
-# TeamRome
-admin.site.register(Client, ClientAdmin)
-
-
-# TeamPoland
-class InlineFilesForJobInterviews(admin.TabularInline):
-    model = FilesForJobInterviews
-
-
-# TeamPoland
-class JobInterviewsAdmin(admin.ModelAdmin):
-    list_display = (
-        'client', 'name', 'location'
-    )
-    list_display_links = (
-        'client', 'name', 'location'
-    )
-    search_fields = (
-        'client', 'name', 'location'
-    )
-
-    model = JobInterviews
-    inlines = [InlineFilesForJobInterviews]
-
-    #class Media:
-    #    js = ['js/scriptJob.js']
-
-
 admin.site.register(JobInterviews, JobInterviewsAdmin)
+
 
 class DirectionAdmin(admin.ModelAdmin):  # TeamRome
     model = Direction
 
 
 admin.site.register(Direction, DirectionAdmin)  # TeamRome
-
