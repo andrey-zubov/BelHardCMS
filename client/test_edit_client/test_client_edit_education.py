@@ -1,14 +1,16 @@
+from datetime import date
+
+from PIL import Image
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.test.client import MULTIPART_CONTENT
 from django.urls import reverse
-from datetime import datetime, date
-from PIL import Image
+
 from client.edit.utility import time_it
 from client.models import Client, Education, Certificate
 
-
 """ НЕ проверено сохранение файла сертификата """
+
 
 class ClientEditEducationTests(TestCase):
     """ python manage.py test client/test_edit_client/ --keepdb """
@@ -17,7 +19,7 @@ class ClientEditEducationTests(TestCase):
     TEST_USER_EMAIL = 'test_user'
     # with open("client/test_edit_client/user_1.png") as file:
 
-    image = Image.open("client/test_edit_client/user_1.png")
+    image = Image.open("client/media/user_1.png")
 
     TEST_DATA_1 = {'institution': 'rocket_science_1',
                    'subject_area': 'rocket_science_1',
