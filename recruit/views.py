@@ -13,7 +13,7 @@ from client.edit.check_clients import (load_client_img)
 from client.models import (CV, JobInterviews, FilesForJobInterviews, Vacancy,
                            State)
 from client.models import (Chat, Message, Tasks, UserModel, SubTasks, Settings,
-                           Client)
+                           Client, Employer)
 from recruit.edit_pages.check_recruit import (recruit_check)
 from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
 from recruit.edit_pages.r_pages_get import (recruit_edit_page_get,
@@ -69,6 +69,7 @@ def base_of_applicants(request):
 
 
 class ApplicantDet(View):
+    """ Детальный просмотр профиля соискателя. """
     def get(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
         resumes = applicant_user.cv_set.all()
@@ -78,23 +79,21 @@ class ApplicantDet(View):
                                'resumes': resumes, 'vacancies': vacancies})
 
     def post(self, request, id_a):
+        """ Отправка соискателю вакансии на рассмотрение (с фронта) """
         applicant_user = Client.objects.get(id=id_a)
         response = request.POST
         resume = CV.objects.get(id=response['id_cv'])
         vacancies_id = request.POST.getlist('id_v')
 
-        print('resume  ', resume)
-        print('vacansies_id ', vacancies_id)
         for id_v in vacancies_id:
             vacancy = Vacancy.objects.get(id=id_v)
             resume.vacancies_in_waiting.add(vacancy)
             resume.notification.add(vacancy)
-            print(vacancy)
-
         return redirect(applicant_user.get_absolute_url())
 
 
 class CreateJobInterview(View):
+    """ Создание собеседования для клиента """
     def get(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
         if CV.objects.filter(client_cv=applicant_user):
@@ -102,7 +101,6 @@ class CreateJobInterview(View):
                 0].vacancies_accept.all()
             for resume in applicant_user.cv_set.all()[1:]:
                 accepted_vacancies |= resume.vacancies_accept.all()
-            # print(accepted_vacancies)
         else:
             accepted_vacancies = None
         return render(request, 'recruit/recruiter_tasks_for_applicant.html',
@@ -119,8 +117,7 @@ class CreateJobInterview(View):
             name=response.get('name'),
             jobinterviewtime=response.get('time'),
             jobinterviewdate=response.get('date'),
-            # interview_author=Recruiter.objects.get(id=),
-            # Filling in this field will be automatic
+            interview_author=recruit_check(request.user),
             # period_of_execution= #  I don't know why is this field needed
             position=response.get('position'),
             organization=response.get('organization'),
@@ -149,13 +146,10 @@ class EditJobInterview(View):
         applicant_user = Client.objects.get(id=id_a)
         response = request.POST
         files = request.FILES.getlist('files')
-        # print(request.POST['id_job_edit'])
         j = JobInterviews.objects.get(id=request.POST['id_job_edit'])
         j.name = response.get('name')
         j.jobinterviewtime = response.get('time')
         j.jobinterviewdate = response.get('date')
-        # interview_author=Recruiter.objects.get(id=) # Filling in this field
-        # will be automatic
         # period_of_execution= # I don't know why is this field needed
         j.position = response.get('position')
         j.organization = response.get('organization')
@@ -187,19 +181,70 @@ class DelJobInterview(View):
         return redirect(applicant_user.get_tasks_url())
 
 
+class Employers(View):
+    """ Создание карточки работодателя. Вывод на экран базы работодателей """
+    def get(self, request):
+        employers = Employer.objects.all()
+        return render(request, 'recruit/recruiter_employers.html', context={'employers': employers})
+
+    def post(self, request):
+        response = request.POST
+        e = Employer(
+            name=response['name'],
+            address=response['address'],
+            description=response['description'],
+
+        )
+        print(request.FILES.getlist('logofile'))
+        if request.FILES.getlist('logofile'):
+            e.image = request.FILES.getlist('logofile')[0]
+
+        e.save()
+        return redirect('employers_url')
+
+
+class EmployerDet(View):
+    """ Детальный просмотр карточки работодалеля. """
+    def get(self, request, id_e):
+        employer = Employer.objects.get(id=id_e)
+        empl_vacancies = employer.vacancies.all()
+        return render(request, 'recruit/recruiter_employer_detail.html', context={
+            'employer': employer,
+            'empl_vacancies': empl_vacancies,
+        })
+
+    def post(self, request, id_e):
+        """ Редактирование карточки работодателя. """
+        response = request.POST
+        e = Employer.objects.get(id=id_e)
+        e.name = response['name']
+        e.address = response['address']
+        e.description = response['description']
+        if request.FILES.getlist('logofile'):
+            print(request.FILES.getlist('logofile')[0])
+            e.image = request.FILES.getlist('logofile')[0]
+        e.save()
+        return redirect(e.get_absolute_url())  # ('employer_det_url', id_e=e.id)
+
+
+class EmployerDel(View):
+    """ Удаление карточки работодателя """
+    def post(self, request, id_e):
+        e = Employer.objects.get(id=request.POST['id_emp'])
+        e.delete()
+        return redirect('employers_url')
+
+
 class Vacancies(View):
     def get(self, request):
         vacancies = Vacancy.objects.all()
-        return render(request, 'recruit/recruiter_vacancies.html',
-                      context={'vacancies': vacancies})
+        return render(request, 'recruit/recruiter_vacancies.html', context={'vacancies': vacancies})
 
     def post(self, request):
         response = request.POST
         v = Vacancy(
             state=response['position'],
             salary=response['salary'],
-            organization=response['organization'],
-            address=response['address'],
             employment=response['employment'],
             description=response['description'],
             skills=response['skills'],
@@ -207,15 +252,34 @@ class Vacancies(View):
             duties=response['duties'],
             conditions=response['conditions'],
         )
-        v.save()
-        return redirect('vacancies_url')
+
+        if response.get('id_empl'):
+            e = Employer.objects.get(id=response['id_empl'])
+            v.employer = e
+            v.organization = e.name
+            v.address = e.address
+            v.save()
+            return redirect('employer_det_url', id_e=response['id_empl'])
+        else:
+            if response['organization'] in [e.name for e in Employer.objects.all()]:
+                v.organization = Employer.objects.get(name=response['organization']).name
+                v.employer = Employer.objects.get(name=response['organization'])
+                v.save()
+                return redirect('vacancies_url')
+            else:
+                e = Employer(name=response['organization'], address=response['address'])
+                e.save()
+                v.organization = e.name
+                v.address = e.address
+                v.employer = e
+                v.save()
+                return redirect('vacancies_url')
 
 
 class VacancyDet(View):
     def get(self, request, id_v):
         vacancy = Vacancy.objects.get(id=id_v)
-        return render(request, 'recruit/recruiter_vacancy_detail.html',
-                      context={'vacancy': vacancy})
+        return render(request, 'recruit/recruiter_vacancy_detail.html', context={'vacancy': vacancy})
 
     def post(self, request, id_v):
         response = request.POST
@@ -243,10 +307,12 @@ class DelVacancy(View):
         v.delete()
         return redirect('vacancies_url')
 
+
 def del_file(request):
     file = FilesForJobInterviews.objacts.get(id=request.GET['id_f'])
     file.delete()
     return HttpResponse('id  ', request.GET['id_f'])
+
 
 # End Poland's views #
 
@@ -419,6 +485,10 @@ def recruit_base(request):
 
 # функция поиска по списку клиентов, для рекрутера
 def client_filtration(request, own_status):
+    """
+
+    :rtype: object
+    """
     if own_status == 'all':
         clients_after_search = Client.objects.all()
         return clients_after_search

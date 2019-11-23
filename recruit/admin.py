@@ -1,6 +1,8 @@
 from django.contrib import admin
 
 from recruit.models import Recruiter
+
+
 #from recruit.models import  RecruitSkills, RecruitExperience, RecruitEducation)
 
 """ PEP 8: Wildcard imports (from <module> import *) should be avoided,

@@ -4,8 +4,6 @@ from client.edit.utility import try_except, time_it
 from client.models import Client
 
 
-@try_except
-@time_it
 def client_check(some_one):  # TeamRome
     """ список карточек c id клиента.
     Список Юзеров с зарегистрированной карточкой клиента. """

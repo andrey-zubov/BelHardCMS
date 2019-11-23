@@ -6,7 +6,7 @@ from client.models import (SubTasks, CV, Vacancy, Help, Opinion, Answer, Chat,
                            SkillsWord, Sphere, CvWord, Employment, TimeJob,
                            TypeSalary, State, Settings, FilesForJobInterviews,
                            JobInterviews, Experience, Education,
-                           Client, Direction)
+                           Client, Direction, Employer)
 
 """ PEP 8: Wildcard imports (from <module> import *) should be avoided, 
 as they make it unclear which names are present in the namespace, 
@@ -24,7 +24,7 @@ class Tasks_Admin(admin.ModelAdmin):
 
 
 admin.site.register(CV)
-
+admin.site.register(Employer)
 
 class VacancyAdmin(admin.ModelAdmin):
     list_display = (
