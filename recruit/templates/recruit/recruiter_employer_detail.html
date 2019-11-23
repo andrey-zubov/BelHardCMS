@@ -174,7 +174,7 @@
                                 </div>
                                 <div class="modal-body">
 
-                                    <form action="{{ employer.get_absolute_url }}" method="post">
+                                    <form enctype='multipart/form-data' action="{{ employer.get_absolute_url }}" method="post">
                                         {% csrf_token %}
                                         <div class="form-group">
                                             <label for="id_name">Название организации:</label>
@@ -192,7 +192,7 @@
                                                       name="description">{{ employer.description }}</textarea>
                                         </div>
                                         <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="LogoFile" name="logofile"/>
+                                            <input type="file" class="custom-file-input" id="LogoFile" name="files"/>
                                             <label class="custom-file-label" for="LogoFile">Выбирите логотип</label>
                                         </div>
 

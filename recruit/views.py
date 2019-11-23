@@ -188,16 +188,16 @@ class Employers(View):
         return render(request, 'recruit/recruiter_employers.html', context={'employers': employers})
 
     def post(self, request):
+        files = request.FILES['files']
         response = request.POST
         e = Employer(
             name=response['name'],
             address=response['address'],
             description=response['description'],
-
         )
-        print(request.FILES.getlist('logofile'))
-        if request.FILES.getlist('logofile'):
-            e.image = request.FILES.getlist('logofile')[0]
+
+        if files:
+            e.image = files
 
         e.save()
         return redirect('employers_url')
@@ -220,11 +220,10 @@ class EmployerDet(View):
         e.name = response['name']
         e.address = response['address']
         e.description = response['description']
-        if request.FILES.getlist('logofile'):
-            print(request.FILES.getlist('logofile')[0])
-            e.image = request.FILES.getlist('logofile')[0]
+        if request.FILES.getlist('files'):
+            e.image = request.FILES['files']
         e.save()
-        return redirect(e.get_absolute_url())  # ('employer_det_url', id_e=e.id)
+        return redirect(e.get_absolute_url())
 
 
 class EmployerDel(View):
@@ -237,7 +236,7 @@ class EmployerDel(View):
 
 class Vacancies(View):
     def get(self, request):
-        vacancies = Vacancy.objects.all()
+        vacancies = Vacancy.objects.all().order_by('organization')
         return render(request, 'recruit/recruiter_vacancies.html', context={'vacancies': vacancies})
 
     def post(self, request):

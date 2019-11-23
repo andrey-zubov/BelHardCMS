@@ -379,6 +379,7 @@ def check_subtask(request):
 
     return HttpResponse()
 
+
 def checktask(request):
     id = (request.GET['id'])
     task = Tasks.objects.get(id=id)
