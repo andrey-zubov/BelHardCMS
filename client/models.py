@@ -296,7 +296,6 @@ class Vacancy(models.Model):
 def file_path_image_employer(instanse, filename):
     """ Задает путь к папке картинки у работодателя. """
     return f'employers/{translit(str(instanse.name), "ru", reversed=True)}/Images/{filename}'
-    # return f'employers/{str(instanse.name)}/Images/{filename}'
 
 
 class Employer(models.Model):

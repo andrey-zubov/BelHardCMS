@@ -165,7 +165,7 @@
                                                 <div id="files-div">
                                                     <h5>
                                                         Добавить файл(ы): <input type='file'
-                                                                                 class="btn btn-secondary form-files"
+                                                                                 class="btn btn-secondary form-files-edit"
                                                                                  name='files' multiple="multiple"
                                                                                  id="form-files-edit" value=""/>
 
@@ -271,7 +271,7 @@
                         <div id="files-div">
                             <h5>
                                 Добавить файл(ы): <input type='file' class="btn btn-secondary form-files" name='files' multiple="multiple"
-                                                         id="form-files" value=""/>
+                                                         id="form-files" value="">
                                 <button type="button" class="btn btn-secondary" id="reset-files">Удалить файл(ы)
                                 </button>
                                 <br>
@@ -363,23 +363,7 @@
         });
     });
 
-
-    /*
-$('document').ready(function () {
-    /*actions for buttons*/
-    /*$('.del_file').on('click',function () {
-        var id = $(this).attr('id');
-        $.ajax({'url':'/recruit/del_file/',
-                'data':{"id_f":id},
-                success:function (data) {
-                    console.log(data);
-                    $('#' + id).attr('disabled', true)
-
-                }})
-
-    });
-
-})*/
+})
 
 </script>
 {% endblock %}
