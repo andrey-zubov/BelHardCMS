@@ -182,7 +182,7 @@ class Employers(View):
                       context={'employers': employers})
 
     def post(self, request):
-        files = request.FILES['files']
+        files = request.FILES.get('files')
         response = request.POST
         e = Employer(
             name=response['name'],
@@ -211,7 +211,7 @@ class EmployerDet(View):
         e.name = response['name']
         e.address = response['address']
         e.description = response['description']
-        if request.FILES['files']:
+        if request.FILES.get('files'):
             e.image.delete()
             e.image = request.FILES['files']
         e.save()
