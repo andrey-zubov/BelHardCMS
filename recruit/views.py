@@ -1,13 +1,8 @@
-from time import perf_counter
-from collections import defaultdict
-
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import redirect, render   # get_object_or_404
 from django.views.generic import View, TemplateView
-from django.views.generic.edit import FormView
-from django.template.context_processors import csrf
-from django.urls import reverse
+from django.db.models.functions import Lower
 
 from client.edit.check_clients import (load_client_img)
 from client.models import (CV, JobInterviews, FilesForJobInterviews, Vacancy,
@@ -27,12 +22,11 @@ from recruit.edit_pages.r_pages_post import (recruit_edit_page_post,
                                              recruit_experience_page_post)
 from recruit.models import (Recruiter)
 
-from datetime import datetime
 
 from .models import *  # TODO fix *
 
-""" PEP 8: Wildcard imports (from <module> import *) should be avoided, 
-as they make it unclear which names are present in the namespace, 
+""" PEP 8: Wildcard imports (from <module> import *) should be avoided,
+as they make it unclear which names are present in the namespace,
 confusing both readers and many automated tools. """
 
 
@@ -132,7 +126,6 @@ class CreateJobInterview(View):
         j.save()
         if files:
             for file in files:
-                # print(file)
                 f = FilesForJobInterviews(
                     add_file=file,
                     jobinterviews_files=j,
@@ -142,6 +135,7 @@ class CreateJobInterview(View):
 
 
 class EditJobInterview(View):
+
     def post(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
         response = request.POST
@@ -164,7 +158,6 @@ class EditJobInterview(View):
         j.save()
         if files:
             for file in files:
-                # print(file)
                 f = FilesForJobInterviews(
                     add_file=file,
                     jobinterviews_files=j,
@@ -184,8 +177,9 @@ class DelJobInterview(View):
 class Employers(View):
     """ Создание карточки работодателя. Вывод на экран базы работодателей """
     def get(self, request):
-        employers = Employer.objects.all()
-        return render(request, 'recruit/recruiter_employers.html', context={'employers': employers})
+        employers = Employer.objects.all().order_by(Lower('name'))
+        return render(request, 'recruit/recruiter_employers.html',
+                      context={'employers': employers})
 
     def post(self, request):
         files = request.FILES['files']
@@ -195,10 +189,8 @@ class Employers(View):
             address=response['address'],
             description=response['description'],
         )
-
         if files:
             e.image = files
-
         e.save()
         return redirect('employers_url')
 
@@ -208,10 +200,9 @@ class EmployerDet(View):
     def get(self, request, id_e):
         employer = Employer.objects.get(id=id_e)
         empl_vacancies = employer.vacancies.all()
-        return render(request, 'recruit/recruiter_employer_detail.html', context={
-            'employer': employer,
-            'empl_vacancies': empl_vacancies,
-        })
+        return render(request, 'recruit/recruiter_employer_detail.html',
+                      context={'employer': employer,
+                               'empl_vacancies': empl_vacancies})
 
     def post(self, request, id_e):
         """ Редактирование карточки работодателя. """
@@ -220,7 +211,8 @@ class EmployerDet(View):
         e.name = response['name']
         e.address = response['address']
         e.description = response['description']
-        if request.FILES.getlist('files'):
+        if request.FILES['files']:
+            e.image.delete()
             e.image = request.FILES['files']
         e.save()
         return redirect(e.get_absolute_url())
@@ -236,8 +228,9 @@ class EmployerDel(View):
 
 class Vacancies(View):
     def get(self, request):
-        vacancies = Vacancy.objects.all().order_by('organization')
-        return render(request, 'recruit/recruiter_vacancies.html', context={'vacancies': vacancies})
+        vacancies = Vacancy.objects.all().order_by(Lower('organization'))
+        return render(request, 'recruit/recruiter_vacancies.html',
+                      context={'vacancies': vacancies})
 
     def post(self, request):
         response = request.POST
@@ -260,13 +253,17 @@ class Vacancies(View):
             v.save()
             return redirect('employer_det_url', id_e=response['id_empl'])
         else:
-            if response['organization'] in [e.name for e in Employer.objects.all()]:
-                v.organization = Employer.objects.get(name=response['organization']).name
-                v.employer = Employer.objects.get(name=response['organization'])
+            if response['organization'] in \
+                    [e.name for e in Employer.objects.all()]:
+                v.organization = Employer.objects.get(
+                    name=response['organization']).name
+                v.employer = Employer.objects.get(
+                    name=response['organization'])
                 v.save()
                 return redirect('vacancies_url')
             else:
-                e = Employer(name=response['organization'], address=response['address'])
+                e = Employer(name=response['organization'],
+                             address=response['address'])
                 e.save()
                 v.organization = e.name
                 v.address = e.address
@@ -278,7 +275,8 @@ class Vacancies(View):
 class VacancyDet(View):
     def get(self, request, id_v):
         vacancy = Vacancy.objects.get(id=id_v)
-        return render(request, 'recruit/recruiter_vacancy_detail.html', context={'vacancy': vacancy})
+        return render(request, 'recruit/recruiter_vacancy_detail.html',
+                      context={'vacancy': vacancy})
 
     def post(self, request, id_v):
         response = request.POST
@@ -411,9 +409,12 @@ class client_task_adding(View):
 
     def get(self, request, id_a):
         client = Client.objects.get(id=id_a)
-        client_user = client.user_client #ссылается на UserModel
-        client_activ_tasks = Tasks.objects.filter(user=client_user, status=False) #просмотр активных задач клинета
-        return render(request, template_name='recruit/adding_task_to_client.html',
+        client_user = client.user_client  # ссылается на UserModel
+        client_activ_tasks = Tasks.objects.filter(user=client_user,
+                                                  status=False)
+        # просмотр активных задач клинета
+        return render(request,
+                      template_name='recruit/adding_task_to_client.html',
                       context={'client': client,
                                'client_user': client_user,
                                'client_activ_tasks': client_activ_tasks, })
@@ -430,7 +431,8 @@ class client_task_adding(View):
         reqpost = request.POST
         while True:
             try:
-                newsubtask = SubTasks(title=reqpost['task_subtask' + str(i)], task=newtask)
+                newsubtask = SubTasks(title=reqpost['task_subtask' + str(i)],
+                                      task=newtask)
             except:
                 break
             i += 1
@@ -445,9 +447,10 @@ class client_task_adding(View):
         return redirect(client.get_add_client_task())
 
 # список избранных клиентов, для рекрутера
+
+
 def favorites(request):
     own_status = Recruiter.objects.get(recruiter=request.user)
-    # own_status = recruit
     clients = client_filtration(request, own_status)
     context = {'applicants': clients}
 
