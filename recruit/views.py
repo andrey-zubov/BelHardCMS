@@ -5,15 +5,13 @@ from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import View, TemplateView
-from django.views.generic.edit import FormView
-from django.template.context_processors import csrf
-from django.urls import reverse
+from django.db.models.functions import Lower
 
 from client.edit.check_clients import (load_client_img)
 from client.models import (CV, JobInterviews, FilesForJobInterviews, Vacancy,
                            State)
 from client.models import (Chat, Message, Tasks, UserModel, SubTasks, Settings,
-                           Client)
+                           Client, Employer)
 from recruit.edit_pages.check_recruit import (recruit_check)
 from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
 from recruit.edit_pages.r_pages_get import (recruit_edit_page_get,
@@ -69,6 +67,7 @@ def base_of_applicants(request):
 
 
 class ApplicantDet(View):
+    """ Детальный просмотр профиля соискателя. """
     def get(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
         resumes = applicant_user.cv_set.all()
@@ -82,23 +81,21 @@ class ApplicantDet(View):
                                'user_activ_tasks': user_activ_tasks})
 
     def post(self, request, id_a):
+        """ Отправка соискателю вакансии на рассмотрение (с фронта) """
         applicant_user = Client.objects.get(id=id_a)
         response = request.POST
         resume = CV.objects.get(id=response['id_cv'])
         vacancies_id = request.POST.getlist('id_v')
 
-        print('resume  ', resume)
-        print('vacansies_id ', vacancies_id)
         for id_v in vacancies_id:
             vacancy = Vacancy.objects.get(id=id_v)
             resume.vacancies_in_waiting.add(vacancy)
             resume.notification.add(vacancy)
-            print(vacancy)
-
         return redirect(applicant_user.get_absolute_url())
 
 
 class CreateJobInterview(View):
+    """ Создание собеседования для клиента """
     def get(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
         if CV.objects.filter(client_cv=applicant_user):
@@ -106,7 +103,6 @@ class CreateJobInterview(View):
                 0].vacancies_accept.all()
             for resume in applicant_user.cv_set.all()[1:]:
                 accepted_vacancies |= resume.vacancies_accept.all()
-            # print(accepted_vacancies)
         else:
             accepted_vacancies = None
         return render(request, 'recruit/recruiter_tasks_for_applicant.html',
@@ -123,8 +119,7 @@ class CreateJobInterview(View):
             name=response.get('name'),
             jobinterviewtime=response.get('time'),
             jobinterviewdate=response.get('date'),
-            # interview_author=Recruiter.objects.get(id=),
-            # Filling in this field will be automatic
+            interview_author=recruit_check(request.user),
             # period_of_execution= #  I don't know why is this field needed
             position=response.get('position'),
             organization=response.get('organization'),
@@ -139,7 +134,6 @@ class CreateJobInterview(View):
         j.save()
         if files:
             for file in files:
-                # print(file)
                 f = FilesForJobInterviews(
                     add_file=file,
                     jobinterviews_files=j,
@@ -153,13 +147,10 @@ class EditJobInterview(View):
         applicant_user = Client.objects.get(id=id_a)
         response = request.POST
         files = request.FILES.getlist('files')
-        # print(request.POST['id_job_edit'])
         j = JobInterviews.objects.get(id=request.POST['id_job_edit'])
         j.name = response.get('name')
         j.jobinterviewtime = response.get('time')
         j.jobinterviewdate = response.get('date')
-        # interview_author=Recruiter.objects.get(id=) # Filling in this field
-        # will be automatic
         # period_of_execution= # I don't know why is this field needed
         j.position = response.get('position')
         j.organization = response.get('organization')
@@ -174,7 +165,6 @@ class EditJobInterview(View):
         j.save()
         if files:
             for file in files:
-                # print(file)
                 f = FilesForJobInterviews(
                     add_file=file,
                     jobinterviews_files=j,
@@ -191,9 +181,61 @@ class DelJobInterview(View):
         return redirect(applicant_user.get_tasks_url())
 
 
+class Employers(View):
+    """ Создание карточки работодателя. Вывод на экран базы работодателей """
+    def get(self, request):
+        employers = Employer.objects.all().order_by(Lower('name'))
+        return render(request, 'recruit/recruiter_employers.html',
+                      context={'employers': employers})
+
+    def post(self, request):
+        files = request.FILES.get('files')
+        response = request.POST
+        e = Employer(
+            name=response['name'],
+            address=response['address'],
+            description=response['description'],
+        )
+        if files:
+            e.image = files
+        e.save()
+        return redirect('employers_url')
+
+
+class EmployerDet(View):
+    """ Детальный просмотр карточки работодалеля. """
+    def get(self, request, id_e):
+        employer = Employer.objects.get(id=id_e)
+        empl_vacancies = employer.vacancies.all()
+        return render(request, 'recruit/recruiter_employer_detail.html',
+                      context={'employer': employer,
+                               'empl_vacancies': empl_vacancies})
+
+    def post(self, request, id_e):
+        """ Редактирование карточки работодателя. """
+        response = request.POST
+        e = Employer.objects.get(id=id_e)
+        e.name = response['name']
+        e.address = response['address']
+        e.description = response['description']
+        if request.FILES.get('files'):
+            e.image.delete()
+            e.image = request.FILES['files']
+        e.save()
+        return redirect(e.get_absolute_url())
+
+
+class EmployerDel(View):
+    """ Удаление карточки работодателя """
+    def post(self, request, id_e):
+        e = Employer.objects.get(id=request.POST['id_emp'])
+        e.delete()
+        return redirect('employers_url')
+
+
 class Vacancies(View):
     def get(self, request):
-        vacancies = Vacancy.objects.all()
+        vacancies = Vacancy.objects.all().order_by(Lower('organization'))
         return render(request, 'recruit/recruiter_vacancies.html',
                       context={'vacancies': vacancies})
 
@@ -211,8 +253,32 @@ class Vacancies(View):
             duties=response['duties'],
             conditions=response['conditions'],
         )
-        v.save()
-        return redirect('vacancies_url')
+
+        if response.get('id_empl'):
+            e = Employer.objects.get(id=response['id_empl'])
+            v.employer = e
+            v.organization = e.name
+            v.address = e.address
+            v.save()
+            return redirect('employer_det_url', id_e=response['id_empl'])
+        else:
+            if response['organization'] in \
+                    [e.name for e in Employer.objects.all()]:
+                v.organization = Employer.objects.get(
+                    name=response['organization']).name
+                v.employer = Employer.objects.get(
+                    name=response['organization'])
+                v.save()
+                return redirect('vacancies_url')
+            else:
+                e = Employer(name=response['organization'],
+                             address=response['address'])
+                e.save()
+                v.organization = e.name
+                v.address = e.address
+                v.employer = e
+                v.save()
+                return redirect('vacancies_url')
 
 
 class VacancyDet(View):
@@ -247,10 +313,12 @@ class DelVacancy(View):
         v.delete()
         return redirect('vacancies_url')
 
+
 def del_file(request):
     file = FilesForJobInterviews.objacts.get(id=request.GET['id_f'])
     file.delete()
     return HttpResponse('id  ', request.GET['id_f'])
+
 
 # End Poland's views #
 
