@@ -86,7 +86,6 @@ class ClientEditExperienceTests(TestCase):
     @time_it
     def test_POST_user(self): #не работает
         self.client.login(username=self.TEST_USER_USERNAME, password=self.TEST_USER_PASSWORD)
-
         response = self.client.post(path=self.url, data=self.TEST_DATA_1)
 
         user_exp = Experience.objects.get(client_exp=self.client_inst)

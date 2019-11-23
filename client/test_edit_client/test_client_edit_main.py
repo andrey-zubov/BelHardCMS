@@ -1,11 +1,13 @@
 import os
 import sys
+from datetime import date
 
 import django
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
+from client.edit.utility import time_it
 from client.models import Client
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,34 +23,26 @@ class ClientEditMainTests(TestCase):
     TEST_USER_USERNAME = 'admin'
     TEST_USER_PASSWORD = 'admin'
     TEST_USER_EMAIL = 'test_user'
-    TEST_DATA_1 = {'client_first_name': 'Adm',
-                   'client_last_name': 'Admin',
-                   'patronymic':'Admin',
-                   'sex':'М',
-                   'date_born':date(1983,4,11),
-                   'citizenship':'Респубика Беларусь'}
+    TEST_MAIN = []
 
-    def test_GET_user(self):
+    @time_it
+    def test_POST_user(self):
+        user = get_user_model()
+        self.test_user = user.objects.create_user(self.TEST_USER_USERNAME, self.TEST_USER_EMAIL,
+                                                  self.TEST_USER_PASSWORD)
+        self.client_inst = Client.objects.create(user_client=self.test_user)
+        """ request.POST this LoggedIn User. """
         self.client.login(username=self.TEST_USER_USERNAME, password=self.TEST_USER_PASSWORD)
 
-        main = Client.objects.create(
-                                        patronymic=self.TEST_DATA_1['patronymic'],
-                                        citizenship=self.TEST_DATA_1['citizenship'],
-                                        date_born=self.TEST_DATA_1['date_born'],)
+        response = self.client.post(path=self.url, data={
+            'sex': self.TEST_MAIN, 'citizenship': self.TEST_MAIN, 'family_state': self.TEST_MAIN, 'children': self.TEST_MAIN, 'country': self.TEST_MAIN, 'city': self.TEST_MAIN, 'state': self.TEST_MAIN,
+        })
 
-        main_arr = [{'id': exp.id,
-                    'client_exp_id': self.client_inst.id,
-                    'name': self.TEST_DATA_1['name'],
-                    'sphere': [Sphere.objects.get(id=self.TEST_DATA_1['sphere']).sphere_word],
-                    'position': self.TEST_DATA_1['position'],
-                    'start_date': self.TEST_DATA_1['start_date'] if self.TEST_DATA_1[
-                        'start_date'] else None,
-                    'end_date': self.TEST_DATA_1['end_date'] if self.TEST_DATA_1['end_date'] else None,
-                    'duties': self.TEST_DATA_1['duties'],
-                    }]
-        response = self.client.get(self.url)
-        self.assertEqual(response.context['data'], main_arr)
-        self.assertEqual(response.status_code, 200)
+        for i in self.TEST_MAIN:
+            i_client = Client.objects.get(client_skills=self.client_inst, skill=i)
+            self.assertEqual(i_client, i)
+
+        self.assertEqual(response.status_code, 302)
 
 
 
@@ -69,7 +63,9 @@ class ClientEditMainTests(TestCase):
     def test_GET_no_user(self):
         self.url = reverse('client_edit')
         response = self.client.get(self.url)
+        #self.assertEqual(response.context['data'], self.default_select_fields)
         self.assertQuerysetEqual(response.context['data'], self.default_select_fields)
+        self.assertEqual(response.status_code, 200)
 
 
 if __name__ == "__main__":

@@ -35,7 +35,7 @@ class ClientProfileTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'client/client_profile.html')
 
-    def test_POST_no_user(self):
+    def test_POST_no_user(self):  #no
 
         response = self.client.post(path=self.url, data={})
         self.assertEqual(response.status_code, 302)
