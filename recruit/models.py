@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from transliterate import translit
 
-from client.models import (Sex, Citizenship, FamilyState, Children, City, State, Sphere)
+from client.models import Sex, Citizenship, FamilyState, Children, City, State, Sphere
 
 """ PEP 8: Wildcard imports (from <module> import *) should be avoided, 
 as they make it unclear which names are present in the namespace, 
@@ -13,20 +14,19 @@ UserModel = get_user_model()
 class Recruiter(models.Model):  # TeamRome
     recruiter = models.OneToOneField(UserModel, on_delete=models.CASCADE, null=True, blank=True)
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
-    sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
-
     date_born = models.DateField(null=True, blank=True)
-    r_citizenship = models.ForeignKey(Citizenship, related_name='r_citizenship', on_delete=models.SET_NULL,
-                                      null=True, blank=True)
+
+    sex = models.ForeignKey(Sex, on_delete=models.SET_NULL, null=True, blank=True)
+    r_citizenship = models.ForeignKey(Citizenship, related_name='r_citizenship',
+                                      on_delete=models.SET_NULL, null=True, blank=True)
     family_state = models.ForeignKey(FamilyState, on_delete=models.SET_NULL, null=True, blank=True)
     children = models.ForeignKey(Children, on_delete=models.SET_NULL, null=True, blank=True)
     r_country = models.ForeignKey(Citizenship, related_name='r_country',
-                                  on_delete=models.SET_NULL, blank=True,
-                                  null=True)
-    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True,
-                             blank=True)
-    street = models.CharField(max_length=100, verbose_name='Улица', null=True,
-                              blank=True)
+                                  on_delete=models.SET_NULL, blank=True, null=True)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=True)
+    state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
+
+    street = models.CharField(max_length=100, verbose_name='Улица', null=True, blank=True)
     house = models.CharField(max_length=100, verbose_name='Номер дома',
                              null=True, blank=True)
     flat = models.CharField(max_length=10, verbose_name='Квартира', null=True,
@@ -36,7 +36,7 @@ class Recruiter(models.Model):  # TeamRome
     link_linkedin = models.URLField(max_length=200, null=True, blank=True)
     skype = models.CharField(max_length=100, null=True, blank=True)
     img = models.ImageField(blank=True, null=True)
-    state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
+
 
     def __str__(self):
         return "%s %s %s" % (self.recruiter.first_name, self.recruiter.last_name, self.patronymic)

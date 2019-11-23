@@ -2,7 +2,8 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
-import transliterate
+from transliterate import translit
+
 UserModel = get_user_model()
 
 
@@ -264,6 +265,8 @@ class State(models.Model):
 
 
 class Vacancy(models.Model):
+    """ Модель вакансий. ForeignKey - несколько вакансий у одного работодателя. """
+    employer = models.ForeignKey(to='Employer', on_delete=models.CASCADE, related_name='vacancies', blank=True, null=True)
     state = models.CharField(max_length=100)
     salary = models.CharField(max_length=20)
     organization = models.CharField(max_length=100)
@@ -274,8 +277,7 @@ class Vacancy(models.Model):
     requirements = models.TextField(max_length=1000, blank=True, null=True)
     duties = models.TextField(max_length=1000, blank=True, null=True)
     conditions = models.TextField(max_length=1000, blank=True, null=True)
-    creating_date = models.DateTimeField(auto_now_add=True, blank=True,
-                                         null=True)
+    creating_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
         return self.state
@@ -288,6 +290,29 @@ class Vacancy(models.Model):
 
     def get_del_url(self):
         return reverse('vacancy_del_recr_url', kwargs={'id_v': self.id})
+
+
+def file_path_image_employer(instanse, filename):
+    """ Задает путь к папке картинки у работодателя. """
+    # return f'employers/{translit(str(instanse.Employer.name), reversed=True)}/Images/{filename}'
+    return f'employers/{str(instanse.Employer.name)}/Images/{filename}'
+
+
+class Employer(models.Model):
+    """ Упрощенная модель работодателя. """
+    name = models.CharField(max_length=50, blank=True, null=True)
+    address = models.CharField(max_length=50, blank=True, null=True)
+    description = models.TextField(max_length=3000, null=True, blank=True, verbose_name='description')
+    image = models.ImageField(upload_to=file_path_image_employer, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('employer_det_url', kwargs={'id_e': self.id})
+
+    def get_del_url(self):
+        return reverse('employer_del_url', kwargs={'id_e': self.id})
 
 
 class Help(models.Model):
@@ -317,21 +342,16 @@ class JobInterviews(models.Model):
                                             verbose_name='Время создания')
     period_of_execution = models.DateTimeField(blank=True, null=True,
                                                verbose_name='Срок исполнения')
-    reminder = models.DateTimeField(blank=True, null=True,
-                                    verbose_name='Напоминание')
-    position = models.CharField(max_length=50,
-                                verbose_name='Предполагаемая должность')
+    reminder = models.DateTimeField(blank=True, null=True, verbose_name='Напоминание')
+    position = models.CharField(max_length=50, verbose_name='Предполагаемая должность')
     organization = models.CharField(max_length=50, verbose_name='Организация')
-    responsible_person = models.CharField(max_length=50,
-                                          verbose_name='Ответственное лицо')
+    responsible_person = models.CharField(max_length=50, verbose_name='Ответственное лицо')
     contact_responsible_person_1str = models.CharField(max_length=50,
                                                        verbose_name='Контакты ответственного лица (1-я строчка)')
-    contact_responsible_person_2str = models.CharField(max_length=50,
-                                                       blank=True, null=True,
+    contact_responsible_person_2str = models.CharField(max_length=50, blank=True, null=True,
                                                        verbose_name='Контакты ответственного лица (2-я строчка)')
     location = models.CharField(max_length=50, verbose_name='Место проведения')
-    additional_information = models.TextField(max_length=3000, blank=True,
-                                              null=True,
+    additional_information = models.TextField(max_length=3000, blank=True, null=True,
                                               verbose_name='Дополнительная информация')
     status = models.BooleanField(default=False)  # статус собеседования, на которое ещё не ходили
     check_status = models.BooleanField(default=True)  # статус активен,если можем после успешного
@@ -346,18 +366,15 @@ class JobInterviews(models.Model):
         to_show_verbose_name = []
         for key in self.__dict__:
             if (self.__dict__[key].__class__.__name__ == 'str' or
-            self.__dict__[key].__class__.__name__ == 'datetime' or
-            self.__dict__[key].__class__.__name__ == 'time' or
-            self.__dict__[key].__class__.__name__ == 'date'):
-                to_show_verbose_name.append(
-                    self._meta.get_field(key).verbose_name)
+                    self.__dict__[key].__class__.__name__ == 'datetime' or
+                    self.__dict__[key].__class__.__name__ == 'time' or
+                    self.__dict__[key].__class__.__name__ == 'date'):
+                to_show_verbose_name.append(self._meta.get_field(key).verbose_name)
                 to_show_name.append(self.__dict__[key])
-        to_show_name.remove(self.time_of_creation)
-        to_show_verbose_name.remove(
-            self._meta.get_field('time_of_creation').verbose_name)
-        to_show_name.remove(self.reminder)
-        to_show_verbose_name.remove(
-            self._meta.get_field('reminder').verbose_name)
+        # to_show_name.remove(self.time_of_creation)
+        # to_show_verbose_name.remove(self._meta.get_field('time_of_creation').verbose_name)
+        # to_show_name.remove(self.reminder)
+        # to_show_verbose_name.remove(self._meta.get_field('reminder').verbose_name)
         return zip(to_show_verbose_name, to_show_name)
 
     @property
@@ -394,7 +411,7 @@ class JobInterviews(models.Model):
 
 
 def file_path(instanse, filename):
-    return f'users/{transliterate.translit(str(instanse.jobinterviews_files.client), reversed=True)}/files_for_jobinterviews/{filename}'
+    return f'users/{translit(str(instanse.jobinterviews_files.client), reversed=True)}/files_for_jobinterviews/{filename}'
 
 
 class FilesForJobInterviews(models.Model):
@@ -403,8 +420,12 @@ class FilesForJobInterviews(models.Model):
         on_delete=models.CASCADE,
         related_name='files_for_jobinterview'
     )
-    add_file = models.FileField(upload_to=file_path,
-                                verbose_name='Вложения', blank=True, null=True)
+    add_file = models.FileField(
+        upload_to=file_path,
+        verbose_name='Вложения',
+        blank=True,
+        null=True
+    )
 
     def delete(self, *args, **kwargs):
         self.add_file.delete()
@@ -495,6 +516,7 @@ class Client(models.Model):
 
     def get_add_client_task(self):
         return reverse('client_task_adding_url', kwargs={'id_a': self.id})
+
 
 class Telephone(models.Model):
     """ Номера телефонов. ForeignKey = несколько телефонов у одного Клиента."""

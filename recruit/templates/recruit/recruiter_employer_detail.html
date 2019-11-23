@@ -1,0 +1,268 @@
+{% extends 'recruit/recruit_main_template.html' %}
+
+{% block title %}
+    {{ employer.name }}
+{% endblock %}
+
+{% block head %}
+
+    <!-- Bootstrap CSS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+</script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+</script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="p-sm-5 pt-sm-1">
+            <div class="card mb-5">
+                <h2 class="mb-5">{{ employer.name }}</h2>
+                <p>
+                    <b>{{ employer.address }}</b>
+                </p>
+                <p>
+                    <b>{{ employer.description }}</b>
+                </p>
+
+                <!-- addition new vacancy-->
+                    <div align="middle">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalNewVacancy">
+            + Добавить вакансию...
+        </button>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade bd-example-modal-xl" id="ModalNewVacancy" tabindex="-1" role="dialog"
+         aria-labelledby="myExtraLargeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"> Данные вакансии </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form action="{% url 'vacancies_url' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label for="id_position">Должность:</label>
+                                <input type="text" class="form-control" id="id_position" name="position" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_salary"> &nbsp; Уровень заработной платы:</label>
+                                <input type="text" class="form-control" id="id_salary" name="salary" required>
+                            </div>
+                        </div><br>
+                        <div class="form-group">
+                            <label for="id_employment">Опыт работы и занятость:</label>
+                            <input type="text" class="form-control" id="id_employment" name="employment">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_description">Описание:</label>
+                            <textarea class="form-control" id="id_description" name="description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_skills">Ключевые навыки:</label>
+                            <input type="text" class="form-control" id="id_skills" name="skills">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_requirements">Требования к соискателю:</label>
+                            <textarea class="form-control" id="id_requirements" name="requirements"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_duties">Обязанности:</label>
+                            <textarea class="form-control" id="id_duties" name="duties"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_conditions">Условия работы:</label>
+                            <textarea class="form-control" id="id_conditions" name="conditions"></textarea>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="reset" class="btn btn-secondary" data-dismiss="all-form">
+                                Очистить
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-primary" name="id_empl" value="{{ employer.id }}">Добавить</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end Modal -->
+
+    <div class="container">
+        <div class="p-sm-5 pt-sm-1" style="overflow: auto">
+            {% for vacancy in empl_vacancies %}
+                <div class="card mb-5">
+                    <div class="card-header">
+                        <b>{{ vacancy.organization }}</b>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ vacancy.state }}</h5>
+                        <p class="card-text"><b>{{ vacancy.salary }}</b></p>
+                        <p class="card-text">{{ vacancy.description | truncatewords:20 }}</p>
+                        <a href="{{ vacancy.get_absolute_url2 }}" class="btn btn-secondary">Подробнее</a>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+
+                <!-- end addition -->
+
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+
+                    <div class="btn-group mr-2" role="group" aria-label="First group">
+                        <a href="{% url 'employers_url' %}" class="btn btn-secondary">Назад</a>
+                    </div>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEmployer">
+                        Редактировать карточку
+                    </button>
+
+                    <button data-toggle="collapse" class="btn btn-danger"
+                            data-target="#del_emp{{ employer.id }}">Удалить
+                    </button>
+                    <form action="{{ employer.get_del_url }}" method="post">
+                        {% csrf_token %}
+                        <div>
+                            <div id="del_emp{{ employer.id }}" class="collapse">
+                                <h4>Вы уверены, что хотите удалить?</h4>
+
+
+                                <button class="btn btn-danger" type="submit" name="id_emp"
+                                        value="{{ employer.id }}">
+                                    Да
+                                </button>
+                                <button class="btn btn-success" type="button" data-toggle="collapse"
+                                        data-target="#del_emp{{ employer.id }}">
+                                    Нет
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Modal -->
+                    <div class="modal fade bd-example-modal-lg" id="ModalEmployer" tabindex="-1" role="dialog"
+                         aria-labelledby="myLargeModalLabel" aria-hidden="true" align="left">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel"> Данные организации </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+
+                                    <form action="{{ employer.get_absolute_url }}" method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="id_name">Название организации:</label>
+                                            <input type="text" class="form-control" id="id_name" name="name"
+                                                   value="{{ employer.name }}" required/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_address"> Адрес:</label>
+                                            <input type="text" class="form-control" id="id_address"
+                                                   value="{{ employer.address }}" name="address"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_description">Описание:</label>
+                                            <textarea class="form-control" id="id_description"
+                                                      name="description">{{ employer.description }}</textarea>
+                                        </div>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="LogoFile" name="logofile"/>
+                                            <label class="custom-file-label" for="LogoFile">Выбирите логотип</label>
+                                        </div>
+
+                                        <div class=" modal-footer">
+                                            <button type="reset" class="btn btn-secondary"
+                                                    data-dismiss="all-form">
+                                                Очистить
+                                            </button>
+                                            <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">
+                                                Закрыть
+                                            </button>
+                                            <button type="submit" class="btn btn-primary" value="{{ employer.id }}"
+                                                    name="id_emp">Редактировать
+                                            </button>
+                                        </div>
+                                    </form>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end Modal-->
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+// Add the following code if you want the name of the file appear on select
+$(".custom-file-input").on("change", function() {
+    var fileName = $(this).val().split("\\").pop();
+    $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+});
+
+        /*$('document').ready(function () {
+            var first = { first_flag }}
+            var second = { second_flag }}
+            if (first){$('#first').attr('hidden',false)}
+            if (second){$('#second').attr('hidden',false)}*/
+
+
+        /*actions for buttons*/
+        /*$('.accept').on('click',function () {
+            var id = $(this).attr('id');
+            $.ajax({'url':'/client/accept_reject/',
+                    'data':{'flag':'accept',"id_v":id},
+                    success:function (data) {
+                        console.log(data);
+                        $('#first').attr('hidden', true)
+                        $('#second').attr('hidden', false)
+                    }})
+
+        });
+        $('.reject').on('click',function () {
+            var id = $(this).attr('id');
+            $.ajax({'url':'/client/accept_reject/',
+                    'data':{'flag':'reject','id_v':id},
+                    success:function (data) {
+                        console.log(data)
+                        $('#first').attr('hidden', false)
+                        $('#second').attr('hidden', true)
+                    }})
+
+        });
+    })*/
+
+    </script>
+{% endblock %}

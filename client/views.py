@@ -43,7 +43,7 @@ as they make it unclear which names are present in the namespace,
 confusing both readers and many automated tools. """
 
 
-def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
+def client_main_page(request):
     response = csrf(request)
     # Poland
     try:
@@ -568,12 +568,9 @@ def accept_reject(request):
         return HttpResponse('accept_server')
 
     elif request.GET['flag'] == 'reject' and \
-            Vacancy.objects.get(
-                id=request.GET['id_v']).accept_for_resume.filter(
-                client_cv=client):
+            Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.filter(client_cv=client):
         print(request.GET['id_v'], 4)
-        r = Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.get(
-            client_cv=client)
+        r = Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_reject.add(v)
         r.vacancies_accept.remove(v)
@@ -584,9 +581,7 @@ def accept_reject(request):
 def help_list(request):
     faqs = Help.objects.all()
     client_instance = client_check(request.user)
-    return render(request, 'client/help.html',
-                  context={'faqs': faqs,
-                           'client_img': load_client_img(client_instance)})
+    return render(request, 'client/help.html', context={'faqs': faqs,'client_img': load_client_img(client_instance)})
 
 
 def viewed(request):
