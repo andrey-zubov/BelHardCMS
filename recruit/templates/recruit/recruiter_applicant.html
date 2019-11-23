@@ -8,12 +8,72 @@
     <style>
         .applicant-content {
 
-            width: 100%;
-            height: 40%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-        }
+
+
+    <div class="p-sm-5 pt-sm-1">
+        <h2 class="mb-5"> {{ applicant_user.user_client.last_name }} {{ applicant_user.user_client.first_name }} {{ applicant_user.patronymic }}</h2>
+        {% for cv in applicant_user.cv_set.all %}
+            {{ cv }} <br>
+        {% endfor %}
+
+
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalVacancy">
+           + Добавить предложение...
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade bd-example-modal-xl" id="ModalVacancy" tabindex="-1" role="dialog"
+             aria-labelledby="myExtraLargeModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"> Данные вакансии </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</s pan>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <form action="{{ applicant_user.get_absolute_url }}" method="post">
+                            {% csrf_token %}
+                            <!--div> class="form-inline"-->
+                                <div class="form-group">
+                                    <label for="sel_resume">Доступные резюме:</label>
+                                    <select size="5" name="id_cv" id="sel_resume">
+                                        <option disabled>Выберите резюме пользователя</option>
+                                        {% for resume in resumes %}
+                                            <option value="{{ resume.id }}">{{ resume }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sel_resume">Доступные вакансии:<br>(можно выбрать несколько)</label>
+                                    <select size="5" name="id_v" id="sel_vacancy" multiple>
+                                        <option disabled>Выберите подходящие ваканции</option>
+                                        {% for vacancy in vacancies %}
+                                            <option value="{{ vacancy.id }}">{{ vacancy }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            <!--/div-->
+
+
+                            <div class=" modal-footer">
+                                <button type="reset" class="btn btn-secondary"
+                                        data-dismiss="all-form">
+                                    Очистить
+                                </button>
+                                <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">
+                                    Закрыть
+                                </button>
+                                <button type="submit" class="btn btn-primary" value="{{ vacancy.id }}"
+                                        name="id_vac">Отправить
+                                </button>
+                            </div>
+                        </form>
+
 
         .applicant_btn {
             font-size: 20px;
