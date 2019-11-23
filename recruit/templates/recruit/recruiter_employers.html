@@ -43,7 +43,7 @@
                 </div>
                 <div class="modal-body" align="left">
 
-                    <form action="{% url 'employers_url' %}" method="post">
+                    <form enctype='multipart/form-data' action="{% url 'employers_url' %}" method="post">
                         {% csrf_token %}
 
                         <div class="form-group">
@@ -59,9 +59,7 @@
                             <textarea class="form-control" id="id_description" name="description"></textarea>
                         </div>
                         <div class="custom-file">
-                            <input type='file' class="btn btn-secondary form-files" name='logofile' multiple="multiple"
-                                                         id="form-files" value=""/>
-                            <!--input type="file" class="custom-file-input" id="LogoFile" name="logofile" multiple="multiple"/-->
+                            <input type="file" class="custom-file-input" id="LogoFile" name="files" multiple="multiple">
                             <label class="custom-file-label" for="LogoFile">Выбирите логотип</label>
                         </div>
 
@@ -73,7 +71,6 @@
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
                             <button type="submit" class="btn btn-primary">Добавить</button>
                         </div>
-
                     </form>
 
                 </div>

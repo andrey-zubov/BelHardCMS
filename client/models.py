@@ -266,7 +266,8 @@ class State(models.Model):
 
 class Vacancy(models.Model):
     """ Модель вакансий. ForeignKey - несколько вакансий у одного работодателя. """
-    employer = models.ForeignKey(to='Employer', on_delete=models.CASCADE, related_name='vacancies', blank=True, null=True)
+    employer = models.ForeignKey(to='Employer', on_delete=models.CASCADE,
+                                 related_name='vacancies', blank=True, null=True)
     state = models.CharField(max_length=100)
     salary = models.CharField(max_length=20)
     organization = models.CharField(max_length=100)
@@ -294,8 +295,8 @@ class Vacancy(models.Model):
 
 def file_path_image_employer(instanse, filename):
     """ Задает путь к папке картинки у работодателя. """
-    # return f'employers/{translit(str(instanse.Employer.name), reversed=True)}/Images/{filename}'
-    return f'employers/{str(instanse.Employer.name)}/Images/{filename}'
+    return f'employers/{translit(str(instanse.name), "ru", reversed=True)}/Images/{filename}'
+    # return f'employers/{str(instanse.name)}/Images/{filename}'
 
 
 class Employer(models.Model):
@@ -313,6 +314,10 @@ class Employer(models.Model):
 
     def get_del_url(self):
         return reverse('employer_del_url', kwargs={'id_e': self.id})
+
+    def delete(self, *args, **kwargs):
+        self.image.delete()
+        super().delete(*args, **kwargs)
 
 
 class Help(models.Model):
@@ -411,7 +416,7 @@ class JobInterviews(models.Model):
 
 
 def file_path(instanse, filename):
-    return f'users/{translit(str(instanse.jobinterviews_files.client), reversed=True)}/files_for_jobinterviews/{filename}'
+    return f'users/{translit(str(instanse.jobinterviews_files.client), "ru", reversed=True)}/files_for_jobinterviews/{filename}'
 
 
 class FilesForJobInterviews(models.Model):
