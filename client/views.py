@@ -1,6 +1,4 @@
 import json
-import re
-
 from django.contrib import auth
 from django.contrib.auth.models import Group
 from django.core.files.storage import FileSystemStorage
@@ -9,39 +7,40 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.template.context_processors import csrf
 from django.urls import reverse
 
-
-from django.utils.timezone import utc
-# from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm, AnswerForm, MessageForm
+# from .forms import UploadImgForm, AddSkillForm, AddSkillFormSet, OpinionForm,
+# AnswerForm, MessageForm
 
 
 from django.utils import timezone
 
 from django.views.generic import View, TemplateView
-from tika import parser
 
 from client.edit.check_clients import (client_check, load_client_img)
 
 # from .forms import UploadImgForm, EducationFormSet, CertificateFormSet
 
-from .models import *  #TODO change *
+from .models import *  # TODO change *
 from django.contrib.auth.models import Group
 from django.core.files.storage import FileSystemStorage
 from tika import parser
 import re
 
 from client.edit.edit_forms import UploadImgForm
-from client.edit.pages_get import (show_profile, edit_page_get, skills_page_get, cv_page_get, education_page_get,
+from client.edit.pages_get import (show_profile, edit_page_get,
+                                   skills_page_get, cv_page_get,
+                                   education_page_get,
                                    experience_page_get)
-from client.edit.pages_post import (edit_page_post, skills_page_post, photo_page_post, cv_page_post,
+from client.edit.pages_post import (edit_page_post, skills_page_post,
+                                    photo_page_post, cv_page_post,
                                     education_page_post, experience_page_post)
 from client.forms import (OpinionForm, AnswerForm, MessageForm)
-from client.models import (Client, CV, Tasks, JobInterviews, Chat, Message, Settings, Opinion, Answer, Vacancy, Help)
+from client.models import (Client, CV, Tasks, JobInterviews, Chat, Message,
+                           Settings, Opinion, Answer, Vacancy, Help)
 from client.utils_for_mixins import ObjectResumeMixin
 
 """ PEP 8: Wildcard imports (from <module> import *) should be avoided, 
 as they make it unclear which names are present in the namespace, 
 confusing both readers and many automated tools. """
-
 
 
 def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
@@ -57,11 +56,15 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     for resume in resumes:  # Poland
         suggestions += resume.notification.count()
     readtask = len(Tasks.objects.filter(user=request.user, readtask=False))
-    readinterview = len(JobInterviews.objects.filter(client=client, readinterview=False))
+    readinterview = len(
+        JobInterviews.objects.filter(client=client, readinterview=False))
     chat = Chat.objects.get(members=request.user)
-    unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
+    unread_messages = len(
+        Message.objects.filter(chat=chat, is_read=False).exclude(
+            author=request.user))
     settings = Settings.objects.get(user=request.user)
-    context = {'unread_messages': unread_messages, 'readtask': readtask, 'settings': settings,
+    context = {'unread_messages': unread_messages, 'readtask': readtask,
+               'settings': settings,
                'readinterview': readinterview}
 
     # Poland
@@ -70,7 +73,9 @@ def client_main_page(request):  # !!!!!!!!!!!!!!!!!!!!!Alert
     response['client_img'] = load_client_img(client_instance)
     context.update(response)
     # print(context['unread_suggestions'])
-    return render(request=request, template_name='client/main_template_client.html', context=context)
+    return render(request=request,
+                  template_name='client/main_template_client.html',
+                  context=context)
 
 
 class ClientProfile(TemplateView):  # TeamRome
@@ -81,7 +86,8 @@ class ClientProfile(TemplateView):  # TeamRome
         response = {'client_img': load_client_img(client_instance),
                     'data': show_profile(client_instance)
                     }
-        return render(request=request, template_name=self.template_name, context=response)
+        return render(request=request, template_name=self.template_name,
+                      context=response)
 
     def post(self, request):
         pass
@@ -95,7 +101,8 @@ class ClientEditMain(TemplateView):  # TeamRome
         response = {'client_img': load_client_img(client_instance),
                     'data': edit_page_get(client_instance),
                     }
-        return render(request=request, template_name=self.template_name, context=response)
+        return render(request=request, template_name=self.template_name,
+                      context=response)
 
     def post(self, request):
         client_instance = client_check(request.user)
@@ -111,7 +118,8 @@ class ClientEditSkills(TemplateView):  # TeamRome
         response = {'client_img': load_client_img(client_instance),
                     'data': skills_page_get(client_instance),
                     }
-        return render(request=request, template_name=self.template_name, context=response)
+        return render(request=request, template_name=self.template_name,
+                      context=response)
 
     def post(self, request):
         client_instance = client_check(request.user)
@@ -128,7 +136,8 @@ class ClientEditPhoto(TemplateView):  # TeamRome
         response = {'client_img': load_client_img(client_instance),
                     'form': UploadImgForm(),
                     }
-        return render(request=request, template_name=self.template_name, context=response)
+        return render(request=request, template_name=self.template_name,
+                      context=response)
 
     def post(self, request):
         client_instance = client_check(request.user)
@@ -145,7 +154,8 @@ class ClientEditCv(TemplateView):  # TeamRome
                     'data': cv_page_get(client_instance),
                     }  # сюда влетел словарь который сформировался в pages_get
         return render(request, self.template_name,
-                      response)  # а здесь он залетел в соответствующий темплейт для заполнения полей
+                      response)  # а здесь он залетел в соответствующий
+        # темплейт для заполнения полей
 
     def post(self, request):
         client_instance = client_check(request.user)
@@ -190,13 +200,16 @@ class MessagesView(View):
         try:
             chat = Chat.objects.get(members=request.user)
             if request.user in chat.members.all():
-                chat.message_set.filter(is_read=False).exclude(author=request.user).update(is_read=True)
+                chat.message_set.filter(is_read=False).exclude(
+                    author=request.user).update(is_read=True)
             else:
                 chat = None
         except Chat.DoesNotExist:
             chat = None
 
-        unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
+        unread_messages = len(
+            Message.objects.filter(chat=chat, is_read=False).exclude(
+                author=request.user))
         context = {'user_profile': request.user,
                    'unread_messages': unread_messages,
                    'chat': chat,
@@ -230,7 +243,8 @@ def answer_create(request, pk):
             form.user = request.user
             form.save()
             return redirect('opinion_detail', pk)
-    return render(request, 'opinion/answer_create.html', context={'form': form, 'opinion': opinion, "answer": answer})
+    return render(request, 'opinion/answer_create.html',
+                  context={'form': form, 'opinion': opinion, "answer": answer})
 
 
 def opinion_list(request):
@@ -243,9 +257,10 @@ class OpinionCreate(View):
         opinions = Opinion.objects.all()
         form = OpinionForm()
         client_instance = client_check(request.user)
-        return render(request, 'opinion/opinion_create.html', context={'form': form,
-                                                                       'client_img': load_client_img(client_instance),
-                                                                       'opinions': opinions})
+        return render(request, 'opinion/opinion_create.html',
+                      context={'form': form,
+                               'client_img': load_client_img(client_instance),
+                               'opinions': opinions})
 
     def post(self, request):
         opinions = Opinion.objects.all()
@@ -257,9 +272,10 @@ class OpinionCreate(View):
             new_opinion.save()
             return redirect('opinion_detail', pk=new_opinion.pk)
         client_instance = client_check(request.user)
-        return render(request, 'opinion/opinion_create.html', context={'form': form,
-                                                                       'client_img': load_client_img(client_instance),
-                                                                       'opinions': opinions})
+        return render(request, 'opinion/opinion_create.html',
+                      context={'form': form,
+                               'client_img': load_client_img(client_instance),
+                               'opinions': opinions})
 
 
 def opinion_detail(request, pk):
@@ -270,7 +286,8 @@ def opinion_detail(request, pk):
 class OpinionDelete(View):
     def get(self, request, pk):
         opinion = Opinion.objects.filter(pk=pk)
-        return render(request, 'opinion/opinion_delete.html', context={'opinion': opinion})
+        return render(request, 'opinion/opinion_delete.html',
+                      context={'opinion': opinion})
 
     def post(self, request, pk):
         opinion = Opinion.objects.filter(pk=pk)
@@ -298,7 +315,8 @@ def client_login(request):  # ввести логин/пароль -> зайти
         user_chat = Chat.objects.get(members=request.user)
     except Chat.DoesNotExist:
         user_chat = Chat.objects.create()
-        user_chat.members.add(request.user)  # TODO сюда добавить менеджера, которому, по дефолту, передают юзера
+        user_chat.members.add(
+            request.user)  # TODO сюда добавить менеджера, которому, по дефолту, передают юзера
     try:
         user_settings = Settings.objects.get(user=request.user)
     except Settings.DoesNotExist:
@@ -323,12 +341,14 @@ def client_logout(request):  # выйти из системы, возврат н
 
 def tasks(request):
     task = Tasks.objects.filter(user=request.user, status=False)
-    task_false = Tasks.objects.filter(user=request.user, status=True)  # status=False)
+    task_false = Tasks.objects.filter(user=request.user,
+                                      status=True)  # status=False)
     task_false = sorted(task_false, key=lambda x: x.endtime, reverse=True)
     client_instance = client_check(request.user)
     return render(request, 'client/tasks.html', context={'task': task,
                                                          'task_false': task_false,
-                                                         'client_img': load_client_img(client_instance)})
+                                                         'client_img': load_client_img(
+                                                             client_instance)})
 
 
 def check_subtask(request):
@@ -380,9 +400,12 @@ def checktask(request):
 def checknotifications(request):
     client = get_object_or_404(Client, user_client=request.user)
     chat = Chat.objects.get(members=request.user)
-    unread_messages = len(Message.objects.filter(chat=chat, is_read=False).exclude(author=request.user))
+    unread_messages = len(
+        Message.objects.filter(chat=chat, is_read=False).exclude(
+            author=request.user))
     readtask = len(Tasks.objects.filter(user=request.user, readtask=False))
-    readinterview = len(JobInterviews.objects.filter(client=client, readinterview=False))
+    readinterview = len(
+        JobInterviews.objects.filter(client=client, readinterview=False))
     client = Client.objects.get(user_client=request.user)
     resumes = CV.objects.filter(client_cv=client)
     suggestions = 0
@@ -399,7 +422,8 @@ def settings_menu(request):
     context = {'settings': settings, }
     client_instance = client_check(request.user)
     context['client_img'] = load_client_img(client_instance)
-    return render(request=request, template_name='client/client_settings.html', context=context)
+    return render(request=request, template_name='client/client_settings.html',
+                  context=context)
 
 
 def set_settings(request):
@@ -439,28 +463,37 @@ def chat_update(request):
     messages = Message.objects.filter(chat=chat)
     mes = (m for m in messages if m.id > int(last_id))
     if request.user in chat.members.all():
-        chat.message_set.filter(is_read=False).exclude(author=request.user).update(is_read=True)
+        chat.message_set.filter(is_read=False).exclude(
+            author=request.user).update(is_read=True)
 
     send2 = []
     for s in mes:
         send2.append(
-            {'author_id': s.author.id, 'author_first_name': s.author.first_name, 'author_last_name': s.author.last_name, 'message': s.message, 'message_id': s.id,
+            {'author_id': s.author.id,
+             'author_first_name': s.author.first_name,
+             'author_last_name': s.author.last_name, 'message': s.message,
+             'message_id': s.id,
              'pub_date': s.pub_date.ctime()})
     return JsonResponse(send2, safe=False)
 
 
-# Poland's views ###################################################################################
+# Poland's views #
 
-
-class VacancyDetail(View):  # ##################  There's a lot of work to remove all bugs...
+#  There's a lot of work to remove all bugs  #
+class VacancyDetail(View):
     def get(self, request, id_v):
         client = get_object_or_404(Client, user_client=request.user)
         vacancy = get_object_or_404(Vacancy, id=id_v)
-        resume_for_waiting = vacancy.in_waiting_for_resume.filter(client_cv=client)
-        resume_for_accepted = vacancy.accept_for_resume.filter(client_cv=client)
-        resume_for_rejected = vacancy.reject_for_resume.filter(client_cv=client)
-        first_flag = 1 if bool(resume_for_waiting or resume_for_rejected) else 0
-        second_flag = 1 if bool(resume_for_waiting or resume_for_accepted) else 0
+        resume_for_waiting = vacancy.in_waiting_for_resume.filter(
+            client_cv=client)
+        resume_for_accepted = vacancy.accept_for_resume.filter(
+            client_cv=client)
+        resume_for_rejected = vacancy.reject_for_resume.filter(
+            client_cv=client)
+        first_flag = 1 if bool(
+            resume_for_waiting or resume_for_rejected) else 0
+        second_flag = 1 if bool(
+            resume_for_waiting or resume_for_accepted) else 0
         return render(request, 'client/client_vacancy_detail.html', context={
             'vacancy': vacancy,
             'first_flag': first_flag,
@@ -476,8 +509,9 @@ class ResumesList(View):
         client = get_object_or_404(Client, user_client=request.user)
         resumes = CV.objects.filter(client_cv=client)
         client_instance = client_check(request.user)
-        return render(request, 'client/client_resumes.html', context={'resumes': resumes,
-                                                                      'client_img': load_client_img(client_instance)})
+        return render(request, 'client/client_resumes.html',
+                      context={'resumes': resumes,
+                               'client_img': load_client_img(client_instance)})
 
 
 class ResumeDetail(ObjectResumeMixin, View):  # Look utils_for_mixins.py
@@ -495,9 +529,12 @@ class RejectedVacancies(ObjectResumeMixin, View):  # Look utils_for_mixins.py
 def accept_reject(request):
     client = get_object_or_404(Client, user_client=request.user)
     if request.GET['flag'] == 'accept' and \
-            Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.filter(client_cv=client):
+            Vacancy.objects.get(
+                id=request.GET['id_v']).in_waiting_for_resume.filter(
+                client_cv=client):
         print(request.GET['id_v'], 1)
-        r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get(client_cv=client)
+        r = Vacancy.objects.get(
+            id=request.GET['id_v']).in_waiting_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_accept.add(v)
         r.vacancies_in_waiting.remove(v)
@@ -505,9 +542,12 @@ def accept_reject(request):
         return HttpResponse('accept_server')
 
     elif request.GET['flag'] == 'reject' and \
-            Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.filter(client_cv=client):
+            Vacancy.objects.get(
+                id=request.GET['id_v']).in_waiting_for_resume.filter(
+                client_cv=client):
         print(request.GET['id_v'], 2)
-        r = Vacancy.objects.get(id=request.GET['id_v']).in_waiting_for_resume.get(client_cv=client)
+        r = Vacancy.objects.get(
+            id=request.GET['id_v']).in_waiting_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_reject.add(v)
         r.vacancies_in_waiting.remove(v)
@@ -515,9 +555,12 @@ def accept_reject(request):
         return HttpResponse('reject_server')
 
     elif request.GET['flag'] == 'accept' and \
-            Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.filter(client_cv=client):
+            Vacancy.objects.get(
+                id=request.GET['id_v']).reject_for_resume.filter(
+                client_cv=client):
         print(request.GET['id_v'], 3)
-        r = Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.get(client_cv=client)
+        r = Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.get(
+            client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_accept.add(v)
         r.vacancies_reject.remove(v)
@@ -525,9 +568,12 @@ def accept_reject(request):
         return HttpResponse('accept_server')
 
     elif request.GET['flag'] == 'reject' and \
-            Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.filter(client_cv=client):
+            Vacancy.objects.get(
+                id=request.GET['id_v']).accept_for_resume.filter(
+                client_cv=client):
         print(request.GET['id_v'], 4)
-        r = Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.get(client_cv=client)
+        r = Vacancy.objects.get(id=request.GET['id_v']).accept_for_resume.get(
+            client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
         r.vacancies_reject.add(v)
         r.vacancies_accept.remove(v)
@@ -538,8 +584,9 @@ def accept_reject(request):
 def help_list(request):
     faqs = Help.objects.all()
     client_instance = client_check(request.user)
-    return render(request, 'client/help.html', context={'faqs': faqs,
-                                                        'client_img': load_client_img(client_instance)})
+    return render(request, 'client/help.html',
+                  context={'faqs': faqs,
+                           'client_img': load_client_img(client_instance)})
 
 
 def viewed(request):
@@ -555,13 +602,17 @@ def viewed(request):
 def interviews_list(request):
     client = get_object_or_404(Client, user_client=request.user)
     interviews = JobInterviews.objects.filter(client=client, status=False)
-    interviews_false = JobInterviews.objects.filter(client=client, status=True)  # status=False
-    interviews_false = sorted(interviews_false, key=lambda x: x.period_of_execution, reverse=True)
+    interviews_false = JobInterviews.objects.filter(client=client,
+                                                    status=True)  # False
+    interviews_false = sorted(interviews_false,
+                              key=lambda x: x.period_of_execution,
+                              reverse=True)
     client_instance = client_check(request.user)
 
-    return render(request, 'client/interviews.html', context={'interviews': interviews,
-                                                              'interviews_false': interviews_false,
-                                                              'client_img': load_client_img(client_instance)})
+    return render(request, 'client/interviews.html',
+                  context={'interviews': interviews,
+                           'interviews_false': interviews_false,
+                           'client_img': load_client_img(client_instance)})
 
 
 def checkinterviews(request):
@@ -613,7 +664,10 @@ def parsing():
     email_exp = r'[\w\d.-]+@[\w.]+'
     email = re.findall(email_exp, text)
     client_row.email = email
-    phone_exp = [i.strip() for i in re.findall(r'\+?[\s\d()-]+', text) if len(i) >= 10][1].strip()
+    phone_exp = \
+        [i.strip() for i in re.findall(r'\+?[\s\d()-]+', text) if
+         len(i) >= 10][
+            1].strip()
     client_row.telephone = phone_exp
     citizenship_exp = re.findall(r'\Г\w+:\s\w+\w', text)
     citizenship = citizenship_exp[0].split()[1]
@@ -625,7 +679,7 @@ def parsing():
     client_row.save()
 
 
-# End Poland's views ###################################################################################$$$$
+# End Poland's views #
 
 
 class ClientShowSkills(TemplateView):  # TeamRome
@@ -636,7 +690,8 @@ class ClientShowSkills(TemplateView):  # TeamRome
         response = {'client_img': load_client_img(client_instance),
                     'data': skills_page_get(client_instance),
                     }
-        return render(request=request, template_name=self.template_name, context=response)
+        return render(request=request, template_name=self.template_name,
+                      context=response)
 
     def post(self, request):
         pass
