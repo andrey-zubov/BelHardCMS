@@ -6,8 +6,70 @@
 {% endblock %}
 
 {% block content %}
+<style>
+#messages{
+   max-width: 1200px;
+    width:100%;
+    height: 70%;
+    margin: 20px auto 5px;
+    border: 1px solid rgba(80,143,244, 0.5);
+    overflow-y: auto;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
 
-    <div id="messages" class="panel" style="width: 90%; height: 80%; margin: 0 auto; margin-bottom: 1%; border: 1px solid black; overflow-y: scroll;" onscroll="scroll(this);" >
+#message-form{
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+#textField{
+    max-width: 80%;
+    width: 100%;
+    height: 60px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    border: 1px solid rgba(80,143,244, 0.5);
+    margin: 0;
+    padding: 0;
+    border-radius: 10px;
+    outline: none;
+}
+
+.msg-btn{
+    margin: 0;
+    padding: 0;
+    max-width: 16%;
+    width:100%;
+    height: 60px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    border: 1px solid rgba(80,143,244, 0.5);
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    color: black;
+    transition: all .3s linear;
+    outline: none;
+}
+
+.msg-btn:hover{
+    background: rgba(72, 75, 75, 0.11);
+}
+
+#textField[name="message"][placeholder]{
+    padding-left: 30px ;
+}
+
+h3{
+    float: left;
+    margin-left: 5%;
+}
+
+</style>
+    <h3>Общение с контактным центром</h3>
+    <div id="messages" class="panel"  onscroll="scroll(this);" >
+
             <div id="innerMessages">
                 {% for message in chat.message_set.all %}
                     {% if message.author != request.user %}
@@ -37,20 +99,22 @@
     <div id="message_form">
         <form id="message-form" class="panel panel-body" method="post" >
             {% csrf_token %}
-             <input type="text" id="textField" class="form-control" style="width: 80%; height: 10%;" id="message" name="message">
-                <button type="submit" class="btn btn-outline-success">Отправить</button>
+             <input type="text" id="textField" class="form-control"  id="message" name="message" placeholder="Введите сообщение...">
+                <button type="submit" class="msg-btn">Отправить</button>
         </form>
     </div>
 
 <script>
+
+
     var auto = false
             function scroll (ths) {
                 auto = ths.scrollTop(ths.prop('scrollHeight')) + ths.clientHeight == ths.scrollHeight;
             }
     $('document').ready(function () {
+        $('.content').css('overflow-y', 'none');
         var objDiv = document.getElementById("messages");
         objDiv.scrollTop = objDiv.scrollHeight;
-
         setInterval(function(){
             var last_id = $('div.list-inline').last().attr('id');
             $.ajax({

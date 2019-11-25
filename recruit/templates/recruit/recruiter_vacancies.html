@@ -5,89 +5,209 @@
 {% endblock %}
 
 {% block content %}
-    <div align="middle">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalNewVacancy">
-            + Добавить вакансию...
-        </button>
-    </div>
+    <style>
+
+    .vacancies-content{width: 100%;
+            height: 40%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+    }
+    .add-vacancies {
+            margin: 0 auto;
+            width: 200px;
+            height: 20px;
+            text-decoration: none;
+            color: white;
+            background-color: #213d4d;
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s linear;
+        }
+
+        .add-vacancies:hover {
+            background-color: #8D7171;
+        }
+
+            #popup {
+            height: 100%;
+            width: 100%;
+            background: rgba(179,179,179, .5);
+            min-height: 100%;
+            position: fixed;
+            left: 0;
+            top: 0;
+
+        }
+
+        .popup-content{
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            height: auto;
+            background: white;
+            opacity: 1;
+            border-radius: 10px;
+
+        }
+
+        .close{
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            text-decoration: none;
+            width: 20px;
+            height: 20px;
+            background: #213d4d;
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            transition: all 0.3s linear;
+        }
+
+        .close:hover {
+            background-color: #8D7171;
+        }
+
+        .login-form{
+            margin: 0 70px 40px;
+            float: left;
+            width: 560px;
+        }
+
+        .form-group{
+            margin-top: 15px ;
+            clear:both;
+            text-align:right;
+            margin-top: 15px;
+        }
+
+        label{
+        float:left;
+        padding-right: 20px;
+        color: #414141;
+        font-size: 20px;
+        font-family:open sans,sans-serif;
+        font-weight: bold;
+    }
+
+    input{
+        width: 170.23px;
+
+    }
+
+    textarea{
+         width: 168.23px;
+    }
+
+    .content-title{
+                font-size: 20px;
+                font-weight: bold;
+            }
+    .btns-footer{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        width: 400px;
+        margin:0 auto 50px;
+    }
+    .popup-btn{
+        text-decoration: none;
+        background: #213d4d;
+        outline: none;
+        border: none;
+        padding: 10px;
+        color: white;
+        border-radius: 5px;
+        transition: all 0.3s linear;
+    }
+    .popup-btn:hover {
+            background-color: #8D7171;
+        }
+    .comeback{
+            margin-left: 50px;
+            width: 100px;
+            text-decoration: none;
+            color: white;
+            background-color: #213d4d;
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s linear;
+        }
+
+        .comeback:hover {
+            background-color: #8D7171;
+        }
+    </style>
+<div class="vacancies-content">
+    <a class="add-vacancies" href="javascript:PopUpShow()">+ Добавить вакансию</a>
     <!-- Modal -->
-    <div class="modal fade bd-example-modal-xl" id="ModalNewVacancy" tabindex="-1" role="dialog"
-         aria-labelledby="myExtraLargeModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-xl" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel"> Данные вакансии </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
+    <div id="popup">
+        <div class="popup-content">
+            <a class="close" href="javascript:PopUpHide()">x</a>
+             <h5 class="content-title"> Данные вакансии </h5>
+            <div class="vacancie-info">
+                <form action="{% url 'vacancies_url' %}" method="post">
+                    {% csrf_token %}
+                    <div class="login-form">
+                    <div class="form-group">
+                        <label for="id_position">Должность:</label>
+                        <input type="text" class="form-control" id="id_position" name="position" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_salary">Уровень заработной платы:</label>
+                        <input type="text" class="form-control" id="id_salary" name="salary" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_organization">Организация:</label>
+                        <input type="text" class="form-control" id="id_organization" name="organization" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_address">Адрес:</label>
+                        <input type="text" class="form-control" id="id_address" name="address">
+                    </div>
+                    <div class="form-group">
+                        <label for="id_employment">Опыт работы и занятость:</label>
+                        <input type="text" class="form-control" id="id_employment" name="employment">
+                    </div>
+                    <div class="form-group">
+                        <label for="id_description">Описание:</label>
+                        <textarea class="form-control" id="id_description" name="description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_skills">Ключевые навыки:</label>
+                        <input type="text" class="form-control" id="id_skills" name="skills">
+                    </div>
+                    <div class="form-group">
+                        <label for="id_requirements">Требования к соискателю:</label>
+                        <textarea class="form-control" id="id_requirements" name="requirements"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_duties">Обязанности:</label>
+                        <textarea class="form-control" id="id_duties" name="duties"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_conditions">Условия работы:</label>
+                        <textarea class="form-control" id="id_conditions" name="conditions"></textarea>
+                    </div>
+                    </div>
+                    <div class="btns-footer">
+                        <button class="popup-btn" type="reset">Очистить</button>
+                        <a class="popup-btn" href="javascript:PopUpHide()">Закрыть</a>
+                        <button class="popup-btn" type="submit" value="{{ vacancy.id }}" name="id_vac">Отправить</button>
+                    </div>
+                </form>
 
-                    <form action="{% url 'vacancies_url' %}" method="post">
-                        {% csrf_token %}
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="id_position">Должность:</label>
-                                <input type="text" class="form-control" id="id_position" name="position" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="id_salary"> &nbsp; Уровень заработной платы:</label>
-                                <input type="text" class="form-control" id="id_salary" name="salary" required>
-                            </div>
-                        </div><br>
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="id_organization">Организация:</label>
-                                <input type="text" class="form-control" id="id_organization" name="organization" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="id_address"> &nbsp; Адрес:</label>
-                                <input type="text" class="form-control" id="id_address" name="address">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="id_employment">Опыт работы и занятость:</label>
-                            <input type="text" class="form-control" id="id_employment" name="employment">
-                        </div>
-                        <div class="form-group">
-                            <label for="id_description">Описание:</label>
-                            <textarea class="form-control" id="id_description" name="description"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="id_skills">Ключевые навыки:</label>
-                            <input type="text" class="form-control" id="id_skills" name="skills">
-                        </div>
-                        <div class="form-group">
-                            <label for="id_requirements">Требования к соискателю:</label>
-                            <textarea class="form-control" id="id_requirements" name="requirements"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="id_duties">Обязанности:</label>
-                            <textarea class="form-control" id="id_duties" name="duties"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="id_conditions">Условия работы:</label>
-                            <textarea class="form-control" id="id_conditions" name="conditions"></textarea>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="reset" class="btn btn-secondary" data-dismiss="all-form">
-                                Очистить
-                            </button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                            <button type="submit" class="btn btn-primary">Добавить</button>
-                        </div>
-                    </form>
-
-                </div>
             </div>
         </div>
     </div>
+
     <!-- end Modal -->
 
     <div class="container">
-        <div class="p-sm-5 pt-sm-1" style="overflow: auto">
+        <div style="overflow: auto">
             {% for vacancy in vacancies %}
                 <div class="card mb-5">
                     <div class="card-header">
@@ -105,5 +225,22 @@
         </div>
     </div>
 
-
+    <a class='comeback' href="{% url 'base_url' %}">Вернуться</a>
+</div>
+<script>
+$(document).ready(function () {
+    //Скрыть PopUp при загрузке страницы
+    PopUpHide();
+});
+//Функция отображения PopUp
+function PopUpShow() {
+    $("#popup").show();
+    document.body.style.overflow = "hidden";
+}
+//Функция скрытия PopUp
+function PopUpHide() {
+    $("#popup").hide();
+    document.body.style.overflow = "auto";
+}
+</script>
 {% endblock %}

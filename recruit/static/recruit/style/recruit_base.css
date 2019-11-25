@@ -15,9 +15,7 @@
 .search_rb {
 
     border-radius: 5px;
-    border: solid;
-    border-width: 1px;
-    border-color: black;
+    border:1px solid black;
     height: 50px;
     outline: none;
     margin-right: 5px;
@@ -25,11 +23,18 @@
 }
 .sb_small{
     border-radius: 5px;
-    border: solid;
-    border-width: 1px;
-    border-color: black;
-    background-color: white;
+    border:1px solid black;
     outline: none;
+    cursor: pointer;
+    background: #213D4D;
+    color: #ffffff;
+    text-decoration: none;
+    transition: all .3s linear;
+}
+
+.sb_small:hover{
+    color: white;
+                background: #8D7171;
 }
 
 .advaced_search_b {

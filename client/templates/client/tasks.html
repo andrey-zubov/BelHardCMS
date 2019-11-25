@@ -1,70 +1,141 @@
 {% extends 'client/main_template_client.html' %}
 {% load staticfiles %}
 
-    {% block title%} Задачи {% endblock %}
+{% block title%} Задачи {% endblock %}
 
 
 {% block content %}
-<div class="active">
-    {% for tas in task %}
-        <div hidden>{{ tas.check_readstatus }}</div>
-        <div>
-            <input class="check_tas" id="check_tas{{ tas.id }}" type="checkbox">
-            <button class="fortask" id="idfortas{{ tas.id }}">{{ tas.title }}</button>
-            <br>
-        </div>
-        <div class="subs" id="forsubtask{{ tas.id }}" hidden>
+    <style>
+        .tasks{
+            width: 100%;
+            background: url("../../static/client/img/cobalt.png") no-repeat;
+            max-width: 1200px;
+            min-height: 600px;
+            border-radius: 20px;
+            margin: 0 auto;
 
-            {% for sub in tas.show_all %}
-                {% if sub.status == True %}
-                    <input class="check_sub" id="check_sub{{ sub.id }}" type="checkbox">{{ sub.title }}<br>
-                {% else %}
-                    <input class="check_sub" id="check_sub{{ sub.id }}" type="checkbox" checked>{{ sub.title }}<br>
-                {% endif %}
+        }
+    h3{
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        height: 50px;
+        line-height: 50px;
+        box-shadow: 0 0 10px rgba(84,97,127,0.5);
+        margin: 0;
+        color: white;
+        background: #213D4D;
+        text-align: center;
 
-            {% endfor %}
-        </div>
-        <br>
+    }
+    #show{
+        margin-left: 20px;
+        background: #213D4D;
+        color: #ffffff;
+        padding: 5px;
+        border: none;
+        outline: none;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: all .3s linear;
+    }
 
-    {% endfor %}
-</div>
-<button id="show">Показать заверешенные задачи</button>
-<div class="hide_task" hidden>
-    {% for tas in task_false %}
-    <div id="task_checktime" hidden>{{ tas.checktime }}</div>
-        {% if tas.checkstatus != False %}
-            <input class="check_tas" id="check_tas{{ tas.id }}" type="checkbox" checked>
-            <button class="fortask" id="idfortas{{ tas.id }}">
-                {{ tas.title }}
-            </button><br>
-            <div id="forsubtask{{ tas.id }}" hidden>
+    #show:hover{
+        background: #8D7171;
+    }
 
+    .active{
+        margin-top: 15px;
+        height: auto;
+    }
+
+    .style-task{
+        width: 100%;
+        max-width: 1180px;
+        background: #fffffd;
+        height: 40px;
+        margin: 0 auto ;
+        line-height: 38px;
+        border-radius: 5px;
+    }
+
+    .fortask{
+        height: 40px;
+        border: none;
+        outline: none;
+        background: #fffffd;
+        padding: 0;
+        width: 1140px;
+        cursor: pointer;
+        text-align: left;
+        float: right;
+        border-radius: 5px;
+    }
+
+    input[type='checkbox']{
+        width: 20px;
+        height: 40px;
+        margin: 0;
+        margin-left: 10px;
+    }
+    </style>
+<div class="tasks">
+    <h3>Задачи</h3>
+    <div class="active">
+        {% for tas in task %}
+            <div hidden>{{ tas.check_readstatus }}</div>
+            <div class="style-task">
+                <input class="check_tas" id="check_tas{{ tas.id }}" type="checkbox">
+                <button class="fortask " id="idfortas{{ tas.id }}">{{ tas.title }}</button>
+            </div>
+            <div class="subs" id="forsubtask{{ tas.id }}" hidden>
                 {% for sub in tas.show_all %}
-                    <input class="chech_sub" id="check_sub{{ sub.id }}" type="checkbox" checked>
-                    {{ sub.title }}
-                    <br>
+                    {% if sub.status == True %}
+                        <input class="check_sub" id="check_sub{{ sub.id }}" type="checkbox">{{ sub.title }}<br>
+                    {% else %}
+                        <input class="check_sub" id="check_sub{{ sub.id }}" type="checkbox" checked>{{ sub.title }}<br>
+                    {% endif %}
+
                 {% endfor %}
             </div>
-            <hr>
-        {% endif %}
+            <br>
 
-    {% if tas.checkstatus == False %}
-        {{tas.title}}
-        {% for sub in task.show_all %}
-            {{ sub.title }}
         {% endfor %}
-     {% endif %}
-        <br>
-    {% endfor %}
+    </div>
+    <button id="show">Показать заверешенные задачи</button>
+    <div class="hide_task" hidden>
+        {% for tas in task_false %}
+        <div id="task_checktime" hidden>{{ tas.checktime }}</div>
+            {% if tas.checkstatus != False %}
+                <input class="check_tas" id="check_tas{{ tas.id }}" type="checkbox" checked>
+                <button class="fortask" id="idfortas{{ tas.id }}">
+                    {{ tas.title }}
+                </button><br>
+                <div id="forsubtask{{ tas.id }}" hidden>
 
+                    {% for sub in tas.show_all %}
+                        <input class="chech_sub" id="check_sub{{ sub.id }}" type="checkbox" checked>
+                        {{ sub.title }}
+                        <br>
+                    {% endfor %}
+                </div>
+                <hr>
+            {% endif %}
 
-    <button class="hide">Скрыть</button>
+        {% if tas.checkstatus == False %}
+            {{tas.title}}
+            {% for sub in task.show_all %}
+                {{ sub.title }}
+            {% endfor %}
+         {% endif %}
+            <br>
+        {% endfor %}
+
+    </div>
 </div>
-
 <script type="text/javascript">
 
 $('document').ready(function () {
-
+    $('.content').css('text-align', 'inherit')
     $('#show_done').on('click', function () {
         console.log(4444)
         done_tasks=$('.done_tasks')
@@ -78,14 +149,9 @@ $('document').ready(function () {
     });
 
     $('#show').on('click', function () {
-        $('.hide_task').show()
-        console.log(1)
+        $('.hide_task').toggle()
+    });
 
-    });
-    $(".hide_task .hide").click(function(){
-        $(this).parents(".hide_task").hide();
-        console.log(2)
-    });
     $('.fortask').on('click', function () {
         var id = 'forsubtask' + $(this).attr('id').slice(8);
         var elem = $('#' + id);
