@@ -32,8 +32,7 @@
     </div>
     <!-- Modal -->
     <div class="modal fade bd-example-modal-xl" id="ModalNewVacancy" tabindex="-1" role="dialog"
-         aria-labelledby="myExtraLargeModalLabel"
-         aria-hidden="true">
+         aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" align="left">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -55,7 +54,20 @@
                                 <label for="id_salary"> &nbsp; Уровень заработной платы:</label>
                                 <input type="text" class="form-control" id="id_salary" name="salary" required>
                             </div>
-                        </div><br>
+                        </div>
+                        <br>
+
+                        <div class="form-group">
+                            <label for="direction">Направление *</label>
+                            <select class="form-control" id="direction" name="direction" required>
+                                <option disabled selected value="">Выбирите вариант</option>
+                                {% for direction in directions %}
+                                    <option value="{{ direction.id }}">{{ direction }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <br>
+
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="id_organization">Организация:</label>
