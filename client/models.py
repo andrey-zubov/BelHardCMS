@@ -261,6 +261,17 @@ class State(models.Model):
         return self.state_word
 
 
+class Direction(models.Model):  # TeamRome
+    direction_word = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Направление"
+        verbose_name_plural = "Направления"
+
+    def __str__(self):
+        return self.direction_word
+
+
 # Poland Task 1 & 2 #
 
 
@@ -272,13 +283,16 @@ class Vacancy(models.Model):
     salary = models.CharField(max_length=20)
     organization = models.CharField(max_length=100)
     address = models.CharField(max_length=200, blank=True, null=True)
-    employment = models.CharField(max_length=100, blank=True, null=True)
+    employment = models.CharField(max_length=100, blank=True, null=True)  # many_to_many?
     description = models.TextField(max_length=1000, blank=True, null=True)
-    skills = models.CharField(max_length=100, blank=True, null=True)
+    skills = models.CharField(max_length=100, blank=True, null=True)     # many_to_many?
     requirements = models.TextField(max_length=1000, blank=True, null=True)
     duties = models.TextField(max_length=1000, blank=True, null=True)
     conditions = models.TextField(max_length=1000, blank=True, null=True)
     creating_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+
+    direction = models.ManyToManyField(Direction, verbose_name='Направление',
+                                       blank=True)
 
     def __str__(self):
         return self.state
@@ -293,9 +307,9 @@ class Vacancy(models.Model):
         return reverse('vacancy_del_recr_url', kwargs={'id_v': self.id})
 
 
-def file_path_image_employer(instanse, filename):
+def file_path_image_employer(instance, filename):
     """ Задает путь к папке картинки у работодателя. """
-    return f'employers/{translit(str(instanse.name), "ru", reversed=True)}/Images/{filename}'
+    return f'employers/{translit(str(instance.name), "ru", reversed=True)}/Images/{filename}'
 
 
 class Employer(models.Model):
@@ -410,12 +424,9 @@ class JobInterviews(models.Model):
     def __str__(self):
         return self.name
 
-    # def get_absolute_url(self):
-    #    return reverse('applicant_url', kwargs={'id_a': self.id})
 
-
-def file_path(instanse, filename):
-    return f'users/{translit(str(instanse.jobinterviews_files.client), "ru", reversed=True)}/files_for_jobinterviews/{filename}'
+def file_path(instance, filename):
+    return f'users/{translit(str(instance.jobinterviews_files.client), "ru", reversed=True)}/files_for_jobinterviews/{filename}'
 
 
 class FilesForJobInterviews(models.Model):
@@ -647,14 +658,3 @@ class Settings(models.Model):
     email_suggestions = models.BooleanField(default=True)
     email_meetings = models.BooleanField(default=True)
     email_reviews = models.BooleanField(default=True)
-
-
-class Direction(models.Model):  # TeamRome
-    direction_word = models.CharField(max_length=100, blank=True, null=True)
-
-    class Meta:
-        verbose_name = "Направление"
-        verbose_name_plural = "Направления"
-
-    def __str__(self):
-        return self.direction_word

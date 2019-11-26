@@ -11,7 +11,7 @@ from client.edit.check_clients import (load_client_img)
 from client.models import (CV, JobInterviews, FilesForJobInterviews, Vacancy,
                            State)
 from client.models import (Chat, Message, Tasks, UserModel, SubTasks, Settings,
-                           Client, Employer)
+                           Client, Employer, Direction)
 from recruit.edit_pages.check_recruit import (recruit_check)
 from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
 from recruit.edit_pages.r_pages_get import (recruit_edit_page_get,
@@ -95,8 +95,8 @@ class ApplicantDet(View):
 
 
 class CreateJobInterview(View):
-    """ Создание собеседования для клиента """
     def get(self, request, id_a):
+        """Вывод на экран подтвержденных вакансий"""
         applicant_user = Client.objects.get(id=id_a)
         if CV.objects.filter(client_cv=applicant_user):
             accepted_vacancies = applicant_user.cv_set.all()[
@@ -110,6 +110,7 @@ class CreateJobInterview(View):
                                'accepted_vacancies': accepted_vacancies})
 
     def post(self, request, id_a):
+        """ Создание собеседования для клиента """
         applicant_user = Client.objects.get(id=id_a)
         response = request.POST
 
@@ -129,6 +130,7 @@ class CreateJobInterview(View):
             location=response.get('address'),
             additional_information=response.get('addition'),
         )
+
         if response.get('vacancy'):
             j.vacancies = Vacancy.objects.get(id=int(response.get('vacancy')))
         j.save()
@@ -144,6 +146,7 @@ class CreateJobInterview(View):
 
 class EditJobInterview(View):
     def post(self, request, id_a):
+        """Редактирование собеседования"""
         applicant_user = Client.objects.get(id=id_a)
         response = request.POST
         files = request.FILES.getlist('files')
@@ -174,6 +177,7 @@ class EditJobInterview(View):
 
 
 class DelJobInterview(View):
+    """ Удаление собеседования """
     def post(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
         j = JobInterviews.objects.get(id=request.POST['id_job'])
@@ -236,8 +240,9 @@ class EmployerDel(View):
 class Vacancies(View):
     def get(self, request):
         vacancies = Vacancy.objects.all().order_by(Lower('organization'))
+        directions = Direction.objects.all().order_by('direction_word')
         return render(request, 'recruit/recruiter_vacancies.html',
-                      context={'vacancies': vacancies})
+                      context={'vacancies': vacancies, 'directions': directions})
 
     def post(self, request):
         response = request.POST
@@ -260,6 +265,7 @@ class Vacancies(View):
             v.organization = e.name
             v.address = e.address
             v.save()
+            v.direction.add(Direction.objects.get(id=response['direction']))
             return redirect('employer_det_url', id_e=response['id_empl'])
         else:
             if response['organization'] in \
@@ -269,6 +275,7 @@ class Vacancies(View):
                 v.employer = Employer.objects.get(
                     name=response['organization'])
                 v.save()
+                v.direction.add(Direction.objects.get(id=response['direction']))
                 return redirect('vacancies_url')
             else:
                 e = Employer(name=response['organization'],
@@ -278,14 +285,16 @@ class Vacancies(View):
                 v.address = e.address
                 v.employer = e
                 v.save()
+                v.direction.add(Direction.objects.get(id=response['direction']))
                 return redirect('vacancies_url')
 
 
 class VacancyDet(View):
     def get(self, request, id_v):
         vacancy = Vacancy.objects.get(id=id_v)
+        directions = Direction.objects.all().order_by('direction_word')
         return render(request, 'recruit/recruiter_vacancy_detail.html',
-                      context={'vacancy': vacancy})
+                      context={'vacancy': vacancy, 'directions': directions})
 
     def post(self, request, id_v):
         response = request.POST
@@ -301,7 +310,8 @@ class VacancyDet(View):
         v.requirements = response['requirements']
         v.duties = response['duties']
         v.conditions = response['conditions']
-
+        v.direction.clear()
+        v.direction.add(Direction.objects.get(id=response['direction']))
         v.save()
 
         return redirect(v.get_absolute_url2())
