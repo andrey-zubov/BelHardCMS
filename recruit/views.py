@@ -3,6 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect, render   # get_object_or_404
 from django.views.generic import View, TemplateView
 from django.db.models.functions import Lower
+from django.db.models import Q
 
 from client.edit.check_clients import (load_client_img)
 from client.models import (CV, JobInterviews, FilesForJobInterviews, Vacancy,
@@ -232,7 +233,17 @@ class EmployerDel(View):
 
 class Vacancies(View):
     def get(self, request):
-        vacancies = Vacancy.objects.all().order_by(Lower('organization'))
+        search_direct = request.GET.get('search_direction', '')
+        search_state = request.GET.get('search_state')
+        print('Профессия', search_state)
+        if search_direct or search_state:
+            print('Направление', search_direct)
+            print('Профессия', search_state)
+            vacancies = Vacancy.objects.filter(
+                Q(direction=search_direct) | Q(state__icontains=search_state)
+            ).order_by(Lower('organization'))
+        else:
+            vacancies = Vacancy.objects.all().order_by(Lower('organization'))
         directions = Direction.objects.all().order_by('direction_word')
         return render(request, 'recruit/recruiter_vacancies.html',
                       context={'vacancies': vacancies, 'directions': directions})

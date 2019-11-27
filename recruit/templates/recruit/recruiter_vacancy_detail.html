@@ -121,7 +121,7 @@
                                             <select class="form-control" id="direction" name="direction" required>
                                                 {% for direction in directions %}
                                                     {% if direction.id == vacancy.direction.get.id %}
-                                                        <option vacancy.direction.get.id selected>{{ vacancy.direction.get }}</option>
+                                                        <option value="{{ vacancy.direction.get.id }}" selected>{{ vacancy.direction.get }}</option>
                                                     {% else %}
                                                         <option value="{{ direction.id }}">{{ direction }}</option>
                                                     {% endif %}
