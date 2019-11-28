@@ -25,6 +25,25 @@
 {% endblock %}
 
 {% block content %}
+
+     <div class="container">
+        <form action="{% url 'employers_url' %}" method="get" class="form-inline">
+            <div class="form-group">
+                <!--label for="search_state">Название профессии</label-->
+                {% if found_name %}
+                    <input id="search_name" type="search" name="search_name"
+                           placeholder="Введите название организации" size="30" value="{{ found_name }}">
+                {% else %}
+                    <input id="search_name" type="search" name="search_name"
+                           placeholder="Введите название организации" size="30">
+                {% endif %}
+            </div>
+            <input type="submit" value="Найти">
+            <input type="submit" value="Показать все" name="all_values">
+        </form>
+    </div>
+    <br>
+
     <div align="middle">
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalNewEmployer">
             + Добавить карточку работодателя...

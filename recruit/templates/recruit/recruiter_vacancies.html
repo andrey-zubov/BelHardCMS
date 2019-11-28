@@ -33,16 +33,26 @@
                 <select class="form-control-search" id="search_direction" name="search_direction">
                     <option value="">Выбирите направление</option>
                     {% for direction in directions %}
-                        <option value="{{ direction.id }}">{{ direction }}</option>
+                        {% if found_direct == direction.id %}
+                            <option value="{{ direction.id }}" selected>{{ direction }}</option>
+                        {% else %}
+                            <option value="{{ direction.id }}">{{ direction }}</option>
+                        {% endif %}
                     {% endfor %}
                 </select>
             </div>
             <div class="form-group">
                 <!--label for="search_state">Название профессии</label-->
-                <input id="search_state" type="search" name="search_state"
-                       placeholder="Введите название профессии" size="26">
+                {% if found_state %}
+                    <input id="search_state" type="search" name="search_state"
+                           placeholder="Введите название профессии" size="26" value="{{ found_state }}">
+                {% else %}
+                    <input id="search_state" type="search" name="search_state"
+                           placeholder="Введите название профессии" size="26">
+                {% endif %}
             </div>
             <input type="submit" value="Найти">
+            <input type="submit" value="Показать все" name="all_values">
         </form>
     </div>
     <br>
