@@ -122,7 +122,6 @@ class CreateJobInterview(View):
             jobinterviewtime=response.get('time'),
             jobinterviewdate=response.get('date'),
             interview_author=recruit_check(request.user),
-            # period_of_execution= #  I don't know why is this field needed
             position=response.get('position'),
             organization=response.get('organization'),
             responsible_person=response.get('responsible_person'),
@@ -147,7 +146,7 @@ class CreateJobInterview(View):
 
 class EditJobInterview(View):
     def post(self, request, id_a):
-        """Редактирование собеседования"""
+        """ Редактирование собеседования """
         applicant_user = Client.objects.get(id=id_a)
         response = request.POST
         files = request.FILES.getlist('files')
@@ -155,7 +154,6 @@ class EditJobInterview(View):
         j.name = response.get('name')
         j.jobinterviewtime = response.get('time')
         j.jobinterviewdate = response.get('date')
-        # period_of_execution= # I don't know why is this field needed
         j.position = response.get('position')
         j.organization = response.get('organization')
         j.responsible_person = response.get('responsible_person')
@@ -187,13 +185,27 @@ class DelJobInterview(View):
 
 
 class Employers(View):
-    """ Создание карточки работодателя. Вывод на экран базы работодателей """
+    """ Вывод на экран базы работодателей.
+    Поиск по базе и вывод результата на экран. """
     def get(self, request):
-        employers = Employer.objects.all().order_by(Lower('name'))
+        search_name = request.GET.get('search_name', '')
+        found_name = ''
+        all_values = request.GET.get('all_values')
+        if all_values:
+            employers = Employer.objects.all().order_by(Lower('name'))
+        else:
+            if search_name:
+                employers = Employer.objects.filter(
+                    name__icontains=search_name).order_by(Lower('name'))
+                found_name = search_name
+            else:
+                employers = Employer.objects.all().order_by(Lower('name'))
         return render(request, 'recruit/recruiter_employers.html',
-                      context={'employers': employers})
+                      context={'employers': employers,
+                               'found_name': found_name})
 
     def post(self, request):
+        """ Создание карточки работодателя. """
         files = request.FILES.get('files')
         response = request.POST
         e = Employer(
@@ -240,22 +252,41 @@ class EmployerDel(View):
 
 class Vacancies(View):
     def get(self, request):
+        """ Вывод на экран базы работодателей.
+            Поиск и вывод результата на экран. """
         search_direct = request.GET.get('search_direction', '')
         search_state = request.GET.get('search_state')
-        print('Профессия', search_state)
-        if search_direct or search_state:
-            print('Направление', search_direct)
-            print('Профессия', search_state)
-            vacancies = Vacancy.objects.filter(
-                Q(direction=search_direct) | Q(state__icontains=search_state)
-            ).order_by(Lower('organization'))
-        else:
+        found_direct = ''
+        found_state = ''
+        all_values = request.GET.get('all_values')
+        if all_values:
             vacancies = Vacancy.objects.all().order_by(Lower('organization'))
+        else:
+            if search_direct and search_state:
+                vacancies = Vacancy.objects.filter(
+                    Q(direction=search_direct) | Q(state__icontains=search_state)
+                ).order_by(Lower('organization'))
+                found_direct = search_direct
+                found_state = search_state
+            elif search_direct:
+                vacancies = Vacancy.objects.filter(
+                    direction=search_direct).order_by(Lower('organization'))
+                found_direct = int(search_direct)
+            elif search_state:
+                vacancies = Vacancy.objects.filter(
+                    state__icontains=search_state).order_by(Lower('organization'))
+                found_state = search_state
+            else:
+                vacancies = Vacancy.objects.all().order_by(Lower('organization'))
         directions = Direction.objects.all().order_by('direction_word')
         return render(request, 'recruit/recruiter_vacancies.html',
-                      context={'vacancies': vacancies, 'directions': directions})
+                      context={'vacancies': vacancies,
+                               'directions': directions,
+                               'found_direct': found_direct,
+                               'found_state': found_state})
 
     def post(self, request):
+        """ Создание карточки вакансии. """
         response = request.POST
         v = Vacancy(
             state=response['position'],
@@ -335,10 +366,10 @@ class DelVacancy(View):
         return redirect('vacancies_url')
 
 
-def del_file(request):
-    file = FilesForJobInterviews.objacts.get(id=request.GET['id_f'])
-    file.delete()
-    return HttpResponse('id  ', request.GET['id_f'])
+# def del_file(request):
+#     file = FilesForJobInterviews.objacts.get(id=request.GET['id_f'])
+#     file.delete()
+#     return HttpResponse('id  ', request.GET['id_f'])
 
 
 # End Poland's views #
