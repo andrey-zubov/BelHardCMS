@@ -87,6 +87,23 @@ class ApplicantDet(View):
         return redirect(applicant_user.get_absolute_url())
 
 
+class ApplicantCVDet(View):
+    def get(self, request, id_a, id_c):
+        cv = CV.objects.get(id=id_c)
+        cv_v_in_w = cv.vacancies_in_waiting.all()
+        cv_v_a = cv.vacancies_accept.all()
+        cv_v_r = cv.vacancies_reject.all()
+        applicant = Client.objects.get(id=id_a)
+        vacancies = Vacancy.objects.filter(direction=cv.direction)
+        print('cv_v_a ',  cv_v_r)
+        print('vacancies', vacancies)
+        print('! ', vacancies | cv_v_r)
+        return render(request, 'recruit/recruit_applicant_cv_det.html',
+                      context={'cv': cv, 'cv_v_in_w': cv_v_in_w,
+                               'applicant': applicant, 'vacancies': vacancies,
+                               'cv_v_a': cv_v_a, 'cv_v_r': cv_v_r})
+
+
 class CreateJobInterview(View):
     def get(self, request, id_a):
         """Вывод на экран подтвержденных вакансий"""

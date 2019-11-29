@@ -25,6 +25,7 @@ urlpatterns = [
     path('base/', views.recruiter_base, name='base_url'),
     path('base/base_of_clients/', views.base_of_applicants, name='base_of_clients'),
     path('base/base_of_clients/<id_a>/', views.ApplicantDet.as_view(), name='applicant_url'),
+    path('base/base_of_clients/<id_a>/CV<id_c>/', views.ApplicantCVDet.as_view(), name='recruit_resume_detail_url'),
     path('base/base_of_clients/<id_a>/tasks/', views.CreateJobInterview.as_view(), name='applicant_tasks_url'),
     path('base/base_of_clients/<id_a>/edit_job_interview/',
          views.EditJobInterview.as_view(), name='applicant_edit_interviews_url'),

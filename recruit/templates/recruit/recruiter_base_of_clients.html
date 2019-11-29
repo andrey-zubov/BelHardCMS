@@ -23,7 +23,7 @@
                     <h5>
                         <div>
                         <a href="{{ applicant.get_absolute_url }}" id="{{ applicant.id }}"> {{ applicant.user_client.first_name }} {{ applicant.user_client.last_name }}  {{ applicant.patronymic }}</a>
-                        <!--<input type="image" infavor="{{ owner_list }}" src='https://image.freepik.com/free-vector/_53876-25533.jpg' class="white_star" id="{{ applicant.id }}" style="width: 32px; height: 32px; opacity: 0.35">-->
+                        <!--<input type="image" infavor="{ owner_list }}" src='https://image.freepik.com/free-vector/_53876-25533.jpg' class="white_star" id="{ applicant.id }}" style="width: 32px; height: 32px; opacity: 0.35">-->
                         {% if applicant.is_reserved %}
                             {% if applicnat.own_recruit != request.user%}
 

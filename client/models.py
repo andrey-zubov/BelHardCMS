@@ -210,6 +210,17 @@ class TypeSalary(models.Model):
         return self.type_word
 
 
+class Direction(models.Model):  # TeamRome
+    direction_word = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Направление"
+        verbose_name_plural = "Направления"
+
+    def __str__(self):
+        return self.direction_word
+
+
 class CV(models.Model):
     """ Резюме. ForeignKey = Несколько резюме у одного клиента. """
     client_cv = models.ForeignKey(to='Client', on_delete=models.CASCADE)
@@ -224,18 +235,23 @@ class CV(models.Model):
     salary = models.CharField(max_length=20, null=True, blank=True)
     type_salary = models.ForeignKey(TypeSalary, on_delete=models.SET_NULL,
                                     null=True, blank=True)
-    # There is Poland's upgrade
-    vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True, related_name='in_waiting_for_resume')
+    vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True,
+                                                  related_name='in_waiting_for_resume')
     vacancies_accept = models.ManyToManyField('Vacancy', blank=True,
                                               related_name='accept_for_resume')
-    vacancies_reject = models.ManyToManyField('Vacancy', blank=True, related_name='reject_for_resume')
-    notification = models.ManyToManyField('Vacancy', blank=True, related_name='notifications_for_resume')
+    vacancies_reject = models.ManyToManyField('Vacancy', blank=True,
+                                              related_name='reject_for_resume')
+    notification = models.ManyToManyField('Vacancy', blank=True,
+                                          related_name='notifications_for_resume')
 
     def __str__(self):
         return self.position
 
     def get_absolute_url(self):
         return reverse('resume_detail_url', kwargs={'id_c': self.id})
+
+    def get_absolute_url2(self):
+        return reverse('recruit_resume_detail_url', kwargs={'id_c': self.id})
 
     def get_accept_url(self):
         return reverse('accepted_vacancies_url', kwargs={'id_c': self.id})
@@ -258,20 +274,7 @@ class State(models.Model):
         return self.state_word
 
 
-class Direction(models.Model):  # TeamRome
-    direction_word = models.CharField(max_length=100, blank=True, null=True)
-
-    class Meta:
-        verbose_name = "Направление"
-        verbose_name_plural = "Направления"
-
-    def __str__(self):
-        return self.direction_word
-
-
-# Poland Task 1 & 2 #
-
-
+# PolandTeam
 class Vacancy(models.Model):
     """ Модель вакансий. ForeignKey - несколько вакансий у одного работодателя. """
     employer = models.ForeignKey(to='Employer', on_delete=models.CASCADE,
