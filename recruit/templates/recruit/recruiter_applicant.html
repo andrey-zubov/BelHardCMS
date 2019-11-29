@@ -34,7 +34,7 @@
     <div class="p-sm-5 pt-sm-1">
         <h2 class="mb-5"> {{ applicant_user.user_client.last_name }} {{ applicant_user.user_client.first_name }} {{ applicant_user.patronymic }}</h2>
         {% for cv in applicant_user.cv_set.all %}
-            {{ cv }} <br>
+            <a href="{% url 'recruit_resume_detail_url' id_a=applicant_user.id id_c=cv.id %}">{{ cv }}</a><br>
         {% endfor %}
 
 
@@ -43,10 +43,9 @@
         </button>
 
         <!-- Modal -->
-        <div class="modal fade bd-example-modal-xl" id="ModalVacancy" tabindex="-1" role="dialog"
-             aria-labelledby="myExtraLargeModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog modal-xl" role="document">
+        <div class="modal fade bd-example-modal-lg" id="ModalVacancy" tabindex="-1" role="dialog"
+             aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel"> Данные вакансии </h5>
@@ -71,7 +70,7 @@
                                 <div class="form-group">
                                     <label for="sel_resume">Доступные вакансии:<br>(можно выбрать несколько)</label>
                                     <select size="5" name="id_v" id="sel_vacancy" multiple>
-                                        <option disabled>Выберите подходящие ваканции</option>
+                                        <option disabled>Выберите подходящие вакансии</option>
                                         {% for vacancy in vacancies %}
                                             <option value="{{ vacancy.id }}">{{ vacancy }} {{ vacancy.organization }}</option>
                                         {% endfor %}
