@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
-from client.edit.utility import time_it
 from recruit.models import Recruiter
 
 
