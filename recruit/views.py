@@ -73,9 +73,13 @@ class ApplicantDet(View):
         applicant_user = Client.objects.get(id=id_a)
         resumes = applicant_user.cv_set.all()
         vacancies = Vacancy.objects.all()
+        user = applicant_user.user_client
+        user_id = user.id
+        user_activ_tasks = Tasks.objects.filter(user=user, status=False)
         return render(request, 'recruit/recruiter_applicant.html',
                       context={'applicant_user': applicant_user,
-                               'resumes': resumes, 'vacancies': vacancies})
+                               'resumes': resumes, 'vacancies': vacancies,
+                               'user_activ_tasks': user_activ_tasks})
 
     def post(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
@@ -338,6 +342,97 @@ def check_mes(request):
     return JsonResponse(send, safe=False)
 
 
+class pattern_task(View):
+    '''Назначение новых и шаблонных задач рекрутером-клиенту.'''
+    def get(self, request):
+        client_id = request.GET['user_id']
+        pattern_tasks = RecruitPatternClient.objects.all()
+        check = 1
+        client_ac = Client.objects.get(id=client_id)
+        client_user = client_ac.user_client
+        client_activ_tasks = Tasks.objects.filter(user=client_user, status=False)
+
+        return render(request, template_name='recruit/pattern_task.html', context={'client_id': client_id,
+                                                                                   'pattern_tasks': pattern_tasks,
+                                                                                   'client': client_user,
+                                                                                   'check': check,
+                                                                                   'client_activ_tasks': client_activ_tasks})
+
+    def post(self, request):
+        if 'form1' in request.POST:
+            client_id = request.POST['user_id']
+            client_ac = Client.objects.get(id=client_id)
+            client_user = client_ac.user_client
+            client_activ_tasks = Tasks.objects.filter(user=client_user, status=False)
+            pattern_tasks = RecruitPatternClient.objects.all()
+            chosen_task = RecruitPatternClient.objects.get(title=request.POST['pattern_task'])
+            chosen_id = chosen_task.id
+            check = 2
+            return render(request, template_name='recruit/pattern_task.html', context={'client_id': client_id,
+                                                                                       'pattern_tasks': pattern_tasks,
+                                                                                       'check': check,
+                                                                                       'task': chosen_task,
+                                                                                       'task_id': chosen_id,
+                                                                                       'client_activ_tasks': client_activ_tasks})
+
+        if 'form2' in request.POST:
+            client = Client.objects.get(id=request.POST['user_id'])
+            client_user = client.user_client
+
+            newtask = Tasks.objects.create()
+            newtask.user = client_user
+            newtask.title = request.POST['task_title']
+            newtask.comment = str(request.POST['task_comment'])
+            newtask.save()
+
+            try: # если использован шаблон
+                pattern_id = request.POST['pattern_used']
+                pattern = RecruitPatternClient.objects.get(id=pattern_id)
+                all_subs = pattern.show_all
+
+                reqpost = request.POST
+                for sub in all_subs: # изменить шаблонные
+                    try:
+                        sub_text = request.POST['subtask_' + str(sub.id)]
+                        newsubtask = SubTasks(title=sub_text, task=newtask)
+                        print('first', sub, str('subtask_' + str(sub.id)))
+                    except:
+                        try:
+                            i += 1
+                            print('i:', i)
+                            newsubtask = SubTasks(title=reqpost['task_subtask' + str(i)], task=newtask)
+                        except:
+                            break
+                    newsubtask.save()
+                    print(str(newsubtask))
+            except:
+                pass
+
+            i = 0
+            while True: # добавление новых
+                i += 1
+                try:
+                    # return HttpResponse('task_subtask' + str(i))
+                    sub_text = request.POST['task_subtask' + str(i)]
+                    newsubtask = SubTasks(title=sub_text, task=newtask)
+                except:
+                    if i == 1:
+                        continue
+                    else:
+                        break
+                newsubtask.save()
+
+            try:
+                if Settings.objects.get(user=client).email_messages:
+                    send_email = EmailMessage('HR-system', 'У вас новая задача', to=[str(client.email)])
+                    send_email.send()
+            except Exception:
+                print('Exception: нет адреса электронной почты')
+            return redirect(client.get_add_client_task())
+        else:
+            return HttpResponse('ОШИБКА В НАЗВАНИИ ФФОРЫФ')
+
+
 class change_task(View):
     def get(self, request, id_t):
         task = Tasks.objects.get(id=id_t)
@@ -371,9 +466,11 @@ class client_task_adding(View):
         client = Client.objects.get(id=id_a)
         client_user = client.user_client #ссылается на UserModel
         client_activ_tasks = Tasks.objects.filter(user=client_user, status=False) #просмотр активных задач клинета
+        client_closed_tasks = Tasks.objects.filter(user=client_user, status=True)
         return render(request, template_name='recruit/adding_task_to_client.html', context={'client':client,
                                                                                             'client_user': client_user,
-                                                                                            'client_activ_tasks':client_activ_tasks,})
+                                                                                            'client_activ_tasks':client_activ_tasks,
+                                                                                            'client_closed_tasks': client_closed_tasks})
 
 
     def post(self, request, id_a):
@@ -447,9 +544,6 @@ def recruit_base(request):
 
 # функция поиска по списку клиентов, для рекрутера
 def client_filtration(request, own_status):
-    if own_status == 'all':
-        clients_after_search = Client.objects.all()
-        return clients_after_search
     recruit = Recruiter.objects.get(recruiter=request.user)
     search_request = request.GET.get('recruit_search', '')
     clients_after_search = set()
@@ -481,7 +575,9 @@ def client_filtration(request, own_status):
             clients_after_search.update(users_for_last_name)
             clients_after_search.update(users_for_patronymic)
     else:
-
+        if own_status == 'all':
+            clients_after_search = Client.objects.all()
+            return clients_after_search
         clients_after_search = Client.objects.filter(own_recruiter=own_status)
 
     return clients_after_search
