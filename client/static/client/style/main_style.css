@@ -122,15 +122,12 @@ body{
     display: table-cell;
     vertical-align: middle;
     text-align: center;
-    max-width: 150ch;
-    width: 100%;
-    margin: auto
+    width: 150ch;
 }
 
-
-
-img{
-  margin: auto 0;
+.content img{
+    margin: auto;
+    display: block;
 }
 
 .notification{
