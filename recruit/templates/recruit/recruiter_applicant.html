@@ -215,7 +215,15 @@
     <div class="applicant-content">
         <div class="btns">
             <a class="applicant_btn" href="{{ applicant_user.get_tasks_url }}"> Собеседования клиента </a>
-            <a class="applicant_btn" href="{{ applicant_user.get_add_client_task }}">Задачи клиента </a>
+            <br><br>
+            <div>
+                {% for activ_task in user_activ_tasks %}
+                    {{  activ_task.title }}
+                    <br>
+                {%  endfor %}
+
+            </div>
+            <a class="applicant_btn" href="{{ applicant_user.get_add_client_task }}">Побробнее</a>
         </div>
 
 
