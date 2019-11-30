@@ -42,9 +42,9 @@
                 <option disabled>Выберите подходящие вакансии</option>
                 {% for vacancy in vacancies %}
                         {#% if vacancy not in cv.vacancies_in_waiting.all and vacancy not in vacancies_accept.all and vacancy not in vacancies_reject.all %#}
-                        {#% if vacancy not in cv.vacancies_in_waiting.all and vacancy not in vacancies_accept.all and vacancy not in vacancies_reject.all %#}
+                        {% if vacancy not in sum_cv %}
                             <option value="{{ vacancy.id }}">{{ vacancy }} {{ vacancy.organization }}</option>
-                        {#% endif %#}
+                        {% endif %}
                 {% endfor %}
             </select>
 

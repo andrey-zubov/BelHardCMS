@@ -57,14 +57,15 @@ def base_of_applicants(request):
     recruiter = Recruiter.objects.get(recruiter=request.user)
     owner_list = Client.objects.filter(own_recruiter=recruiter)
     owner_range = len(owner_list)
-
+    # url_check = 'base_of_applicants'
     clients_after_search = client_filtration(request, own_status)
     applicants = clients_after_search
     return render(request,
                   template_name='recruit/recruiter_base_of_clients.html',
                   context={'applicants': applicants,
                            'owner_list': owner_list,
-                           'owner_range': owner_range})
+                           'owner_range': owner_range,
+                           })
 
 
 class ApplicantDet(View):
@@ -82,7 +83,7 @@ class ApplicantDet(View):
                                'user_activ_tasks': user_activ_tasks})
 
     def post(self, request, id_a):
-        """ Отправка соискателю вакансии на рассмотрение (с фронта) """
+        """ Отправка соискателю вакансии на рассмотрение (с фронта). """
         applicant_user = Client.objects.get(id=id_a)
         response = request.POST
         resume = CV.objects.get(id=response['id_cv'])
@@ -103,13 +104,10 @@ class ApplicantCVDet(View):
         cv_v_r = cv.vacancies_reject.all()
         applicant = Client.objects.get(id=id_a)
         vacancies = Vacancy.objects.filter(direction=cv.direction)
-        print('cv_v_a ',  cv_v_r)
-        print('vacancies', vacancies)
-        print('! ', vacancies | cv_v_r)
+        sum_cv = cv_v_in_w | cv_v_a | cv_v_r
         return render(request, 'recruit/recruit_applicant_cv_det.html',
-                      context={'cv': cv, 'cv_v_in_w': cv_v_in_w,
-                               'applicant': applicant, 'vacancies': vacancies,
-                               'cv_v_a': cv_v_a, 'cv_v_r': cv_v_r})
+                      context={'cv': cv, 'sum_cv': sum_cv,
+                               'applicant': applicant, 'vacancies': vacancies})
 
 
 class CreateJobInterview(View):
@@ -308,8 +306,6 @@ class Vacancies(View):
         v = Vacancy(
             state=response['position'],
             salary=response['salary'],
-            organization=response['organization'],
-            address=response['address'],
             employment=response['employment'],
             description=response['description'],
             skills=response['skills'],
@@ -643,7 +639,8 @@ def favorites(request):
     own_status = Recruiter.objects.get(recruiter=request.user)
     # own_status = recruit
     clients = client_filtration(request, own_status)
-    context = {'applicants': clients}
+    url_check = 1
+    context = {'applicants': clients, 'url_check': url_check}
 
     return render(request, template_name='recruit/favorites.html',
                   context=context)
