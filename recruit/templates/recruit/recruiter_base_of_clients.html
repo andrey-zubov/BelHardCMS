@@ -33,10 +33,10 @@
                             <input type="checkbox" id="check_{{ applicant.id }}" checked="{{applicant.is_reserved}}" hidden>
                                 <label for="check_{{ applicant.id }}"><img src="https://image.freepik.com/free-vector/_53876-25533.jpg" class="white_star" id="{{ applicant.id }}" style="width: 32px; height: 32px;"></label>
                             {% endif %}
-                            {% else %}
+                        {% else %}
                                 <input type="checkbox" id="check_{{ applicant.id }}" checked="{{applicant.is_reserved}}" hidden>
                                 <label for="check_{{ applicant.id }}"><img src="https://image.freepik.com/free-vector/_53876-25533.jpg" class="white_star" id="{{ applicant.id }}" style="width: 32px; height: 32px; opacity: 0.35"></label>
-                            {% endif %}
+                        {% endif %}
                         </div>
                     </h5>
 
