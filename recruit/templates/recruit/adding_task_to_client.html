@@ -1,8 +1,194 @@
+{#{% extends 'recruit/recruit_main_template.html' %}#}
+{#{% block content %}#}
+{#    <style>#}
+{##}
+{##}
+{#    .comeback{#}
+{#            margin-bottom: 20px;#}
+{#            margin-top: 100px;#}
+{#            margin-left: 50px;#}
+{#            float: left;#}
+{#            width: 100px;#}
+{#            text-decoration: none;#}
+{#            color: white;#}
+{#            background-color: #213d4d;#}
+{#            padding: 10px;#}
+{#            border-radius: 5px;#}
+{#            transition: all 0.3s linear;#}
+{#            cursor: pointer;#}
+{#        }#}
+{##}
+{#        .comeback:hover {#}
+{#            background-color: #8D7171;#}
+{#        }#}
+{##}
+{#        .login-form{#}
+{#            margin: 40px auto ;#}
+{#            width: 560px;#}
+{#        }#}
+{#        .form-group{#}
+{#            margin-top: 15px ;#}
+{#            clear:both;#}
+{#            text-align:right;#}
+{#            margin-top: 15px;#}
+{#        }#}
+{##}
+{#    label{#}
+{#        float:left;#}
+{#        padding-right: 20px;#}
+{#        color: #414141;#}
+{#        font-size: 20px;#}
+{#        font-family:open sans,sans-serif;#}
+{#        font-weight: bold;#}
+{#    }#}
+{#    #origin1{#}
+{#        margin-top: 15px;#}
+{#    }#}
+{##}
+{#    .put_here{#}
+{#        margin-bottom: 15px;#}
+{#    }#}
+{#    input{#}
+{#        width: 170.23px;#}
+{#        height: 20px;#}
+{#    }#}
+{##}
+{#    input[type='button'],#}
+{#    input[type='submit']{#}
+{#        background: #213d4d;#}
+{#        color: white;#}
+{#        border: none;#}
+{#        border-radius: 5px;#}
+{#        font-family:sans-serif;#}
+{#        cursor: pointer;#}
+{#        transition:all .3s linear;#}
+{#    }#}
+{##}
+{#    input[type='button']:hover,#}
+{#    input[type='submit']:hover{#}
+{#            background-color: #8D7171;#}
+{#        }#}
+{##}
+{#    .popup-btn{#}
+{#        text-decoration: none;#}
+{#        background: #213d4d;#}
+{#        outline: none;#}
+{#        border: none;#}
+{#        padding: 10px;#}
+{#        color: white;#}
+{#        border-radius: 5px;#}
+{#        transition: all 0.3s linear;#}
+{#        font-size: 15px;#}
+{#        cursor: pointer;#}
+{#    }#}
+{#    .popup-btn:hover {#}
+{#            background-color: #8D7171;#}
+{#        }#}
+{#    </style>#}
+{##}
+{#<form action="{{ applicant_user.get_add_client_task}}" method="post">#}
+{#    {% csrf_token %}#}
+{#<div class="login-form">#}
+{#            <div class="form-group">#}
+{#                <label for="task_title">Заголовок задачи:</label>#}
+{#                <input type="text" name="task_title" id="task_title"></div>#}
+{#            <div class="form-group">#}
+{#                <label for="task_comment">Комментарий к задаче:</label>#}
+{#                <input type="text" name="task_comment" id="task_comment">#}
+{#            <div class="form-group">#}
+{#                <label for="task_subtask1">Задать подзадачи:</label>#}
+{#                <div>#}
+{#                    <div id="origin1">#}
+{#                        <input type="text" name="task_subtask1" id="task_subtask_q">#}
+{#                    </div>#}
+{#                    <div class="put_here">#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#                <input type="button" value="Добавить еще подзадачу" id="add_more_tasks">#}
+{#                <input type="submit" value="Назначить задачу">#}
+{#            </div>#}
+{#</div>#}
+{#</form>#}
+{#    <a class="popup-btn" href="{%  url 'pattern_task_url' %}">Добавить шаблонную задачу</a>#}
+{#    <button  class="client_activ_tasks popup-btn">Показать активные задачи пользователя</button>#}
+{#<div>#}
+{##}
+{#    <div class="activ_tasks" name="activ_tasks" hidden>#}
+{#        {% for tas in client_activ_tasks %}#}
+{##}
+{#        <button class="fortask" id="idfortas{{ tas.id }}">#}
+{#            {{ tas.title }}#}
+{#        </button>#}
+{#            <a href="{{ tas.change_task }}">изменить</a>#}
+{#            <br>#}
+{##}
+{#            <br>#}
+{#             <div id="forsubtask{{ tas.id }}" hidden>#}
+{#                {% for sub in tas.show_all %}#}
+{#                    {{ sub.title }}#}
+{#                 <br>#}
+{#                {% endfor %}#}
+{##}
+{##}
+{#            </div><hr>#}
+{#        {% endfor %}#}
+{#    </div>#}
+{#    </div>#}
+{##}
+{#<a class='comeback'  onclick="javascript:history.back(); return false;">Назад</a>#}
+{#<script>#}
+{##}
+{#        $(document).ready(function () {#}
+{#            $('.content').css('display', 'block');#}
+{#            $('.content').css('overflow', 'auto');#}
+{#            let count = 2;#}
+{#            let tasks = $('.activ_tasks')#}
+{##}
+{#            $("#add_more_tasks").on("click", function () {#}
+{#                let origin ='<div id="origin1"><input type="text" name="task_subtask'+ count +'"id="task_subtask_q"><br></div>';#}
+{#                $('.put_here').append(origin);#}
+{#                count++;#}
+{#                console.log(count);#}
+{#            });#}
+{##}
+{#            $('.client_activ_tasks').on('click', function () {#}
+{#                if( tasks.is(":hidden")){#}
+{#                    $(tasks).show()#}
+{#                }#}
+{#                else {#}
+{#                      $(tasks).hide()#}
+{#                }#}
+{#            });#}
+{##}
+{#            $('.fortask').on('click', function () {#}
+{#                let this_task = $(this).attr('id').slice(8)#}
+{#                let task_id = 'forsubtask' + this_task#}
+{#                let task_to_show = $('#' + task_id)#}
+{##}
+{#                if( task_to_show.is(":hidden")){#}
+{#                       $(task_to_show).show()#}
+{#                }#}
+{#                else {#}
+{#                      $(task_to_show).hide()#}
+{#                }#}
+{##}
+{##}
+{##}
+{#            });#}
+{##}
+{##}
+{##}
+{#        });#}
+{##}
+{#</script>#}
+{##}
+{#{% endblock %}#}
+
 {% extends 'recruit/recruit_main_template.html' %}
 {% block content %}
+
     <style>
-
-
     .comeback{
             margin-bottom: 20px;
             margin-top: 100px;
@@ -117,6 +303,41 @@
     <div class="activ_tasks" name="activ_tasks" hidden>
         {% for tas in client_activ_tasks %}
 
+<article>Активные задачи клиента {{ client }}</article>
+<form action="{% url 'pattern_task_url' %}">
+    <input type="text" name="user_id" value="{{ client.id }}" hidden>
+    <button type="submit">Назначить задачу</button>
+
+</form>
+<hr>
+<div>
+    {% for tas in client_activ_tasks %}
+    <button class="fortask" id="idfortas{{ tas.id }}">
+            {{ tas.title }}
+        </button>
+            <br>
+             <div id="forsubtask{{ tas.id }}" hidden>
+                {% for sub in tas.show_all %}
+                    {{ sub.title }}
+                 <br>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+</div>
+<br>
+
+
+
+
+<br>
+
+
+<button class="client_closed_tasks">Показать выполненные задачи</button>
+    <div class="closed_tasks" name="closed_tasks" hidden>
+        {% for tas in client_closed_tasks %}
+
+
         <button class="fortask" id="idfortas{{ tas.id }}">
             {{ tas.title }}
         </button>
@@ -143,7 +364,7 @@
             $('.content').css('display', 'block');
             $('.content').css('overflow', 'auto');
             let count = 2;
-            let tasks = $('.activ_tasks')
+            let tasks = $('.closed_tasks')
 
             $("#add_more_tasks").on("click", function () {
                 let origin ='<div id="origin1"><input type="text" name="task_subtask'+ count +'"id="task_subtask_q"><br></div>';
@@ -152,7 +373,7 @@
                 console.log(count);
             });
 
-            $('.client_activ_tasks').on('click', function () {
+            $('.client_closed_tasks').on('click', function () {
                 if( tasks.is(":hidden")){
                     $(tasks).show()
                 }

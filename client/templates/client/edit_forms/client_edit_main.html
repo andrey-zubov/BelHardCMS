@@ -178,7 +178,6 @@
         </form>
     </div>
     <div class="extra edit-title">Дополнительно:
-
                 <a class="extra-item" href="{% url 'client_edit_education' %}" id="edit_education">
                     Образование +</a>
                 <a class="extra-item" href="{% url 'client_edit_skills' %}" id="edit_skills">
@@ -220,7 +219,7 @@
             height: calc(100vh - 255px);
             overflow: auto;
             width: 100%;
-        padding-top: 20px;
+            padding-top: 20px;
         }
     .login-form {
             margin: 0 70px 40px;
@@ -231,7 +230,6 @@
             margin-top: 15px;
             clear: both;
             text-align: right;
-            margin-top: 15px;
         }
     label{
             float: left;
@@ -272,6 +270,7 @@
         border: none;
         font-size: 16px;
         font-weight: normal;
+        outline:none;
     }
     #add_more:hover,
     .btn-extra:hover,
