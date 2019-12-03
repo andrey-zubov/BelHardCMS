@@ -12,9 +12,9 @@
             {% csrf_token %}
             <div class="edit-title">Обновить фотографию
                 <p>Ваше текущая аватарка:
-                    <img src="{{ client_img }}" alt="img" height="64">
+                    <img src="{{ client_img|default:'' }}" alt="img" height="64">
                 </p>
-                <p>Выберите фото{{ form }}</p>
+                <p>Выберите файл для изменения {{ form }}</p>
             </div>
             <div class="navigation-bar">
                 <a class="btn-extra" href="{% url 'client_edit' %}">Назад</a>
