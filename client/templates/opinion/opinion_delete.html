@@ -1,15 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'client/main_template_client.html' %}
+{% load staticfiles %}
+
+    {% block title %} Отзыв {% endblock %}
+
+{% block content %}
 <form action="{{opinion.opinion_delete}}" method="post">
     {%csrf_token%}
-
-    <h3>You wanna delete {{opinion.title}}</h3>
-    <button type="submit" class="btn btn-primary">Delete</button>
+    <h3>Вы собираетесь удалить следующий отзыв:</h3>
+        <h2>{{opinion.title}}</h2>
+        <h4>{{opinion.text}}</h4>
+        <h5>{{opinion.date}}</h5>
+    <a class="btn-extra" href="{% url 'opinion_create' %}">Отмена</a>
+    <button type="submit" class="btn-extra">Удалить</button>
 </form>
-</body>
-</html>
+
+
+<style>
+.btn-extra{
+        padding: 5px;
+        margin-top: 10px;
+        background: #213d4d;
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all .3s linear;
+        border: none;
+        font-size: 16px;
+        font-weight: normal;
+        outline:none;
+    }
+    .btn-extra:hover{
+    background-color: #8D7171;
+}
+</style>
+{% endblock %}

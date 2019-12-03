@@ -6,13 +6,44 @@
 {% endblock %}
 
 {% block content %}
-    <h2 class="mb-5">Список всех предложений {{ resume.state }}:</h2>
-    {% for vacancy in resume.vacancies_all.all %}
-        {% include 'client/includes/vacancy_template.html' %}
-    {% endfor %}
-    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-      <div class="btn-group mr-2" role="group" aria-label="First group">
-        <a href="{% url 'resumes_list_url' %}" class="btn btn-secondary">Назад</a>
-      </div>
+    <div class="accepted-vacancies">
+        <h1 class="edit-title">Список всех предложений {{ resume.state }}:</h1>
+        {% for vacancy in resume.vacancies_all.all %}
+            {% include 'client/includes/vacancy_template.html' %}
+        {% endfor %}
+        <a class="btn-extra" href="{% url 'resumes_list_url' %}">Назад</a>
     </div>
+
+<style>
+ .edit-title{
+        font-size: 22px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+    }
+
+ .accepted-vacancies{
+     padding-top: 30px;
+     height: calc(100vh - 280px);
+     width: 100%;
+     overflow: auto;
+ }
+
+.btn-extra{
+        padding: 5px;
+        margin-top: 10px;
+        background: #213d4d;
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all .3s linear;
+        border: none;
+        font-size: 16px;
+        font-weight: normal;
+        outline:none;
+    }
+    .btn-extra:hover{
+    background-color: #8D7171;
+}
+</style>
 {% endblock %}

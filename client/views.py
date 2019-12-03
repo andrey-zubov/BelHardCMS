@@ -265,12 +265,12 @@ class OpinionCreate(View):
     def post(self, request):
         opinions = Opinion.objects.all()
         form = OpinionForm(request.POST)
-
         if form.is_valid():
             new_opinion = form.save(commit=False)
             new_opinion.user = request.user
             new_opinion.save()
-            return redirect('opinion_detail', pk=new_opinion.pk)
+            return redirect('opinion_create')
+            # return redirect('opinion_detail', pk=new_opinion.pk)
         client_instance = client_check(request.user)
         return render(request, 'opinion/opinion_create.html',
                       context={'form': form,
@@ -285,14 +285,14 @@ def opinion_detail(request, pk):
 
 class OpinionDelete(View):
     def get(self, request, pk):
-        opinion = Opinion.objects.filter(pk=pk)
+        opinion = get_object_or_404(Opinion, pk=pk)
         return render(request, 'opinion/opinion_delete.html',
                       context={'opinion': opinion})
 
     def post(self, request, pk):
         opinion = Opinion.objects.filter(pk=pk)
         opinion.delete()
-        return redirect(reverse('opinion_list'))
+        return redirect(reverse('opinion_create'))
 
 
 def client_login(request):  # ввести логин/пароль -> зайти в систему
