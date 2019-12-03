@@ -2,55 +2,50 @@
 {% load staticfiles %}
 
 {% block title %}
-    recruit Profile
+    Recruit Profile
 {% endblock %}
 
 {% block content %}
-    {% include 'client/edit_forms/tot_samui_bootstrap.html' %}
-    <div class="container">
-        <h3>Моя карточка</h3>
-        <div>
-            <p>
-                <img src="{{ recruit_img|default:'/media/user_1.png' }}" alt="img" class="m-sm-1" height="64">
-                <a href="{% url 'recruit_edit' %}" class="btn btn-outline-primary">Редактировать</a>
-                <a href="{% url 'recruiter_url' %}" class="btn btn-outline-danger">X</a>
-            </p>
-
-            <div>
-                <div>
-                    <h3>
-                        {{ data.user_model.first_name }}
-                        {{ data.user_model.last_name }}
-                        {{ data.recruit.patronymic }}
-                    </h3>
-                    <p>
-                        age: {{ data.age }} {{ data.nameage }},
-                        family_state: {{ data.recruit.family_state }},
-                        children: {{ data.recruit.children }} {{ data.namechild }},
-                    </p>
-                    <h3>Место жительства:</h3>
-                    <p>
-                        city: {{ data.recruit.city }},
-                        street: {{ data.recruit.street }},
-                        house: {{ data.recruit.house }},
-                        flat: {{ data.recruit.flat }}
-                    </p>
-                </div>
-
-                <div>
-                    <p> Телефон:
-                        {% for e in data.r_phone %}
-                            {{ e.telephone_number }},
-                        {% endfor %}
-                    </p>
-                    <p>Email: {{ data.user_model.email }}</p>
-                    <p>Telegram: {{ data.recruit.telegram_link }}</p>
-                    <p>Linkedin: <a href="{{ data.recruit.link_linkedin }}">{{ data.recruit.link_linkedin }}</a></p>
-                </div>
-            </div>
+<div class="profile-content">
+    <a class="close" href="{% url 'recruiter_url' %}">x</a>
+    <section class="profile-header">
+        <div class="status-block">
+            <h3 class="item-title">Моя карточка</h3>
+            <a class="edit-profile" href="{% url 'recruit_edit' %}">Редактировать</a>
         </div>
-        <div>
-            <h3>Образование</h3>
+        <img class="client-img" src="{{ recruit_img|default:'/media/user_1.png' }}" alt="img" height="170">
+        <div class="info-block">
+            <h3 class="name">
+                {{ data.user_model.first_name }}
+                {{ data.user_model.last_name }}
+                {{ data.recruit.patronymic }}
+            </h3>
+            <h3 class="private">
+                age: {{ data.age }} {{ data.nameage }},
+                family_state: {{ data.recruit.family_state }},
+                children: {{ data.recruit.children }} {{ data.namechild }}
+            </h3>
+            <h3 class="private-info"> Место жительства:<span class = "info-item">
+                    city: {{ data.recruit.city }},
+                    street: {{ data.recruit.street }},
+                    house: {{ data.recruit.house }},
+                    flat: {{ data.recruit.flat }}</span>
+            </h3>
+            <h3 class="private-info"> Телефон:
+                {% for e in data.r_phone %}
+                    {{ e.telephone_number }},
+                {% endfor %}
+            </h3>
+            <h3 class="private-info">Email:  <h6 class = "info-item">{{ data.user_model.email }}</h6></h3>
+            <h3 class="private-info">Telegram: <span class = "info-item">{{ data.recruit.telegram_link }}</span></h3>
+            <h3 class="private-info">Linkedin: <a
+                    href="{{ data.recruit.link_linkedin }}">{{ data.recruit.link_linkedin }}</a></h3>
+        </div>
+    </section>
+
+    <section class="experience">
+        <div class="experience-item">
+            <h3 class="item-title">Образование</h3>
             {% for edu in data.r_edu_profile %}
                 <p>
                     institution: {{ edu.institution }},
@@ -58,11 +53,10 @@
                     specialization: {{ edu.specialization }}
                 </p>
             {% endfor %}
-            <a href="{% url 'recruit_show_education' %}"
-               class="list-group-item list-group-item-action list-group-item-info">Подробнее </a>
+            <a class="experience-more" href="{% url 'recruit_show_education' %}">Подробнее </a>
         </div>
-        <div>
-            <h3>Опыт работы</h3>
+        <div class="experience-item">
+            <h3 class="item-title">Опыт работы</h3>
             {% for exp in data.r_exp_profile %}
                 <p>
                     name: {{ exp.name }},
@@ -73,18 +67,126 @@
                     duties: {{ exp.duties }}
                 </p>
             {% endfor %}
-            <a href="{% url 'recruit_show_experience' %}"
-               class="list-group-item list-group-item-action list-group-item-info">Подробнее </a>
+            <a class="experience-more" href="{% url 'recruit_show_experience' %}">Подробнее </a>
         </div>
-        <div>
-            <h3>Навыки</h3>
-            <p>
+        <div class="experience-item">
+            <h3 class="item-title">Навыки</h3>
                 {% for s in data.r_skill_profile %}
-                    {{ s.skill }},
+                    <p>
+                    {{ s.skill }}
+                    </p>
                 {% endfor %}
-            </p>
-            <a href="{% url 'recruit_show_skills' %}"
-               class="list-group-item list-group-item-action list-group-item-info">Подробнее </a>
+            <a class="experience-more" href="{% url 'recruit_show_skills' %}">Подробнее </a>
         </div>
-    </div>
+    </section>
+</div>
+<style>
+h3,h6{
+    margin: 0;
+    padding: 0;
+}
+.profile-content{
+    position: relative;
+    margin: 15px;
+    border-radius: 10px;
+    border: 1px solid black;
+}
+.profile-header{
+    margin: 20px 0;
+    display: flex;
+    flex-direction: row;
+}
+.status-block{
+    margin: auto 25px;
+    font-size: 22px;
+    font-weight: bold;
+    font-family: "Arial", sans-serif;
+}
+.edit-profile{
+    background: #213d4d;
+    padding: 5px;
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all .3s linear;
+}
+.edit-profile:hover{
+    background-color: #8D7171;
+}
+.info-block{
+    margin-left: 30px;
+    text-align: start;
+}
+.name{
+    font-size: 25px;
+    font-weight: bold;
+    color: #414141;
+    margin-bottom: 15px;
+}
+.private{
+    font-size: 19px;
+    font-weight: normal;
+    color: #414141;
+}
+.private-info{
+    white-space: nowrap;
+    font-size: 19px;
+    font-weight: bold;
+    color: #414141;
+}
+.info-item{
+font-size: 19px;
+    font-weight: normal;
+    color: #414141;
+    white-space: nowrap;
+}
+.experience{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+.experience-item{
+    padding: 10px;
+    width: 234px;
+    min-height: 200px;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+.item-title{
+    margin-bottom: 10px;
+}
+.experience-more{
+    padding: 5px;
+    background: #213d4d;
+    text-decoration: none;
+    border-radius: 5px;
+    color: white;
+    transition: all 0.3s linear;
+}
+.experience-more:hover {
+    background-color: #8D7171;
+}
+.close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    width: 30px;
+    height: 30px;
+    background: #213d4d;
+    color: white;
+    line-height: 30px;
+    font-weight: bold;
+    transition: all 0.3s linear;
+    font-size: 25px;
+    font-weight: normal;
+}
+.close:hover {
+    background-color: #8D7171;
+}
+</style>
+
 {% endblock %}

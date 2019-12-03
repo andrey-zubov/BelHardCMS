@@ -6,113 +6,201 @@
 {% endblock %}
 
 {% block content %}
-    <table align="center">
-        <tr>
-
-            <td>
-                <div class="col-md-8">
-                    <h3>Моя карточка</h3>
-                    <p> {{ data.client.state }}
-                    <p>
-                        <a href="{% url 'client_edit' %}" class="btn btn-outline-primary">Редактировать</a>
-            </td>
-            <td><img src="{{ client_img }}" alt="img" class="m-sm-1" height="120"></td>
-
-
-            <td><h2>
-
+<div class="profile-content">
+    <a class="close-profile" href="{% url 'client' %}">x</a>
+    <section class="profile-header">
+        <div class="status-block">
+             <h3 class="item-title">Моя карточка</h3>
+             <h3 class="item-title status">{{ data.client.state }}</h3>
+             <a class="edit-profile" href="{% url 'client_edit' %}">Редактировать</a>
+        </div>
+        <img class="client-img" src="{{ client_img }}" alt="img"  height="170">
+        <div class="info-block">
+            <h3 class="name">
                 {{ data.user_model.first_name }}
                 {{ data.user_model.last_name }}
-                {{ data.client.patronymic }}</h2>
-                <p>
-                    {{ data.age }} {{ data.nameage }},
-                    {{ data.client.family_state }},
-                    {{ data.client.children }} {{ data.namechild }}
-                <p>
-                    <a>Место жительства:</a>
-
+                {{ data.client.patronymic }}
+            </h3>
+            <h3 class="private">
+                age: {{ data.age }} {{ data.nameage }},
+                family_state: {{ data.recruit.family_state }},
+                children: {{ data.recruit.children }} {{ data.namechild }}
+            </h3>
+            <h3 class="private-info">Место жительства:<span class = "info-item">
                     {{ data.client.city }},
                     {{ data.client.street }},
                     {{ data.client.house }},
-                    {{ data.client.flat }}
-
-                <p>
+                    {{ data.client.flat }}</span>
+            </h3>
+            <h3 class="private-info">
                     <a> Телефон:</a>
                     {% for e in data.cl_phone %}
                         {{ e.telephone_number }}
-
                     {% endfor %}
-
-                <p>
-                    <a> Email: </a>
-                    {{ data.user_model.email }}
-
-
-                <p>
-                    <a> Telegram: </a>
-                    {{ data.client.telegram_link }}
-                <p>
-                    Linkedin:
-                    <a href="{{ data.client.link_linkedin }}">{{ data.client.link_linkedin }}</a></p></td>
-
-            <td><a href="{% url 'client' %}" class="btn btn-outline-danger">X</a></td>
-            </div>  </tr>
-
-
-        <tr>
-            <div>
-                <td><h3>Образование</h3>
+            </h3>
+            <h3 class="private-info">Email:  <h6 class = "info-item">{{ data.user_model.email }}</h6></h3>
+            <h3 class="private-info">Telegram: <span class = "info-item">{{ data.recruit.telegram_link }}</span></h3>
+            <h3 class="private-info">Linkedin: <a
+                    href="{{ data.recruit.link_linkedin }}">{{ data.recruit.link_linkedin }}</a></h3>
+        </div>
+    </section>
+    <section class="experience">
+            <div class="experience-item">
+               <h3 class="item-title">Образование</h3>
                     {% for e in data.cl_edu_profile %}
                         <p>
                             {{ forloop.counter }} {{ e.institution }} -
                             {{ e.qualification }}
                         </p>
                     {% endfor %}
-                    <a href="{% url 'client_show_education' %}"
-                       class="list-group-item list-group-item-action list-group-item-info">
-                        Подробнее </a></td>
+                    <a class="experience-more" href="{% url 'client_show_education' %}">
+                        Подробнее </a>
             </div>
-
-            <div>
-                <td><h3>Опыт работы</h3>
+            <div class="experience-item">
+                <h3 class="item-title">Опыт работы</h3>
                     {% for e in data.cl_exp_profile %}
                         <p>
                             {{ forloop.counter }} {{ e.start_date }} -
                             {{ e.end_date }} - {{ e.position }} - {{ e.name }}
                         </p>
                     {% endfor %}
-                    <a href="{% url 'client_show_experience' %}"
-                       class="list-group-item list-group-item-action list-group-item-info">
-                        Подробнее </a></td>
+                    <a class="experience-more" href="{% url 'client_show_experience' %}">
+                        Подробнее </a>
 
             </div>
-            <div>
-                <td><h3>Навыки</h3>
+            <div class="experience-item">
+                <h3 class="item-title">Навыки</h3>
                     {% for e in data.cl_skill_profile %}
                         <p>
                             {{ forloop.counter }} {{ e.skill }}
-
                         </p>
                     {% endfor %}
-                    <a href="{% url 'client_show_skills' %}"
-                       class="list-group-item list-group-item-action list-group-item-info">
-                        Подробнее </a></td>
+                    <a class="experience-more" href="{% url 'client_show_skills' %}">
+                        Подробнее </a>
             </div>
-
-            <div>
-                <td><h3>Мои резюме</h3>
+            <div class="experience-item">
+                <h3 class="item-title">Мои резюме</h3>
                     {% for e in data.cl_cvs_profile %}
                         <p>
                             {{ forloop.counter }} {{ e.position }}
-
                         </p>
                     {% endfor %}
-                    <a href="{% url 'client_show_cv' %}"
-                       class="list-group-item list-group-item-action list-group-item-info">Подробнее </a></td>
+                    <a class="experience-more" href="{% url 'client_show_cv' %}">Подробнее</a>
             </div>
-    </table>
-    </div>
-
-    </div>
-
+    </section>
+</div>
+<style>
+h3,h6{
+    margin: 0;
+    padding: 0;
+}
+.profile-content{
+    position: relative;
+    margin: 15px;
+    border-radius: 10px;
+    border: 1px solid black;
+}
+.profile-header{
+    margin: 20px 0;
+    display: flex;
+    flex-direction: row;
+}
+.status-block{
+    margin: auto 25px;
+    font-size: 22px;
+    font-weight: bold;
+    font-family: "Arial", sans-serif;
+}
+.edit-profile{
+    background: #213d4d;
+    padding: 5px;
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all .3s linear;
+}
+.edit-profile:hover{
+    background-color: #8D7171;
+}
+.info-block{
+    margin-left: 30px;
+    text-align: start;
+}
+.name{
+    font-size: 25px;
+    font-weight: bold;
+    color: #414141;
+    margin-bottom: 15px;
+}
+.private{
+    font-size: 19px;
+    font-weight: normal;
+    color: #414141;
+}
+.private-info{
+    white-space: nowrap;
+    font-size: 19px;
+    font-weight: bold;
+    color: #414141;
+}
+.info-item{
+font-size: 19px;
+    font-weight: normal;
+    color: #414141;
+    white-space: nowrap;
+}
+.experience{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+.experience-item{
+    padding: 10px;
+    width: 234px;
+    min-height: 200px;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+.item-title{
+    margin-bottom: 10px;
+}
+.status{
+    background: #ff4040;
+    padding: 5px;
+    color: white;
+    border-radius: 10px;
+}
+.experience-more{
+    padding: 5px;
+    background: #213d4d;
+    text-decoration: none;
+    border-radius: 5px;
+    color: white;
+    transition: all 0.3s linear;
+}
+.experience-more:hover {
+    background-color: #8D7171;
+}
+.close-profile {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    width: 30px;
+    height: 30px;
+    background: #213d4d;
+    color: white;
+    line-height: 30px;
+    font-weight: bold;
+    transition: all 0.3s linear;
+    font-size: 25px;
+    font-weight: normal;
+}
+.close-profile:hover {
+    background-color: #8D7171;
+}
+</style >
 {% endblock %}

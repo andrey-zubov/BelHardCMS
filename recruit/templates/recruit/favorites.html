@@ -1,11 +1,18 @@
 {% extends 'recruit/recruit_main_template.html' %}
 
 {% block content %}
+<style>
+.search{
+    width: 60%;
+}
+
+
+</style>
 <div class="search">
-    <form action="{% url 'favorites' %}">
-        <input type="search" name="recruit_search">
-        <button type="submit">поиск</button>
-    </form>
+        <form class="form_rb" action="{% url 'favorites' %}">
+            <input class="search_rb" type="search" name="recruit_search">
+            <input class="sb_small" type="submit" value="Поиск">
+        </form>
 </div>
 
 <div id="client-list" class="panel" style="width: 100%; height: 70%; border: 1px solid black; overflow-y: scroll;" onscroll="scroll(this);" >
@@ -15,7 +22,6 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <h5><a href="{{ applicant.get_absolute_url }}" id="{{ applicant.id }}"> {{ applicant.user_client.first_name }} {{ applicant.user_client.last_name }}  {{ applicant.patronymic }}</a>
-
                         <input type="image" src='https://image.freepik.com/free-vector/_53876-25533.jpg' class="yellow_star" id="{{ applicant.id }}" style="width: 32px; height: 32px">
                     </h5>
 
@@ -27,7 +33,6 @@
                             {{ cv }}<br>
                         {% endfor %}
                     {% endif %}
-
                 </div>
             </div>
         {% endfor %}

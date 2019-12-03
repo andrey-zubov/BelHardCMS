@@ -1,5 +1,94 @@
 {% extends 'recruit/recruit_main_template.html' %}
 {% block content %}
+
+<!--     <style>
+
+
+    .comeback{
+            margin-bottom: 20px;
+            margin-top: 100px;
+            margin-left: 50px;
+            float: left;
+            width: 100px;
+            text-decoration: none;
+            color: white;
+            background-color: #213d4d;
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s linear;
+            cursor: pointer;
+        }
+
+        .comeback:hover {
+            background-color: #8D7171;
+        }
+
+        .login-form{
+            margin: 40px auto ;
+            width: 560px;
+        }
+        .form-group{
+            margin-top: 15px ;
+            clear:both;
+            text-align:right;
+            margin-top: 15px;
+        }
+
+    label{
+        float:left;
+        padding-right: 20px;
+        color: #414141;
+        font-size: 20px;
+        font-family:open sans,sans-serif;
+        font-weight: bold;
+    }
+    #origin1{
+        margin-top: 15px;
+    }
+
+    .put_here{
+        margin-bottom: 15px;
+    }
+    input{
+        width: 170.23px;
+        height: 20px;
+    }
+
+    input[type='button'],
+    input[type='submit']{
+        background: #213d4d;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-family:sans-serif;
+        cursor: pointer;
+        transition:all .3s linear;
+    }
+
+    input[type='button']:hover,
+    input[type='submit']:hover{
+            background-color: #8D7171;
+        }
+
+    .popup-btn{
+        text-decoration: none;
+        background: #213d4d;
+        outline: none;
+        border: none;
+        padding: 10px;
+        color: white;
+        border-radius: 5px;
+        transition: all 0.3s linear;
+        font-size: 15px;
+        cursor: pointer;
+    }
+    .popup-btn:hover {
+            background-color: #8D7171;
+        } 
+    </style>-->
+
+
+
 <article>Активные задачи клиента {{ client }}</article>
 <form action="{% url 'pattern_task_url' %}">
     <input type="text" name="user_id" value="{{ client.id }}" hidden>
@@ -34,6 +123,7 @@
     <div class="closed_tasks" name="closed_tasks" hidden>
         {% for tas in client_closed_tasks %}
 
+
         <button class="fortask" id="idfortas{{ tas.id }}">
             {{ tas.title }}
         </button>
@@ -50,13 +140,15 @@
 
             </div><hr>
         {% endfor %}
-
+    </div>
     </div>
 
-
+<a class='comeback'  onclick="javascript:history.back(); return false;">Назад</a>
 <script>
 
         $(document).ready(function () {
+            $('.content').css('display', 'block');
+            $('.content').css('overflow', 'auto');
             let count = 2;
             let tasks = $('.closed_tasks')
 

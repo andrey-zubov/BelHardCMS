@@ -118,7 +118,7 @@ body{
 }
 
 .content{
-    height: calc(100vh - 220px);
+    height: calc(100vh - 240px);
     display: table-cell;
     vertical-align: middle;
     text-align: center;
