@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from recruit.models import Recruiter
 from recruit.models import (RecruitSkills, RecruitExperience, RecruitEducation,
-                             RecruitPatternClient, PatternSubTasks)
+                             RecruitPatternClient, PatternSubTasks, Recruiter,
+                            RecruitersTasks, RecruitersSubtasks)
 
 """ PEP 8: Wildcard imports (from <module> import *) should be avoided,
 as they make it unclear which names are present in the namespace,
@@ -36,5 +36,16 @@ class PatternTaskAdmin(admin.ModelAdmin):
     inlines = [PatternSubTask]
 
 
+class RecSubInline(admin.StackedInline):
+    model = RecruitersSubtasks
+    extra = 1
+
+
+class RecruitersTaskAdmin(admin.ModelAdmin):
+    model = RecruitersTasks
+    inlines = [RecSubInline]
+
+
 admin.site.register(Recruiter, RecruitAdmin)  # TeamRome
 admin.site.register(RecruitPatternClient, PatternTaskAdmin)
+admin.site.register(RecruitersTasks, RecruitersTaskAdmin)

@@ -712,3 +712,9 @@ class RecruitShowExperience(TemplateView):  # TeamRome
                     }
         return render(request, self.template_name, response)
 
+
+def recruiters_tasks(request):
+    all_tasks = RecruitersTasks.objects.all()
+
+    return render(request=request, template_name='recruit/recruiters_tasks.html', context={'all_tasks': all_tasks})
+
