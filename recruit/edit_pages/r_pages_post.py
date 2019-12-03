@@ -1,6 +1,6 @@
 from client.edit.edit_forms import UploadImgForm
 from client.edit.parsers import (pars_exp_request, pars_edu_request)
-from client.edit.utility import (time_it, try_except, check_input_str, check_home_number, check_telegram, check_phone)
+from client.edit.utility import (try_except)
 from client.models import (Sphere, Sex, Citizenship, FamilyState, Children, City, State)
 from recruit.models import (RecruitExperience, UserModel, Recruiter, RecruitTelephone, RecruitEducation,
                             RecruitCertificate)
@@ -8,14 +8,13 @@ from recruit.models import (RecruitSkills)
 
 
 @try_except
-@time_it
 def recruit_edit_page_post(recruit_instance, request):  # TeamRome
     """ views.py RecruitEditMain(TemplateView) POST method. """
     """ Входные данные для сохранения: """
     user = request.user
-    user_name = check_input_str(request.POST['recruit_first_name'])
-    last_name = check_input_str(request.POST['recruit_last_name'])
-    patronymic = check_input_str(request.POST['recruit_middle_name'])
+    user_name = request.POST['recruit_first_name']
+    last_name = request.POST['recruit_last_name']
+    patronymic = request.POST['recruit_middle_name']
     sex = Sex.objects.get(sex_word=request.POST['sex']) if request.POST['sex'] else None
     date_born = request.POST['date_born'] if request.POST['date_born'] else None
     citizenship = Citizenship.objects.get(country_word=request.POST['citizenship']) if request.POST[
@@ -25,11 +24,11 @@ def recruit_edit_page_post(recruit_instance, request):  # TeamRome
     children = Children.objects.get(children_word=request.POST['children']) if request.POST['children'] else None
     country = Citizenship.objects.get(country_word=request.POST['country']) if request.POST['country'] else None
     city = City.objects.get(city_word=request.POST['city']) if request.POST['city'] else None
-    street = check_input_str(request.POST['street'])
-    house = check_home_number(request.POST['house'])
-    flat = check_home_number(request.POST['flat'])
-    telegram_link = check_telegram(request.POST['telegram_link'])
-    skype = check_input_str(request.POST['skype_id'])
+    street = request.POST['street']
+    house = request.POST['house']
+    flat = request.POST['flat']
+    telegram_link = request.POST['telegram_link']
+    skype = request.POST['skype_id']
     email = request.POST['email']
     link_linkedin = request.POST['link_linkedin']
     state = State.objects.get(state_word=request.POST['state']) if request.POST['state'] else None
@@ -92,7 +91,7 @@ def recruit_edit_page_post(recruit_instance, request):  # TeamRome
     if any(tel):
         RecruitTelephone.objects.filter(recruit_phone=recruit_instance).delete()
     for t in tel:
-        t = check_phone(t)
+        # t = check_phone(t)
         if t:
             phone = RecruitTelephone(
                 recruit_phone=recruit,
@@ -102,7 +101,6 @@ def recruit_edit_page_post(recruit_instance, request):  # TeamRome
 
 
 @try_except
-@time_it
 def recruit_experience_page_post(recruit_instance, request):  # TeamRome
     """" views.py ClientEditExperience(TemplateView) POST method. """
     arr = pars_exp_request(request.POST)  # list of dictionaries
@@ -113,29 +111,23 @@ def recruit_experience_page_post(recruit_instance, request):  # TeamRome
         for dic in arr:
             if any(dic.values()):
                 """ If this dictionary hes any values? than take them and save to Exp. instance. """
-                organisation = dic['experience_1']
-                position = dic['experience_3']
-                start_date = dic['exp_date_start']
-                end_date = dic['exp_date_end']
-                duties = dic['experience_4']
-
                 experiences = RecruitExperience(
                     recruit_exp=recruit_instance,
-                    name=organisation,
-                    position=position,
-                    start_date=start_date,
-                    end_date=end_date,
-                    duties=duties,
+                    name=dic['name'],
+                    position=dic['position'],
+                    start_date=dic['start_date'],
+                    end_date=dic['end_date'],
+                    duties=dic['duties'],
                 )
                 experiences.save()
 
-                spheres = dic['experience_2']
-                for s in spheres:
-                    if s:
-                        """ Save ManyToManyField 'sphere' """
-                        sp = Sphere.objects.get(id=s)
-                        sp.save()
-                        experiences.sphere.add(sp)
+                if dic['sphere']:
+                    for s in dic['sphere']:
+                        if s:
+                            """ Save ManyToManyField 'sphere' """
+                            sp = Sphere.objects.get(id=s)
+                            sp.save()
+                            experiences.sphere.add(sp)
             else:
                 print('\tExperience Form is Empty')
     else:
@@ -143,8 +135,7 @@ def recruit_experience_page_post(recruit_instance, request):  # TeamRome
 
 
 @try_except
-@time_it
-def skills_page_post(recruit_instance, request):  # TeamRome
+def recruit_skills_page_post(recruit_instance, request):  # TeamRome
     skills_arr = request.POST.getlist('skill') if request.POST.getlist('skill') else None
 
     if any(skills_arr):
@@ -162,17 +153,16 @@ def skills_page_post(recruit_instance, request):  # TeamRome
 
 
 @try_except
-@time_it
 def photo_page_post(recruit_instance, request):  # TeamRome
-    form = UploadImgForm(request.POST, request.FILES)
-    if form.is_valid():
-        img = form.cleaned_data.get('img')
-        recruit_instance.img = img
-        recruit_instance.save()
+    if recruit_instance:
+        form = UploadImgForm(request.POST, request.FILES)
+        if form.is_valid():
+            img = form.cleaned_data.get('img')
+            recruit_instance.img = img
+            recruit_instance.save()
 
 
 @try_except
-@time_it
 def recruit_education_page_post(recruit_instance, request):  # TeamRome
     arr_edu = pars_edu_request(request.POST, request.FILES)  # list of dictionaries
 
@@ -181,32 +171,25 @@ def recruit_education_page_post(recruit_instance, request):  # TeamRome
         for edus in arr_edu:
             if any(edus.values()):
 
-                institution = edus['institution']
-                subject_area = edus['subject_area']
-                specialization = edus['specialization']
-                qualification = edus['qualification']
-                date_start = edus['date_start']
-                date_end = edus['date_end']
-                cert_arr = edus['certificate']
-
                 education = RecruitEducation(
                     recruit_edu=recruit_instance,
-                    institution=institution,
-                    subject_area=subject_area,
-                    specialization=specialization,
-                    qualification=qualification,
-                    date_start=date_start,
-                    date_end=date_end,
+                    institution=edus['institution'],
+                    subject_area=edus['subject_area'],
+                    specialization=edus['specialization'],
+                    qualification=edus['qualification'],
+                    date_start=edus['date_start'],
+                    date_end=edus['date_end'],
                 )
                 education.save()
 
-                for c in cert_arr:  # array of tuples
-                    certificate = RecruitCertificate(
-                        education=education,
-                        img=c[1],
-                        link=c[0],
-                    )
-                    certificate.save()
+                if edus['certificate']:
+                    for c in edus['certificate']:  # array of tuples
+                        certificate = RecruitCertificate(
+                            education=education,
+                            img=c[1],
+                            link=c[0],
+                        )
+                        certificate.save()
 
                 # print("\tEducation Form - OK:\n\t", institution, subject_area, specialization, qualification,
                 #       date_start, date_end, cert_arr)

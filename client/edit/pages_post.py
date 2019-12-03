@@ -1,13 +1,11 @@
 from client.edit.edit_forms import UploadImgForm
 from client.edit.parsers import (pars_edu_request, pars_cv_request, pars_exp_request)
-from client.edit.utility import (check_input_str, check_phone)
-from client.edit.utility import (time_it, try_except)
+from client.edit.utility import (try_except)
 from client.models import (Skills, Telephone, Sex, Citizenship, FamilyState, Children, City, State, Client, Education,
                            Certificate, CV, Experience, Sphere, Employment, TimeJob, TypeSalary, UserModel, Direction)
 
 
 @try_except
-@time_it
 def edit_page_post(client_instance, request):  # TeamRome
     """ views.py ClientEditMain(TemplateView) POST method. """
     """ Входные данные для сохранения: """
@@ -95,7 +93,7 @@ def edit_page_post(client_instance, request):  # TeamRome
     if any(tel):
         Telephone.objects.filter(client_phone=client_instance).delete()
     for t in tel:
-        t = check_phone(t)
+        # t = check_phone(t)
         if t:
             phone = Telephone(
                 client_phone=client,
@@ -105,7 +103,6 @@ def edit_page_post(client_instance, request):  # TeamRome
 
 
 @try_except
-@time_it
 def skills_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditSkills(TemplateView) POST method.  """
     skills_arr = request.POST.getlist('skill') if request.POST.getlist('skill') else None
@@ -118,7 +115,7 @@ def skills_page_post(client_instance, request):  # TeamRome
                 """ ОБЪЕДИНЕНИЕ модуля Навыки с конкретным залогиненым клиентом!!! """
                 skill = Skills(
                     client_skills=client_instance,
-                    skill=check_input_str(s, False)
+                    skill=s,
                 )
                 skill.save()
     else:
@@ -126,7 +123,6 @@ def skills_page_post(client_instance, request):  # TeamRome
 
 
 @try_except
-@time_it
 def photo_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditPhoto(TemplateView) POST method.
     В БД сохраняется УНИКАЛЬНОЕ имя картинки (пр: user_2_EntrmQR.png) в папке MEDIA_URL = '/media/' """
@@ -138,7 +134,6 @@ def photo_page_post(client_instance, request):  # TeamRome
 
 
 @try_except
-@time_it
 def education_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditEducation(TemplateView) POST method.  """
     arr_edu = pars_edu_request(request.POST, request.FILES)  # list of dictionaries
@@ -177,7 +172,6 @@ def education_page_post(client_instance, request):  # TeamRome
 
 
 @try_except
-@time_it
 def cv_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditCv(TemplateView) POST method. """
     if client_instance:
@@ -209,7 +203,6 @@ def cv_page_post(client_instance, request):  # TeamRome
 
 
 @try_except
-@time_it
 def experience_page_post(client_instance, request):  # TeamRome
     """" views.py ClientEditExperience(TemplateView) POST method. """
     arr = pars_exp_request(request.POST)  # list of dictionaries
@@ -222,19 +215,19 @@ def experience_page_post(client_instance, request):  # TeamRome
                 """ If this dictionary hes any values? than take them and save to Exp. instance. """
                 experiences = Experience(
                     client_exp=client_instance,
-                    name=dic['experience_1'],
-                    position=dic['experience_3'],
-                    start_date=dic['exp_date_start'],
-                    end_date=dic['exp_date_end'],
-                    duties=dic['experience_4'],
+                    name=dic['name'],
+                    position=dic['position'],
+                    start_date=dic['start_date'],
+                    end_date=dic['end_date'],
+                    duties=dic['duties'],
                 )
                 experiences.save()
 
-                if dic['experience_2']:
-                    for s in dic['experience_2']:
+                if dic['sphere']:
+                    for s in dic['sphere']:
                         if s:
                             """ Save ManyToManyField 'sphere' """
-                            sp = Sphere.objects.get(id=s)
+                            sp = Sphere.objects.get(id=s)  # type(s) == str !!!
                             sp.save()
                             experiences.sphere.add(sp)
 
