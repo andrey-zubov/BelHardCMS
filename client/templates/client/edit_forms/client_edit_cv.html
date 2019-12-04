@@ -6,7 +6,6 @@
 {% endblock %}
 
 {% block content %}
-    {% include 'client/edit_forms/tot_samui_bootstrap.html' %}
     {# <!-- JS добавления однотипных форм. ONLY FOR THIS CUSTOM FORM -->#}
     <script type="text/javascript">
         $(document).ready(function () {
@@ -88,15 +87,13 @@
         });
     </script>
 
-    <div class="container">
+    <div class="edit-profile">
         <form method="post">
             {% csrf_token %}
-            <div id="div_to_add_new">
+            <div id="div_to_add_new" class="login-form edit-title edu">
                 {% for cv in data.cl_cvs %}
                     <div id="origin_div">
-
                         <h3 id="cv_h">Резюме {{ forloop.counter }}</h3>
-
                         <div class="form-group">
                             <label for="id_position">Должность</label>
                             <input type="text" class="form-control" id="id_position"
@@ -145,7 +142,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <h5>Уровень заработной платы</h5>
+                        <h5 class="edit-title">Уровень заработной платы</h5>
                         <div class="form-group">
                             <label for="id_salary">Сумма</label>
                             <input type="text" class="form-control" id="id_salary"
@@ -170,11 +167,81 @@
                     {% include 'client/edit_forms/cv_empty.html' %}
                 {% endfor %}
             </div>
-            <div class="text-center">
-                <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>
-                <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>
-                <input type="button" value="Добавить резюме" id="add_more" class="btn btn-outline-primary m-2">
+            <div class="navigation-bar">
+                <a class="btn-extra" href="{% url 'client_edit' %}">Назад</a>
+                <button type="submit" class="btn-extra" id="save">Сохранить все данные</button>
+                <input type="button" value="Добавить резюме" id="add_more" class="btn-extra">
             </div>
         </form>
     </div>
+    <style>
+    .edit-title{
+        font-size: 22px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+    }
+    .login-form {
+            margin: 0 70px 40px;
+            float: left;
+            width: 50%;
+        }
+ .edu{
+        margin: auto;
+        float: none}
+.form-group {
+            margin-top: 15px;
+            clear: both;
+            text-align: right;
+        }
+ label{
+            float: left;
+            padding-right: 20px;
+            color: #414141;
+            font-size: 20px;
+            font-family: open sans, sans-serif;
+            font-weight: bold;
+        }
+ input{
+        width: 298px;
+        height: 28px;
+        padding: 0;
+        border: 1px solid black;
+    }
+select{
+    width: 300px;
+    height: 28px;
+    padding: 0;
+        border: 1px solid black;
+}
+     .edit-profile {
+            height: calc(100vh - 255px);
+            overflow: auto;
+            width: 100%;
+            padding-top: 20px;
+            margin-bottom: 20px;
+        }
+    .navigation-bar{
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+    .btn-extra
+   {
+        padding: 5px;
+        margin-top: 10px;
+        background: #213d4d;
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all .3s linear;
+        border: none;
+        font-size: 16px;
+        font-weight: normal;
+        outline:none;
+    }
+    .btn-extra:hover
+    {
+    background-color: #8D7171;
+}
+    </style>
 {% endblock %}

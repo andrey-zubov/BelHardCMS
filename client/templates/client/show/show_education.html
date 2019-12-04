@@ -5,7 +5,8 @@
     Show Education
 {% endblock %}
 {% block content %}
-    <h3>Образование</h3>
+    <div class="edit-profile">
+    <h3 class="edit-title">Образование</h3>
     {% for edu in data.cl_edu %}
         <p>institution: {{ edu.institution }}</p>
         <p>subject_area: {{ edu.subject_area }}</p>
@@ -16,9 +17,52 @@
     {% endfor %}
 
 
-    <div class="text-center">
-        <a class="btn btn-outline-warning m-2" href="{% url 'client_profile' %}">Назад</a>
-        <a href="{% url 'client_edit_education' %}" type="button" id="add_more"
-           class="btn btn-outline-primary m-2">"Редактировать"</a>
+    <div class="navigation-bar">
+                <a class="btn-extra" href="{% url 'client_profile' %}">Назад</a>
+                <a href="{% url 'client_edit_education' %}" id="add_more"
+                    class="btn-extra">Редактировать</a>
     </div>
+    </div>
+ <style>
+ p{
+     font-size: 16px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+ }
+ .edit-title{
+        font-size: 22px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+    }
+   .edit-profile {
+            height: calc(100vh - 255px);
+            overflow: auto;
+            width: 100%;
+            padding-top: 20px;
+            margin-bottom: 20px;
+        }
+     .navigation-bar{
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+    .btn-extra
+   {
+        padding: 5px;
+        margin-top: 10px;
+        background: #213d4d;
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all .3s linear;
+        border: none;
+        font-size: 16px;
+        font-weight: normal;
+        outline:none;
+    }
+    .btn-extra:hover
+    {
+    background-color: #8D7171;
+}
+
 {% endblock %}

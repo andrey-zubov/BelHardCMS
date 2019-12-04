@@ -6,7 +6,6 @@
 {% endblock %}
 
 {% block content %}
-    {% include 'client/edit_forms/tot_samui_bootstrap.html' %}
     <script type="text/javascript">
         $(document).ready(function () {
             var origin = $("#id_skill").clone();
@@ -44,32 +43,90 @@
 
         });
     </script>
-    <div class="container">
+    <div class="edit-profile">
         <form method="post" id="origin_form">
             {% csrf_token %}
-            <div>
-                <h3 class="text-center">Навыки</h3>
-                <div id="div_to_add_new" class="input-group">
+            <div class="login-form edit-title edu">Навыки
+                <div id="div_to_add_new" class="skills">
                     {% for s in data.cl_skill %}
-                        <input type="text" class="form-control m-2 rounded" id="id_skill"
+                        <input type="text" class="form-control inp-skl" id="id_skill"
                                name="skill" value="{{ s }}" readonly>
                     {% empty %}
-                        <input type="text" class="form-control m-2 rounded" id="id_skill"
+                        <input type="text" class="form-control inp-skl" id="id_skill"
                                name="skill" value="" readonly>
                     {% endfor %}
                 </div>
 
-                <input type="text" class="form-control my-2" id="id_skill_input" list="data_list">
+                <input type="text" class="form-control inp-skl" id="id_skill_input" list="data_list">
                 <datalist id="data_list">
                     <option id="dl_option"></option>
                 </datalist>
 
             </div>
-            <div class="text-center">
-                <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>
-                <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>
-                <input type="button" value="Добавить Навыки" id="add_more" class="btn btn-outline-primary m-2">
+            <div class="navigation-bar">
+                <a class="btn-extra" href="{% url 'client_edit' %}">Назад</a>
+                <button type="submit" class="btn-extra" id="save">Сохранить все данные</button>
+                <input type="button" value="Добавить навык" id="add_more" class="btn-extra">
             </div>
         </form>
     </div>
+
+   <style>
+    .edit-profile {
+            height: calc(100vh - 255px);
+            overflow: auto;
+            width: 100%;
+            padding-top: 20px;
+            margin-bottom: 20px;
+        }
+   .navigation-bar{
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+   .btn-extra{
+       width: auto;
+        padding: 5px;
+        margin-top: 10px;
+        background: #213d4d;
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all .3s linear;
+        border: none;
+        font-size: 16px;
+        font-weight: normal;
+        outline:none;
+    }
+    .btn-extra:hover{
+    background-color: #8D7171;
+}
+    .skills{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .inp-skl{
+        border-radius: 5px;
+        margin-right: 10px;
+        margin-bottom: 5px;
+        width: 198px;
+        height: 28px;
+        padding: 0;
+        border: 1px solid black;
+    }
+   .login-form {
+            margin: 0 70px 40px;
+            float: left;
+            width: 50%;
+        }
+    .edu{
+        margin: auto;
+        float: none}
+
+    .edit-title{
+        font-size: 22px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+    }
+   </style>
 {% endblock %}

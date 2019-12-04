@@ -1,11 +1,60 @@
-<div class="card mb-5">
-    <div class="card-header">
+<div class="vacancy-template">
+    <div class="vacancy-header">
         <b>{{ vacancy.organization }}</b>
     </div>
-    <div class="card-body">
-        <h5 class="card-title">{{ vacancy.state }}</h5>
-        <p class="card-text"><b>{{ vacancy.salary }}</b></p>
-        <p class="card-text">{{ vacancy.description | truncatewords:20 }}</p>
-        <a  href="{{ vacancy.get_absolute_url }}" class="btn btn-secondary">Подробнее</a>
+    <div class="vacancy-body">
+        <h5 class="vacancy-title">{{ vacancy.state }}</h5>
+        <p class="vacancy-text"><b>{{ vacancy.salary }}</b></p>
+        <p class="vacancy-text">{{ vacancy.description | truncatewords:20 }}</p>
+        <a  class="btn-extra" href="{{ vacancy.get_absolute_url }}" >Подробнее</a>
     </div>
 </div>
+
+<style>
+    .vacancy-template{
+        width: 60%;
+        margin: 20px auto;
+    }
+
+    .vacancy-header{
+        font-size: 22px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+        text-align: center;
+    }
+
+    .vacancy-body{
+        width: auto;
+        text-align: start;
+    }
+
+    .vacancy-title{
+        font-size: 19px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+    }
+
+    .vacancy-text{
+        font-size: 16px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+    }
+
+    .btn-extra{
+        padding: 5px;
+        margin-top: 10px;
+        background: #213d4d;
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all .3s linear;
+        border: none;
+        font-size: 16px;
+        font-weight: normal;
+        outline:none;
+    }
+    .btn-extra:hover{
+    background-color: #8D7171;
+}
+</style>

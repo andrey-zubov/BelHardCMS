@@ -6,20 +6,49 @@
 {% endblock %}
 
 {% block content %}
-    <h2 class="mb-5 offset-md-0">Выбор резюме</h2>
-    {% for resume in resumes %}
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5><a href="{{ resume.get_absolute_url }}">{{ resume.position }}</a></h5>
-            </div>
-            <div class="card-body">
-
-                <b>
-                    Всего: {{ resume.vacancies_in_waiting.count|add:resume.vacancies_accept.count|add:resume.vacancies_reject.count }} |
-                    Принято: {{ resume.vacancies_accept.count }}    |
-                    Отклонено: {{ resume.vacancies_reject.count }}
-                </b>
-            </div>
+    <div class="resume-content">
+    <h1 class="edit-title">Мое резюме</h1>
+    <div class="resumes">
+{% for resume in resumes %}
+        <div class="resume-single">
+                <p><a href="{{ resume.get_absolute_url }}">{{ resume.position }}</a> Тестировщик</p>
+                <p> Всего: {{ resume.vacancies_in_waiting.count|add:resume.vacancies_accept.count|add:resume.vacancies_reject.count }}  </p>
+                 <p>Принято: {{ resume.vacancies_accept.count }}</p>
+                 <p> Отклонено: {{ resume.vacancies_reject.count }}</p>
         </div>
-    {% endfor %}
+ {% endfor %}
+    </div>
+        </div>
+    <style>
+        .edit-title{
+        font-size: 22px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+    }
+     .resume-content{
+        padding-top: 30px;
+        height: calc(100vh - 280px);
+        width: 100%;
+        overflow: auto;
+    }
+     .resumes{
+        display: grid;
+         grid-template-columns: 1fr 1fr;
+    }
+    .resume-single{
+        margin: 0 auto 20px;
+        width: auto;
+        height: auto;
+        border-radius: 15px;
+        border: 1px solid black;
+        padding: 20px;
+        text-align: start;
+    }
+     .resume-single p:first-child{
+         cursor: pointer;
+         font-size: 20px;
+         font-weight: bold;
+    }
+
+    </style>
 {% endblock %}

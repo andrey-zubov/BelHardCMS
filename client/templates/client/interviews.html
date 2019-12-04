@@ -6,23 +6,22 @@
 {% endblock %}
 
 {% block content %}
-<nav class="nav fixed-center" style="background-color: #344955; width: 100%; margin: 0 auto; max-width: 900px; display: flex; justify-content: space-between; align-items: center;">
-    <a class="nav-link text-white offset-md-4"><h3>Собеседования</h3><a class="offset-md-4"><a href="{% url 'client' %}" class="btn btn-secondary">X</a></a></a>
-</nav>
+<div class="interview-content edit-title">Собеседования
+    <a class="btn-faq" href="{% url 'client' %}" >X</a>
+
+
 <div class="active">
     {% for interview in interviews %}
         <div hidden>{{ interview.check_readstatus }}</div>
         <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox"> <a>({{ interview.jobinterviewtime }})</a>
         <button class="forinterviews" id="idforinterview{{ interview.id }}">{{ interview.name }}</button> <a>{{ interview.jobinterviewdate }}</a>
         <div class="show_interviews" id="forallinterviews{{ interview.id }}">
-
             {% for verbose_name, field in interview.show_all %}
                 <div class="check_all" id="check_all{{ all.id }}" type="checkbox">
                     <b>{{ verbose_name }}:</b> {{ field }}<br>
                 </div>
             {% endfor %}
             <button class="hide">Скрыть</button>
-
         </div>
         <hr>
     {% endfor %}
@@ -60,7 +59,7 @@
 </div>
 </div>
 
-
+</div>
 <script type="text/javascript">
     $('.show_interviews').hide()
     $('.hide_interviews').hide()
@@ -112,9 +111,46 @@ $('document').ready(function () {
             }
         });
     })
-
-
 });
 </script>
+<style>
+.interview-content{
+
+        position: relative;
+        padding: 20px;
+        height: calc(100vh - 280px);
+        overflow: auto;
+
+    }
+
+.btn-faq{
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        background: #213d4d;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all .3s linear;
+        border: none;
+        font-size: 18px;
+        font-weight: normal;
+        outline:none;
+        z-index: 100;
+
+    }
+    .btn-faq:hover{
+    background-color: #8D7171;
+}
+.edit-title{
+        font-size: 22px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+    }
+</style>
 {% endblock %}
 
