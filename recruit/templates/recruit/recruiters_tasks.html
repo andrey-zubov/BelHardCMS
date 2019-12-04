@@ -1,13 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-ЗДЕСЬ БУДЕТ ГОРОД САД<br>
-{% for i in all_tasks %}
-    {{ i }}
-{% endfor %}
-</body>
-</html>
+{% extends 'recruit/recruit_main_template.html' %}
+
+{% block content %}
+<div>
+    все задачи ВРЕМЕННОЕ<br>
+    {% for i in all_tasks %}
+        {{ i.title }}
+        <br>
+    {% endfor %}
+</div>
+------------------
+
+<div name="neraspredelennie">
+    НЕРАСПРЕДЕЛЕННЫЕ
+    {% for i in free_tasks %}
+        {{ i.title }}
+        <br>
+
+    {% endfor %}
+</div><br>
+
+<br>-----------------<br>
+
+<div name="moi_zadachi">
+    <h4>Мои задачи<br></h4>
+    {% for i in my_tasks %}
+        {{ i.title }}
+        <br>
+
+    {% endfor %}
+
+</div><br>
+
+{% endblock %}

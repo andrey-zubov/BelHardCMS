@@ -714,7 +714,13 @@ class RecruitShowExperience(TemplateView):  # TeamRome
 
 
 def recruiters_tasks(request):
+    me = Recruiter.objects.get(recruiter=request.user)
     all_tasks = RecruitersTasks.objects.all()
+    my_tasks = RecruitersTasks.objects.filter(recruiters=me)
+    free_tasks = RecruitersTasks.objects.filter(recruiters=None)
 
-    return render(request=request, template_name='recruit/recruiters_tasks.html', context={'all_tasks': all_tasks})
+
+    return render(request=request, template_name='recruit/recruiters_tasks.html', context={'all_tasks': all_tasks,
+                                                                                           'my_tasks': my_tasks,
+                                                                                           'free_tasks': free_tasks})
 

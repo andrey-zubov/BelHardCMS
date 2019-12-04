@@ -156,7 +156,7 @@ class RecruitersTasks(models.Model):
 
     # несколько рекрутеров на одну задачу???
     # при одном сабтаске 1 рекрутер?
-    recruiters = models.ForeignKey(Recruiter, on_delete=models.CASCADE)
+    recruiters = models.ForeignKey(Recruiter, null=True, blank=True, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     comment = models.TextField(max_length=300, blank=True,
                                null=True)
@@ -167,7 +167,7 @@ class RecruitersTasks(models.Model):
     def all_subs(self):
         return self.rec_subtasks.all()
 
-
+# не нжуны
 class RecruitersSubtasks(models.Model):
     task = models.ForeignKey(RecruitersTasks, on_delete=models.CASCADE,
                              related_name='rec_subtasks')
