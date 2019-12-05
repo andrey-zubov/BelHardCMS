@@ -718,12 +718,16 @@ def recruiters_tasks(request):
     all_tasks = RecruitersTasks.objects.all()
     my_tasks = RecruitersTasks.objects.filter(recruiters=me)
     free_tasks = RecruitersTasks.objects.filter(recruiters=None)
+    my_tasks_new = my_tasks.filter(status=False)
+    my_tasks_old = my_tasks.filter(status=True)
 
 
     return render(request=request, template_name='recruit/recruiters_tasks.html', context={'all_tasks': all_tasks,
                                                                                            'my_tasks': my_tasks,
                                                                                            'free_tasks': free_tasks,
-                                                                                           'me': me})
+                                                                                           'me': me,
+                                                                                           'my_tasks_new': my_tasks_new,
+                                                                                           'my_tasks_old': my_tasks_old})
 
 
 
@@ -738,5 +742,19 @@ def recruit_chooose_task(request):
     if choice == 1:
         rec_task.recruiters = recruiter
         rec_task.save()
+
+    return HttpResponse()
+
+
+def recruit_check_task(request):
+    my_id = request.GET['my_id']
+    task_id = request.GET['task_id']
+    this_task = RecruitersTasks.objects.get(id=task_id)
+    if this_task.status == False:
+        this_task.status = True
+    else:
+        this_task.status = False
+    this_task.save()
+
 
     return HttpResponse()

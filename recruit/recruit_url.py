@@ -11,7 +11,8 @@ from recruit.views import (base_of_applicants, CreateJobInterview,
                            RecruitEditMain, RecruitEditExperience,
                            RecruitEditSkills, RecruitEditPhoto,
                            RecruitEditEducation, RecruitShowSkills,
-                           RecruitShowEducation, RecruitShowExperience)
+                           RecruitShowEducation, RecruitShowExperience,
+                           recruit_check_task)
 
 """ PEP 8: Wildcard imports (from <module> import *) should be avoided, 
 as they make it unclear which names are present in the namespace, 
@@ -56,7 +57,7 @@ urlpatterns = [
     path('pattern_task/', views.pattern_task.as_view(), name='pattern_task_url'),
     path('recruiter_tasks/', views.recruiters_tasks, name='recruiters_tasks_url'),
     path('choose_rec_task/', views.recruit_chooose_task, name='choose_rec_task_url'),
-
+    path('rec_check_task/', views.recruit_check_task, name='recruit_check_task_url'),
 
     # Team Rome (start)
     path('profile/', RecruitProfile.as_view(), name='recruit_profile'),
