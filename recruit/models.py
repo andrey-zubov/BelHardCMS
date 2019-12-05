@@ -167,7 +167,7 @@ class RecruitersTasks(models.Model):
     def all_subs(self):
         return self.rec_subtasks.all()
 
-# не нжуны
+# не нжуны TODO
 class RecruitersSubtasks(models.Model):
     task = models.ForeignKey(RecruitersTasks, on_delete=models.CASCADE,
                              related_name='rec_subtasks')

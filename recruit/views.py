@@ -722,5 +722,21 @@ def recruiters_tasks(request):
 
     return render(request=request, template_name='recruit/recruiters_tasks.html', context={'all_tasks': all_tasks,
                                                                                            'my_tasks': my_tasks,
-                                                                                           'free_tasks': free_tasks})
+                                                                                           'free_tasks': free_tasks,
+                                                                                           'me': me})
 
+
+
+def recruit_chooose_task(request):
+    choice = int(request.GET['choice'])
+    my_id = request.GET['my_id']
+    user = UserModel.objects.get(id=my_id)
+    recruiter = Recruiter.objects.get(recruiter=user)
+    task_id = request.GET['task_id']
+    rec_task = RecruitersTasks.objects.get(id=task_id)
+
+    if choice == 1:
+        rec_task.recruiters = recruiter
+        rec_task.save()
+
+    return HttpResponse()

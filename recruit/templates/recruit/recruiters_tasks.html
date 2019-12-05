@@ -1,18 +1,27 @@
 {% extends 'recruit/recruit_main_template.html' %}
 
 {% block content %}
-<div>
-    все задачи ВРЕМЕННОЕ<br>
-    {% for i in all_tasks %}
-        {{ i.title }}
-        <br>
-    {% endfor %}
-</div>
+        <div name="УДАЛЬИТЬ НАХУЙ">
+        кто я (юзернейм): {{ request.user }} <br>
+        Рекрутер: {{ me.recruiter }}
+            <br>
+            мой ид {{ me.recruiter.id}} = {{ request.user.id }}
+
+
+        <div>
+            все задачи ВРЕМЕННОЕ<br>
+            {% for i in all_tasks %}
+                {{ i.title }}
+                <br>
+            {% endfor %}
+        </div></div>
 ------------------
 
 <div name="neraspredelennie">
-    НЕРАСПРЕДЕЛЕННЫЕ
+    <h4>НЕРАСПРЕДЕЛЕННЫЕ</h4>
     {% for i in free_tasks %}
+
+        <input type="checkbox" class="free_task" id="task_{{ i.id }}">
         {{ i.title }}
         <br>
 
@@ -24,6 +33,7 @@
 <div name="moi_zadachi">
     <h4>Мои задачи<br></h4>
     {% for i in my_tasks %}
+
         {{ i.title }}
         <br>
 
@@ -31,4 +41,39 @@
 
 </div><br>
 
+
+
+<script>
+    $('document').ready(function () {
+        let my_id = {{ request.user.id }}
+        console.log('hellp')
+        $('.free_task').on('click', function () {
+            console.log('test')
+            let task_id = $(this).prop('id').slice(5)
+            console.log(task_id)
+            console.log(my_id)
+            let choice = 1
+            console.log('tewat', choice)
+
+
+            $.ajax({
+                'url': '/recruit/choose_rec_task/',
+                'data': {'my_id': my_id,
+                        'task_id': task_id,
+                        'choice': choice},
+                success: function (success) {
+                    console.log('success')
+                }
+
+            })
+
+
+
+
+
+        });
+
+    })
+
+</script>
 {% endblock %}

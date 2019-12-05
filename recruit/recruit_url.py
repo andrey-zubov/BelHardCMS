@@ -55,6 +55,7 @@ urlpatterns = [
     path('change_task/<id_t>', views.change_task.as_view(), name='change_task_url'),
     path('pattern_task/', views.pattern_task.as_view(), name='pattern_task_url'),
     path('recruiter_tasks/', views.recruiters_tasks, name='recruiters_tasks_url'),
+    path('choose_rec_task/', views.recruit_chooose_task, name='choose_rec_task_url'),
 
 
     # Team Rome (start)
