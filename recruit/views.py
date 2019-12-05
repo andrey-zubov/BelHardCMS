@@ -1,9 +1,6 @@
-from time import perf_counter
-from collections import defaultdict
-
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import redirect, render
 from django.views.generic import View, TemplateView
 from django.db.models.functions import Lower
 from django.db.models import Q
@@ -25,8 +22,6 @@ from recruit.edit_pages.r_pages_post import (photo_page_post, recruit_skills_pag
 from recruit.edit_pages.r_pages_post import (recruit_edit_page_post,
                                              recruit_experience_page_post)
 from recruit.models import (Recruiter)
-
-from datetime import datetime
 
 from .models import *  # TODO fix *
 
@@ -57,7 +52,7 @@ def base_of_applicants(request):
     recruiter = Recruiter.objects.get(recruiter=request.user)
     owner_list = Client.objects.filter(own_recruiter=recruiter)
     owner_range = len(owner_list)
-    # url_check = 'base_of_applicants'
+    url_check = 'base_of_applicants'
     clients_after_search = client_filtration(request, own_status)
     applicants = clients_after_search
     return render(request,
@@ -65,6 +60,7 @@ def base_of_applicants(request):
                   context={'applicants': applicants,
                            'owner_list': owner_list,
                            'owner_range': owner_range,
+                           'url_check': url_check,
                            })
 
 
@@ -80,6 +76,7 @@ class ApplicantDet(View):
         return render(request, 'recruit/recruiter_applicant.html',
                       context={'applicant_user': applicant_user,
                                'resumes': resumes, 'vacancies': vacancies,
+                               'user_id': user_id,
                                'user_activ_tasks': user_activ_tasks})
 
     def post(self, request, id_a):

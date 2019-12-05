@@ -267,8 +267,8 @@ class State(models.Model):
     state_word = models.CharField(max_length=100)
 
     class Meta:
-        verbose_name = 'Стутус клиента'
-        verbose_name_plural = 'Стутус клиента'
+        verbose_name = 'Статус клиента'
+        verbose_name_plural = 'Статус клиента'
 
     def __str__(self):
         return self.state_word
