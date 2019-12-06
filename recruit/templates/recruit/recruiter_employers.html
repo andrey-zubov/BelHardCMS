@@ -1,0 +1,126 @@
+{% extends 'recruit/recruit_main_template.html' %}
+
+{% block title %}
+    Работодатели
+{% endblock %}
+
+{% block head %}
+
+    <!-- Bootstrap CSS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+</script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+</script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+{% endblock %}
+
+{% block content %}
+
+     <div class="container">
+        <form action="{% url 'employers_url' %}" method="get" class="form-inline">
+            <div class="form-group">
+                <!--label for="search_state">Название профессии</label-->
+                {% if found_name %}
+                    <input id="search_name" type="search" name="search_name"
+                           placeholder="Введите название организации" size="30" value="{{ found_name }}">
+                {% else %}
+                    <input id="search_name" type="search" name="search_name"
+                           placeholder="Введите название организации" size="30">
+                {% endif %}
+            </div>
+            <input type="submit" value="Найти">
+            <input type="submit" value="Показать все" name="all_values">
+        </form>
+    </div>
+    <br>
+
+    <div align="middle">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalNewEmployer">
+            + Добавить карточку работодателя...
+        </button>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade bd-example-modal-lg" id="ModalNewEmployer" tabindex="-1" role="dialog"
+         aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"> Данные работодателя </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" align="left">
+
+                    <form enctype='multipart/form-data' action="{% url 'employers_url' %}" method="post">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <label for="id_name">Название организации:</label>
+                            <input type="text" class="form-control" id="id_name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_address"> Адрес:</label>
+                            <input type="text" class="form-control" id="id_address" name="address">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_description">Описание:</label>
+                            <textarea class="form-control" id="id_description" name="description"></textarea>
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="LogoFile" name="files" accept="image/*">
+                            <label class="custom-file-label" for="LogoFile">Выбирите логотип</label>
+                        </div>
+
+
+                        <div class="modal-footer">
+                            <button type="reset" class="btn btn-secondary" data-dismiss="all-form">
+                                Очистить
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-primary">Добавить</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end Modal -->
+
+    <div class="container">
+        <div class="p-sm-5 pt-sm-1" style="overflow: auto">
+            {% for employer in employers %}
+                <div class="card mb-5">
+                    <div class="card-header">
+                        <b>{{ employer.name }}</b>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ employer.address }}</h5>
+                        <p class="card-text">{{ employer.description | truncatewords:20 }}</p>
+                        <a href="{{ employer.get_absolute_url }}" class="btn btn-secondary">Посмотреть активные вакансии</a>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+<script>
+// Add the following code if you want the name of the file appear on select
+$(".custom-file-input").on("change", function() {
+    var fileName = $(this).val().split("\\").pop();
+    $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+});
+</script>
+{% endblock %}
