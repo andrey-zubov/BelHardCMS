@@ -107,6 +107,11 @@ class ApplicantCVDet(View):
                                'applicant': applicant, 'vacancies': vacancies})
 
 
+def check_flag(request):
+    # print('check_flag', request.GET.get('check_flag'))
+    return HttpResponse('Done!')
+
+
 class CreateJobInterview(View):
     def get(self, request, id_a):
         """Вывод на экран подтвержденных вакансий"""
@@ -343,6 +348,7 @@ class Vacancies(View):
 
 class VacancyDet(View):
     def get(self, request, id_v):
+        # print('VacancyDet', request.GET.get('check_flag'))
         vacancy = Vacancy.objects.get(id=id_v)
         directions = Direction.objects.all().order_by('direction_word')
         return render(request, 'recruit/recruiter_vacancy_detail.html',
@@ -374,12 +380,6 @@ class DelVacancy(View):
         v = Vacancy.objects.get(id=request.POST['id_vac'])
         v.delete()
         return redirect('vacancies_url')
-
-
-# def del_file(request):
-#     file = FilesForJobInterviews.objacts.get(id=request.GET['id_f'])
-#     file.delete()
-#     return HttpResponse('id  ', request.GET['id_f'])
 
 
 # End Poland's views #

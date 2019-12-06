@@ -39,6 +39,7 @@ urlpatterns = [
     path('base/employers/', views.Employers.as_view(), name='employers_url'),
     path('base/employers/<id_e>/', views.EmployerDet.as_view(), name='employer_det_url'),
     path('base/employers/<id_e>/del_employer', views.EmployerDel.as_view(), name='employer_del_url'),
+    path('check_flag/', views.check_flag),
 
     # End TeamPoland ###############################################
 

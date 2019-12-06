@@ -161,7 +161,7 @@
                         <h5 class="card-title">{{ vacancy.state }}</h5>
                         <p class="card-text"><b>{{ vacancy.salary }}</b></p>
                         <p class="card-text">{{ vacancy.description | truncatewords:20 }}</p>
-                        <a href="{{ vacancy.get_absolute_url2 }}" class="btn btn-secondary">Подробнее</a>
+                        <a href="{{ vacancy.get_absolute_url2 }}" class="btn btn-secondary" id="base_vac">Подробнее</a>
                     </div>
                 </div>
             {% endfor %}
@@ -169,5 +169,18 @@
         </div>
     </div>
 
+<script>
+$('document').ready(function () {
+    $('#base_vac').on('click',function () {
+        $.ajax({'url':'/recruit/check_flag/',
+                'data':{'check_flag': 1},
+                success:function (data) {
+                    console.log(data);
+                }})
+
+    });
+})
+
+</script>
 
 {% endblock %}

@@ -533,7 +533,6 @@ def accept_reject(request):
             Vacancy.objects.get(
                 id=request.GET['id_v']).in_waiting_for_resume.filter(
                 client_cv=client):
-        print(request.GET['id_v'], 1)
         r = Vacancy.objects.get(
             id=request.GET['id_v']).in_waiting_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
@@ -546,7 +545,6 @@ def accept_reject(request):
             Vacancy.objects.get(
                 id=request.GET['id_v']).in_waiting_for_resume.filter(
                 client_cv=client):
-        print(request.GET['id_v'], 2)
         r = Vacancy.objects.get(
             id=request.GET['id_v']).in_waiting_for_resume.get(client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])
@@ -559,7 +557,6 @@ def accept_reject(request):
             Vacancy.objects.get(
                 id=request.GET['id_v']).reject_for_resume.filter(
                 client_cv=client):
-        print(request.GET['id_v'], 3)
         r = Vacancy.objects.get(id=request.GET['id_v']).reject_for_resume.get(
             client_cv=client)
         v = Vacancy.objects.get(id=request.GET['id_v'])

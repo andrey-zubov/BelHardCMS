@@ -143,10 +143,11 @@
 
 
         <div>
-            <h2> {{ applicant_user.user_client.last_name }} {{ applicant_user.user_client.first_name }} {{ applicant_user.patronymic }}</h2>
+            <h2 class="mb-5"> {{ applicant_user.user_client.last_name }} {{ applicant_user.user_client.first_name }} {{ applicant_user.patronymic }}</h2>
             {% for cv in applicant_user.cv_set.all %}
-                {{ cv }} <br>
+                <a href="{% url 'recruit_resume_detail_url' id_a=applicant_user.id id_c=cv.id %}">{{ cv }}</a><br>
             {% endfor %}
+
             <a class="add_offer" href="javascript:PopUpShow()">+ Добавить предложение</a>
 
         </div>
