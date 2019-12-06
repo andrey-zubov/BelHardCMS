@@ -1,0 +1,74 @@
+{% extends 'recruit/recruit_main_template.html' %}
+{% block title %} Ответить на отзыв {% endblock %}
+{% block content %}
+    <div class="single-opinion">
+    <h6 class="opinion-user">{{opinion.user}} <span>{{opinion.date}}</span></h6>
+                <h2 class="opinion-title">{{opinion.title}}</h2>
+                <h4 class="opinion-text">{{opinion.text}}</h4>
+    <form action="" method="post">
+            {%csrf_token%}
+            {{form.as_p}}
+            <button type="submit" class="btn-extra">Ответить</button>
+    <a class="btn-extra" href="{{opinion.admins_delete_opinion}}">Удалить</a>
+    </form>
+    </div>
+
+
+ <style>
+
+ p label{
+     display: none;
+ }
+
+ p textarea{
+     width: 100%;
+ }
+ .opinion-user{
+        color: black;
+        font-weight: 600;
+        font-size: 14px;
+    }
+    .opinion-user span{
+        color: #4d4d4d;
+        font-weight: 400;
+        font-size: 11px;
+    }
+
+    .opinion-title{
+        color: #333333;
+        font-weight: 700;
+        font-size: 29px;
+    }
+    .opinion-text{
+        color: #333;
+        font-weight: normal;
+        font-size: 23px;
+    }
+
+ .single-opinion{
+        text-align: left;
+        margin: 0 auto 20px;
+        width: 40%;
+        border-radius: 15px;
+        border: 1px solid black;
+        padding: 20px;
+    }
+    .btn-extra{
+        padding: 5px;
+        margin-top: 10px;
+        background: #213d4d;
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all .3s linear;
+        border: none;
+        font-size: 16px;
+        font-weight: normal;
+        outline:none;
+    }
+    .btn-extra:hover{
+    background-color: #8D7171;
+}
+</style>
+{% endblock %}

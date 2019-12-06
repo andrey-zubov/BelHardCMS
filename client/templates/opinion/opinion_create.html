@@ -7,13 +7,14 @@
     <div class="opinion-content edit-title">Мои отзывы:
         {% for opinion in opinions %}
             <div class="single-opinion">
-                <h2>{{opinion.title}}</h2>
-                <h4>{{opinion.text}}</h4>
-                <h5>{{opinion.date}}</h5>
-                <h3 >{{opinion.answer.text}}</h3>
+                <h2 class="opinion-title">{{opinion.title}}</h2>
+                <h4 class="opinion-text">{{opinion.text}}</h4>
+                <h5 class="opinion-date">{{opinion.date}}</h5>
                 {% if not opinion.answer.text %}
-                    <h6 style="font-weight: lighter">На данный момент еще не ответили</h6>
+                    <h6 class="answer-text">На данный момент еще не ответили</h6>
                     <a href="{{opinion.opinion_delete}}" class="btn-extra">Удалить</a>
+                {% else %}
+                    <h3 class="answer-text"><b>Ответ карьерного центра:</b><br>{{opinion.answer.text}}</h3>
                 {% endif %}
             </div>
     {%endfor%}
@@ -54,8 +55,31 @@
 
 </script>
     <style>
-    .single-opinion{
+    .opinion-date{
+        color: #4d4d4d;
+        font-weight: 400;
+        font-size: 11px;
+    }
 
+    .opinion-title{
+        color: #333333;
+        font-weight: 700;
+        font-size: 29px;
+    }
+    .opinion-text{
+        color: #333;
+        font-weight: normal;
+        font-size: 23px;
+    }
+
+    .answer-text{
+        opacity: 0.8;
+        font-weight: normal;
+        font-size: 13px;
+        padding-left: 20px;
+    }
+    .single-opinion{
+        text-align: left;
         margin: 0 auto 20px;
         width: 60%;
         border-radius: 15px;
