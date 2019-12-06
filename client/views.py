@@ -355,6 +355,7 @@ def check_subtask(request):
     sub_id = request.GET['sub_id']
     subtask = SubTasks.objects.get(id=sub_id)
     task_id = request.GET['task_id']
+    print(task_id)
     task = Tasks.objects.get(id=task_id)
     subtask_amount = len(task.show_all)
 
