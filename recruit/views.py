@@ -730,7 +730,6 @@ def recruiters_tasks(request):
                                                                                            'my_tasks_old': my_tasks_old})
 
 
-
 def recruit_chooose_task(request):
     choice = int(request.GET['choice'])
     my_id = request.GET['my_id']
@@ -755,6 +754,5 @@ def recruit_check_task(request):
     else:
         this_task.status = False
     this_task.save()
-
 
     return HttpResponse()
