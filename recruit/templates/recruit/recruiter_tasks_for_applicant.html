@@ -1,8 +1,30 @@
 {% extends 'recruit/recruit_main_template.html' %}
 
+{% block head %}
+
+    <!-- Bootstrap CSS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+</script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+</script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+{% endblock %}
+
+
 {% block title %}
     {{applicant_user.name}} {{ applicant_user.last_name }}
 {% endblock %}
+
 
 {% block content %}
 
@@ -54,7 +76,7 @@
                             {% for file in jobinterview.files_for_jobinterview.all %}
 
                                 <a type="button" class="btn btn-primary" href="{{ file.add_file.url }}">Скачать</a>
-                                {{ file }}<br>
+                                {{ file }} <br>
                             {% endfor %}
                         </div>
                         <div>
@@ -92,7 +114,7 @@
                                                     <h5>Выберите подтвержденную соискателем вакансию: *
                                                         <select name="vacancy" size="3" class="custom-select" required>
                                                             {% for vacancy in accepted_vacancies %}
-                                                                <option value="{{ vacancy.id }}">{{ vacancy }}</option>
+                                                                <option value="{{ vacancy.id }}">{{ vacancy }} в {{ vacancy.organization }}</option>
                                                             {% endfor %}
 
                                                         </select>
@@ -132,10 +154,18 @@
                                                     <input type="text" class="form-addition" id="id_addition"
                                                            name="addition" value="{{ jobinterview.additional_information }}"/>
                                                 </h5><br>
+                                                <h5>
+                                                    {% for file in jobinterview.files_for_jobinterview.all %}               <!--:::::::::::::::::::::::----------------------------------------->
+
+                                                        <a type="button" class="btn btn-primary"
+                                                        href="{{ file.add_file.url }}">Скачать</a>
+                                                    {{ file }} <button type="button" class="btn btn-primary del_file" id="{{ file.id }}">Удалить</button><br>
+                                                    {% endfor %}
+                                                </h5><br>
                                                 <div id="files-div">
                                                     <h5>
                                                         Добавить файл(ы): <input type='file'
-                                                                                 class="btn btn-secondary form-files"
+                                                                                 class="btn btn-secondary form-files-edit"
                                                                                  name='files' multiple="multiple"
                                                                                  id="form-files-edit" value=""/>
 
@@ -207,7 +237,7 @@
                             <h5>Выберите подтвержденную соискателем вакансию: *
                                 <select name="vacancy" size="3" class="custom-select" required>
                                     {% for vacancy in accepted_vacancies %}
-                                        <option value="{{ vacancy.id }}">{{ vacancy }}</option>
+                                        <option value="{{ vacancy.id }}">{{ vacancy }} в {{ vacancy.organization }}</option>
                                     {% endfor %}
 
                                 </select>
@@ -241,7 +271,7 @@
                         <div id="files-div">
                             <h5>
                                 Добавить файл(ы): <input type='file' class="btn btn-secondary form-files" name='files' multiple="multiple"
-                                                         id="form-files" value=""/>
+                                                         id="form-files" value="">
                                 <button type="button" class="btn btn-secondary" id="reset-files">Удалить файл(ы)
                                 </button>
                                 <br>
@@ -306,7 +336,8 @@
                                             {% for file in jobinterview.files_for_jobinterview.all %}
 
                                                 <a type="button" class="btn btn-primary" href="{{ file.add_file.url }}">Скачать</a>
-                                                {{ file }}<br>
+                                                {{ file }}
+                                                 <br>
                                             {% endfor %}
 
                                         </div>
@@ -323,6 +354,7 @@
             </div>
         </div>
     </div>
+</div>
 <script>
 
     $(document).ready(function () {
@@ -332,38 +364,5 @@
     });
 
 
-    /*
-$('document').ready(function () {
-    var first = { first_flag }}
-    var second = { second_flag }}
-    if (first){$('#first').attr('hidden',false)}
-    if (second){$('#second').attr('hidden',false)} */
-
-
-    /*actions for buttons*/
-   /* $('.accept').on('click',function () {
-        var id = $(this).attr('id');
-        $.ajax({'url':'/client/accept_reject/',
-                'data':{'flag':'accept',"id_v":id},
-                success:function (data) {
-                    console.log(data);
-                    $('#first').attr('hidden', true)
-                    $('#second').attr('hidden', false)
-                }})
-
-    });
-    $('.reject').on('click',function () {
-        var id = $(this).attr('id');
-        $.ajax({'url':'/client/accept_reject/',
-                'data':{'flag':'reject','id_v':id},
-                success:function (data) {
-                    console.log(data)
-                    $('#first').attr('hidden', false)
-                    $('#second').attr('hidden', true)
-                }})
-
-    });
-}) */
-
-    </script>
+</script>
 {% endblock %}

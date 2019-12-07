@@ -4,7 +4,59 @@
     Вакансии
 {% endblock %}
 
+{% block head %}
+
+    <!-- Bootstrap CSS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+</script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+</script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+{% endblock %}
+
 {% block content %}
+
+    <div class="container">
+        <form action="{% url 'vacancies_url' %}" method="get" class="form-inline">
+            <div class="form-group">
+                <!--label for="search_direction">Направление</label-->
+                <select class="form-control-search" id="search_direction" name="search_direction">
+                    <option value="">Выбирите направление</option>
+                    {% for direction in directions %}
+                        {% if found_direct == direction.id %}
+                            <option value="{{ direction.id }}" selected>{{ direction }}</option>
+                        {% else %}
+                            <option value="{{ direction.id }}">{{ direction }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <!--label for="search_state">Название профессии</label-->
+                {% if found_state %}
+                    <input id="search_state" type="search" name="search_state"
+                           placeholder="Введите название профессии" size="26" value="{{ found_state }}">
+                {% else %}
+                    <input id="search_state" type="search" name="search_state"
+                           placeholder="Введите название профессии" size="26">
+                {% endif %}
+            </div>
+            <input type="submit" value="Найти">
+            <input type="submit" value="Показать все" name="all_values">
+        </form>
+    </div>
+    <br>
+
     <div align="middle">
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalNewVacancy">
             + Добавить вакансию...
@@ -12,8 +64,7 @@
     </div>
     <!-- Modal -->
     <div class="modal fade bd-example-modal-xl" id="ModalNewVacancy" tabindex="-1" role="dialog"
-         aria-labelledby="myExtraLargeModalLabel"
-         aria-hidden="true">
+         aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" align="left">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -35,7 +86,20 @@
                                 <label for="id_salary"> &nbsp; Уровень заработной платы:</label>
                                 <input type="text" class="form-control" id="id_salary" name="salary" required>
                             </div>
-                        </div><br>
+                        </div>
+                        <br>
+
+                        <div class="form-group">
+                            <label for="direction">Направление *</label>
+                            <select class="form-control" id="direction" name="direction" required>
+                                <option disabled selected value="">Выбирите вариант</option>
+                                {% for direction in directions %}
+                                    <option value="{{ direction.id }}">{{ direction }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <br>
+
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="id_organization">Организация:</label>
@@ -97,7 +161,7 @@
                         <h5 class="card-title">{{ vacancy.state }}</h5>
                         <p class="card-text"><b>{{ vacancy.salary }}</b></p>
                         <p class="card-text">{{ vacancy.description | truncatewords:20 }}</p>
-                        <a href="{{ vacancy.get_absolute_url2 }}" class="btn btn-secondary">Подробнее</a>
+                        <a href="{{ vacancy.get_absolute_url2 }}" class="btn btn-secondary" id="base_vac">Подробнее</a>
                     </div>
                 </div>
             {% endfor %}
@@ -105,5 +169,18 @@
         </div>
     </div>
 
+<script>
+$('document').ready(function () {
+    $('#base_vac').on('click',function () {
+        $.ajax({'url':'/recruit/check_flag/',
+                'data':{'check_flag': 1},
+                success:function (data) {
+                    console.log(data);
+                }})
+
+    });
+})
+
+</script>
 
 {% endblock %}

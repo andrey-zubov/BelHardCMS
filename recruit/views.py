@@ -1,19 +1,15 @@
-from time import perf_counter
-from collections import defaultdict
-
 from django.core.mail import EmailMessage
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import redirect, render
 from django.views.generic import View, TemplateView
-from django.views.generic.edit import FormView
-from django.template.context_processors import csrf
-from django.urls import reverse
+from django.db.models.functions import Lower
+from django.db.models import Q
 
 from client.edit.check_clients import (load_client_img)
 from client.models import (CV, JobInterviews, FilesForJobInterviews, Vacancy,
                            State)
 from client.models import (Chat, Message, Tasks, UserModel, SubTasks, Settings,
-                           Client)
+                           Client, Employer, Direction)
 from recruit.edit_pages.check_recruit import (recruit_check)
 from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
 from recruit.edit_pages.r_pages_get import (recruit_edit_page_get,
@@ -26,8 +22,6 @@ from recruit.edit_pages.r_pages_post import (photo_page_post, recruit_skills_pag
 from recruit.edit_pages.r_pages_post import (recruit_edit_page_post,
                                              recruit_experience_page_post)
 from recruit.models import (Recruiter)
-
-from datetime import datetime
 
 from .models import *  # TODO fix *
 
@@ -58,17 +52,20 @@ def base_of_applicants(request):
     recruiter = Recruiter.objects.get(recruiter=request.user)
     owner_list = Client.objects.filter(own_recruiter=recruiter)
     owner_range = len(owner_list)
-
+    url_check = 'base_of_applicants'
     clients_after_search = client_filtration(request, own_status)
     applicants = clients_after_search
     return render(request,
                   template_name='recruit/recruiter_base_of_clients.html',
                   context={'applicants': applicants,
                            'owner_list': owner_list,
-                           'owner_range': owner_range})
+                           'owner_range': owner_range,
+                           'url_check': url_check,
+                           })
 
 
 class ApplicantDet(View):
+    """ Детальный просмотр профиля соискателя. """
     def get(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
         resumes = applicant_user.cv_set.all()
@@ -79,34 +76,51 @@ class ApplicantDet(View):
         return render(request, 'recruit/recruiter_applicant.html',
                       context={'applicant_user': applicant_user,
                                'resumes': resumes, 'vacancies': vacancies,
+                               'user_id': user_id,
                                'user_activ_tasks': user_activ_tasks})
 
     def post(self, request, id_a):
+        """ Отправка соискателю вакансии на рассмотрение (с фронта). """
         applicant_user = Client.objects.get(id=id_a)
         response = request.POST
         resume = CV.objects.get(id=response['id_cv'])
         vacancies_id = request.POST.getlist('id_v')
 
-        print('resume  ', resume)
-        print('vacansies_id ', vacancies_id)
         for id_v in vacancies_id:
             vacancy = Vacancy.objects.get(id=id_v)
             resume.vacancies_in_waiting.add(vacancy)
             resume.notification.add(vacancy)
-            print(vacancy)
-
         return redirect(applicant_user.get_absolute_url())
+
+
+class ApplicantCVDet(View):
+    def get(self, request, id_a, id_c):
+        cv = CV.objects.get(id=id_c)
+        cv_v_in_w = cv.vacancies_in_waiting.all()
+        cv_v_a = cv.vacancies_accept.all()
+        cv_v_r = cv.vacancies_reject.all()
+        applicant = Client.objects.get(id=id_a)
+        vacancies = Vacancy.objects.filter(direction=cv.direction)
+        sum_cv = cv_v_in_w | cv_v_a | cv_v_r
+        return render(request, 'recruit/recruit_applicant_cv_det.html',
+                      context={'cv': cv, 'sum_cv': sum_cv,
+                               'applicant': applicant, 'vacancies': vacancies})
+
+
+def check_flag(request):
+    # print('check_flag', request.GET.get('check_flag'))
+    return HttpResponse('Done!')
 
 
 class CreateJobInterview(View):
     def get(self, request, id_a):
+        """Вывод на экран подтвержденных вакансий"""
         applicant_user = Client.objects.get(id=id_a)
         if CV.objects.filter(client_cv=applicant_user):
             accepted_vacancies = applicant_user.cv_set.all()[
                 0].vacancies_accept.all()
             for resume in applicant_user.cv_set.all()[1:]:
                 accepted_vacancies |= resume.vacancies_accept.all()
-            # print(accepted_vacancies)
         else:
             accepted_vacancies = None
         return render(request, 'recruit/recruiter_tasks_for_applicant.html',
@@ -114,6 +128,7 @@ class CreateJobInterview(View):
                                'accepted_vacancies': accepted_vacancies})
 
     def post(self, request, id_a):
+        """ Создание собеседования для клиента """
         applicant_user = Client.objects.get(id=id_a)
         response = request.POST
 
@@ -123,9 +138,7 @@ class CreateJobInterview(View):
             name=response.get('name'),
             jobinterviewtime=response.get('time'),
             jobinterviewdate=response.get('date'),
-            # interview_author=Recruiter.objects.get(id=),
-            # Filling in this field will be automatic
-            # period_of_execution= #  I don't know why is this field needed
+            interview_author=recruit_check(request.user),
             position=response.get('position'),
             organization=response.get('organization'),
             responsible_person=response.get('responsible_person'),
@@ -134,12 +147,12 @@ class CreateJobInterview(View):
             location=response.get('address'),
             additional_information=response.get('addition'),
         )
+
         if response.get('vacancy'):
             j.vacancies = Vacancy.objects.get(id=int(response.get('vacancy')))
         j.save()
         if files:
             for file in files:
-                # print(file)
                 f = FilesForJobInterviews(
                     add_file=file,
                     jobinterviews_files=j,
@@ -150,17 +163,14 @@ class CreateJobInterview(View):
 
 class EditJobInterview(View):
     def post(self, request, id_a):
+        """ Редактирование собеседования """
         applicant_user = Client.objects.get(id=id_a)
         response = request.POST
         files = request.FILES.getlist('files')
-        # print(request.POST['id_job_edit'])
         j = JobInterviews.objects.get(id=request.POST['id_job_edit'])
         j.name = response.get('name')
         j.jobinterviewtime = response.get('time')
         j.jobinterviewdate = response.get('date')
-        # interview_author=Recruiter.objects.get(id=) # Filling in this field
-        # will be automatic
-        # period_of_execution= # I don't know why is this field needed
         j.position = response.get('position')
         j.organization = response.get('organization')
         j.responsible_person = response.get('responsible_person')
@@ -174,7 +184,6 @@ class EditJobInterview(View):
         j.save()
         if files:
             for file in files:
-                # print(file)
                 f = FilesForJobInterviews(
                     add_file=file,
                     jobinterviews_files=j,
@@ -184,6 +193,7 @@ class EditJobInterview(View):
 
 
 class DelJobInterview(View):
+    """ Удаление собеседования """
     def post(self, request, id_a):
         applicant_user = Client.objects.get(id=id_a)
         j = JobInterviews.objects.get(id=request.POST['id_job'])
@@ -191,19 +201,113 @@ class DelJobInterview(View):
         return redirect(applicant_user.get_tasks_url())
 
 
-class Vacancies(View):
+class Employers(View):
+    """ Вывод на экран базы работодателей.
+    Поиск по базе и вывод результата на экран. """
     def get(self, request):
-        vacancies = Vacancy.objects.all()
-        return render(request, 'recruit/recruiter_vacancies.html',
-                      context={'vacancies': vacancies})
+        search_name = request.GET.get('search_name', '')
+        found_name = ''
+        all_values = request.GET.get('all_values')
+        if all_values:
+            employers = Employer.objects.all().order_by(Lower('name'))
+        else:
+            if search_name:
+                employers = Employer.objects.filter(
+                    name__icontains=search_name).order_by(Lower('name'))
+                found_name = search_name
+            else:
+                employers = Employer.objects.all().order_by(Lower('name'))
+        return render(request, 'recruit/recruiter_employers.html',
+                      context={'employers': employers,
+                               'found_name': found_name})
 
     def post(self, request):
+        """ Создание карточки работодателя. """
+        files = request.FILES.get('files')
+        response = request.POST
+        e = Employer(
+            name=response['name'],
+            address=response['address'],
+            description=response['description'],
+        )
+        if files:
+            e.image = files
+        e.save()
+        return redirect('employers_url')
+
+
+class EmployerDet(View):
+    """ Детальный просмотр карточки работодалеля. """
+    def get(self, request, id_e):
+        employer = Employer.objects.get(id=id_e)
+        empl_vacancies = employer.vacancies.all()
+        return render(request, 'recruit/recruiter_employer_detail.html',
+                      context={'employer': employer,
+                               'empl_vacancies': empl_vacancies})
+
+    def post(self, request, id_e):
+        """ Редактирование карточки работодателя. """
+        response = request.POST
+        e = Employer.objects.get(id=id_e)
+        e.name = response['name']
+        e.address = response['address']
+        e.description = response['description']
+        if request.FILES.get('files'):
+            e.image.delete()
+            e.image = request.FILES['files']
+        e.save()
+        return redirect(e.get_absolute_url())
+
+
+class EmployerDel(View):
+    """ Удаление карточки работодателя """
+    def post(self, request, id_e):
+        e = Employer.objects.get(id=request.POST['id_emp'])
+        e.delete()
+        return redirect('employers_url')
+
+
+class Vacancies(View):
+    def get(self, request):
+        """ Вывод на экран базы работодателей.
+            Поиск и вывод результата на экран. """
+        search_direct = request.GET.get('search_direction', '')
+        search_state = request.GET.get('search_state')
+        found_direct = ''
+        found_state = ''
+        all_values = request.GET.get('all_values')
+        if all_values:
+            vacancies = Vacancy.objects.all().order_by(Lower('organization'))
+        else:
+            if search_direct and search_state:
+                vacancies = Vacancy.objects.filter(
+                    Q(direction=search_direct) | Q(state__icontains=search_state)
+                ).order_by(Lower('organization'))
+                found_direct = search_direct
+                found_state = search_state
+            elif search_direct:
+                vacancies = Vacancy.objects.filter(
+                    direction=search_direct).order_by(Lower('organization'))
+                found_direct = int(search_direct)
+            elif search_state:
+                vacancies = Vacancy.objects.filter(
+                    state__icontains=search_state).order_by(Lower('organization'))
+                found_state = search_state
+            else:
+                vacancies = Vacancy.objects.all().order_by(Lower('organization'))
+        directions = Direction.objects.all().order_by('direction_word')
+        return render(request, 'recruit/recruiter_vacancies.html',
+                      context={'vacancies': vacancies,
+                               'directions': directions,
+                               'found_direct': found_direct,
+                               'found_state': found_state})
+
+    def post(self, request):
+        """ Создание карточки вакансии. """
         response = request.POST
         v = Vacancy(
             state=response['position'],
             salary=response['salary'],
-            organization=response['organization'],
-            address=response['address'],
             employment=response['employment'],
             description=response['description'],
             skills=response['skills'],
@@ -211,15 +315,44 @@ class Vacancies(View):
             duties=response['duties'],
             conditions=response['conditions'],
         )
-        v.save()
-        return redirect('vacancies_url')
+
+        if response.get('id_empl'):
+            e = Employer.objects.get(id=response['id_empl'])
+            v.employer = e
+            v.organization = e.name
+            v.address = e.address
+            v.save()
+            v.direction.add(Direction.objects.get(id=response['direction']))
+            return redirect('employer_det_url', id_e=response['id_empl'])
+        else:
+            if response['organization'] in \
+                    [e.name for e in Employer.objects.all()]:
+                v.organization = Employer.objects.get(
+                    name=response['organization']).name
+                v.employer = Employer.objects.get(
+                    name=response['organization'])
+                v.save()
+                v.direction.add(Direction.objects.get(id=response['direction']))
+                return redirect('vacancies_url')
+            else:
+                e = Employer(name=response['organization'],
+                             address=response['address'])
+                e.save()
+                v.organization = e.name
+                v.address = e.address
+                v.employer = e
+                v.save()
+                v.direction.add(Direction.objects.get(id=response['direction']))
+                return redirect('vacancies_url')
 
 
 class VacancyDet(View):
     def get(self, request, id_v):
+        # print('VacancyDet', request.GET.get('check_flag'))
         vacancy = Vacancy.objects.get(id=id_v)
+        directions = Direction.objects.all().order_by('direction_word')
         return render(request, 'recruit/recruiter_vacancy_detail.html',
-                      context={'vacancy': vacancy})
+                      context={'vacancy': vacancy, 'directions': directions})
 
     def post(self, request, id_v):
         response = request.POST
@@ -235,7 +368,8 @@ class VacancyDet(View):
         v.requirements = response['requirements']
         v.duties = response['duties']
         v.conditions = response['conditions']
-
+        v.direction.clear()
+        v.direction.add(Direction.objects.get(id=response['direction']))
         v.save()
 
         return redirect(v.get_absolute_url2())
@@ -466,12 +600,10 @@ class client_task_adding(View):
         client = Client.objects.get(id=id_a)
         client_user = client.user_client #ссылается на UserModel
         client_activ_tasks = Tasks.objects.filter(user=client_user, status=False) #просмотр активных задач клинета
-        client_closed_tasks = Tasks.objects.filter(user=client_user, status=True)
-        return render(request, template_name='recruit/adding_task_to_client.html', context={'client':client,
-                                                                                            'client_user': client_user,
-                                                                                            'client_activ_tasks':client_activ_tasks,
-                                                                                            'client_closed_tasks': client_closed_tasks})
-
+        return render(request, template_name='recruit/adding_task_to_client.html',
+                      context={'client': client,
+                               'client_user': client_user,
+                               'client_activ_tasks': client_activ_tasks, })
 
     def post(self, request, id_a):
         client = Client.objects.get(id=id_a)
@@ -504,7 +636,8 @@ def favorites(request):
     own_status = Recruiter.objects.get(recruiter=request.user)
     # own_status = recruit
     clients = client_filtration(request, own_status)
-    context = {'applicants': clients}
+    url_check = 1
+    context = {'applicants': clients, 'url_check': url_check}
 
     return render(request, template_name='recruit/favorites.html',
                   context=context)
