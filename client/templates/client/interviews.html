@@ -6,60 +6,59 @@
 {% endblock %}
 
 {% block content %}
-<nav class="nav fixed-center" style="background-color: #344955; width: 100%; margin: 0 auto; max-width: 900px; display: flex; justify-content: space-between; align-items: center;">
-    <a class="nav-link text-white offset-md-4"><h3>Собеседования</h3><a class="offset-md-4"><a href="{% url 'client' %}" class="btn btn-secondary">X</a></a></a>
-</nav>
-<div class="active">
-    {% for interview in interviews %}
-        <div hidden>{{ interview.check_readstatus }}</div>
-        <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox"> <a>({{ interview.jobinterviewtime }})</a>
-        <button class="forinterviews" id="idforinterview{{ interview.id }}">{{ interview.name }}</button> <a>{{ interview.jobinterviewdate }}</a>
-        <div class="show_interviews" id="forallinterviews{{ interview.id }}">
-
-            {% for verbose_name, field in interview.show_all %}
-                <div class="check_all" id="check_all{{ all.id }}" type="checkbox">
-                    <b>{{ verbose_name }}:</b> {{ field }}<br>
+    <div class="interview">
+        <h3>Собеседования</h3>
+        <div class="active">
+            {% for interview in interviews %}
+                <div hidden>{{ interview.check_readstatus }}</div>
+                <div class="style-interview">
+                    <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox">
+                    <button class="forinterviews" id="idforinterview{{ interview.id }}">
+                        ({{ interview.jobinterviewtime }}){{ interview.name }}<h4
+                            class="interview-date">{{ interview.jobinterviewdate }}</h4></button>
                 </div>
-            {% endfor %}
-            <button class="hide">Скрыть</button>
-
-        </div>
-        <hr>
-    {% endfor %}
-</div>
-<div class="done">
-<button class="show_done_interviews" id="id_show_done_interviews">Показать заверешенные собеседования</button>
-<div class="hide_interviews" id="forhideinterviews{{ interview.id }}">
-    {% for interview in interviews_false %}
-        <div id="interviews_check_time" hidden>{{ interview.check_time }}</div>
-            {% if interview.check_status != False %}
-                <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox">
-                <button class="forinterviews" id="idforinterview{{ interview.id }}">{{ interview.name }}</button>
                 <div class="show_interviews" id="forallinterviews{{ interview.id }}">
-
                     {% for verbose_name, field in interview.show_all %}
                         <div class="check_all" id="check_all{{ all.id }}" type="checkbox">
-                            <b>{{ verbose_name }}:</b> {{ field }}<br>
+                            <b>{{ verbose_name }}:</b> {{ field }}
                         </div>
                     {% endfor %}
-
-                </div>
-
-            {% endif %}
-        {% if interview.check_status == False %}
-            <b>{{interview.name}}</b>
-            {% for verbose_name, field in interview.show_all %}
-                <div class="check_all" id="check_all{{ all.id }}" type="checkbox">
-                    <b>{{ verbose_name }}:</b> {{ field }}<br>
+                    <div class="sub-close hide">x</div>
                 </div>
             {% endfor %}
-        {% endif %}
-    <hr>
-    {% endfor %}
-    <button class="hide">Скрыть</button>
-</div>
-</div>
+        </div>
+        <button class="show_done_interviews" id="id_show_done_interviews">Показать заверешенные собеседования</button>
+        <div class="hide_interviews" id="forhideinterviews{{ interview.id }}">
+            {% for interview in interviews_false %}
+                <div id="interviews_check_time" hidden>{{ interview.check_time }}</div>
+                {% if interview.check_status != False %}
+                    <div class="style-interview">
+                        <input class="check_interview" id="check_interview{{ interview.id }}" type="checkbox">
+                        <button class="forinterviews" id="idforinterview{{ interview.id }}">
+                            ({{ interview.jobinterviewtime }}){{ interview.name }}<h4
+                                class="interview-date">{{ interview.jobinterviewdate }}</h4></button>
+                        {% for verbose_name, field in interview.show_all %}
+                            <div class="check_all" id="check_all{{ all.id }}" type="checkbox">
+                                <b>{{ verbose_name }}:</b> {{ field }}<br>
+                            </div>
+                        {% endfor %}
+                    </div>
 
+                {% endif %}
+                {% if interview.check_status == False %}
+                    <div class="style-interview forinterviews style-interview--hide" id="idforinterview{{ interview.id }}">{{ interview.name }}</div>
+                    <div class="show_interviews" id="forallinterviews{{ interview.id }}">
+                        {% for verbose_name, field in interview.show_all %}
+                            <div class="check_all" id="check_all{{ all.id }}" type="checkbox">
+                                <b>{{ verbose_name }}:</b> {{ field }}<br>
+                            </div>
+                        {% endfor %}
+                        <div class="sub-close hide">x</div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
 
 <script type="text/javascript">
     $('.show_interviews').hide()
@@ -112,9 +111,151 @@ $('document').ready(function () {
             }
         });
     })
-
-
 });
 </script>
+<style>
+.style-interview--hide{
+    margin: 10px 10px !important;
+}
+
+.check_all{
+    margin-bottom: 10px;
+    padding-left: 10px;
+}
+.check_all:first-child,
+.check_all:nth-child(2){
+        height: 40px;
+        line-height: 40px;
+        display: inherit;
+        border-bottom: 1px solid #e8e6e6;
+}
+.sub-close{
+        width: 20px;
+        height:20px;
+        text-align: center;
+        line-height: 20px;
+        background-color: #213D4D;
+        color: white;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        transition: background-color .2s linear;
+        border-radius: 3px;
+    }
+
+    .sub-close:hover{
+                background: #8D7171;
+            }
+.show_interviews{
+            position: absolute;
+            display: none;
+            top: 50px;
+            right: 0;
+            width: 400px;
+            background-color: white;
+            height: calc(100% - 70px);
+            transition: display .3s linear;
+            z-index: 100;
+            padding: 10px;
+    }
+ .forinterviews{
+        height: 40px;
+        border: none;
+        outline: none;
+        background: #fffffd;
+        padding: 0;
+        width: 100%;
+        max-width: 1130px;
+        margin-left: 10px;
+        cursor: pointer;
+        text-align: left;
+        float: right;
+        border-radius: 5px;
+    }
+
+.check_interview{
+        height: 40px;
+        border: none;
+        outline: none;
+        background: #fffffd;
+        padding: 0;
+        width: 100%;
+        max-width: 1140px;
+        cursor: pointer;
+        text-align: left;
+        border-radius: 5px;
+    }
+
+    input[type='checkbox']{
+        width: 20px;
+        height: 40px;
+        margin: 0;
+    }
+
+.interview{
+            width: 100%;
+            background: url("../../static/client/img/cobalt.png") no-repeat;
+            max-width: 1200px;
+            min-height: 600px;
+            border-radius: 20px;
+            margin: 0 auto;
+            overflow: auto;
+            position: relative;
+            text-align: left;
+
+        }
+    h3{
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        height: 50px;
+        line-height: 50px;
+        box-shadow: 0 0 10px rgba(84,97,127,0.5);
+        margin: 0;
+        color: white;
+        background: #213D4D;
+        text-align: center;
+
+    }
+#id_show_done_interviews{
+        margin-left: 20px;
+        background: #213D4D;
+        color: #ffffff;
+        padding: 5px;
+        border: none;
+        outline: none;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: all .3s linear;
+    }
+
+    #id_show_done_interviews:hover{
+        background: #8D7171;
+    }
+
+    .active{
+        margin-top: 15px;
+        height: auto;
+    }
+
+ .style-interview{
+        width: 100%;
+        max-width: 1160px;
+        background: #fffffd;
+        height: 40px;
+        margin: 0 auto 10px;
+        line-height: 38px;
+        border-radius: 5px;
+        cursor: pointer;
+        padding:0 10px;
+        text-align: left;
+    }
+    .interview-date{
+        float: right;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+</style>
 {% endblock %}
 

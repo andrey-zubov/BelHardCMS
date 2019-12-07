@@ -13,7 +13,8 @@ from client.edit.check_clients import (load_client_img)
 from client.models import (CV, JobInterviews, FilesForJobInterviews, Vacancy,
                            State)
 from client.models import (Chat, Message, Tasks, UserModel, SubTasks, Settings,
-                           Client)
+                           Client, Opinion, Answer)
+from client.forms import AnswerForm
 from recruit.edit_pages.check_recruit import (recruit_check)
 from recruit.edit_pages.r_forms import (RecruitUploadImgForm)
 from recruit.edit_pages.r_pages_get import (recruit_edit_page_get,
@@ -756,3 +757,32 @@ def recruit_check_task(request):
     this_task.save()
 
     return HttpResponse()
+
+class OpinionDeleteAdmin(View):
+    def get(self, request, pk):
+        opinion = get_object_or_404(Opinion, pk=pk)
+        return render(request, 'recruit/opinion_admin_delete.html',
+                          context={'opinion': opinion})
+
+    def post(self, request, pk):
+        opinion = Opinion.objects.filter(pk=pk)
+        opinion.delete()
+        return redirect(reverse('clients_opinions'))
+
+
+def answer_create(request, pk):
+    opinion = get_object_or_404(Opinion, id=pk)
+    answer = Answer.objects.filter(pk=pk)
+    form = AnswerForm()
+
+    if request.method == "POST":
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.opinion = opinion
+            form.user = request.user
+            form.save()
+            return redirect('clients_opinions')
+    return render(request, 'recruit/opinion_answer_admin_create.html',
+                  context={'form': form, 'opinion': opinion, "answer": answer})
+

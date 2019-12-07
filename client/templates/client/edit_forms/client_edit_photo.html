@@ -6,22 +6,67 @@
 {% endblock %}
 
 {% block content %}
-    {% include 'client/edit_forms/tot_samui_bootstrap.html' %}
-    <div class="container">
+
+    <div class="edit-profile photo-edit ">
         <form enctype="multipart/form-data" method="post">
             {% csrf_token %}
-            <div class="my-2">
-                <h3>Upload Your Photo</h3>
-                <p>Ваше теккущее фото:
-                    <img src="{{ client_img|default:'' }}" alt="img" class="m-2" height="64">
+            <div class="edit-title">Обновить фотографию
+                <p>Ваше текущая аватарка:
+                    <img src="{{ client_img|default:'' }}" alt="img" height="64">
+
                 </p>
                 <p>Выберите файл для изменения {{ form }}</p>
             </div>
-
-            <div class="text-center">
-                <a class="btn btn-outline-warning m-2" href="{% url 'client_edit' %}">Назад</a>
-                <button type="submit" class="btn btn-outline-success m-2" id="save">Соранить все данные</button>
+            <div class="navigation-bar">
+                <a class="btn-extra" href="{% url 'client_edit' %}">Назад</a>
+                <button type="submit" class="btn-extra" id="save">Сохранить все данные</button>
             </div>
         </form>
     </div>
+
+    <style>
+    .photo-edit{
+        display: inline;
+        vertical-align: middle;
+    }
+       .btn-extra{
+        padding: 5px;
+        margin-top: 10px;
+        background: #213d4d;
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all .3s linear;
+        border: none;
+        font-size: 16px;
+        font-weight: normal;
+        outline:none;
+    }
+    .btn-extra:hover{
+    background-color: #8D7171;
+}
+     .navigation-bar{
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+     .edit-profile {
+            height: calc(100vh - 255px);
+            overflow: auto;
+            width: 100%;
+            padding-top: 20px;
+            margin-bottom: 20px;
+        }
+     .edit-title{
+        font-size: 22px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+    }
+
+    p{
+        font-size: 16px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+    }
+    </style>
 {% endblock %}

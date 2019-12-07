@@ -6,71 +6,40 @@
 {% endblock %}
 
 {% block content %}
-    <h2 class="mb-5">{{ vacancy.state }}</h2>
-    <p>
-        <b>{{ vacancy.salary }}</b>
-    </p>
-    <p>
-        <b>{{ vacancy.organization }}</b>
-    </p>
-    <p>
-        {{ vacancy.address }}
-    </p>
-    <p>
-        {{ vacancy.employment }}
-    </p>
-    <p>
-        {{ vacancy.description }}
-    </p>
-    <p>
-        {{ vacancy.skills }}
-    </p>
-    <p>
-        {{ vacancy.requirements }}
-    </p>
-    <p>
-        {{ vacancy.duties }}
-    </p>
-    <p>
-        {{ vacancy.conditions }}
-    </p>
-    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+ <div class="vacancy-content">
+      <div class="vacancy-info">
+            <p>{{ vacancy.state }}</p>
+            <p>{{ vacancy.salary }}</p>
+            <p>{{ vacancy.organization }}</p>
+            <p>{{ vacancy.address }}</p>
+            <p>{{ vacancy.employment }}</p>
+            <p>{{ vacancy.description }}</p>
+            <p>{{ vacancy.skills }}</p>
+            <p>{{ vacancy.requirements }}</p>
+            <p>{{ vacancy.duties }}</p>
+            <p>{{ vacancy.conditions }}</p>
+      </div>
+    <div class="navigation-bar">
         {% if resume_for_waiting %}
-            <div class="btn-group mr-2" role="group" aria-label="First group">
-                <a href="{{ resume_for_waiting.get.get_absolute_url }}" class="btn btn-secondary">Назад</a>
-            </div>
+                <a href="{{ resume_for_waiting.get.get_absolute_url }}" class="btn-extra">Назад</a>
         {% elif resume_for_accepted %}
-            <div class="btn-group mr-2" role="group" aria-label="First group">
-                <a href="{{ resume_for_accepted.get.get_accept_url }}" class="btn btn-secondary">Назад</a>
-            </div>
+                <a href="{{ resume_for_accepted.get.get_accept_url }}" class="btn-extra">Назад</a>
         {% elif resume_for_rejected %}
-            <div class="btn-group mr-2" role="group" aria-label="First group">
-                <a href="{{ resume_for_rejected.get.get_reject_url }}" class="btn btn-secondary">Назад</a>
-            </div>
+                <a href="{{ resume_for_rejected.get.get_reject_url }}" class="btn-extra">Назад</a>
         {% else %}
-            <div class="btn-group mr-2" role="group" aria-label="First group">
-                <a onclick="javascript:history.back(); return false;" class="btn btn-secondary">Назад</a>
-            </div>
+                <a onclick="javascript:history.back(); return false;" class="btn-extra">Назад</a>
         {% endif %}
-
-    <div class="btn-group mr-2" role="group" aria-label="Second group" hidden id="first">
-        <button type="button" id="{{ vacancy.id }}" class="btn btn-success accept">Принять</button>
-    </div>
-
-
-    <div class="btn-group" role="group" aria-label="Third group" hidden id="second">
-        <button type="button" id="{{ vacancy.id }}" class="btn btn-danger reject">Отклонить</button>
-    </div>
-
+        <button type="button" id="{{ vacancy.id }}" hidden class=" btn-extra accept first">Принять</button>
+        <button type="button" id="{{ vacancy.id }}" class="btn-extra reject second">Отклонить</button>
 </div>
 
-
+</div>
 <script>
 $('document').ready(function () {
     var first = {{ first_flag }}
     var second = {{ second_flag }}
-    if (first){$('#first').attr('hidden',false)}
-    if (second){$('#second').attr('hidden',false)}
+    if (first){$('.first').attr('hidden',false)}
+    if (second){$('.second').attr('hidden',false)}
 
 
     /*actions for buttons*/
@@ -80,8 +49,8 @@ $('document').ready(function () {
                 'data':{'flag':'accept',"id_v":id},
                 success:function (data) {
                     console.log(data);
-                    $('#first').attr('hidden', true)
-                    $('#second').attr('hidden', false)
+                    $('.first').attr('hidden', true)
+                    $('.second').attr('hidden', false)
                 }})
 
     });
@@ -91,13 +60,29 @@ $('document').ready(function () {
                 'data':{'flag':'reject','id_v':id},
                 success:function (data) {
                     console.log(data)
-                    $('#first').attr('hidden', false)
-                    $('#second').attr('hidden', true)
+                    $('.first').attr('hidden', false)
+                    $('.second').attr('hidden', true)
                 }})
 
     });
 })
 
     </script>
+
+
+    <style>
+    .vacancy-content{
+            height: calc(100vh - 255px);
+            overflow: auto;
+            width: 100%;
+            padding-top: 20px;
+            margin-bottom: 20px;
+        }
+
+    .vacancy-info{
+        text-align: start;
+        height: auto;
+    }
+    </style>
 {% endblock %}
 

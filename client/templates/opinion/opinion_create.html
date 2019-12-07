@@ -1,47 +1,188 @@
 {% extends 'client/main_template_client.html' %}
 {% load staticfiles %}
 
-    {% block title %} Opinion {% endblock %}
+    {% block title %} Отзыв {% endblock %}
 
 {% block content %}
+    <div class="opinion-content edit-title">Мои отзывы:
         {% for opinion in opinions %}
-
-        <h2>{{opinion.title}}</h2>
-
-        <h4>{{opinion.text}}</h4>
-        <h5>{{opinion.date}}</h5>
-
-
-
-        <a href="{{opinion.get_adres}}" class="btn btn-primary">More</a>
-
-    {%endfor%}<hr>
-    <button id="add_opinion" type="submit">Оставить отзыв</button>
-   <div class="create_opinion" hidden=>
-    <form action="" method="post">
-        {%csrf_token%}
-
-        {%for field in form %}
-            <div class="form-group">
-                {{field.label}}
-                {{field}}
+            <div class="single-opinion">
+                <h2 class="opinion-title">{{opinion.title}}</h2>
+                <h4 class="opinion-text">{{opinion.text}}</h4>
+                <h5 class="opinion-date">{{opinion.date}}</h5>
+                {% if not opinion.answer.text %}
+                    <h6 class="answer-text">На данный момент еще не ответили</h6>
+                    <a href="{{opinion.opinion_delete}}" class="btn-extra">Удалить</a>
+                {% else %}
+                    <h3 class="answer-text"><b>Ответ карьерного центра:</b><br>{{opinion.answer.text}}</h3>
+                {% endif %}
             </div>
-        {%endfor%}
-        <button type="submit" class="btn btn-primary">Add</button>
-    </form>
+    {%endfor%}
+    <a id="add_opinion" class="btn-extra btn--create" href="javascript:PopUpShow()">Написать отзыв</a>
+    <div id="popup">
+        <div class="popup-content">
+            <a class="close-popup" href="javascript:PopUpHide()">x</a>
+                <div class="create_opinion">
+                    <form action="." method="post">
+                        {%csrf_token%}
+                    <div class="login-form">
+                        {%for field in form %}
+                            <div class="form-group">
+                                <label for="add_opinion">{{field.label}}</label>
+                                <input type="text"  class="form-control" id="add_opinion" {{field}}
+                            </div>
+                        {%endfor%}
+                        <button type="submit" class="btn-extra">Отправить</button>
+                    </div>
+                </form>
+                </div>
+        </div>
     </div>
-
-
+</div>
 <script>
     $('document').ready(function () {
-            let op = document.getElementsByClassName('create_opinion');
-            $('#add_opinion').on('click', function () {
-                $('.create_opinion').toggle();
+            PopUpHide();
 
-
-        });
-
-        });
+    });
+        function PopUpShow() {
+            $("#popup").show();
+            document.body.style.overflow = "hidden";
+        }
+        function PopUpHide() {
+            $("#popup").hide();
+            document.body.style.overflow = "auto";
+        }
 
 </script>
+    <style>
+    .opinion-date{
+        color: #4d4d4d;
+        font-weight: 400;
+        font-size: 11px;
+    }
+
+    .opinion-title{
+        color: #333333;
+        font-weight: 700;
+        font-size: 29px;
+    }
+    .opinion-text{
+        color: #333;
+        font-weight: normal;
+        font-size: 23px;
+    }
+
+    .answer-text{
+        opacity: 0.8;
+        font-weight: normal;
+        font-size: 13px;
+        padding-left: 20px;
+    }
+    .single-opinion{
+        text-align: left;
+        margin: 0 auto 20px;
+        width: 60%;
+        border-radius: 15px;
+        border: 1px solid black;
+        padding: 20px;
+
+    }
+     #popup {
+            height: 100%;
+            width: 100%;
+            background: rgba(179,179,179, .8);
+            min-height: 100%;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .popup-content{
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: auto;
+            height: auto;
+            background: white;
+            opacity: 1;
+            border-radius: 10px;
+        }
+
+        .close-popup{
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            text-decoration: none;
+            width: 20px;
+            height: 20px;
+            background: #213d4d;
+            font-size: 16px;
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            transition: all 0.3s linear;
+        }
+
+        .close-popup:hover {
+            background-color: #8D7171;
+        }
+
+     input{
+        width: 298px;
+        height: 28px;
+        padding: 0;
+        border: 1px solid black;
+    }
+
+    .login-form {
+            margin: 40px;
+            float: left;
+        }
+    .form-group {
+            margin-top: 15px;
+            clear: both;
+            text-align: right;
+        }
+    label{
+            float: left;
+            padding-right: 20px;
+            color: #414141;
+            font-size: 20px;
+            font-family: open sans, sans-serif;
+            font-weight: bold;
+        }
+    .opinion-content{
+        padding-top: 30px;
+        height: calc(100vh - 280px);
+        width: 100%;
+        overflow: auto;
+    }
+     .edit-title{
+        font-size: 22px;
+        font-weight: bold;
+        font-family: "Arial", sans-serif;
+    }
+    .btn-extra{
+        padding: 5px;
+        margin-top: 10px;
+        background: #213d4d;
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all .3s linear;
+        border: none;
+        font-size: 16px;
+        font-weight: normal;
+        outline:none;
+    }
+    .btn-extra:hover{
+    background-color: #8D7171;
+}
+
+    .btn--create{
+        padding: 15px;
+    }
+   </style>
 {% endblock %}

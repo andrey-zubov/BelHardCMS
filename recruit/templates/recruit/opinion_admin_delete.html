@@ -1,16 +1,13 @@
-{% extends 'client/main_template_client.html' %}
-{% load staticfiles %}
-
-    {% block title %} Отзыв {% endblock %}
-
+{% extends 'recruit/recruit_main_template.html' %}
+{% block title %} Удалить отзыв {% endblock %}
 {% block content %}
-<form action="{{opinion.opinion_delete}}" method="post">
+<form action="{{opinion.opinion_admin_delete}}" method="post">
     {%csrf_token%}
     <h3>Вы собираетесь удалить следующий отзыв:</h3>
         <h2>{{opinion.title}}</h2>
         <h4>{{opinion.text}}</h4>
         <h5>{{opinion.date}}</h5>
-    <a class="btn-extra" href="{% url 'opinion_create' %}">Отмена</a>
+    <a class="btn-extra" href="{% url 'clients_opinions' %}">Отмена</a>
     <button type="submit" class="btn-extra">Удалить</button>
 </form>
 
