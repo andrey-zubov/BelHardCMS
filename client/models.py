@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
+from transliterate import translit
 
 UserModel = get_user_model()
 
@@ -209,6 +210,17 @@ class TypeSalary(models.Model):
         return self.type_word
 
 
+class Direction(models.Model):  # TeamRome
+    direction_word = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Направление"
+        verbose_name_plural = "Направления"
+
+    def __str__(self):
+        return self.direction_word
+
+
 class CV(models.Model):
     """ Резюме. ForeignKey = Несколько резюме у одного клиента. """
     client_cv = models.ForeignKey(to='Client', on_delete=models.CASCADE)
@@ -223,21 +235,23 @@ class CV(models.Model):
     salary = models.CharField(max_length=20, null=True, blank=True)
     type_salary = models.ForeignKey(TypeSalary, on_delete=models.SET_NULL,
                                     null=True, blank=True)
-    # There is Poland's upgrade
     vacancies_in_waiting = models.ManyToManyField('Vacancy', blank=True,
-                                         related_name='in_waiting_for_resume')
+                                                  related_name='in_waiting_for_resume')
     vacancies_accept = models.ManyToManyField('Vacancy', blank=True,
                                               related_name='accept_for_resume')
     vacancies_reject = models.ManyToManyField('Vacancy', blank=True,
                                               related_name='reject_for_resume')
     notification = models.ManyToManyField('Vacancy', blank=True,
-                                      related_name='notifications_for_resume')
+                                          related_name='notifications_for_resume')
 
     def __str__(self):
         return self.position
 
     def get_absolute_url(self):
         return reverse('resume_detail_url', kwargs={'id_c': self.id})
+
+    def get_absolute_url2(self):
+        return reverse('recruit_resume_detail_url', kwargs={'id_c': self.id})
 
     def get_accept_url(self):
         return reverse('accepted_vacancies_url', kwargs={'id_c': self.id})
@@ -249,33 +263,36 @@ class CV(models.Model):
 
 
 class State(models.Model):
-    """ Стутус клиента. """
+    """ Статус клиента. """
     state_word = models.CharField(max_length=100)
 
     class Meta:
-        verbose_name = 'Стутус клиента'
-        verbose_name_plural = 'Стутус клиента'
+        verbose_name = 'Статус клиента'
+        verbose_name_plural = 'Статус клиента'
 
     def __str__(self):
         return self.state_word
 
 
-# Poland Task 1 & 2 #
-
-
+# PolandTeam
 class Vacancy(models.Model):
+    """ Модель вакансий. ForeignKey - несколько вакансий у одного работодателя. """
+    employer = models.ForeignKey(to='Employer', on_delete=models.CASCADE,
+                                 related_name='vacancies', blank=True, null=True)
     state = models.CharField(max_length=100)
     salary = models.CharField(max_length=20)
     organization = models.CharField(max_length=100)
     address = models.CharField(max_length=200, blank=True, null=True)
-    employment = models.CharField(max_length=100, blank=True, null=True)
+    employment = models.CharField(max_length=100, blank=True, null=True)  # many_to_many?
     description = models.TextField(max_length=1000, blank=True, null=True)
-    skills = models.CharField(max_length=100, blank=True, null=True)
+    skills = models.CharField(max_length=100, blank=True, null=True)     # many_to_many?
     requirements = models.TextField(max_length=1000, blank=True, null=True)
     duties = models.TextField(max_length=1000, blank=True, null=True)
     conditions = models.TextField(max_length=1000, blank=True, null=True)
-    creating_date = models.DateTimeField(auto_now_add=True, blank=True,
-                                         null=True)
+    creating_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+
+    direction = models.ManyToManyField(Direction, verbose_name='Направление',
+                                       blank=True)
 
     def __str__(self):
         return self.state
@@ -288,6 +305,32 @@ class Vacancy(models.Model):
 
     def get_del_url(self):
         return reverse('vacancy_del_recr_url', kwargs={'id_v': self.id})
+
+
+def file_path_image_employer(instance, filename):
+    """ Задает путь к папке картинки у работодателя. """
+    return f'employers/{translit(str(instance.name), "ru", reversed=True)}/Images/{filename}'
+
+
+class Employer(models.Model):
+    """ Упрощенная модель работодателя. """
+    name = models.CharField(max_length=50, blank=True, null=True)
+    address = models.CharField(max_length=50, blank=True, null=True)
+    description = models.TextField(max_length=3000, null=True, blank=True, verbose_name='description')
+    image = models.ImageField(upload_to=file_path_image_employer, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('employer_det_url', kwargs={'id_e': self.id})
+
+    def get_del_url(self):
+        return reverse('employer_del_url', kwargs={'id_e': self.id})
+
+    def delete(self, *args, **kwargs):
+        self.image.delete()
+        super().delete(*args, **kwargs)
 
 
 class Help(models.Model):
@@ -307,11 +350,9 @@ class JobInterviews(models.Model):
                                   verbose_name='Вакансии')
     name = models.CharField(max_length=50, verbose_name='Наименование')
     jobinterviewtime = models.TimeField(max_length=10,
-                                        verbose_name='Время проведения\
-                                         собеседования')
+                                        verbose_name='Время проведения собеседования')
     jobinterviewdate = models.DateField(max_length=20,
-                                        verbose_name='Дата проведения\
-                                         собеседования')
+                                        verbose_name='Дата проведения собеседования')
     interview_author = models.CharField(max_length=50,
                                         verbose_name='Автор собеседования',
                                         blank=True, null=True)
@@ -319,34 +360,21 @@ class JobInterviews(models.Model):
                                             verbose_name='Время создания')
     period_of_execution = models.DateTimeField(blank=True, null=True,
                                                verbose_name='Срок исполнения')
-    reminder = models.DateTimeField(blank=True, null=True,
-                                    verbose_name='Напоминание')
-    position = models.CharField(max_length=50,
-                                verbose_name='Предполагаемая должность')
+    reminder = models.DateTimeField(blank=True, null=True, verbose_name='Напоминание')
+    position = models.CharField(max_length=50, verbose_name='Предполагаемая должность')
     organization = models.CharField(max_length=50, verbose_name='Организация')
-    responsible_person = models.CharField(max_length=50,
-                                          verbose_name='Ответственное лицо')
+    responsible_person = models.CharField(max_length=50, verbose_name='Ответственное лицо')
     contact_responsible_person_1str = models.CharField(max_length=50,
-                                                       verbose_name='Контакты\
-                                                        ответственного лица\
-                                                         (1-я строчка)')
-    contact_responsible_person_2str = models.CharField(max_length=50,
-                                                       blank=True, null=True,
-                                                       verbose_name='Контакты\
-                                                        ответственного лица\
-                                                         (2-я строчка)')
+                                                       verbose_name='Контакты ответственного лица (1-я строчка)')
+    contact_responsible_person_2str = models.CharField(max_length=50, blank=True, null=True,
+                                                       verbose_name='Контакты ответственного лица (2-я строчка)')
     location = models.CharField(max_length=50, verbose_name='Место проведения')
-    additional_information = models.TextField(max_length=3000, blank=True,
-                                              null=True,
-                                              verbose_name='Дополнительная\
-                                               информация')
-    status = models.BooleanField(
-        default=False)  # статус собеседования, на которое ещё не ходили
-    check_status = models.BooleanField(
-        default=True)  # статус активен,если можем после успешного
+    additional_information = models.TextField(max_length=3000, blank=True, null=True,
+                                              verbose_name='Дополнительная информация')
+    status = models.BooleanField(default=False)  # статус собеседования, на которое ещё не ходили
+    check_status = models.BooleanField(default=True)  # статус активен,если можем после успешного
     # собеседования в течении 60 сек вернуть в статус активных собеседований
-    readinterview = models.BooleanField(
-        default=False)  # cтатус собеседования для определения отображения в
+    readinterview = models.BooleanField(default=False)  # статус собеседования для определения отображения в
 
     # оповещениях
 
@@ -356,18 +384,15 @@ class JobInterviews(models.Model):
         to_show_verbose_name = []
         for key in self.__dict__:
             if (self.__dict__[key].__class__.__name__ == 'str' or
-            self.__dict__[key].__class__.__name__ == 'datetime' or
-            self.__dict__[key].__class__.__name__ == 'time' or 
-            self.__dict__[key].__class__.__name__ == 'date'):
-                to_show_verbose_name.append(
-                    self._meta.get_field(key).verbose_name)
+                    self.__dict__[key].__class__.__name__ == 'datetime' or
+                    self.__dict__[key].__class__.__name__ == 'time' or
+                    self.__dict__[key].__class__.__name__ == 'date'):
+                to_show_verbose_name.append(self._meta.get_field(key).verbose_name)
                 to_show_name.append(self.__dict__[key])
-        to_show_name.remove(self.time_of_creation)
-        to_show_verbose_name.remove(
-            self._meta.get_field('time_of_creation').verbose_name)
-        to_show_name.remove(self.reminder)
-        to_show_verbose_name.remove(
-            self._meta.get_field('reminder').verbose_name)
+        # to_show_name.remove(self.time_of_creation)
+        # to_show_verbose_name.remove(self._meta.get_field('time_of_creation').verbose_name)
+        # to_show_name.remove(self.reminder)
+        # to_show_verbose_name.remove(self._meta.get_field('reminder').verbose_name)
         return zip(to_show_verbose_name, to_show_name)
 
     @property
@@ -390,11 +415,18 @@ class JobInterviews(models.Model):
             self.readinterview = True
             self.save()
 
+    def delete(self, *args, **kwargs):
+        if self.files_for_jobinterview.all():
+            for file in self.files_for_jobinterview.all():
+                file.delete()
+        super().delete(*args, **kwargs)
+
     def __str__(self):
         return self.name
 
-    # def get_absolute_url(self):
-    #    return reverse('applicant_url', kwargs={'id_a': self.id})
+
+def file_path(instance, filename):
+    return f'users/{translit(str(instance.jobinterviews_files.client), "ru", reversed=True)}/files_for_jobinterviews/{filename}'
 
 
 class FilesForJobInterviews(models.Model):
@@ -403,11 +435,19 @@ class FilesForJobInterviews(models.Model):
         on_delete=models.CASCADE,
         related_name='files_for_jobinterview'
     )
-    add_file = models.FileField(upload_to='files_for_jobinterviewes/',
-                                verbose_name='Вложения', blank=True, null=True)
+    add_file = models.FileField(
+        upload_to=file_path,
+        verbose_name='Вложения',
+        blank=True,
+        null=True
+    )
+
+    def delete(self, *args, **kwargs):
+        self.add_file.delete()
+        super().delete(*args, **kwargs)
 
     def __str__(self):
-        return self.add_file.name
+        return self.add_file.name.split('/')[-1]
 
     class Meta:
         verbose_name = 'Файл'
@@ -514,7 +554,6 @@ class Chat(models.Model):
 class Message(models.Model):
     class Meta:
         ordering = ['pub_date']
-
 
     chat = models.ForeignKey(Chat, verbose_name="Чат",
                              on_delete=models.CASCADE, )
@@ -625,14 +664,3 @@ class Settings(models.Model):
     email_suggestions = models.BooleanField(default=True)
     email_meetings = models.BooleanField(default=True)
     email_reviews = models.BooleanField(default=True)
-
-
-class Direction(models.Model):  # TeamRome
-    direction_word = models.CharField(max_length=100, blank=True, null=True)
-
-    class Meta:
-        verbose_name = "Направление"
-        verbose_name_plural = "Направления"
-
-    def __str__(self):
-        return self.direction_word
