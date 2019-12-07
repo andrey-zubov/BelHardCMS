@@ -61,8 +61,7 @@ urlpatterns = [
     path('login/', client_login, name='login'),
     path('logout/', client_logout, name='logout'),
     path('tasks/', tasks, name='tasks_list'),
-    path('check_subtask/', check_subtask,
-         name='check_subtask'),
+
     path(r'checktask/', checktask),
     path(r'checknotifications/', checknotifications),
     path(r'settings/', settings_menu, name='settings_menu'),
