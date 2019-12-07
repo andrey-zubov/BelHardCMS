@@ -1,0 +1,92 @@
+{% extends 'recruit/recruit_main_template.html' %}
+
+{% block title %}
+    Задачи | Рекрутер
+{% endblock %}
+
+{% block content %}
+
+<div name="unlocked_tasks">
+    <h4>НЕРАСПРЕДЕЛЕННЫЕ</h4>
+    {% for i in free_tasks %}
+        <input type="checkbox" class="free_task" id="task_{{ i.id }}">
+        {{ i.title }}
+        <br>
+    {% endfor %}
+</div><br>
+
+
+
+<div name="my_tasks">
+    <h4>Мои задачи<br></h4>
+    {% for i in my_tasks_new %}
+        <input type="checkbox" class="my_task" id="task_{{ i.id }}">
+        {{ i.title }}
+        <br>
+    {% endfor %}
+
+    <button class="my_closed_tasks">Показать завершенные задачи</button>
+    <div class="my_old_tasks" hidden>
+        <h4>Выполненные задачи</h4>
+        {% for i in my_tasks_old %}
+            {{ i.title }}
+            <br>
+        {% endfor %}
+    </div>
+
+</div><br>
+
+
+
+<script>
+    $('document').ready(function () {
+        let my_id = {{ request.user.id }}
+        console.log('hellp')
+        old_tasks = $('.my_old_tasks')
+
+        $('.my_closed_tasks').on('click', function () {
+            if( old_tasks.is(":hidden")){
+                $(old_tasks).show()
+                }
+                else {
+                      $(old_tasks).hide()
+                }
+        });
+
+        $('.free_task').on('click', function () {
+            let conf = confirm('Вы уверены, что хотите взять задачу')
+            let task_id = $(this).prop('id').slice(5)
+            let choice = 1
+
+            if (conf === true) {
+
+            $.ajax({
+                'url': '/recruit/choose_rec_task/',
+                'data': {'my_id': my_id,
+                        'task_id': task_id,
+                        'choice': choice},
+                success: function (success) {
+                    console.log('success')
+                }
+            })
+            }
+        });
+
+        $('.my_task').on('click', function () {
+            let task_id = $(this).prop('id').slice(5)
+            console.log(task_id)
+
+            $.ajax({
+                'url': '/recruit/rec_check_task/',
+                'data': {'my_id': my_id,
+                        'task_id': task_id},
+                success: function (success) {
+                    console.log('suc')
+                }
+            });
+        });
+
+    })
+
+</script>
+{% endblock %}

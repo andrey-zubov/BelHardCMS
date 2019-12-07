@@ -169,3 +169,5 @@ class DirectionAdmin(admin.ModelAdmin):  # TeamRome
 
 
 admin.site.register(Direction, DirectionAdmin)  # TeamRome
+
+

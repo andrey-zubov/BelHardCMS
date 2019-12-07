@@ -149,5 +149,36 @@ class PatternSubTasks(models.Model):
     status = models.BooleanField(default=True)  # активная задача
 
 
+class RecruitersTasks(models.Model):
+    class Meta:
+        verbose_name = 'Задача для рекрутера'
+        verbose_name_plural = 'Задачи для рекрутера'
+
+    # несколько рекрутеров на одну задачу???
+    # при одном сабтаске 1 рекрутер?
+    recruiters = models.ForeignKey(Recruiter, null=True, blank=True, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    comment = models.TextField(max_length=300, blank=True,
+                               null=True)
+    status = models.BooleanField(default=False)
+    endtime = models.DateTimeField(blank=True, null=True)
+
+    @property
+    def all_subs(self):
+        return self.rec_subtasks.all()
+
+# не нжуны TODO
+class RecruitersSubtasks(models.Model):
+    task = models.ForeignKey(RecruitersTasks, on_delete=models.CASCADE,
+                             related_name='rec_subtasks')
+    recruiter = models.ForeignKey(Recruiter, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    comment = models.CharField(max_length=200)
+    status = models.BooleanField(default=False)
+
+
+
+
+
 
 
