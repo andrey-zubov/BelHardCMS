@@ -1,0 +1,34 @@
+{% extends 'recruit/recruit_main_template.html' %}
+{% block title %} Удалить отзыв {% endblock %}
+{% block content %}
+<form action="{{opinion.opinion_admin_delete}}" method="post">
+    {%csrf_token%}
+    <h3>Вы собираетесь удалить следующий отзыв:</h3>
+        <h2>{{opinion.title}}</h2>
+        <h4>{{opinion.text}}</h4>
+        <h5>{{opinion.date}}</h5>
+    <a class="btn-extra" href="{% url 'clients_opinions' %}">Отмена</a>
+    <button type="submit" class="btn-extra">Удалить</button>
+</form>
+
+
+<style>
+.btn-extra{
+        padding: 5px;
+        margin-top: 10px;
+        background: #213d4d;
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all .3s linear;
+        border: none;
+        font-size: 16px;
+        font-weight: normal;
+        outline:none;
+    }
+    .btn-extra:hover{
+    background-color: #8D7171;
+}
+</style>
+{% endblock %}

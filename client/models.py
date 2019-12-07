@@ -539,6 +539,12 @@ class Opinion(models.Model):
     def opinion_delete(self):
         return reverse('opinion_delete', kwargs={'pk': self.pk})
 
+    def create_answer(self):
+        return reverse('clients_answer_create', kwargs={'pk': self.pk})
+
+    def admins_delete_opinion(self):
+        return reverse('clients_opinions_delete', kwargs={'pk': self.pk})
+
     def __str__(self):
         return self.title[:10]
 

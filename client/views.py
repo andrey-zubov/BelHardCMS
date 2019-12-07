@@ -248,8 +248,8 @@ def answer_create(request, pk):
 
 
 def opinion_list(request):
-    opinion = Opinion.objects.all()
-    return render(request, 'opinion/index.html', context={'opinion': opinion})
+    opinions = Opinion.objects.all()
+    return render(request, 'opinion/index.html', context={'opinions': opinions})
 
 
 class OpinionCreate(View):
@@ -283,6 +283,8 @@ def opinion_detail(request, pk):
     return render(request, 'opinion/opinion_detail.html', {'opinion': opinion})
 
 
+
+
 class OpinionDelete(View):
     def get(self, request, pk):
         opinion = get_object_or_404(Opinion, pk=pk)
@@ -293,6 +295,8 @@ class OpinionDelete(View):
         opinion = Opinion.objects.filter(pk=pk)
         opinion.delete()
         return redirect(reverse('opinion_create'))
+
+
 
 
 def client_login(request):  # ввести логин/пароль -> зайти в систему
@@ -355,6 +359,7 @@ def check_subtask(request):
     sub_id = request.GET['sub_id']
     subtask = SubTasks.objects.get(id=sub_id)
     task_id = request.GET['task_id']
+    print(task_id)
     task = Tasks.objects.get(id=task_id)
     subtask_amount = len(task.show_all)
 
