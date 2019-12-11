@@ -1,0 +1,121 @@
+{% extends 'recruit/recruit_main_template.html' %}
+{% load staticfiles %}
+
+
+    {% block title %}Настройки{% endblock %}
+
+
+{% block content %}
+
+НАСТРОЕЧКИ У ТРОЕЧКИ
+
+    <article class="main">
+    <div class="wrapper" >
+        <div class="right_block">
+            <h3 class="HeadLine">Уведомления на почту</h3>
+
+            <ul>
+                <li>
+                    <section class="container">
+                    <p class="paragraph ">О новых сообщениях</p>
+                    <label class="switch">
+                            {% if settings.email_messages == False %}
+                                <input class="activation" id="email_messages" type="checkbox">
+                                <span class="slider round"></span>
+                            {% else %}
+                                <input class="activation" id="email_messages" type="checkbox" checked>
+                                <span class="slider round"></span>
+                            {% endif %}
+                    </label>
+                        </section>
+
+                </li>
+                <li>
+                    <section class="container">
+                    <p class="paragraph ">О новых задачах</p>
+                    <label class="switch">
+                        {% if settings.email_tasks == False %}
+                            <input class="activation" type="checkbox" id="email_tasks">
+                            <span class="slider round"></span>
+                        {% else %}
+                            <input class="activation" type="checkbox" id="email_tasks" checked>
+                            <span class="slider round"></span>
+                         {% endif %}
+                    </label>
+                        </section>
+
+                </li>
+
+
+
+            </ul>
+        </div>
+
+        <div class="left_block">
+            <h3 class="HeadLine">Всплывающие уведомления</h3>
+
+            <ul>
+                <li>
+                    <section class="container">
+                    <p class="paragraph ">О новых сообщениях</p>
+                    <label class="switch">
+                            {% if settings.messages == False %}
+                                <input class="activation" id="messages" type="checkbox">
+                                <span class="slider round"></span>
+                            {% else %}
+                                <input class="activation" id="messages" type="checkbox" checked>
+                                <span class="slider round"></span>
+                            {% endif %}
+                    </label>
+                        </section>
+
+                </li>
+                <li>
+                    <section class="container">
+                    <p class="paragraph ">О новых задачах</p>
+                    <label class="switch">
+                        {% if settings.tasks == False %}
+                            <input class="activation" type="checkbox" id="tasks">
+                            <span class="slider round"></span>
+                        {% else %}
+                            <input class="activation" type="checkbox" id="tasks" checked>
+                            <span class="slider round"></span>
+                         {% endif %}
+                    </label>
+                        </section>
+
+                </li>
+
+            </ul>
+        </div>
+
+
+    </div>
+    </article>
+
+    <script type="text/javascript">
+        $('document').ready(function () {
+            $('.activation').on('click', function () {
+                let set = this.id;
+                console.log(set)
+                let stat = false;
+                console.log(set)
+
+                if (this.checked){
+                     stat = true
+
+                }
+
+                $.ajax({
+                    'url': '/recruit/rec_set_settings/',
+                    'data': {'setting': set, 'state': stat},
+                    success: function (data) {
+                        console.log('ata')
+                    }
+                });
+            })
+        });
+
+    </script>
+
+{% endblock %}
