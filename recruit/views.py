@@ -922,3 +922,28 @@ def answer_create(request, pk):
     return render(request, 'recruit/opinion_answer_admin_create.html',
                   context={'form': form, 'opinion': opinion, "answer": answer})
 
+
+def recruit_settings(request):
+    rec = Recruiter.objects.get(recruiter=request.user)
+    rec_settings = RecruiterSettings.objects.get(user=request.user)
+
+
+    return render(request=request, template_name='recruit/recruit_settings.html', context={'settings': rec_settings})
+
+
+
+def recruit_set_settings(request):
+    setting = request.GET['setting']
+    status = request.GET['state'] == 'true'
+    settings = Settings.objects.get(user=request.user)
+
+    if setting == 'messages':
+        settings.messages = status
+    elif setting == 'tasks':
+        settings.tasks = status
+
+
+    setting.save()
+
+    return HttpResponse(setting)
+

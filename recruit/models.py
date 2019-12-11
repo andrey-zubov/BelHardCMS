@@ -187,6 +187,17 @@ class RecruitersSubtasks(models.Model):
     status = models.BooleanField(default=False)
 
 
+class RecruiterSettings(models.Model):
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    messages = models.BooleanField(default=True)
+    tasks = models.BooleanField(default=True)
+    email_messages = models.BooleanField(default=True)
+    email_tasks = models.BooleanField(default=True)
+
+
+
+
+
 
 
 

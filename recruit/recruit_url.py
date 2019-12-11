@@ -60,6 +60,8 @@ urlpatterns = [
     path('recruiter_tasks/', views.recruiters_tasks, name='recruiters_tasks_url'),
     path('choose_rec_task/', views.recruit_chooose_task, name='choose_rec_task_url'),
     path('rec_check_task/', views.recruit_check_task, name='recruit_check_task_url'),
+    path('rec_settings/', views.recruit_settings, name='rec_settings_url'),
+    path('rec_set_settings/', views.recruit_set_settings, name='rec_set_settings_url'),
 
     # Team Rome (start)
     path('profile/', RecruitProfile.as_view(), name='recruit_profile'),
