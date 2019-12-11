@@ -8,6 +8,7 @@
 {% block content %}
 
 НАСТРОЕЧКИ У ТРОЕЧКИ
+{{ request.user }}
 
     <article class="main">
     <div class="wrapper" >
@@ -98,19 +99,19 @@
             $('.activation').on('click', function () {
                 let set = this.id;
                 console.log(set)
-                let stat = false;
+                let stat = 0;
                 console.log(set)
 
                 if (this.checked){
-                     stat = true
-
+                     stat = 1
+                     console.log('checkedshit')
                 }
 
                 $.ajax({
                     'url': '/recruit/rec_set_settings/',
                     'data': {'setting': set, 'state': stat},
                     success: function (data) {
-                        console.log('ata')
+                        console.log(set, stat)
                     }
                 });
             })

@@ -933,17 +933,24 @@ def recruit_settings(request):
 
 
 def recruit_set_settings(request):
-    setting = request.GET['setting']
-    status = request.GET['state'] == 'true'
-    settings = Settings.objects.get(user=request.user)
+    setting = str(request.GET['setting'])
+    state = int(request.GET['state'])
+    if state == 0:
+        status = False
+    else:
+        status = True
+    settings = RecruiterSettings.objects.get(user=request.user)
 
     if setting == 'messages':
         settings.messages = status
     elif setting == 'tasks':
         settings.tasks = status
+    elif setting == 'email_messages':
+        settings.email_messages = status
+    elif setting == 'email_tasks':
+        settings.email_tasks = status
 
-
-    setting.save()
+    settings.save()
 
     return HttpResponse(setting)
 
