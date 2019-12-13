@@ -1,20 +1,14 @@
 {% extends 'recruit/recruit_main_template.html' %}
 {% load staticfiles %}
 
-
     {% block title %}Настройки{% endblock %}
-
 
 {% block content %}
 
-НАСТРОЕЧКИ У ТРОЕЧКИ
-{{ request.user }}
-
-    <article class="main">
+<article class="main">
     <div class="wrapper" >
         <div class="right_block">
             <h3 class="HeadLine">Уведомления на почту</h3>
-
             <ul>
                 <li>
                     <section class="container">
@@ -29,8 +23,8 @@
                             {% endif %}
                     </label>
                         </section>
-
                 </li>
+
                 <li>
                     <section class="container">
                     <p class="paragraph ">О новых задачах</p>
@@ -44,17 +38,12 @@
                          {% endif %}
                     </label>
                         </section>
-
                 </li>
-
-
-
             </ul>
         </div>
 
         <div class="left_block">
             <h3 class="HeadLine">Всплывающие уведомления</h3>
-
             <ul>
                 <li>
                     <section class="container">
@@ -69,8 +58,8 @@
                             {% endif %}
                     </label>
                         </section>
-
                 </li>
+
                 <li>
                     <section class="container">
                     <p class="paragraph ">О новых задачах</p>
@@ -84,39 +73,127 @@
                          {% endif %}
                     </label>
                         </section>
-
                 </li>
-
             </ul>
         </div>
-
-
     </div>
-    </article>
+</article>
 
-    <script type="text/javascript">
-        $('document').ready(function () {
-            $('.activation').on('click', function () {
-                let set = this.id;
-                console.log(set)
-                let stat = 0;
-                console.log(set)
+<style>
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin-left: auto;
+  }
 
-                if (this.checked){
-                     stat = 1
-                     console.log('checkedshit')
+.switch input {display:none;}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: green;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.container{
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+}
+
+.main{
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width:90%;
+}
+
+.paragraph{
+  padding-right:50px;
+}
+
+.HeadLine{
+  text-decoration: underline;
+}
+
+div.wrapper{
+  width: 100%;
+}
+
+div.left_block{
+  float:left;
+  width: 45%;
+}
+
+div.right_block{
+  float: right;
+  width: 45%;
+}
+
+li{
+    list-style-type: none;
+}
+</style>
+
+<script type="text/javascript">
+    $('document').ready(function () {
+        $('.activation').on('click', function () {
+            let set = this.id;
+            let stat = 0;
+
+            if (this.checked){
+                 stat = 1
+            }
+
+            $.ajax({
+                'url': '/recruit/rec_set_settings/',
+                'data': {'setting': set, 'state': stat},
+                success: function (data) {
+                    console.log('ok')
                 }
-
-                $.ajax({
-                    'url': '/recruit/rec_set_settings/',
-                    'data': {'setting': set, 'state': stat},
-                    success: function (data) {
-                        console.log(set, stat)
-                    }
-                });
-            })
-        });
-
-    </script>
+            });
+        })
+    });
+</script>
 
 {% endblock %}
